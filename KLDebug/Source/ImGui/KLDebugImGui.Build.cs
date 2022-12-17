@@ -1,9 +1,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class KLDebugRuntime : ModuleRules
+public class KLDebugImGui : ModuleRules
 {
-    public KLDebugRuntime(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugImGui(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -17,9 +17,6 @@ public class KLDebugRuntime : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugCore",
-
-                //engine
                 "Engine",
                 "GameplayTags",
                 "StructUtils",

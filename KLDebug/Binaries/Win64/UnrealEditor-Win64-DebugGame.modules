@@ -3,6 +3,7 @@
 	"Modules": 
 	{
 		"KLDebugCore": "UnrealEditor-KLDebugCore-Win64-DebugGame.dll",
+		"KLDebugImGui": "UnrealEditor-KLDebugImGui-Win64-DebugGame.dll",
 		"KLDebugRuntime": "UnrealEditor-KLDebugRuntime-Win64-DebugGame.dll"
 	}
 }

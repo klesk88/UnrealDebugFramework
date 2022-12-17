@@ -4,10 +4,10 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 
-class FKLDebugWindowManager;
+class FKLDebugImGuiFeatureManager;
 
 // main editor module
-class KLDEBUGRUNTIME_API FKLDebugRuntimeModule final : public IModuleInterface
+class KLDEBUGIMGUI_API FKLDebugImGuiModule final : public IModuleInterface
 {
 public:
     // IModuleInterface
@@ -15,5 +15,5 @@ public:
     void ShutdownModule() final;
     //
 
-    UE_NODISCARD static FKLDebugRuntimeModule& Get();
+    UE_NODISCARD static FKLDebugImGuiModule& Get();
 };

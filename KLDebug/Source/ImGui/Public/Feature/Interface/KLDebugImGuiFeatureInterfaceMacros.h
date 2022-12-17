@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Window/Manager/KLDebugWindowManagerEntry.h"
+#include "Feature/Manager/KLDebugImGuiFeatureManagerEntry.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -13,5 +13,5 @@
 #define KL_DEBUG_CREATE_WINDOW(_Class) \
 namespace KL::Debug::Windows \
 {\
-    static inline TKLDebugWindowManagerEntry<_Class> Instanced_##_Class;\
-}
+    static inline TKLDebugImGuiFeatureManagerEntry<_Class> Instanced_##_Class; \
+    }

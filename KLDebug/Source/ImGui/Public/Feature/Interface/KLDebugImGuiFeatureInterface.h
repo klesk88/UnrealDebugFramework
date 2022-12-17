@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Window/Interface/KLDebugWindowInterfaceMacros.h"
+#include "Feature/Interface/KLDebugImGuiFeatureInterfaceMacros.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -11,22 +11,28 @@
 * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() so that the class
 * can auto subscribe to the system. For example:
 * 
-* class FClassDebug final : public IKLDebugWindow
+* class FClassDebug final : public IKLDebugImGuiFeatureInterface
 * {
 *   ...
 * };
 * 
 * KL_DEBUG_CREATE_WINDOW(FClassDebug)
 */
-class KLDEBUGRUNTIME_API IKLDebugWindow
+class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface
 {
 public:
-    virtual ~IKLDebugWindow() = default;
+    virtual ~IKLDebugImGuiFeatureInterface() = default;
     
     //this is called once at game startup from the engine module to initialize the class
     virtual void Initialize();
+
+    virtual void Update();
 };
 
-inline void IKLDebugWindow::Initialize()
+inline void IKLDebugImGuiFeatureInterface::Initialize()
+{
+}
+
+inline void IKLDebugImGuiFeatureInterface::Update()
 {
 }

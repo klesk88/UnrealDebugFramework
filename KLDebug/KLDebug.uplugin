@@ -20,7 +20,7 @@
 			"LoadingPhase": "EarliestPossible"
 		},
 		{
-			"Name": "KLDebugRuntime",
+			"Name": "KLDebugImGui",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

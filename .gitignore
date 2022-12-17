@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+#Unreal ignore list
+KLDebug/Binaries/
+KLDebug/Intermediate/
+KLTest/Binaries/
+KLTest/Intermediate/

@@ -8,9 +8,9 @@ C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLTest\Source\Runti
 /I Runtime\CoreUObject\Public
 /I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLTest\Source
 /I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLTest\Source\Runtime\Public
-/I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Intermediate\Build\Win64\UnrealEditor\Inc\KLDebugRuntime\UHT
+/I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Intermediate\Build\Win64\UnrealEditor\Inc\KLDebugImGui\UHT
 /I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Source
-/I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Source\Runtime\Public
+/I C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Source\ImGui\Public
 /I ..\Intermediate\Build\Win64\UnrealEditor\Inc\Engine\UHT
 /I ..\Shaders\Shared
 /I Runtime\Engine\Classes
