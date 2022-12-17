@@ -23,6 +23,10 @@ class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface
 public:
     virtual ~IKLDebugImGuiFeatureInterface() = default;
     
+    //get the tag associated with this feature.
+    //IMPORTANT: the root node of the tags used must be KL.Debug
+    UE_NODISCARD virtual const FGameplayTag& GetTag() const = 0;
+
     //this is called once at game startup from the engine module to initialize the class
     virtual void Initialize();
 

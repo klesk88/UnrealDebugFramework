@@ -17,6 +17,9 @@ public class KLDebugImGui : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
+                "KLDebugCore",
+
+                //engine
                 "Engine",
                 "GameplayTags",
                 "StructUtils",

@@ -4,6 +4,7 @@
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
 //engine
+#include "GameplayTagContainer.h"
 #include "Templates/UnrealTypeTraits.h"
 
 class IKLDebugImGuiFeatureInterface;

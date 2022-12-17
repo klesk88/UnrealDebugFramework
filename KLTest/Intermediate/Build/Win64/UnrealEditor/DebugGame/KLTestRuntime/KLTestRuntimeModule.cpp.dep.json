@@ -13,7 +13,14 @@
             "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kldebug\\source\\imgui\\public\\feature\\manager\\kldebugimguifeaturemanagerentrybase.h",
             "c:\\unreal\\engine\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
             "c:\\unreal\\engine\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
-            "c:\\unreal\\engine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h"
+            "c:\\unreal\\engine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h",
+            "c:\\unreal\\engine\\engine\\source\\runtime\\gameplaytags\\public\\nativegameplaytags.h",
+            "c:\\unreal\\engine\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagsmanager.h",
+            "c:\\unreal\\engine\\engine\\source\\runtime\\engine\\classes\\engine\\datatable.h",
+            "c:\\unreal\\engine\\engine\\source\\runtime\\engine\\public\\datatableutils.h",
+            "c:\\unreal\\engine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\datatable.generated.h",
+            "c:\\unreal\\engine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagsmanager.generated.h",
+            "c:\\program files\\microsoft visual studio\\2022\\community\\vc\\tools\\msvc\\14.34.31933\\include\\string"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

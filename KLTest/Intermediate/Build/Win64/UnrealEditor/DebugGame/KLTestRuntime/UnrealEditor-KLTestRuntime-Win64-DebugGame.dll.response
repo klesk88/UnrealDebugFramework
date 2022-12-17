@@ -34,10 +34,11 @@
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
-"C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLTest\Intermediate\Build\Win64\UnrealEditor\DebugGame\KLTestRuntime\KLTestRuntimeModule.cpp.obj"
+"C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLTest\Intermediate\Build\Win64\UnrealEditor\DebugGame\KLTestRuntime\Module.KLTestRuntime.cpp.obj"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Default.rc2.res"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
+"C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Intermediate\Build\Win64\UnrealEditor\DebugGame\KLDebugCore\UnrealEditor-KLDebugCore-Win64-DebugGame.lib"
 "C:\Unreal\Projects\KLDebugFramework\KLDebugFramework\Plugins\KLDebug\Intermediate\Build\Win64\UnrealEditor\DebugGame\KLDebugImGui\UnrealEditor-KLDebugImGui-Win64-DebugGame.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\GameplayTags\UnrealEditor-GameplayTags.lib"

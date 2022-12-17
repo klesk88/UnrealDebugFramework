@@ -1,10 +1,12 @@
 #pragma once
 
+#if WITH_KL_DEBUGGER
+
 #include "ImGui/Public/Feature/Interface/KLDebugImGuiFeatureInterface.h"
 
-//engine
-#include "CoreMinimal.h"
+// engine
 #include "Containers/UnrealString.h"
+#include "CoreMinimal.h"
 
 class FKLDebugWindowTest12 final : public IKLDebugImGuiFeatureInterface
 {
@@ -17,6 +19,9 @@ public:
     void Update()
     {
     }
+
+    
+    const FGameplayTag& GetTag() const;
 
 private:
     bool TestVAlue = false;
@@ -39,6 +44,8 @@ public:
     {
     }
 
+    const FGameplayTag& GetTag() const;
+
 private:
     float mTest = 0.f;
     FString mString;
@@ -48,3 +55,5 @@ private:
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest)
 KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12)
+
+#endif

@@ -17,6 +17,7 @@ public class KLTestRuntime : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
+                "KLDebugCore",
                 "KLDebugImGui",
 
                 //engine

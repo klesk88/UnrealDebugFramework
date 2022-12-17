@@ -1,5 +1,9 @@
 {
 	"RemapUnityFiles": 
 	{
+		"Module.KLTestRuntime.cpp.obj": [
+			"KLDebugWindowTestHello.cpp.obj",
+			"KLTestRuntimeModule.cpp.obj"
+		]
 	}
 }
