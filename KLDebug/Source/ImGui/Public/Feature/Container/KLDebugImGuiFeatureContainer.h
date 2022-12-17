@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -14,6 +16,8 @@ class KLDEBUGIMGUI_API FKLDebugImGuiFeatureContainer final : public FNoncopyable
 public:
     void Initialize();
     void Shutdown();
+
+    FKLDebugImGuiFeaturesIterator GetFeatureIteratorMutable();
 
 private:
     UE_NODISCARD IKLDebugImGuiFeatureInterface&       GetFeatureMutable(const uint32 _Offset);
@@ -32,3 +36,8 @@ private:
     //in this way they are all packed in memory close together
     TArray<uint8> mFeaturesPool;
 };
+
+inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainer::GetFeatureIteratorMutable()
+{
+    return FKLDebugImGuiFeaturesIterator(mFeaturesOffset, mFeaturesPool);
+}
