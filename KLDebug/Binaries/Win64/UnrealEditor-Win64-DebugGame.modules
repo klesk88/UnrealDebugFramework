@@ -4,6 +4,8 @@
 	{
 		"KLDebugCore": "UnrealEditor-KLDebugCore-Win64-DebugGame.dll",
 		"KLDebugImGui": "UnrealEditor-KLDebugImGui-Win64-DebugGame.dll",
-		"KLDebugRuntime": "UnrealEditor-KLDebugRuntime-Win64-DebugGame.dll"
+		"KLDebugRuntime": "UnrealEditor-KLDebugRuntime-Win64-DebugGame.dll",
+		"KLDebugUtils": "UnrealEditor-KLDebugUtils-Win64-DebugGame.dll",
+		"KLDebugViewport": "UnrealEditor-KLDebugViewport-Win64-DebugGame.dll"
 	}
 }

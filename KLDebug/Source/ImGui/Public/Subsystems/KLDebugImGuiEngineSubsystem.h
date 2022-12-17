@@ -2,6 +2,9 @@
 
 #include "Feature/Container/KLDebugImGuiFeatureContainer.h"
 
+//utils module
+#include "Utils/Public/Picker/KLDebugUtilsPicker.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -19,11 +22,24 @@ class KLDEBUGIMGUI_API UKLDebugImGuiEngineSubsystem final : public UEngineSubsys
     GENERATED_BODY()
 
 public:
-    UE_NODISCARD static UKLDebugImGuiEngineSubsystem* Get();
-
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
 
+    UE_NODISCARD static UKLDebugImGuiEngineSubsystem* Get();
+    UE_NODISCARD const FKLDebugUtilsPicker& GetPicker() const;
+    UE_NODISCARD FKLDebugUtilsPicker& GetPickerMutable();
+
 private:
     FKLDebugImGuiFeatureContainer mFeaturesContainer;
+    FKLDebugUtilsPicker           mPicker;
 };
+
+inline const FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPicker() const
+{
+    return mPicker;
+}
+
+inline FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPickerMutable()
+{
+    return mPicker;
+}
