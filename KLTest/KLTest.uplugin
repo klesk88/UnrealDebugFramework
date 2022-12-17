@@ -1,0 +1,33 @@
+{
+	"FileVersion": 1,
+	"Version": 1,
+	"VersionName": "1",
+	"FriendlyName": "Unreal NetImgui",
+	"Description": "Plugin exposing Dear ImGui library for drawing 2D menus. These menus are displayed and controlled from an external application but processed from this engine code.",
+	"Category": "2D",
+	"CreatedBy": "Sammy Fatnassi",
+	"CreatedByURL": "",
+	"DocsURL": "https://github.com/sammyfreg/UnrealNetImgui",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/sammyfreg/UnrealNetImgui/issues",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "KLTestRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "EarliestPossible"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "StructUtils",
+			"Enabled": true
+		},
+		{
+			"Name": "KLDebug",
+			"Enabled": true
+		}
+	]
+}

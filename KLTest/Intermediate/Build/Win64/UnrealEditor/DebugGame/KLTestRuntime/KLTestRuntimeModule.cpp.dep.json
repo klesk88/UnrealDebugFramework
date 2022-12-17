@@ -1,0 +1,21 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kltest\\source\\runtime\\private\\kltestruntimemodule.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\unreal\\engine\\engine\\intermediate\\build\\win64\\unrealeditor\\development\\engine\\sharedpch.engine.nonoptimized.shadowerrors.h.pch",
+        "Includes": [
+            "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kltest\\intermediate\\build\\win64\\unrealeditor\\debuggame\\kltestruntime\\definitions.kltestruntime.h",
+            "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kltest\\source\\runtime\\public\\kldebugwindowtesthello.h",
+            "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kldebug\\source\\runtime\\public\\window\\interface\\kldebugwindowinterface.h",
+            "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kldebug\\source\\runtime\\public\\window\\interface\\kldebugwindowinterfacemacros.h",
+            "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kldebug\\source\\runtime\\public\\window\\manager\\kldebugwindowmanagerentry.h",
+            "c:\\unreal\\projects\\kldebugframework\\kldebugframework\\plugins\\kldebug\\source\\runtime\\public\\window\\manager\\kldebugwindowmanagerentrybase.h",
+            "c:\\unreal\\engine\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
+            "c:\\unreal\\engine\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
+            "c:\\unreal\\engine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\uht\\gameplaytagcontainer.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
