@@ -3,6 +3,9 @@
 // engine
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
+#include "Templates/SharedPointer.h"
+
+class SViewport;
 
 // main editor module
 class KLDEBUGVIEWPORT_API FKLDebugViewportModule final : public IModuleInterface
@@ -14,4 +17,10 @@ public:
     //
 
     UE_NODISCARD static FKLDebugViewportModule& Get();
+
+private:
+    void ActivateDebugViewport();
+
+private:
+    TSharedPtr<SViewport> mDebugViewportClient;
 };

@@ -1,0 +1,38 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.22",
+	"FriendlyName": "ImGui",
+	"Description": "",
+	"Category": "Debug",
+	"CreatedBy": "",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/segross/UnrealImGui",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "UnrealImGui",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "ImGuiThirdParty",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "ImPlotThirdParty",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "NetImGuiThirdParty",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "PreDefault"
+		}
+	]
+}

@@ -26,7 +26,9 @@ public class KLDebugViewport : ModuleRules
             new string[]
             {
                 "Core",
-                "CoreUObject"
+                "CoreUObject",
+                "Slate",
+                "SlateCore"
             }
          );
     }

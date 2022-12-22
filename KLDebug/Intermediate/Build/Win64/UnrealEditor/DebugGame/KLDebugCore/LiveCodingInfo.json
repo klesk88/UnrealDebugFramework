@@ -2,7 +2,7 @@
 	"RemapUnityFiles": 
 	{
 		"Module.KLDebugCore.cpp.obj": [
-			"KLDebugCore.cpp.obj",
+			"KLDebugCoreModule.cpp.obj",
 			"KLDebugLog.cpp.obj"
 		]
 	}
