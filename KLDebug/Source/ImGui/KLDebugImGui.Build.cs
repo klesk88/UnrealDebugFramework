@@ -17,10 +17,12 @@ public class KLDebugImGui : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
+                "ImGuiThirdParty",
                 "KLDebugCore",
 				"KLDebugUtils",
 				
                 //engine
+                "AIModule",
                 "Engine",
                 "GameplayTags",
                 "StructUtils",

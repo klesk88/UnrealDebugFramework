@@ -4,7 +4,8 @@
 
 void FKLDebugImGuiFeatureManager::AddEntry(const size_t _ClassSize, FKLDebugImGuiFeatureManagerEntryBase& _NewEntry)
 {
-    ++mCount;
+    uint32& FeatureCount = mFeaturesCount[static_cast<uint32>(_NewEntry.GetEntryType())];
+    ++FeatureCount;
     mTotalBytesCount += _ClassSize;
 
     if (!mHead)

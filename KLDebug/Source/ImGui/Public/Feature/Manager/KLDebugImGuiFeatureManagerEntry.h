@@ -13,7 +13,7 @@ template<typename WindowInterfaceType>
 class TKLDebugImGuiFeatureManagerEntry final : public FKLDebugImGuiFeatureManagerEntryBase
 {
 public:
-    TKLDebugImGuiFeatureManagerEntry();
+    explicit TKLDebugImGuiFeatureManagerEntry(const EFeatureEntryType _EntryType);
 
     //FKLDebugWindowManagerEntryBase
     UE_NODISCARD IKLDebugImGuiFeatureInterface& AllocateInPlace(void* _PoolStartAddress) const final;
@@ -22,8 +22,8 @@ public:
 };
 
 template<typename WindowInterfaceType>
-TKLDebugImGuiFeatureManagerEntry<WindowInterfaceType>::TKLDebugImGuiFeatureManagerEntry()
-    : FKLDebugImGuiFeatureManagerEntryBase(sizeof(WindowInterfaceType))
+TKLDebugImGuiFeatureManagerEntry<WindowInterfaceType>::TKLDebugImGuiFeatureManagerEntry(const EFeatureEntryType _EntryType)
+    : FKLDebugImGuiFeatureManagerEntryBase(sizeof(WindowInterfaceType), _EntryType)
 {
     static_assert(TIsDerivedFrom<WindowInterfaceType, IKLDebugImGuiFeatureInterface>::IsDerived, "Class passed must derived from IKLDebugWindow");
 }

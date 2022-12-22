@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Feature/Manager/KLDebugImGuiFeatureManagerEntryDefines.h"
+
 // engine
+#include "Containers/StaticArray.h"
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "Misc/Optional.h"
@@ -17,10 +20,10 @@ private:
 public:
     static FKLDebugImGuiFeatureManager& Get();
 
-    void                                                AddEntry(const size_t _ClassSize, FKLDebugImGuiFeatureManagerEntryBase& _NewEntry);
+    void                                               AddEntry(const size_t _ClassSize, FKLDebugImGuiFeatureManagerEntryBase& _NewEntry);
     UE_NODISCARD FKLDebugImGuiFeatureManagerEntryBase* GetStartEntry() const;
-    UE_NODISCARD int32                                 GetEntryCount() const;
-    UE_NODISCARD size_t                                 GetTotalSizeRequired() const;
+    UE_NODISCARD uint32                                GetEntryCount(const EFeatureEntryType _FeatureType) const;
+    UE_NODISCARD size_t                                GetTotalSizeRequired() const;
 
 private:
     FKLDebugImGuiFeatureManager() = default;
@@ -28,7 +31,7 @@ private:
 private:
     FKLDebugImGuiFeatureManagerEntryBase* mHead = nullptr;
     FKLDebugImGuiFeatureManagerEntryBase* mTail = nullptr;
-    int32                           mCount = 0;
+    TStaticArray<uint32, static_cast<uint32>(EFeatureEntryType::Count)> mFeaturesCount;
     size_t                          mTotalBytesCount = 0;
 };
 
@@ -44,9 +47,10 @@ inline FKLDebugImGuiFeatureManagerEntryBase* FKLDebugImGuiFeatureManager::GetSta
     return mHead;
 }
 
-inline int32 FKLDebugImGuiFeatureManager::GetEntryCount() const
+inline uint32 FKLDebugImGuiFeatureManager::GetEntryCount(const EFeatureEntryType _FeatureType) const
 {
-    return mCount;
+    checkf(_FeatureType != EFeatureEntryType::Count, TEXT("Invalid data pass"));
+    return mFeaturesCount[static_cast<uint32>(_FeatureType)];
 }
 
 inline size_t FKLDebugImGuiFeatureManager::GetTotalSizeRequired() const

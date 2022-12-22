@@ -53,7 +53,7 @@ private:
 };
 
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest)
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12)
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest, EFeatureEntryType::Default)
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12, EFeatureEntryType::Default)
 
 #endif
