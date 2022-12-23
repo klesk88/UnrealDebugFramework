@@ -1,5 +1,8 @@
 #include "Commands/KLDebugImGuiCommands.h"
 
+#include "Config/KLDebugImGuiEditorConfig.h"
+#include "Input/KLDebugImGuiEditorInputConfig.h"
+
 //engine
 #include "Framework/Commands/InputChord.h"
 #include "Framework/Commands/UICommandInfo.h"
@@ -14,7 +17,10 @@ FKLDebugImGuiCommands::FKLDebugImGuiCommands()
 
 void FKLDebugImGuiCommands::RegisterCommands()
 {
-    UI_COMMAND(mEnableImGui, "EnableImGuiViewport", "Enable ImGui Viewport", EUserInterfaceActionType::Button, FInputChord(EKeys::D, EModifierKey::Alt));
+    const UKLDebugImGuiEditorConfig& Config = UKLDebugImGuiEditorConfig::Get();
+    const FKLDebugImGuiEditorInputConfig& InputConfig = Config.GetInputConfig();
+
+    UI_COMMAND(mEnableImGui, "EnableImGuiViewport", "Enable ImGui Viewport", EUserInterfaceActionType::Button, InputConfig.GetEnableViewportKey());
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -43,7 +43,12 @@
 			"Name": "KLUnrealImGui",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		}
+		},
+		{
+			"Name": "KLDebugImGuiEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}		
 	],
 	"Plugins": [
 		{

@@ -190,6 +190,9 @@ void FImGuiContextProxy::DrawDebug()
 
 void FImGuiContextProxy::Tick(float DeltaSeconds)
 {
+    //@Begin KLMod: Add profiling
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_ImGuiContextProxy_Tick);
+
 	// Making sure that we tick only once per frame.
 	if (LastFrameNumber < GFrameNumber)
 	{

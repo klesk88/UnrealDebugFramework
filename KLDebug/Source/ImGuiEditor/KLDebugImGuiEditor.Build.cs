@@ -1,9 +1,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class KLDebugImGui : ModuleRules
+public class KLDebugImGuiEditor : ModuleRules
 {
-    public KLDebugImGui(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugImGuiEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -17,18 +17,15 @@ public class KLDebugImGui : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "ImGuiThirdParty",
-                "KLDebugCore",
-				"KLDebugUtils",
+                "KLDebugImGui",
                 "KLUnrealImGui",
                 "UnrealImGui",
 				
                 //engine
-                "AIModule",
+                "DeveloperSettings",
                 "Engine",
                 "GameplayTags",
-                "InputCore",
-                "StructUtils",
+                "InputCore"
             }
         );
 
@@ -39,6 +36,7 @@ public class KLDebugImGui : ModuleRules
                 "CoreUObject",
                 "Slate",
                 "SlateCore",
+				"UnrealEd"
             }
         );
     }

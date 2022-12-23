@@ -7,7 +7,7 @@
 
 class FUICommandInfo;
 
-class KLDEBUGIMGUI_API FKLDebugImGuiCommands final : public TCommands<FKLDebugImGuiCommands>
+class KLDEBUGIMGUIEDITOR_API FKLDebugImGuiCommands final : public TCommands<FKLDebugImGuiCommands>
 {
 public:
     FKLDebugImGuiCommands();

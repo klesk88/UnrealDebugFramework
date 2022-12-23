@@ -121,6 +121,9 @@ void FImGuiModuleManager::ReleaseTickInitializer()
 
 void FImGuiModuleManager::Tick(float DeltaSeconds)
 {
+	//@Begin KLMod: Add profiling
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_ImGuiModuleManager_Tick);
+
 	if (IsInGameThread())
 	{
 		// Update context manager to advance all ImGui contexts to the next frame.

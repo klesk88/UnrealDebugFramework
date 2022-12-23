@@ -4,8 +4,6 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 
-class FKLDebugImGuiFeatureManager;
-
 // main editor module
 class KLDEBUGIMGUI_API FKLDebugImGuiModule final : public IModuleInterface
 {

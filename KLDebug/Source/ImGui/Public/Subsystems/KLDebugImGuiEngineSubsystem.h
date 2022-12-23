@@ -31,6 +31,8 @@ public:
     UE_NODISCARD const FKLDebugUtilsPicker& GetPicker() const;
     UE_NODISCARD FKLDebugUtilsPicker& GetPickerMutable();
 
+    void ToogleImGuiSystemState();
+
 private:
     void RegisterCallbacks();
     void UnreagisterCallbacks();
@@ -51,4 +53,9 @@ inline const FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPicker() cons
 inline FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPickerMutable()
 {
     return mPicker;
+}
+
+inline void UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState()
+{
+    mInputManager.ToogleImGuiSystem();
 }

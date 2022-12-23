@@ -5,6 +5,7 @@
 		"KLDebugCore": "UnrealEditor-KLDebugCore-Win64-DebugGame.dll",
 		"KLDebugEditorViewport": "UnrealEditor-KLDebugEditorViewport-Win64-DebugGame.dll",
 		"KLDebugImGui": "UnrealEditor-KLDebugImGui-Win64-DebugGame.dll",
+		"KLDebugImGuiEditor": "UnrealEditor-KLDebugImGuiEditor-Win64-DebugGame.dll",
 		"KLDebugUtils": "UnrealEditor-KLDebugUtils-Win64-DebugGame.dll",
 		"KLDebugViewport": "UnrealEditor-KLDebugViewport-Win64-DebugGame.dll",
 		"KLUnrealImGui": "UnrealEditor-KLUnrealImGui-Win64-DebugGame.dll"

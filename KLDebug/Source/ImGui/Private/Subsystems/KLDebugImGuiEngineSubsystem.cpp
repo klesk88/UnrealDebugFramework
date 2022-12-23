@@ -60,4 +60,6 @@ void UKLDebugImGuiEngineSubsystem::UnreagisterCallbacks()
 
 void UKLDebugImGuiEngineSubsystem::Update()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiEngineSubsystem_Update);
+
 }
