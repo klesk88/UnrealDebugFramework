@@ -24,54 +24,13 @@ FImGuiModuleManager::FImGuiModuleManager()
 	, ImGuiDemo(Properties)
 	, ContextManager(Settings)
 {
-	// Register in context manager to get information whenever a new context proxy is created.
-	ContextManager.OnContextProxyCreated.AddRaw(this, &FImGuiModuleManager::OnContextProxyCreated);
-
-	// Typically we will use viewport created events to add widget to new game viewports.
-	ViewportCreatedHandle = UGameViewportClient::OnViewportCreated().AddRaw(this, &FImGuiModuleManager::OnViewportCreated);
-
-	// Try to register tick delegate (it may fail if Slate application isn't yet ready).
-	RegisterTick();
-
-	// If we failed to register, create an initializer that will do it later.
-	if (!IsTickRegistered())
-	{
-		CreateTickInitializer();
-	}
-
-	// We need to add widgets to active game viewports as they won't generate on-created events. This is especially
-	// important during hot-reloading.
-	AddWidgetsToActiveViewports();
+    // Register in context manager to get information whenever a new context proxy is created.
+    ContextManager.OnContextProxyCreated.AddRaw(this, &FImGuiModuleManager::OnContextProxyCreated);
 }
 
 FImGuiModuleManager::~FImGuiModuleManager()
 {
-	ContextManager.OnFontAtlasBuilt.RemoveAll(this);
-
-	// We are no longer interested with adding widgets to viewports.
-	if (ViewportCreatedHandle.IsValid())
-	{
-		UGameViewportClient::OnViewportCreated().Remove(ViewportCreatedHandle);
-		ViewportCreatedHandle.Reset();
-	}
-
-	// Remove still active widgets (important during hot-reloading).
-	for (auto& Widget : Widgets)
-	{
-		auto SharedWidget = Widget.Pin();
-		if (SharedWidget.IsValid())
-		{
-			auto& WidgetGameViewport = SharedWidget->GetGameViewport();
-			if (WidgetGameViewport.IsValid())
-			{
-				WidgetGameViewport->RemoveViewportWidgetContent(SharedWidget.ToSharedRef());
-			}
-		}
-	}
-
-	// Deactivate this manager.
-	ReleaseTickInitializer();
-	UnregisterTick();
+    Shutdown();
 }
 
 void FImGuiModuleManager::LoadTextures()
@@ -232,3 +191,62 @@ void FImGuiModuleManager::OnContextProxyCreated(int32 ContextIndex, FImGuiContex
 	LoadTextures();
 	ContextProxy.OnDraw().AddLambda([this, ContextIndex]() { ImGuiDemo.DrawControls(ContextIndex); });
 }
+
+//@Begin KLMod
+
+void FImGuiModuleManager::Init()
+{
+    // Typically we will use viewport created events to add widget to new game viewports.
+    ViewportCreatedHandle = UGameViewportClient::OnViewportCreated().AddRaw(this, &FImGuiModuleManager::OnViewportCreated);
+
+    // Try to register tick delegate (it may fail if Slate application isn't yet ready).
+    RegisterTick();
+
+    // If we failed to register, create an initializer that will do it later.
+    if (!IsTickRegistered())
+    {
+        CreateTickInitializer();
+    }
+
+    // We need to add widgets to active game viewports as they won't generate on-created events. This is especially
+    // important during hot-reloading.
+    AddWidgetsToActiveViewports();
+
+	//KLMod: This is added by me
+    ContextManager.RegisterDelegates();
+}
+
+void FImGuiModuleManager::Shutdown()
+{
+    ContextManager.OnFontAtlasBuilt.RemoveAll(this);
+
+    // We are no longer interested with adding widgets to viewports.
+    if (ViewportCreatedHandle.IsValid())
+    {
+        UGameViewportClient::OnViewportCreated().Remove(ViewportCreatedHandle);
+        ViewportCreatedHandle.Reset();
+    }
+
+    // Remove still active widgets (important during hot-reloading).
+    for (auto& Widget : Widgets)
+    {
+        auto SharedWidget = Widget.Pin();
+        if (SharedWidget.IsValid())
+        {
+            auto& WidgetGameViewport = SharedWidget->GetGameViewport();
+            if (WidgetGameViewport.IsValid())
+            {
+                WidgetGameViewport->RemoveViewportWidgetContent(SharedWidget.ToSharedRef());
+            }
+        }
+    }
+
+    // Deactivate this manager.
+    ReleaseTickInitializer();
+    UnregisterTick();
+
+	// KLMod: This is added by me
+    ContextManager.UnregisterDelegates();
+}
+
+//@End KLMod

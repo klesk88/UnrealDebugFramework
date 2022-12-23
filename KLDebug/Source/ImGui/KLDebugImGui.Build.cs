@@ -27,6 +27,7 @@ public class KLDebugImGui : ModuleRules
                 "AIModule",
                 "Engine",
                 "GameplayTags",
+                "InputCore",
                 "StructUtils",
             }
         );
@@ -35,7 +36,12 @@ public class KLDebugImGui : ModuleRules
             new string[]
             {
                 "Core",
-                "CoreUObject"
+                "CoreUObject",
+                "Slate",
+                "SlateCore",
+
+
+                "UnrealEd"
             }
         );
     }

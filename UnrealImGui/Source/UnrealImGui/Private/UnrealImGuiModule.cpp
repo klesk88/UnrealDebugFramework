@@ -272,7 +272,6 @@ void FUnrealImGuiModule::Init()
 #endif
 
     // Create managers that implements module logic.
-
     checkf(!ImGuiModuleManager, TEXT("Instance of the ImGui Module Manager already exists. Instance should be created only during module startup."));
     ImGuiModuleManager = new FImGuiModuleManager();
 

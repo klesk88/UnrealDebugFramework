@@ -68,22 +68,13 @@ FImGuiContextManager::FImGuiContextManager(FImGuiModuleSettings& InSettings)
 	Settings.OnDPIScaleChangedDelegate.AddRaw(this, &FImGuiContextManager::SetDPIScale);
 
 	SetDPIScale(Settings.GetDPIScaleInfo());
-
-	FWorldDelegates::OnWorldTickStart.AddRaw(this, &FImGuiContextManager::OnWorldTickStart);
-#if ENGINE_COMPATIBILITY_WITH_WORLD_POST_ACTOR_TICK
-	FWorldDelegates::OnWorldPostActorTick.AddRaw(this, &FImGuiContextManager::OnWorldPostActorTick);
-#endif
 }
 
 FImGuiContextManager::~FImGuiContextManager()
 {
 	Settings.OnDPIScaleChangedDelegate.RemoveAll(this);
 
-	// Order matters because contexts can be created during World Tick Start events.
-	FWorldDelegates::OnWorldTickStart.RemoveAll(this);
-#if ENGINE_COMPATIBILITY_WITH_WORLD_POST_ACTOR_TICK
-	FWorldDelegates::OnWorldPostActorTick.RemoveAll(this);
-#endif
+	UnregisterDelegates();
 }
 
 void FImGuiContextManager::Tick(float DeltaSeconds)
@@ -321,8 +312,24 @@ void FImGuiContextManager::RebuildFontAtlas()
 
 void FImGuiContextManager::Init()
 {
-	//Moved this from constructor so we can call it after we bound the delegate
     BuildFontAtlas();
+}
+
+void FImGuiContextManager::RegisterDelegates()
+{
+    FWorldDelegates::OnWorldTickStart.AddRaw(this, &FImGuiContextManager::OnWorldTickStart);
+#if ENGINE_COMPATIBILITY_WITH_WORLD_POST_ACTOR_TICK
+    FWorldDelegates::OnWorldPostActorTick.AddRaw(this, &FImGuiContextManager::OnWorldPostActorTick);
+#endif
+}
+
+void FImGuiContextManager::UnregisterDelegates()
+{
+    // Order matters because contexts can be created during World Tick Start events.
+    FWorldDelegates::OnWorldTickStart.RemoveAll(this);
+#if ENGINE_COMPATIBILITY_WITH_WORLD_POST_ACTOR_TICK
+    FWorldDelegates::OnWorldPostActorTick.RemoveAll(this);
+#endif
 }
 
 //@End KLMod

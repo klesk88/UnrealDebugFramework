@@ -48,6 +48,18 @@ FKLUnrealImGuiModule* FKLUnrealImGuiModule::TryGet()
     return FModuleManager::GetModulePtr<FKLUnrealImGuiModule>(KL::UnrealImGui::Module::Module);
 }
 
+void FKLUnrealImGuiModule::EnableImGuiSystem()
+{
+    FImGuiModuleManager& ModuleManager = GetImguiModuleManager();
+    ModuleManager.Init();
+}
+
+void FKLUnrealImGuiModule::DisableImGuiSystem()
+{
+    FImGuiModuleManager& ModuleManager = GetImguiModuleManager();
+    ModuleManager.Shutdown();
+}
+
 #undef LOCTEXT_NAMESPACE
 
 IMPLEMENT_MODULE(FKLUnrealImGuiModule, KLUnrealImGui)

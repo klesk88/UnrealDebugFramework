@@ -35,10 +35,13 @@ public:
 	// Event called right after ImGui is updated, to give other subsystems chance to react.
 	FSimpleMulticastDelegate& OnPostImGuiUpdate() { return PostImGuiUpdateEvent; }
 
-private:
-
+//@Begin KLMod: change to protected
+protected:
 	FImGuiModuleManager();
-	~FImGuiModuleManager();
+	virtual ~FImGuiModuleManager();
+ //@End KLMod
+
+private:
 
 	FImGuiModuleManager(const FImGuiModuleManager&) = delete;
 	FImGuiModuleManager& operator=(const FImGuiModuleManager&) = delete;
@@ -94,4 +97,13 @@ private:
 	FDelegateHandle ViewportCreatedHandle;
 
 	bool bTexturesLoaded = false;
+
+//@Begin KLMod
+public:
+	//moved all constructr code in this method
+    void Init();
+	//move all destruct code here
+    void Shutdown();
+
+//@End KLMod
 };

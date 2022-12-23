@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Feature/Container/KLDebugImGuiFeatureContainer.h"
+#include "Input/KLDebugImGuiInputManager.h"
 
 //utils module
 #include "Utils/Public/Picker/KLDebugUtilsPicker.h"
@@ -39,6 +40,7 @@ private:
 private:
     FKLDebugImGuiFeatureContainer mFeaturesContainer;
     FKLDebugUtilsPicker           mPicker;
+    FKLDebugImGuiInputManager     mInputManager;
 };
 
 inline const FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPicker() const

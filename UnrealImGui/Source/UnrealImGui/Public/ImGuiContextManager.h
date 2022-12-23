@@ -128,7 +128,12 @@ private:
 
 //@Begin KLMod:
 public:
+    // Moved this from constructor so we can call it after we bound the delegate
     void Init();
+    // Moved this from constructor so we can call it after we bound the delegate
+    void RegisterDelegates();
+    // Moved this from constructor so we can call it after we bound the delegate
+    void UnregisterDelegates();
 
 public:
     FOnBuildFontAtlas mOnBuildFontAtlasDelegate;

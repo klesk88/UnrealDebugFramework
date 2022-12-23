@@ -30,6 +30,7 @@ void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collect
 {
     mFeaturesContainer.Initialize();
     RegisterCallbacks();
+    mInputManager.Init();
 }
 
 void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
@@ -40,8 +41,9 @@ void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
 
 void UKLDebugImGuiEngineSubsystem::Deinitialize()
 {
-    mFeaturesContainer.Shutdown();
+    mInputManager.Shutdown();
     UnreagisterCallbacks();
+    mFeaturesContainer.Shutdown();
 }
 
 void UKLDebugImGuiEngineSubsystem::UnreagisterCallbacks()
