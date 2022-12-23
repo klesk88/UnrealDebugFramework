@@ -12,10 +12,12 @@ public class ImGuiThirdParty : ModuleRules
         string PrivateFolder = Path.Combine(ModuleDirectory, "Private");
         string PrivateImguiFolder = Path.Combine(ModuleDirectory, "Private/Library");
         string PublicImguiFolder = Path.Combine(ModuleDirectory, "Public/Library");
+        string PublicImguiFreeTypeFolder = Path.Combine(ModuleDirectory, "Public/Library/misc/freetype");
 
         PrivateIncludePaths.AddRange(
             new string[] {
                 PublicImguiFolder,
+                PublicImguiFreeTypeFolder,
                 PrivateImguiFolder,
                 PrivateFolder,
             }

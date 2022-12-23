@@ -11,4 +11,8 @@ public:
     void StartupModule() override;
     void ShutdownModule() override;
     //
+
+    static const FNetImGuiThirdPartyModule& Get();
+
+    void DrawCommands() const;
 };

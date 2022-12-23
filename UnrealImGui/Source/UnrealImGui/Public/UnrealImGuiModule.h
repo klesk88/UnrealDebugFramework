@@ -8,8 +8,12 @@
 
 #include <Modules/ModuleManager.h>
 
+//@Begin KLMod: forward declarations
+class FImGuiModuleManager;
+//@End KLMod
 
-class FUnrealImGuiModule : public IModuleInterface
+//@Begin KLMod: added API
+class UNREALIMGUI_API FUnrealImGuiModule : public IModuleInterface
 {
 public:
 	enum class eFont
@@ -198,6 +202,14 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+
+//@Begin KLMod: methods that we want to ovverride from child
+protected:
+    virtual void Init();  
+	virtual void Shutdown();	
+	
+	UE_NODISCARD FImGuiModuleManager& GetImguiModuleManager() const;
+//@End KLMod
 
 private:
 

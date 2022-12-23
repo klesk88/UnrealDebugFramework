@@ -101,90 +101,19 @@ void FUnrealImGuiModule::ReleaseTexture(const FImGuiTextureHandle& Handle)
 
 void FUnrealImGuiModule::StartupModule()
 {
-	// Initialize handles to allow cross-module redirections. Other handles will always look for parents in the active
-	// module, which means that we can only redirect to started modules. We don't have to worry about self-referencing
-	// as local handles are guaranteed to be constructed before initializing pointers.
-	// This supports in-editor recompilation and hot-reloading after compiling from the command line. The latter method
-	// theoretically doesn't support plug-ins and will not load re-compiled module, but its handles will still redirect
-	// to the active one.
-
-#if WITH_EDITOR
-	ImGuiContextHandle = &ImGuiImplementation::GetContextHandle();
-	DelegatesContainerHandle = &FImGuiDelegatesContainer::GetHandle();
-#endif
-
-	// Create managers that implements module logic.
-
-	checkf(!ImGuiModuleManager, TEXT("Instance of the ImGui Module Manager already exists. Instance should be created only during module startup."));
-	ImGuiModuleManager = new FImGuiModuleManager();
-
-#if WITH_EDITOR
-	checkf(!ImGuiEditor, TEXT("Instance of the ImGui Editor already exists. Instance should be created only during module startup."));
-	ImGuiEditor = new FImGuiEditor();
-#endif
-
-	NetImGuiStartup();
+    //@Begin KLMod: disable all initialization here as we will initialize teh module from FKLUnrealImGuiModule
+	// if we leave the code here we will call it once when unreal loads this module and another time when we load mine
+    //Init();
+    // add this method so we can override it from the child
+    //ImGuiModuleManager->GetContextManager().Init();
+	//@End KLMod
 }
 
 void FUnrealImGuiModule::ShutdownModule()
 {
-	// In editor store data that we want to move to hot-reloaded module.
-#if WITH_EDITOR
-	static bool bMoveProperties = true;
-	static FImGuiModuleProperties PropertiesToMove = ImGuiModuleManager->GetProperties();
-#endif
-
-	// Before we shutdown we need to delete managers that will do all the necessary cleanup.
-
-#if WITH_EDITOR
-	checkf(ImGuiEditor, TEXT("Null ImGui Editor. ImGui editor instance should be deleted during module shutdown."));
-	delete ImGuiEditor;
-	ImGuiEditor = nullptr;
-#endif
-
-	checkf(ImGuiModuleManager, TEXT("Null ImGui Module Manager. Module manager instance should be deleted during module shutdown."));
-	delete ImGuiModuleManager;
-	ImGuiModuleManager = nullptr;
-
-	NetImGuiShutdown();
-
-#if WITH_EDITOR
-	// When shutting down we leave the global ImGui context pointer and handle pointing to resources that are already
-	// deleted. This can cause troubles after hot-reload when code in other modules calls ImGui interface functions
-	// which are statically bound to the obsolete module. To keep ImGui code functional we can redirect context handle
-	// to point to the new module.
-
-	// When shutting down during hot-reloading, we might want to rewire handles used in statically bound functions
-	// or move data to a new module.
-
-	FModuleManager::Get().OnModulesChanged().AddLambda([this] (FName Name, EModuleChangeReason Reason)
-	{
-		if (Reason == EModuleChangeReason::ModuleLoaded && Name == "ImGui")
-		{
-			FUnrealImGuiModule& LoadedModule = FUnrealImGuiModule::Get();
-			if (&LoadedModule != this)
-			{
-				// Statically bound functions can be bound to the obsolete module, so we need to manually redirect.
-
-				if (LoadedModule.ImGuiContextHandle)
-				{
-					ImGuiImplementation::SetParentContextHandle(*LoadedModule.ImGuiContextHandle);
-				}
-
-				if (LoadedModule.DelegatesContainerHandle)
-				{
-					FImGuiDelegatesContainer::MoveContainer(*LoadedModule.DelegatesContainerHandle);
-				}
-
-				if (bMoveProperties)
-				{
-					bMoveProperties = false;
-					LoadedModule.SetProperties(PropertiesToMove);
-				}
-			}
-		}
-	});
-#endif // WITH_EDITOR
+    //@Begin KLMod: disable shutdown. it will be handle from my module
+    //Shutdown();
+    //@End KLMod
 }
 
 #if WITH_EDITOR
@@ -324,6 +253,106 @@ bool FImGuiTextureHandle::HasValidEntry() const
 	const TextureIndex Index = ImGuiInterops::ToTextureIndex(TextureId);
 	return Index != INDEX_NONE && ImGuiModuleManager && ImGuiModuleManager->GetTextureManager().GetTextureName(Index) == Name;
 }
+
+//@Begin KLMod
+
+//allow to override Init method called from when the module is startup
+void FUnrealImGuiModule::Init()
+{
+    // Initialize handles to allow cross-module redirections. Other handles will always look for parents in the active
+    // module, which means that we can only redirect to started modules. We don't have to worry about self-referencing
+    // as local handles are guaranteed to be constructed before initializing pointers.
+    // This supports in-editor recompilation and hot-reloading after compiling from the command line. The latter method
+    // theoretically doesn't support plug-ins and will not load re-compiled module, but its handles will still redirect
+    // to the active one.
+
+#if WITH_EDITOR
+    ImGuiContextHandle       = &ImGuiImplementation::GetContextHandle();
+    DelegatesContainerHandle = &FImGuiDelegatesContainer::GetHandle();
+#endif
+
+    // Create managers that implements module logic.
+
+    checkf(!ImGuiModuleManager, TEXT("Instance of the ImGui Module Manager already exists. Instance should be created only during module startup."));
+    ImGuiModuleManager = new FImGuiModuleManager();
+
+#if WITH_EDITOR
+    checkf(!ImGuiEditor, TEXT("Instance of the ImGui Editor already exists. Instance should be created only during module startup."));
+    ImGuiEditor = new FImGuiEditor();
+#endif
+
+    NetImGuiStartup();
+}
+
+// allow to override shutdown method called from when the module is shutting down
+void FUnrealImGuiModule::Shutdown()
+{
+    // In editor store data that we want to move to hot-reloaded module.
+#if WITH_EDITOR
+    static bool                   bMoveProperties  = true;
+    static FImGuiModuleProperties PropertiesToMove = ImGuiModuleManager->GetProperties();
+#endif
+
+    // Before we shutdown we need to delete managers that will do all the necessary cleanup.
+
+#if WITH_EDITOR
+    checkf(ImGuiEditor, TEXT("Null ImGui Editor. ImGui editor instance should be deleted during module shutdown."));
+    delete ImGuiEditor;
+    ImGuiEditor = nullptr;
+#endif
+
+    checkf(ImGuiModuleManager, TEXT("Null ImGui Module Manager. Module manager instance should be deleted during module shutdown."));
+    delete ImGuiModuleManager;
+    ImGuiModuleManager = nullptr;
+
+    NetImGuiShutdown();
+
+#if WITH_EDITOR
+    // When shutting down we leave the global ImGui context pointer and handle pointing to resources that are already
+    // deleted. This can cause troubles after hot-reload when code in other modules calls ImGui interface functions
+    // which are statically bound to the obsolete module. To keep ImGui code functional we can redirect context handle
+    // to point to the new module.
+
+    // When shutting down during hot-reloading, we might want to rewire handles used in statically bound functions
+    // or move data to a new module.
+
+    FModuleManager::Get().OnModulesChanged().AddLambda([this](FName Name, EModuleChangeReason Reason)
+                                                       {
+		if (Reason == EModuleChangeReason::ModuleLoaded && Name == "ImGui")
+		{
+			FUnrealImGuiModule& LoadedModule = FUnrealImGuiModule::Get();
+			if (&LoadedModule != this)
+			{
+				// Statically bound functions can be bound to the obsolete module, so we need to manually redirect.
+
+				if (LoadedModule.ImGuiContextHandle)
+				{
+					ImGuiImplementation::SetParentContextHandle(*LoadedModule.ImGuiContextHandle);
+				}
+
+				if (LoadedModule.DelegatesContainerHandle)
+				{
+					FImGuiDelegatesContainer::MoveContainer(*LoadedModule.DelegatesContainerHandle);
+				}
+
+				if (bMoveProperties)
+				{
+					bMoveProperties = false;
+					LoadedModule.SetProperties(PropertiesToMove);
+				}
+			}
+		} });
+#endif  // WITH_EDITOR
+}
+
+//allow to gran the module manager
+FImGuiModuleManager& FUnrealImGuiModule::GetImguiModuleManager() const
+{
+    checkf(ImGuiModuleManager != nullptr, TEXT("not valid"));
+    return *ImGuiModuleManager;
+}
+
+//@End KLMod
 
 #undef LOCTEXT_NAMESPACE
 

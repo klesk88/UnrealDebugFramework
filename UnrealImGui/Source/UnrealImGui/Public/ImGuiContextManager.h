@@ -17,6 +17,10 @@ struct FImGuiDPIScaleInfo;
 // @param ContextProxy - Created context proxy
 DECLARE_MULTICAST_DELEGATE_TwoParams(FContextProxyCreatedDelegate, int32, FImGuiContextProxy&);
 
+//@Begin KLMod: allow to overide font creation
+DECLARE_DELEGATE_TwoParams(FOnBuildFontAtlas, float, ImFontAtlas&);
+//@End KLMod
+
 // NETIMGUI_ENABLED
 // NOTE:	Made this public, to share with NetImgui. Need access to the proxy and CanTick property
 //			Could be done other ways like building the data and sending it to NetImguiUpdate 
@@ -38,7 +42,8 @@ struct FContextData
 
 
 // Manages ImGui context proxies.
-class FImGuiContextManager
+//@Begin KLMod: moved to public folder
+class UNREALIMGUI_API FImGuiContextManager
 {
 public:
 
@@ -120,4 +125,12 @@ private:
 
 	float DPIScale = -1.f;
 	int32 FontResourcesReleaseCountdown = 0;
+
+//@Begin KLMod:
+public:
+    void Init();
+
+public:
+    FOnBuildFontAtlas mOnBuildFontAtlasDelegate;
+//@End KLMod
 };

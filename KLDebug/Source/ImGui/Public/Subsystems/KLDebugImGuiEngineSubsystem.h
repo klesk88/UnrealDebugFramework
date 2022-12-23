@@ -8,9 +8,10 @@
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
+#include "Delegates/IDelegateInstance.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
-#include "Subsystems/EngineSubsystem.h"
+ #include "Subsystems/EngineSubsystem.h"
 
 #include "KLDebugImGuiEngineSubsystem.generated.h"
 
@@ -28,6 +29,12 @@ public:
     UE_NODISCARD static UKLDebugImGuiEngineSubsystem* Get();
     UE_NODISCARD const FKLDebugUtilsPicker& GetPicker() const;
     UE_NODISCARD FKLDebugUtilsPicker& GetPickerMutable();
+
+private:
+    void RegisterCallbacks();
+    void UnreagisterCallbacks();
+
+    void Update();
 
 private:
     FKLDebugImGuiFeatureContainer mFeaturesContainer;

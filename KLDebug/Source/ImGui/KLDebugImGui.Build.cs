@@ -20,6 +20,8 @@ public class KLDebugImGui : ModuleRules
                 "ImGuiThirdParty",
                 "KLDebugCore",
 				"KLDebugUtils",
+                "KLUnrealImGui",
+                "UnrealImGui",
 				
                 //engine
                 "AIModule",

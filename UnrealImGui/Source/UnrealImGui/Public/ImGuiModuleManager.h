@@ -12,7 +12,8 @@
 
 
 // Central manager that implements module logic. It initializes and controls remaining module components.
-class FImGuiModuleManager
+//@Begin KLMod added _API and moved this class in the public folder
+class UNREALIMGUI_API FImGuiModuleManager
 {
 	// Allow module to control life-cycle of this class.
 	friend class FUnrealImGuiModule;

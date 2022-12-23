@@ -55,7 +55,9 @@ public class NetImGuiThirdParty : ModuleRules
 			PublicDefinitions.Add("NETIMGUI_IMGUI_CALLBACK_ENABLED=0");	// Disabled NetImgui intercepting the NewFrame/Render of Imgui Contexts
 			PublicDefinitions.Add("NETIMGUI_WINSOCKET_ENABLED=0");      // Using Unreal sockets, no need for built-in sockets
 			PublicDefinitions.Add("NETIMGUI_POSIX_SOCKETS_ENABLED=0");  // Using Unreal sockets, no need for built-in sockets
-		}
+            PublicDefinitions.Add("IMGUI_UNREAL_COMMAND_ENABLED=1");  // Enable Unreal Command
+            PublicDefinitions.Add("NETIMGUI_DEMO_ACTOR_ENABLED=1");  // Enable demo example
+        }
 		else
 		{
 			PublicDefinitions.Add("NETIMGUI_ENABLED=0");

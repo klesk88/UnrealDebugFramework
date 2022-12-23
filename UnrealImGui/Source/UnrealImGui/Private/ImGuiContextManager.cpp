@@ -68,7 +68,6 @@ FImGuiContextManager::FImGuiContextManager(FImGuiModuleSettings& InSettings)
 	Settings.OnDPIScaleChangedDelegate.AddRaw(this, &FImGuiContextManager::SetDPIScale);
 
 	SetDPIScale(Settings.GetDPIScaleInfo());
-	BuildFontAtlas();
 
 	FWorldDelegates::OnWorldTickStart.AddRaw(this, &FImGuiContextManager::OnWorldTickStart);
 #if ENGINE_COMPATIBILITY_WITH_WORLD_POST_ACTOR_TICK
@@ -265,23 +264,34 @@ void FImGuiContextManager::BuildFontAtlas()
 {
 	if (!FontAtlas.IsBuilt())
 	{
-		//---------------------------------------------------------------------------------------------
-		// Load our Font (Must be loaded in same order as FImguiModule::eFont enum)
-		ImFontConfig FontConfig = {};
-		FontConfig.SizePixels = FMath::RoundFromZero(13.f * DPIScale);
-		FontAtlas.AddFontDefault(&FontConfig);
-		FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Roboto Medium, 16px");
-		FontAtlas.AddFontFromMemoryCompressedTTF(Roboto_Medium_compressed_data,		Roboto_Medium_compressed_size,		16.0f*DPIScale, &FontConfig);
-		FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Cousine Regular, 15px");
-		FontAtlas.AddFontFromMemoryCompressedTTF(Cousine_Regular_compressed_data,	Cousine_Regular_compressed_size,	15.0f*DPIScale, &FontConfig);
-		FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Karla Regular, 16px");
-		FontAtlas.AddFontFromMemoryCompressedTTF(Karla_Regular_compressed_data,		Karla_Regular_compressed_size,		16.0f*DPIScale, &FontConfig);
-		FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Droid Sans, 16px");
-		FontAtlas.AddFontFromMemoryCompressedTTF(Droid_Sans_compressed_data,		Droid_Sans_compressed_size,			16.0f*DPIScale, &FontConfig);
-		FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Proggy Tiny, 10px");
-		FontAtlas.AddFontFromMemoryCompressedTTF(Proggy_Tiny_compressed_data,		Proggy_Tiny_compressed_size,		10.0f*DPIScale, &FontConfig);
+        //@Begin KLMod:
+        if (mOnBuildFontAtlasDelegate.IsBound())
+        {
+            mOnBuildFontAtlasDelegate.Execute(DPIScale, FontAtlas);
+        }
+        else
+        {
+			//revert to original way of build atlas
+			
+            //---------------------------------------------------------------------------------------------
+            // Load our Font (Must be loaded in same order as FImguiModule::eFont enum)
+            ImFontConfig FontConfig = {};
+            FontConfig.SizePixels   = FMath::RoundFromZero(13.f * DPIScale);
+            FontAtlas.AddFontDefault(&FontConfig);
+            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Roboto Medium, 16px");
+            FontAtlas.AddFontFromMemoryCompressedTTF(Roboto_Medium_compressed_data, Roboto_Medium_compressed_size, 16.0f * DPIScale, &FontConfig);
+            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Cousine Regular, 15px");
+            FontAtlas.AddFontFromMemoryCompressedTTF(Cousine_Regular_compressed_data, Cousine_Regular_compressed_size, 15.0f * DPIScale, &FontConfig);
+            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Karla Regular, 16px");
+            FontAtlas.AddFontFromMemoryCompressedTTF(Karla_Regular_compressed_data, Karla_Regular_compressed_size, 16.0f * DPIScale, &FontConfig);
+            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Droid Sans, 16px");
+            FontAtlas.AddFontFromMemoryCompressedTTF(Droid_Sans_compressed_data, Droid_Sans_compressed_size, 16.0f * DPIScale, &FontConfig);
+            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Proggy Tiny, 10px");
+            FontAtlas.AddFontFromMemoryCompressedTTF(Proggy_Tiny_compressed_data, Proggy_Tiny_compressed_size, 10.0f * DPIScale, &FontConfig);
 
-		// ... add extra fonts here (and add extra entry in 'FImguiModule::eFont' enum)
+            // ... add extra fonts here (and add extra entry in 'FImguiModule::eFont' enum)        
+		}
+		//@End KLMod
 
 		unsigned char* Pixels;
 		int Width, Height, Bpp;
@@ -306,3 +316,13 @@ void FImGuiContextManager::RebuildFontAtlas()
 
 	BuildFontAtlas();
 }
+
+//@Begin KLMod:
+
+void FImGuiContextManager::Init()
+{
+	//Moved this from constructor so we can call it after we bound the delegate
+    BuildFontAtlas();
+}
+
+//@End KLMod
