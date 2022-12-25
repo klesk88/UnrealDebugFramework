@@ -54,6 +54,7 @@ namespace
 	{
 		FGuardCurrentContext()
 			: OldContext(ImGui::GetCurrentContext())
+            , OldImPlotContext(ImPlot::GetCurrentContext())
 		{
 		}
 
@@ -62,11 +63,15 @@ namespace
 			if (bRestore)
 			{
 				ImGui::SetCurrentContext(OldContext);
+
+				//@begin KLMod Set also implot as current context
+                ImPlot::SetCurrentContext(OldImPlotContext);
 			}
 		}
 
 		FGuardCurrentContext(FGuardCurrentContext&& Other)
 			: OldContext(MoveTemp(Other.OldContext))
+            , OldImPlotContext(MoveTemp(Other.OldImPlotContext))
 		{
 			Other.bRestore = false;
 		}
@@ -80,6 +85,9 @@ namespace
 
 		ImGuiContext* OldContext = nullptr;
 		bool bRestore = true;
+
+		//@begin KLMod Set also implot
+        ImPlotContext* OldImPlotContext = nullptr;
 	};
 }
 
@@ -94,7 +102,8 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 	Context = ImGui::CreateContext(InFontAtlas);
 
 	// Create ImPlot context
-	ImPlot::CreateContext();
+	//@Begin KLMod store the context we create
+    ImPlotContext = ImPlot::CreateContext();
 	
 //@Begin KLMod: comment out this code not needed
 	// Initialize the Unreal Console Command Widget
@@ -144,7 +153,8 @@ FImGuiContextProxy::~FImGuiContextProxy()
 		ImGui::DestroyContext(Context);
 
 		// Destroy ImPlot context
-		ImPlot::DestroyContext();
+        //@Begin KLMod remove the corrent cotext attached to this proxy
+        ImPlot::DestroyContext(ImPlotContext);
 
 //@Begin KLMod: comment out this code not needed
 	//#if IMGUI_UNREAL_COMMAND_ENABLED
@@ -322,6 +332,9 @@ bool FImGuiContextProxy::IsCurrentContext() const
 void FImGuiContextProxy::SetAsCurrent()
 {
 	ImGui::SetCurrentContext(Context);
+
+	//@begin KLMod Set also implot as current context
+    ImPlot::SetCurrentContext(ImPlotContext);
 }
 
 void FImGuiContextProxy::UpdateDrawData(ImDrawData* DrawData)

@@ -7,12 +7,18 @@
 #include "ImGuiContextManager.h"
 #include "ImGuiDelegatesContainer.h"
 
+//@Begin KLMod include also implot to create the context for it
+#include "ImPlotThirdParty/Public/Library/implot.h"
+
 enum : int { kDualUI_None, kDualUI_Mirror, kDualDisplay_On };
 
 static int					sRemoteContextIndex		= Utilities::INVALID_CONTEXT_INDEX;	// Which proxy context is currently associated with netImgui
 static int					sDualUIType				= kDualUI_None;						// How to handle the local ImGui display when connected remotely
 static FImGuiContextProxy*	spActiveContextProxy	= nullptr;
 static ImGuiContext*		spNetImguiContext		= nullptr;
+
+//@begin KLMod Set also implot as current context
+static ImPlotContext*       spNetImGuiImPlotContext           = nullptr;
 
 //=================================================================================================
 // Pick the most appropriate port to wait for connection
@@ -55,8 +61,11 @@ void NetImguiPreUpdate_Connection()
 			spNetImguiContext = ImGui::CreateContext(ImGui::GetIO().Fonts);
             //@Begin KLMod
             IsNewContext = true;
+
+            spNetImGuiImPlotContext = ImPlot::CreateContext();
             //@End KLMod
 		}
+
 		ImGui::SetCurrentContext(spNetImguiContext);
 
 		//@Begin KLMod allow to call callbacks when we register a new context
@@ -64,6 +73,9 @@ void NetImguiPreUpdate_Connection()
         {
             ThirdParty::UnrealImGui::NetImGui::OnNetImGuiCreatedContext.Broadcast();
         }
+
+		//set also the correct implot context
+		ImPlot::SetCurrentContext(spNetImGuiImPlotContext);
         //@End KLMod
 
 		FString sessionName = FString::Format(TEXT("{0}-{1}"), { FApp::GetProjectName(), FPlatformProcess::ComputerName() });
@@ -109,6 +121,11 @@ void NetImguiPreUpdate_NextFrame()
 	if (NetImgui::IsConnected())
 	{
 		ImGui::SetCurrentContext(spNetImguiContext);
+
+		//@Begin KLMod set also the correct implot context
+        ImPlot::SetCurrentContext(spNetImGuiImPlotContext);
+        //@End KLMod
+
 		NetImgui::EndFrame();
 
 		if (spActiveContextProxy)
@@ -194,6 +211,14 @@ void NetImGuiShutdown()
 		ImGui::DestroyContext(spNetImguiContext);
 		spNetImguiContext = nullptr;
 	}
+
+	//@Begin KLMod destroy also the correct implot context
+    if (spNetImGuiImPlotContext)
+    {
+        ImPlot::DestroyContext(spNetImGuiImPlotContext);
+        spNetImGuiImPlotContext = nullptr;
+    }
+    //@End KLMod
 #endif
 }
 //=================================================================================================
@@ -237,6 +262,10 @@ bool NetImGuiSetupDrawRemote(const FImGuiContextProxy* pProxyContext)
 	if( pProxyContext == spActiveContextProxy )
 	{
 		ImGui::SetCurrentContext(spNetImguiContext);
+        //@Begin KLMod set also the correct implot context
+        ImPlot::SetCurrentContext(spNetImGuiImPlotContext);
+        //@End KLMod
+
 		return NetImgui::IsDrawingRemote();
 	}
 #endif

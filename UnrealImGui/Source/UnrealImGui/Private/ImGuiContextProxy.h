@@ -15,7 +15,9 @@
 #include "UObject/WeakObjectPtrTemplates.h"
 
 class UWorld;
-// End KLMod
+
+struct ImPlotContext;
+    // End KLMod
 
 // Represents a single ImGui context. All the context updates should be done through this proxy. During update it
 // broadcasts draw events to allow listeners draw their controls. After update it stores draw data.
@@ -132,5 +134,7 @@ private:
 //@Begin KLMod: added world
 private:
     TWeakObjectPtr<const UWorld> mWorld;
+
+	ImPlotContext* ImPlotContext = nullptr;
  // End KLMod
 };
