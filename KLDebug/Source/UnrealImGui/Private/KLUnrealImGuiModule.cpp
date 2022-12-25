@@ -1,5 +1,6 @@
 #include "KLUnrealImGuiModule.h"
 
+
 // ImGuiThirdParty module
 #include "ImGuiThirdParty/Public/Library/imgui.h"
 // ImPlotThirdParty module
@@ -74,12 +75,16 @@ void FKLUnrealImGuiModule::EnableImGuiSystem()
 {
     FImGuiModuleManager& ModuleManager = GetImguiModuleManager();
     ModuleManager.Init();
+
+    mOnEnableStateChangeDelegate.Broadcast(true);
 }
 
 void FKLUnrealImGuiModule::DisableImGuiSystem()
 {
     FImGuiModuleManager& ModuleManager = GetImguiModuleManager();
     ModuleManager.Shutdown();
+
+    mOnEnableStateChangeDelegate.Broadcast(false);
 }
 
 void FKLUnrealImGuiModule::OnContextProxyCreated(int32 _Index, FImGuiContextProxy& _Proxy) const

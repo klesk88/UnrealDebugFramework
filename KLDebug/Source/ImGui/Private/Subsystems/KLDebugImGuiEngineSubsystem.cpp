@@ -10,6 +10,7 @@
 
 // engine
 #include "Engine/Engine.h"
+#include "UObject/Object.h"
 
 namespace KL::Debug::ImGui::EngineSubsystem
 {
@@ -26,6 +27,15 @@ UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
     }
 
     return nullptr;
+}
+
+void UKLDebugImGuiEngineSubsystem::OnObjectSelect(UObject& _Object)
+{
+    if (!mInputManager.IsEnable())
+    {
+        return;
+    }
+
 }
 
 void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collection)

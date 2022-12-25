@@ -13,6 +13,13 @@ public:
 
     void ToogleImGuiSystem();
 
+    UE_NODISCARD bool IsEnable() const;
+
 private:
     bool mIsImGuiEnable = false;
 };
+
+inline bool FKLDebugImGuiInputManager::IsEnable() const
+{
+    return mIsImGuiEnable;
+}

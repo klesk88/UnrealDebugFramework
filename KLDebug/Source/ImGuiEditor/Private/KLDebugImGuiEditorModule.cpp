@@ -20,12 +20,14 @@ void FKLDebugImGuiEditorModule::StartupModule()
 {
     mInputManager.Init();
     mMainImGuiWindow.Init();
+    mEditorPicker.Init();
 }
 
 void FKLDebugImGuiEditorModule::ShutdownModule()
 {
     mMainImGuiWindow.Shutdown();
     mInputManager.Shutdown();
+    mEditorPicker.Shutdown();
 }
 
 FKLDebugImGuiEditorModule& FKLDebugImGuiEditorModule::Get()

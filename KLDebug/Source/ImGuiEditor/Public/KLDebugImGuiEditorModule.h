@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Input/KLDebugImGuiEditorInputManager.h"
+#include "Picker/KLDebugImGuiEditorPicker.h"
 #include "Windows/KLDebugImGuiEditorMainWindow.h"
 
 // engine
@@ -21,4 +22,5 @@ public:
 private:
     FKLDebugImGuiEditorInputManager mInputManager;
     FKLDebugImGuiEditorMainWindow   mMainImGuiWindow;
+    FKLDebugImGuiEditorPicker       mEditorPicker;
 };

@@ -19,6 +19,7 @@
 #include "KLDebugImGuiEngineSubsystem.generated.h"
 
 class IKLDebugImGuiFeatureInterface;
+class UObject;
 class UWorld;
 
 UCLASS()
@@ -35,6 +36,10 @@ public:
     UE_NODISCARD FKLDebugUtilsPicker& GetPickerMutable();
 
     void ToogleImGuiSystemState();
+
+    //this can be called externally when an object is selected. For example from the editor module of the imgui
+    //to support editor selection
+    void OnObjectSelect(UObject& _Object);
 
 private:
     void InitFromConfig();
