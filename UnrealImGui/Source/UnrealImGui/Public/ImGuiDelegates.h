@@ -2,9 +2,10 @@
 
 #pragma once
 
-//Begin KLMod point to new .h file
-//#include <Delegates/Delegate.h>
+// Begin KLMod point to new .h file
+// #include <Delegates/Delegate.h>
 #include "ImGuiDelegatesTypes.h"
+
 
 class UWorld;
 
@@ -17,6 +18,9 @@ class UWorld;
  * Order of events is defined in a way that multi-context delegates can be used to draw headers and/or footers:
  * multi-context early debug, world early debug, world debug, multi-context debug.
  */
+
+//@Begin KlMod: changed delegate types 
+
 class UNREALIMGUI_API FImGuiDelegates
 {
 public:

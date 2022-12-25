@@ -9,6 +9,12 @@
 #include "Utilities/Arrays.h"
 #include "VersionCompatibility.h"
 
+// Include ImPlot here so we can call `ImPlot::CreateContext`
+//@Begin KLMod point ot the correct path
+//#include <implot.h>
+#include "ImPlotThirdParty/Public/Library/implot.h"
+// End KLMod
+
 #include <GenericPlatform/GenericPlatformFile.h>
 #include <Misc/Paths.h>
 
@@ -77,6 +83,7 @@ namespace
 	};
 }
 
+//@Begin KLMod: added world to constructor
 FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextIndex, ImFontAtlas* InFontAtlas, float InDPIScale, const UWorld& _World)
 	: Name(InName)
 	, ContextIndex(InContextIndex)
@@ -86,20 +93,33 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 	// Create context.
 	Context = ImGui::CreateContext(InFontAtlas);
 
+	// Create ImPlot context
+	ImPlot::CreateContext();
+	
+//@Begin KLMod: comment out this code not needed
+	// Initialize the Unreal Console Command Widget
+//#if IMGUI_UNREAL_COMMAND_ENABLED
+//	mpImUnrealCommandContext = ImUnrealCommand::Create();
+//
+//	// Commented code demonstrating how to add/modify Presets
+//	// Could also modify the list of 'Default Presets' directly (UECommandImgui::sDefaultPresets)
+//	//ImUnrealcommand::AddPresetFilters(mpImUnrealCommandContext, TEXT("ExamplePreset"), {"ai.Debug", "fx.Dump"});
+//	//ImUnrealcommand::AddPresetCommands(mpImUnrealCommandContext, TEXT("ExamplePreset"), {"Stat Unit", "Stat Fps"});
+//#endif
+//@End KLMod
+// 
 	// Set this context in ImGui for initialization (any allocations will be tracked in this context).
 	SetAsCurrent();
 
 	// Start initialization.
 	ImGuiIO& IO = ImGui::GetIO();
-    IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Set session data storage.
 	IO.IniFilename = IniFilename.c_str();
 
 	// Start with the default canvas size.
 	ResetDisplaySize();
-    //@BeginKLMOD: use float instead of double
-    IO.DisplaySize = {static_cast<float>(DisplaySize.X), static_cast<float>(DisplaySize.Y) };
+	IO.DisplaySize = { (float)DisplaySize.X,(float)DisplaySize.Y };
 
 	// Set the initial DPI scale.
 	SetDPIScale(InDPIScale);
@@ -122,6 +142,15 @@ FImGuiContextProxy::~FImGuiContextProxy()
 
 		// Save context data and destroy.
 		ImGui::DestroyContext(Context);
+
+		// Destroy ImPlot context
+		ImPlot::DestroyContext();
+
+//@Begin KLMod: comment out this code not needed
+	//#if IMGUI_UNREAL_COMMAND_ENABLED
+	//	ImUnrealCommand::Destroy(mpImUnrealCommandContext);
+	//#endif
+//@End KLMod
 	}
 }
 
@@ -190,6 +219,24 @@ void FImGuiContextProxy::DrawDebug()
 			BroadcastWorldDebug();
 			BroadcastMultiContextDebug();
 		}
+
+//@Begin KLMod: comment out this code not needed
+
+	//	//----------------------------------------------------------------------------
+	//	// Display a 'Unreal Console Command' menu entry in MainMenu bar, and the 
+	//	// 'Unreal Console command' window itself when requested
+	//	//----------------------------------------------------------------------------
+	//#if IMGUI_UNREAL_COMMAND_ENABLED
+	//	if (ImGui::BeginMainMenuBar()) {
+	//		ImGui::MenuItem("Unreal-Commands", nullptr, &ImUnrealCommand::IsVisible(mpImUnrealCommandContext) );
+	//		ImGui::EndMainMenuBar();
+	//	}
+
+	//	// Always try displaying the 'Unreal Command Imgui' Window (handle Window visibility internally)
+	//	ImUnrealCommand::Show(mpImUnrealCommandContext);
+	//#endif
+
+//@End KLMod
 	}
 }
 
@@ -235,9 +282,7 @@ void FImGuiContextProxy::BeginFrame(float DeltaTime)
 			SetAsCurrent();
 			ImGuiIO& IO		= ImGui::GetIO();
 			IO.DeltaTime	= DeltaTime;
-
-			//@BeginKLMOD: use float instead of double
-			IO.DisplaySize	= { static_cast<float>(DisplaySize.X), static_cast<float>(DisplaySize.Y) };
+			IO.DisplaySize = { (float)DisplaySize.X, (float)DisplaySize.Y };
 			ImGuiInterops::CopyInput(IO, InputState);
 			ImGui::NewFrame();
 		}
@@ -302,7 +347,7 @@ void FImGuiContextProxy::BroadcastWorldEarlyDebug()
 	if (ContextIndex != Utilities::INVALID_CONTEXT_INDEX)
 	{
         FOnImGuiDelegate& WorldEarlyDebugEvent = FImGuiDelegatesContainer::Get().OnWorldEarlyDebug(ContextIndex);
-        if (mWorld.IsValid() && WorldEarlyDebugEvent.IsBound())
+		if (WorldEarlyDebugEvent.IsBound())
 		{
             WorldEarlyDebugEvent.Broadcast(*mWorld.Get());
 		}
@@ -312,9 +357,9 @@ void FImGuiContextProxy::BroadcastWorldEarlyDebug()
 void FImGuiContextProxy::BroadcastMultiContextEarlyDebug()
 {
     FOnImGuiDelegate& MultiContextEarlyDebugEvent = FImGuiDelegatesContainer::Get().OnMultiContextEarlyDebug();
-    if (mWorld.IsValid() && MultiContextEarlyDebugEvent.IsBound())
+	if (MultiContextEarlyDebugEvent.IsBound())
 	{
-		MultiContextEarlyDebugEvent.Broadcast(*mWorld.Get());
+        MultiContextEarlyDebugEvent.Broadcast(*mWorld.Get());
 	}
 }
 
@@ -328,7 +373,7 @@ void FImGuiContextProxy::BroadcastWorldDebug()
 	if (ContextIndex != Utilities::INVALID_CONTEXT_INDEX)
 	{
         FOnImGuiDelegate& WorldDebugEvent = FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex);
-        if (mWorld.IsValid() && WorldDebugEvent.IsBound())
+		if (WorldDebugEvent.IsBound())
 		{
             WorldDebugEvent.Broadcast(*mWorld.Get());
 		}
@@ -338,7 +383,7 @@ void FImGuiContextProxy::BroadcastWorldDebug()
 void FImGuiContextProxy::BroadcastMultiContextDebug()
 {
     FOnImGuiDelegate& MultiContextDebugEvent = FImGuiDelegatesContainer::Get().OnMultiContextDebug();
-    if (mWorld.IsValid() && MultiContextDebugEvent.IsBound())
+	if (MultiContextDebugEvent.IsBound())
 	{
         MultiContextDebugEvent.Broadcast(*mWorld.Get());
 	}

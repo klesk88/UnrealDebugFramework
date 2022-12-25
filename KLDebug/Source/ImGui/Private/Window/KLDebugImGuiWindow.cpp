@@ -25,6 +25,11 @@ void FKLDebugImGuiWindow::Init()
 {
 #if IMGUI_UNREAL_COMMAND_ENABLED
     KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext = ImUnrealCommand::Create();  // Create a new Imgui Command Window
+
+	// Commented code demonstrating how to add/modify Presets
+    // Could also modify the list of 'Default Presets' directly (UECommandImgui::sDefaultPresets)
+    // ImUnrealcommand::AddPresetFilters(mpImUnrealCommandContext, TEXT("ExamplePreset"), {"ai.Debug", "fx.Dump"});
+    // ImUnrealcommand::AddPresetCommands(mpImUnrealCommandContext, TEXT("ExamplePreset"), {"Stat Unit", "Stat Fps"});
 #endif
 }
 

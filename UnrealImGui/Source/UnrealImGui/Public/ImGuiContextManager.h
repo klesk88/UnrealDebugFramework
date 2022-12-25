@@ -7,7 +7,7 @@
 
 // Begin KLMod
 class UWorld;
-//End KLMod
+// End KLMod
 
 class FImGuiModuleSettings;
 struct FImGuiDPIScaleInfo;
@@ -30,8 +30,8 @@ DECLARE_DELEGATE_TwoParams(FOnBuildFontAtlas, float, ImFontAtlas&);
 //			instead of accessing it directly)
 struct FContextData
 {
-	//Begin KLMod: Added world to constructor
-	FContextData(const UWorld& _World, const FString& ContextName, int32 ContextIndex, ImFontAtlas& FontAtlas, float DPIScale, int32 InPIEInstance = -1)
+    // Begin KLMod: Added world to constructor
+    FContextData(const UWorld& _World, const FString& ContextName, int32 ContextIndex, ImFontAtlas& FontAtlas, float DPIScale, int32 InPIEInstance = -1)
 		: PIEInstance(InPIEInstance)
         , ContextProxy(new FImGuiContextProxy(ContextName, ContextIndex, &FontAtlas, DPIScale, _World))
 	{
@@ -66,7 +66,7 @@ public:
 
 #if WITH_EDITOR
 	// Get or create editor ImGui context proxy.
-	// // Begin KLMod: Removed unused function
+    // Begin KLMod: Removed unused function
 	//FORCEINLINE FImGuiContextProxy& GetEditorContextProxy() { return *GetEditorContextData().ContextProxy; }
 #endif
 
@@ -97,6 +97,8 @@ public:
 
 	void Tick(float DeltaSeconds);
 
+	void RebuildFontAtlas();
+
 private:
 
 #if ENGINE_COMPATIBILITY_LEGACY_WORLD_ACTOR_TICK
@@ -121,8 +123,7 @@ private:
 	FContextData& GetWorldContextData(const UWorld& World, int32* OutContextIndex = nullptr);
 
 	void SetDPIScale(const FImGuiDPIScaleInfo& ScaleInfo);
-	void BuildFontAtlas();
-	void RebuildFontAtlas();
+	void BuildFontAtlas(const TMap<FName, TSharedPtr<ImFontConfig>>& CustomFontConfigs = {});
 
 	TMap<int32, FContextData> Contexts;
 

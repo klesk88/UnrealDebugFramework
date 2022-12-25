@@ -17,7 +17,7 @@
 #include <Interfaces/IPluginManager.h>
 
 
-#define LOCTEXT_NAMESPACE "FImGuiModule"
+#define LOCTEXT_NAMESPACE "FUnrealImGuiModule"
 
 
 struct EDelegateCategory
@@ -54,6 +54,12 @@ FImGuiDelegateHandle FUnrealImGuiModule::AddWorldImGuiDelegate(const FImGuiDeleg
 	return { FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex).Add(Delegate), EDelegateCategory::Default, ContextIndex };
 }
 
+FImGuiDelegateHandle FUnrealImGuiModule::AddWorldImGuiDelegate(const UWorld* World, const FImGuiDelegate& Delegate)
+{
+	const int32 ContextIndex = Utilities::GetWorldContextIndex(World);
+	return { FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex).Add(Delegate), EDelegateCategory::Default, ContextIndex };
+}
+
 FImGuiDelegateHandle FUnrealImGuiModule::AddMultiContextImGuiDelegate(const FImGuiDelegate& Delegate)
 {
 	return { FImGuiDelegatesContainer::Get().OnMultiContextDebug().Add(Delegate), EDelegateCategory::MultiContext };
@@ -79,7 +85,7 @@ FImGuiTextureHandle FUnrealImGuiModule::FindTextureHandle(const FName& Name)
 	return (Index != INDEX_NONE) ? FImGuiTextureHandle{ Name, ImGuiInterops::ToImTextureID(Index) } : FImGuiTextureHandle{};
 }
 
-FImGuiTextureHandle FUnrealImGuiModule::RegisterTexture(const FName& Name, class UTexture2D* Texture, bool bMakeUnique)
+FImGuiTextureHandle FUnrealImGuiModule::RegisterTexture(const FName& Name, class UTexture* Texture, bool bMakeUnique)
 {
 	FTextureManager& TextureManager = ImGuiModuleManager->GetTextureManager();
 
@@ -99,20 +105,28 @@ void FUnrealImGuiModule::ReleaseTexture(const FImGuiTextureHandle& Handle)
 	}
 }
 
+void FUnrealImGuiModule::RebuildFontAtlas()
+{
+	if (ImGuiModuleManager)
+	{
+		ImGuiModuleManager->RebuildFontAtlas();
+	}
+}
+
 void FUnrealImGuiModule::StartupModule()
 {
     //@Begin KLMod: disable all initialization here as we will initialize teh module from FKLUnrealImGuiModule
-	// if we leave the code here we will call it once when unreal loads this module and another time when we load mine
-    //Init();
+    // if we leave the code here we will call it once when unreal loads this module and another time when we load mine
+    // Init();
     // add this method so we can override it from the child
-    //ImGuiModuleManager->GetContextManager().Init();
-	//@End KLMod
+    // ImGuiModuleManager->GetContextManager().Init();
+    //@End KLMod
 }
 
 void FUnrealImGuiModule::ShutdownModule()
 {
     //@Begin KLMod: disable shutdown. it will be handle from my module
-    //Shutdown();
+    // Shutdown();
     //@End KLMod
 }
 
@@ -256,7 +270,7 @@ bool FImGuiTextureHandle::HasValidEntry() const
 
 //@Begin KLMod
 
-//allow to override Init method called from when the module is startup
+// allow to override Init method called from when the module is startup
 void FUnrealImGuiModule::Init()
 {
     // Initialize handles to allow cross-module redirections. Other handles will always look for parents in the active
@@ -272,6 +286,7 @@ void FUnrealImGuiModule::Init()
 #endif
 
     // Create managers that implements module logic.
+
     checkf(!ImGuiModuleManager, TEXT("Instance of the ImGui Module Manager already exists. Instance should be created only during module startup."));
     ImGuiModuleManager = new FImGuiModuleManager();
 
@@ -344,7 +359,7 @@ void FUnrealImGuiModule::Shutdown()
 #endif  // WITH_EDITOR
 }
 
-//allow to gran the module manager
+// allow to gran the module manager
 FImGuiModuleManager& FUnrealImGuiModule::GetImguiModuleManager() const
 {
     checkf(ImGuiModuleManager != nullptr, TEXT("not valid"));
@@ -352,6 +367,7 @@ FImGuiModuleManager& FUnrealImGuiModule::GetImguiModuleManager() const
 }
 
 //@End KLMod
+
 
 #undef LOCTEXT_NAMESPACE
 

@@ -16,19 +16,23 @@ class FImGuiModuleManager;
 class UNREALIMGUI_API FUnrealImGuiModule : public IModuleInterface
 {
 public:
-	enum class eFont
-	{
-		kProggyClean,
-		kCousineRegular,
-		kDroidSans,
-		kKarlaRegular,
-		kProggyTiny,
-		kRobotoMedium,
+    //@Begin KLMod : disable all this I have my own
 
-		//... Your own font can be added here and loaded in 'FImGuiContextManager::BuildFontAtlas()'
+	//enum class eFont
+	//{
+	//	kProggyClean,
+	//	kCousineRegular,
+	//	kDroidSans,
+	//	kKarlaRegular,
+	//	kProggyTiny,
+	//	kRobotoMedium,
 
-		_Count,
-	};
+	//	//... Your own font can be added here and loaded in 'FImGuiContextManager::BuildFontAtlas()'
+
+	//	_Count,
+	//};
+
+	//@End KLMod
 
 	/**
 	 * Singleton-like access to this module's interface. This is just for convenience!
@@ -75,6 +79,16 @@ public:
 	virtual FImGuiDelegateHandle AddWorldImGuiDelegate(const FImGuiDelegate& Delegate);
 
 	/**
+	 * Add a delegate called at the end of a specific world's debug frame to draw debug controls in its ImGui context,
+	 * creating that context on demand.
+	 *
+	 * @param World - A specific world to add the delegate to to
+	 * @param Delegate - Delegate that we want to add (@see FImGuiDelegate::Create...)
+	 * @returns Returns handle that can be used to remove delegate (@see RemoveImGuiDelegate)
+	 */
+	virtual FImGuiDelegateHandle AddWorldImGuiDelegate(const UWorld* World, const FImGuiDelegate& Delegate);
+
+	/**
 	 * Add shared delegate called for each ImGui context at the end of debug frame, after calling context specific
 	 * delegate. This delegate will be used for any ImGui context, created before or after it is registered.
 	 *
@@ -115,7 +129,7 @@ public:
 	 * @returns Handle to the texture resources, which can be used to release allocated resources and as an argument to
 	 *     relevant ImGui functions
 	 */
-	virtual FImGuiTextureHandle RegisterTexture(const FName& Name, class UTexture2D* Texture, bool bMakeUnique = false);
+	virtual FImGuiTextureHandle RegisterTexture(const FName& Name, class UTexture* Texture, bool bMakeUnique = false);
 
 	/**
 	 * Unregister texture and release its Slate resources. If handle is null or not valid, this function fails silently
@@ -124,6 +138,8 @@ public:
 	 * @returns ImGui Texture Handle to texture that needs to be unregistered
 	 */
 	virtual void ReleaseTexture(const FImGuiTextureHandle& Handle);
+
+	virtual void RebuildFontAtlas();
 
 	/**
 	 * Get ImGui module properties.
@@ -139,21 +155,25 @@ public:
 	/** Check whether we have a remote connection established or not **/
 	virtual bool IsRemoteConnected() const;
 
-	/** Change the current Font used for drawing (matching PopFont() is expected). Can also use struct ImGuiScopedFont **/
-	static inline void PushFont(eFont font)
-	{
-		check(font < eFont::_Count);
-		ImFont* pFont = font < eFont::_Count ? ImGui::GetIO().Fonts->Fonts[static_cast<int>(font)] : nullptr;
-		ImGui::PushFont(pFont ? pFont : ImGui::GetFont());
-	}
+	//@Begin KLMod : disable all these methods as I have my own
 
-	/**
-	 * Undo the last PushFont(), returning it to previous value. 
-	 */
-	static inline void PopFont()
-	{
-		ImGui::PopFont();
-	}
+	/** Change the current Font used for drawing (matching PopFont() is expected). Can also use struct ImGuiScopedFont **/
+	//static inline void PushFont(eFont font)
+	//{
+	//	check(font < eFont::_Count);
+	//	ImFont* pFont = font < eFont::_Count ? ImGui::GetIO().Fonts->Fonts[static_cast<int>(font)] : nullptr;
+	//	ImGui::PushFont(pFont ? pFont : ImGui::GetFont());
+	//}
+
+	///**
+	// * Undo the last PushFont(), returning it to previous value. 
+	// */
+	//static inline void PopFont()
+	//{
+	//	ImGui::PopFont();
+	//}
+
+	//@End KLMod
 
 	/**
 	 * DEPRECIATED: Please use GetProperties() as this function is scheduled for removal.
@@ -203,14 +223,6 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
-//@Begin KLMod: methods that we want to ovverride from child
-protected:
-    virtual void Init();  
-	virtual void Shutdown();	
-	
-	UE_NODISCARD FImGuiModuleManager& GetImguiModuleManager() const;
-//@End KLMod
-
 private:
 
 #if WITH_EDITOR
@@ -220,13 +232,25 @@ private:
 	friend struct FImGuiContextHandle;
 	friend struct FImGuiDelegatesContainerHandle;
 #endif
+
+//@Begin KLMod: methods that we want to ovverride from child
+protected:
+    virtual void Init();
+    virtual void Shutdown();
+
+    UE_NODISCARD FImGuiModuleManager& GetImguiModuleManager() const;
+//@End KLMod
 };
+
+//@Begin KLMod : disable all this I have my own
 
 /**
 // Helper class that change the font and automatically restore it when object is out of scope
 */
-struct ImGuiScopedFont
-{
-	inline ImGuiScopedFont(FUnrealImGuiModule::eFont font){ FUnrealImGuiModule::PushFont(font); }
-	inline ~ImGuiScopedFont(){ FUnrealImGuiModule::PopFont(); }
-};
+//struct ImGuiScopedFont
+//{
+//	inline ImGuiScopedFont(FUnrealImGuiModule::eFont font){ FUnrealImGuiModule::PushFont(font); }
+//	inline ~ImGuiScopedFont(){ FUnrealImGuiModule::PopFont(); }
+//};
+
+//@End KLMod

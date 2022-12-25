@@ -6,6 +6,7 @@
 #include "ThirdPartyBuildImGui.h"
 #include "ThirdPartyBuildNetImgui.h"
 #include "ImGuiModuleSettings.h"
+#include "UnrealImGuiModule.h"
 #include "Utilities/WorldContext.h"
 #include "Utilities/WorldContextIndex.h"
 
@@ -63,17 +64,18 @@ namespace
 }
 
 FImGuiContextManager::FImGuiContextManager(FImGuiModuleSettings& InSettings)
-	: Settings(InSettings)
+    : Settings(InSettings)
 {
-	Settings.OnDPIScaleChangedDelegate.AddRaw(this, &FImGuiContextManager::SetDPIScale);
+    Settings.OnDPIScaleChangedDelegate.AddRaw(this, &FImGuiContextManager::SetDPIScale);
 
-	SetDPIScale(Settings.GetDPIScaleInfo());
+    SetDPIScale(Settings.GetDPIScaleInfo());
 }
 
 FImGuiContextManager::~FImGuiContextManager()
 {
 	Settings.OnDPIScaleChangedDelegate.RemoveAll(this);
 
+	//@Begin KLMod:
 	UnregisterDelegates();
 }
 
@@ -83,7 +85,6 @@ void FImGuiContextManager::Tick(float DeltaSeconds)
 
 	// In editor, worlds can get invalid. We could remove corresponding entries, but that would mean resetting ImGui
 	// context every time when PIE session is restarted. Instead we freeze contexts until their worlds are re-created.
-
 
 	for (auto& Pair : Contexts)
 	{
@@ -193,7 +194,8 @@ FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int
 			*OutIndex = Utilities::EDITOR_CONTEXT_INDEX;
 		}
 
-		return GetEditorContextData(World);
+		//@Begin KLMod pass world
+        return GetEditorContextData(World);
 	}
 #endif
 
@@ -215,7 +217,7 @@ FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int
 	if (UNLIKELY(!Data))
 	{
         // Begin KLMod: Added world to constructor
-        Data = &Contexts.Emplace(Index, FContextData{ World, GetWorldContextName(World), Index, FontAtlas, DPIScale, WorldContext->PIEInstance});
+        Data = &Contexts.Emplace(Index, FContextData{World, GetWorldContextName(World), Index, FontAtlas, DPIScale, WorldContext->PIEInstance});
 		OnContextProxyCreated.Broadcast(Index, *Data->ContextProxy);
 	}
 	else
@@ -262,7 +264,7 @@ void FImGuiContextManager::SetDPIScale(const FImGuiDPIScaleInfo& ScaleInfo)
 	}
 }
 
-void FImGuiContextManager::BuildFontAtlas()
+void FImGuiContextManager::BuildFontAtlas(const TMap<FName, TSharedPtr<ImFontConfig>>& CustomFontConfigs)
 {
 	if (!FontAtlas.IsBuilt())
 	{
@@ -273,9 +275,10 @@ void FImGuiContextManager::BuildFontAtlas()
         }
         else
         {
-			//revert to original way of build atlas
-			
-            //---------------------------------------------------------------------------------------------
+            // revert to original way of build atlas
+            ensureMsgf(false, TEXT("we should not enter here KLMod"));
+
+			//---------------------------------------------------------------------------------------------
             // Load our Font (Must be loaded in same order as FImguiModule::eFont enum)
             ImFontConfig FontConfig = {};
             FontConfig.SizePixels   = FMath::RoundFromZero(13.f * DPIScale);
@@ -291,9 +294,24 @@ void FImGuiContextManager::BuildFontAtlas()
             FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Proggy Tiny, 10px");
             FontAtlas.AddFontFromMemoryCompressedTTF(Proggy_Tiny_compressed_data, Proggy_Tiny_compressed_size, 10.0f * DPIScale, &FontConfig);
 
-            // ... add extra fonts here (and add extra entry in 'FImguiModule::eFont' enum)        
-		}
-		//@End KLMod
+            // ... add extra fonts here (and add extra entry in 'FImguiModule::eFont' enum)
+
+            // Build custom fonts
+            for (const TPair<FName, TSharedPtr<ImFontConfig>>& CustomFontPair : CustomFontConfigs)
+            {
+                FName                    CustomFontName   = CustomFontPair.Key;
+                TSharedPtr<ImFontConfig> CustomFontConfig = CustomFontPair.Value;
+
+                // Set font name for debugging
+                if (CustomFontConfig.IsValid())
+                {
+                    strcpy_s(CustomFontConfig->Name, 40, TCHAR_TO_ANSI(*CustomFontName.ToString()));
+                }
+
+                FontAtlas.AddFont(CustomFontConfig.Get());
+            }
+        }
+        //@End KLMod
 
 		unsigned char* Pixels;
 		int Width, Height, Bpp;
@@ -316,7 +334,7 @@ void FImGuiContextManager::RebuildFontAtlas()
 		FontResourcesReleaseCountdown = 3;
 	}
 
-	BuildFontAtlas();
+	BuildFontAtlas(FUnrealImGuiModule::Get().GetProperties().GetCustomFonts());
 }
 
 //@Begin KLMod:

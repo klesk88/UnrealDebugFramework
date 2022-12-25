@@ -1,5 +1,7 @@
 ﻿#include "Font/KLUnrealImGuiFontManager.h"
 
+//ImPlotThirdParty module
+#include "ImPlotThirdParty/Public/Library/implot.h"
 //NetImGuiThirdParty module
 #include "NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
 // UnrealImGui module
@@ -85,7 +87,7 @@ void FKLUnrealImGuiFontManager::Shutdown(FImGuiContextManager& _ContextManager)
 void FKLUnrealImGuiFontManager::BuildFontAtlas(const float _DPIScale, ImFontAtlas& _OutFontAtlas) const
 {
     ImFontConfig Config;
-    // Config.SizePixels = FMath::RoundFromZero(_PxSize * _DPIScale);
+    Config.SizePixels = FMath::RoundFromZero(13.f * _DPIScale);
 #if NETIMGUI_FREETYPE_ENABLED
     Config.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_LightHinting;  // Without this, kanji character looks wrong in smaller font size
 #endif
@@ -95,8 +97,8 @@ void FKLUnrealImGuiFontManager::BuildFontAtlas(const float _DPIScale, ImFontAtla
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Cousine Fixed"), 16.f, Cousine_Regular_compressed_data, Cousine_Regular_compressed_size, true, true);
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Cousine Fixed"), 20.f, Cousine_Regular_compressed_data, Cousine_Regular_compressed_size, true, true);
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Cousine Fixed"), 24.f, Cousine_Regular_compressed_data, Cousine_Regular_compressed_size, true, true);
-    AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Karla Regular"), 16.f, Karla_Regular_compressed_data, Karla_Regular_compressed_size, true);
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Droid Sans"), 20.f, Droid_Sans_compressed_data, Droid_Sans_compressed_size, true);
+    AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Karla Regular"), 16.f, Karla_Regular_compressed_data, Karla_Regular_compressed_size, true);
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Proggy Tiny"), 10.f, Proggy_Tiny_compressed_data, Proggy_Tiny_compressed_size, false);
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Roboto Medium"), 16.f, Roboto_Medium_compressed_data, Roboto_Medium_compressed_size, true);
     AddFontGroup(_OutFontAtlas, Config, _DPIScale, TEXT("Icons"), 32.f, Cousine_Regular_compressed_data, Cousine_Regular_compressed_size, true);

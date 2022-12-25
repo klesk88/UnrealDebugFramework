@@ -6,12 +6,10 @@
 
 #if defined(NETIMGUI_ENABLED) && NETIMGUI_ENABLED
 //@BeginKLMod: fix includes
-	//#include <NetImgui_Api.h>
-//NetImguiThirdPartyModule
+// #include <NetImgui_Api.h>
+// NetImguiThirdPartyModule
 #include "NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
 //@EndKLMod
-
-
 
 #elif !defined(NETIMGUI_ENABLED)
 	#define NETIMGUI_ENABLED 0

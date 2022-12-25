@@ -101,13 +101,6 @@ namespace ImGuiInterops
 		return FVector2D{ ImGuiVector.x, ImGuiVector.y };
 	}
 
-	//@BeginKLMod: add conversion function
-    FORCEINLINE FVector2f ToVector2f(const FVector2D& _Vector)
-    {
-        return FVector2f{static_cast<float>(_Vector.X), static_cast<float>(_Vector.Y)};
-    }
-	//@EndKLMod
-
 	// Convert from ImGui Texture Id to Texture Index that we use for texture resources.
 	FORCEINLINE TextureIndex ToTextureIndex(ImTextureID Index)
 	{
@@ -119,4 +112,11 @@ namespace ImGuiInterops
 	{
 		return reinterpret_cast<ImTextureID>(static_cast<intptr_t>(Index));
 	}
+
+//@Begin KLMod: add conversion function
+    FORCEINLINE FVector2f ToVector2f(const FVector2D& _Vector)
+    {
+        return FVector2f{static_cast<float>(_Vector.X), static_cast<float>(_Vector.Y)};
+    }
+//@EndKLMod
 }

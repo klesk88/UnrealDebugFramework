@@ -35,11 +35,13 @@ public:
 	// Event called right after ImGui is updated, to give other subsystems chance to react.
 	FSimpleMulticastDelegate& OnPostImGuiUpdate() { return PostImGuiUpdateEvent; }
 
+	void RebuildFontAtlas();
+
 //@Begin KLMod: change to protected
 protected:
-	FImGuiModuleManager();
-	virtual ~FImGuiModuleManager();
- //@End KLMod
+    FImGuiModuleManager();
+    virtual ~FImGuiModuleManager();
+//@End KLMod
 
 private:
 
@@ -100,9 +102,9 @@ private:
 
 //@Begin KLMod
 public:
-	//moved all constructr code in this method
+    // moved all constructr code in this method
     void Init();
-	//move all destruct code here
+    // move all destruct code here
     void Shutdown();
 
 //@End KLMod

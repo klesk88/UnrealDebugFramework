@@ -2,7 +2,6 @@
 
 #include "ImGuiDrawData.h"
 
-
 #if ENGINE_COMPATIBILITY_LEGACY_CLIPPING_API
 void FImGuiDrawList::CopyVertexData(TArray<FSlateVertex>& OutVertexBuffer, const FTransform2D& Transform, const FSlateRotatedRect& VertexClippingRect) const
 #else
@@ -29,7 +28,7 @@ void FImGuiDrawList::CopyVertexData(TArray<FSlateVertex>& OutVertexBuffer, const
 		SlateVertex.Position[1] = VertexPosition.Y;
 		SlateVertex.ClipRect = VertexClippingRect;
 #else
-		//@BeginKLMod: convert to correct type
+        //@Begin KLMod: convert to correct type
         SlateVertex.Position = ImGuiInterops::ToVector2f(Transform.TransformPoint(ImGuiInterops::ToVector2D(ImGuiVertex.pos)));
 #endif // ENGINE_COMPATIBILITY_LEGACY_CLIPPING_API
 

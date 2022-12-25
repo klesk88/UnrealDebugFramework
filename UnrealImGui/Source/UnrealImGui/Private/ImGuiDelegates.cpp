@@ -5,6 +5,7 @@
 
 #include <Engine/World.h>
 
+//@Begin KlMod: changed delegate types 
 
 FOnImGuiDelegate& FImGuiDelegates::OnWorldEarlyDebug()
 {

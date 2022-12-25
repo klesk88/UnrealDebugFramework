@@ -45,7 +45,7 @@ void NetImguiPreUpdate_Connection()
 	if (ImGui::GetCurrentContext() && !NetImgui::IsConnected() && !NetImgui::IsConnectionPending())
 	{
 		// Using a separate Imgui Context for NetImgui, so ContextProxy can be easily swapped to any active (PIE, Editor, Game, ...)
-        
+		
 		//@Begin KLMod
         bool IsNewContext = false;
         //@End KLMod
@@ -53,7 +53,9 @@ void NetImguiPreUpdate_Connection()
 		if( !spNetImguiContext )
 		{
 			spNetImguiContext = ImGui::CreateContext(ImGui::GetIO().Fonts);
-            IsNewContext      = true;
+            //@Begin KLMod
+            IsNewContext = true;
+            //@End KLMod
 		}
 		ImGui::SetCurrentContext(spNetImguiContext);
 

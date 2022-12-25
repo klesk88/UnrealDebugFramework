@@ -24,13 +24,19 @@ FImGuiModuleManager::FImGuiModuleManager()
 	, ImGuiDemo(Properties)
 	, ContextManager(Settings)
 {
-    // Register in context manager to get information whenever a new context proxy is created.
-    ContextManager.OnContextProxyCreated.AddRaw(this, &FImGuiModuleManager::OnContextProxyCreated);
+	// Register in context manager to get information whenever a new context proxy is created.
+	ContextManager.OnContextProxyCreated.AddRaw(this, &FImGuiModuleManager::OnContextProxyCreated);
 }
 
 FImGuiModuleManager::~FImGuiModuleManager()
 {
-    Shutdown();
+    //@Begin KLMod:
+	Shutdown();
+}
+
+void FImGuiModuleManager::RebuildFontAtlas()
+{
+	ContextManager.RebuildFontAtlas();
 }
 
 void FImGuiModuleManager::LoadTextures()
@@ -121,7 +127,7 @@ void FImGuiModuleManager::ReleaseTickInitializer()
 
 void FImGuiModuleManager::Tick(float DeltaSeconds)
 {
-	//@Begin KLMod: Add profiling
+    //@Begin KLMod: Add profiling
     QUICK_SCOPE_CYCLE_COUNTER(STAT_ImGuiModuleManager_Tick);
 
 	if (IsInGameThread())
@@ -215,7 +221,7 @@ void FImGuiModuleManager::Init()
     // important during hot-reloading.
     AddWidgetsToActiveViewports();
 
-	//KLMod: This is added by me
+    // KLMod: This is added by me
     ContextManager.RegisterDelegates();
 }
 
@@ -248,7 +254,7 @@ void FImGuiModuleManager::Shutdown()
     ReleaseTickInitializer();
     UnregisterTick();
 
-	// KLMod: This is added by me
+    // KLMod: This is added by me
     ContextManager.UnregisterDelegates();
 }
 

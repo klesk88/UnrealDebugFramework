@@ -3,6 +3,8 @@
 #pragma once
 
 #include <Containers/Map.h>
+#include <Delegates/Delegate.h>
+
 
 // Begin KLMod point to new .h file
 // #include <Delegates/Delegate.h>
@@ -53,6 +55,6 @@ private:
 
 	TMap<int32, FOnImGuiDelegate> WorldEarlyDebugDelegates;
     TMap<int32, FOnImGuiDelegate> WorldDebugDelegates;
-    FOnImGuiDelegate MultiContextEarlyDebugDelegate;
-    FOnImGuiDelegate MultiContextDebugDelegate;
+    FOnImGuiDelegate              MultiContextEarlyDebugDelegate;
+    FOnImGuiDelegate              MultiContextDebugDelegate;
 };

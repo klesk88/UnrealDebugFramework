@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
+//Begin @KLMod change module name to dont have porlbmes with base imgui
 public class UnrealImGui : ModuleRules
 {
 #if WITH_FORWARDED_MODULE_RULES_CTOR
 	public UnrealImGui(ReadOnlyTargetRules Target) : base(Target)
 #else
-    public UnrealImGui(TargetInfo Target)
+	public UnrealImGui(TargetInfo Target)
 #endif
 	{
 
@@ -23,6 +24,8 @@ public class UnrealImGui : ModuleRules
 		// Enable runtime loader, if you want this module to be automatically loaded in runtime builds (monolithic).
 		bool bEnableRuntimeLoader = true;
 		bool bUnrealImguiEnabled = true;
+        //Begin @KLMod removed this not needed
+        //bool bEnableImUnrealCommand = true;
 
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -34,7 +37,12 @@ public class UnrealImGui : ModuleRules
 
 		PublicIncludePaths.AddRange(
 			new string[] {
-				Path.Combine(ModuleDirectory, "../ImGuiThirdParty/Public/Library")
+				//Begin @KLMod fix includes
+                Path.Combine(ModuleDirectory, "../ImGuiThirdParty/Public/Library"),
+                Path.Combine(ModuleDirectory, "../ImPlotThirdParty/Public/Library"),
+				//End @KLMod fix includes
+                //Path.Combine(ModuleDirectory, "../ThirdParty/ImGuiLibrary/Include"),
+                //Path.Combine(ModuleDirectory, "../ThirdParty/ImPlotLibrary/Public")
 				// ... add public include paths required here ...
 			}
 			);
@@ -69,10 +77,10 @@ public class UnrealImGui : ModuleRules
 
 				//KLMod: add correct modules
 				"ImGuiThirdParty",
+                "ImPlotThirdParty",
                 "NetImGuiThirdParty"
-				// ... add private dependencies that you statically link with here ...	
-			}
-			);
+            }
+            );
 
 
 		if (bBuildEditor)
