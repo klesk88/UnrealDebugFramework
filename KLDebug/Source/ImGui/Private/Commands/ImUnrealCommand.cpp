@@ -10,6 +10,11 @@
 #include "Features/IModularFeatures.h"
 #include "Engine/Engine.h"
 
+//@Begin KLMod:
+// ImGuiThirdParty module
+#include "ImGuiThirdParty/Public/Library/imgui.h"
+//@End KLMod
+
 #define LOCTEXT_NAMESPACE "ImguiUnrealCommand"
 
 namespace ImUnrealCommand

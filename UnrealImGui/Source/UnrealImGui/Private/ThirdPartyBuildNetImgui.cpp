@@ -45,11 +45,24 @@ void NetImguiPreUpdate_Connection()
 	if (ImGui::GetCurrentContext() && !NetImgui::IsConnected() && !NetImgui::IsConnectionPending())
 	{
 		// Using a separate Imgui Context for NetImgui, so ContextProxy can be easily swapped to any active (PIE, Editor, Game, ...)
+        
+		//@Begin KLMod
+        bool IsNewContext = false;
+        //@End KLMod
+
 		if( !spNetImguiContext )
 		{
 			spNetImguiContext = ImGui::CreateContext(ImGui::GetIO().Fonts);
+            IsNewContext      = true;
 		}
 		ImGui::SetCurrentContext(spNetImguiContext);
+
+		//@Begin KLMod allow to call callbacks when we register a new context
+        if (IsNewContext)
+        {
+            ThirdParty::UnrealImGui::NetImGui::OnNetImGuiCreatedContext.Broadcast();
+        }
+        //@End KLMod
 
 		FString sessionName = FString::Format(TEXT("{0}-{1}"), { FApp::GetProjectName(), FPlatformProcess::ComputerName() });
 
@@ -240,3 +253,12 @@ bool NetImGuiSetupDrawRemote(const FImGuiContextProxy* pProxyContext)
 //#include <Private/NetImgui_NetworkUE4.cpp>
 
 #endif // NETIMGUI_ENABLED
+
+//@Begin KLMod
+
+namespace ThirdParty::UnrealImGui::NetImGui
+{
+    FOnNetImGuiCreateContext OnNetImGuiCreatedContext;
+}
+
+//@End KLMod

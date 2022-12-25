@@ -22,6 +22,7 @@ public class KLUnrealImGui : ModuleRules
             new string[]
             {
                 "ImGuiThirdParty",
+                "KLDebugUtils",
                 "NetImGuiThirdParty",
                 "UnrealImGui",
 				

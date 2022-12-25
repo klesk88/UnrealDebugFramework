@@ -14,6 +14,7 @@ public:
     void Shutdown();
 
 private:
+    void OnDrawTopBar(const UWorld& _World) const;
     void OnDrawBottomBar(const UWorld& _World) const;
 
     //return true if the currently selected client viewport is the editor one. This can happen in 2 cases:
@@ -21,6 +22,10 @@ private:
     // after pressing play and be in PIE and press F8 to detach the camera from the player
     UE_NODISCARD bool IsLevelEditorCurrentlySelected(const UWorld& _World) const;
 
+    void DrawExamplesMenu() const;
+    void DrawExamples() const;
+
 private:
     FDelegateHandle mDrawBottomBarHandle;
+    FDelegateHandle mDrawTopBarHandle;
 };

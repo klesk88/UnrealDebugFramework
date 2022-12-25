@@ -1,5 +1,6 @@
 #include "Window/KLDebugImGuiWindow.h"
 
+#include "Commands/ImUnrealCommand.h"
 #include "Window/KLDebugImGuiWindowDelegates.h"
 
 //ImGuiThirdParty module
@@ -13,11 +14,36 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+namespace KL::Debug::ImGuiEditor::MainWindow
+{
+#if IMGUI_UNREAL_COMMAND_ENABLED
+    static ImUnrealCommand::CommandContext* mUnrealCommandContext = nullptr;
+#endif
+}
+
+void FKLDebugImGuiWindow::Init()
+{
+#if IMGUI_UNREAL_COMMAND_ENABLED
+    KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext = ImUnrealCommand::Create();  // Create a new Imgui Command Window
+#endif
+}
+
+void FKLDebugImGuiWindow::Shutdown()
+{
+#if IMGUI_UNREAL_COMMAND_ENABLED
+    ImUnrealCommand::Destroy(KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext);
+#endif
+}
+
 void FKLDebugImGuiWindow::Update(const UWorld& _World)
 {
     DrawImGuiTopBar(_World);
-    DrawImGuiBar();
     DrawImGuiBottomBar(_World);
+    DrawImGuiBar();
+
+#if IMGUI_UNREAL_COMMAND_ENABLED
+    DrawCommands();
+#endif
 }
 
 void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World) const
@@ -27,10 +53,9 @@ void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World) const
         return;
     }
 
-    if (ImGui::BeginMenu("Test"))
-    {
-        ImGui::EndMenu();
-    }
+#if IMGUI_UNREAL_COMMAND_ENABLED
+    DrawCommandsMenu();
+#endif
 
     KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.Broadcast(_World);
 
@@ -73,7 +98,7 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
     }
 
     ImGui::SameLine();
-    ImGui::Text(" FPS: [%.3f]", _World.GetDeltaSeconds() != 0.f ? 1.f / _World.GetDeltaSeconds() : 0.f);
+    ImGui::Text(" FPS: [%.2f]", _World.GetDeltaSeconds() != 0.f ? 1.f / _World.GetDeltaSeconds() : 0.f);
 
     KL::Debug::ImGui::MainWindow::Delegate::OnDrawBottomBarDelegate.Broadcast(_World);
 
@@ -83,14 +108,20 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
 
 void FKLDebugImGuiWindow::DrawImGuiBar() const
 {
-    if (!ImGui::BeginTabBar("Selection", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
+    if(!ImGui::Begin("MainWindow", nullptr, WindowFlags))
     {
         return;
     }
 
-    DrawImGuiEngine();
+    if (ImGui::BeginTabBar("Selection", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    {
+        DrawImGuiEngine();
 
-    ImGui::EndTabBar();
+        ImGui::EndTabBar();
+    }
+
+    ImGui::End();
 }
 
 void FKLDebugImGuiWindow::DrawImGuiEngine() const
@@ -100,3 +131,26 @@ void FKLDebugImGuiWindow::DrawImGuiEngine() const
         ImGui::EndTabItem();
     }
 }
+
+#if IMGUI_UNREAL_COMMAND_ENABLED
+
+void FKLDebugImGuiWindow::DrawCommandsMenu() const
+{
+    if (!ImGui::BeginMenu("Commands"))
+    {
+        return;
+    }
+
+    ImGui::MenuItem("Unreal Command", nullptr, &ImUnrealCommand::IsVisible(KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext));
+    ImGui::EndMenu();
+}
+
+void FKLDebugImGuiWindow::DrawCommands() const
+{
+    if (ImUnrealCommand::IsVisible(KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext))
+    {
+        ImUnrealCommand::Show(KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext);
+    }
+}
+
+#endif

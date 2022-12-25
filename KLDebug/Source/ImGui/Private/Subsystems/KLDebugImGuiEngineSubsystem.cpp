@@ -35,6 +35,9 @@ void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collect
     mFeaturesContainer.Initialize();
     RegisterCallbacks();
     mInputManager.Init();
+
+    FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
+    ImGuiWindow.Init();
 }
 
 void UKLDebugImGuiEngineSubsystem::InitFromConfig()
@@ -52,6 +55,9 @@ void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
 
 void UKLDebugImGuiEngineSubsystem::Deinitialize()
 {
+    FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
+    ImGuiWindow.Shutdown();
+
     mInputManager.Shutdown();
     UnreagisterCallbacks();
     mFeaturesContainer.Shutdown();

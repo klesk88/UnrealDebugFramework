@@ -14,6 +14,10 @@ struct KLDEBUGIMGUI_API FKLDebugImGuiWindow
     GENERATED_BODY()
 
 public:
+    virtual ~FKLDebugImGuiWindow() = default;
+
+    virtual void Init();
+    virtual void Shutdown();
     virtual void Update(const UWorld& _World);
 
 protected:
@@ -25,4 +29,10 @@ protected:
 
 private:
     bool mDrawBottomBar = true;
+
+#if IMGUI_UNREAL_COMMAND_ENABLED
+private:
+    void DrawCommandsMenu() const;
+    void DrawCommands() const;
+#endif
 };

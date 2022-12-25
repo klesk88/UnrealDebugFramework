@@ -41,13 +41,13 @@
 
 #if NETIMGUI_FONT_ICON_MATERIALDESIGN
 #include "NetImGuiThirdParty/Public/Fonts/FontMaterialDesign/MaterialIcons_Regular.cpp"
+// List of defines to easily use Icons available in 'Google's Material Design Icons'
+// For list of available icons, see: https://fonts.google.com/icons
+#include "NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsMaterialDesign.h"
 #endif
 
 #if NETIMGUI_FONT_JAPANESE
 #include "NetImGuiThirdParty/Public/Fonts/FontIPAexMincho/IPAexMincho.cpp"
-// List of defines to easily use Icons available in 'Google's Material Design Icons'
-// For list of available icons, see: https://fonts.google.com/icons
-#include "NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsMaterialDesign.h"
 #endif
 
 void FKLUnrealImGuiFontManager::PushFont(const KL::UnrealImGui::Fonts::eFont _Font)
@@ -60,6 +60,16 @@ void FKLUnrealImGuiFontManager::PushFont(const KL::UnrealImGui::Fonts::eFont _Fo
 void FKLUnrealImGuiFontManager::PopFont()
 {
     ImGui::PopFont();
+}
+
+void FKLUnrealImGuiFontManager::SetDefaultFont(const KL::UnrealImGui::Fonts::eFont _Font)
+{
+    check(_Font < KL::UnrealImGui::Fonts::eFont::_Count);
+    if (ImGui::GetIO().Fonts->Fonts[static_cast<int32>(_Font)])
+    {
+        ImFont* pFont              = _Font < KL::UnrealImGui::Fonts::eFont::_Count ? ImGui::GetIO().Fonts->Fonts[static_cast<int>(_Font)] : nullptr;
+        ImGui::GetIO().FontDefault = pFont ? pFont : ImGui::GetIO().FontDefault;
+    }
 }
 
 void FKLUnrealImGuiFontManager::Init(FImGuiContextManager& _ContextManager)

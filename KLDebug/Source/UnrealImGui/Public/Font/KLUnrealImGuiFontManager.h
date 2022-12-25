@@ -20,6 +20,7 @@ class KLUNREALIMGUI_API FKLUnrealImGuiFontManager final : public FNoncopyable
 public:
     static void PushFont(const KL::UnrealImGui::Fonts::eFont font);
     static void PopFont();
+    static void SetDefaultFont(const KL::UnrealImGui::Fonts::eFont _Font);
 
     void Init(FImGuiContextManager& _ContextManager);
     void Shutdown(FImGuiContextManager& _ContextManager);

@@ -13,6 +13,4 @@ public:
     //
 
     static const FNetImGuiThirdPartyModule& Get();
-
-    void DrawCommands() const;
 };

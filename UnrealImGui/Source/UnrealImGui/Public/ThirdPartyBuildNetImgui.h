@@ -11,6 +11,8 @@
 #include "NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
 //@EndKLMod
 
+
+
 #elif !defined(NETIMGUI_ENABLED)
 	#define NETIMGUI_ENABLED 0
 
@@ -28,3 +30,14 @@ bool	NetImGuiCanDrawProxy(const FImGuiContextProxy* pProxyContext);
 
 // Setup remote drawing context and let caller know if netImgui can draw remotely, using this proxy delegates
 bool	NetImGuiSetupDrawRemote(const FImGuiContextProxy* pProxyContext);
+
+//@Begin KLMod
+
+DECLARE_MULTICAST_DELEGATE(FOnNetImGuiCreateContext);
+
+namespace ThirdParty::UnrealImGui::NetImGui
+{
+    UNREALIMGUI_API extern FOnNetImGuiCreateContext OnNetImGuiCreatedContext;
+}
+
+//@End KLMod

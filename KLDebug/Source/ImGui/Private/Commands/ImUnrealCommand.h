@@ -18,7 +18,8 @@
 #endif
 
 // When Dear Imgui is not detected, remove Imgui UnrealCommand support
-#ifndef IMGUI_API
+//@Begin KLMod: use the correct _API for imgui which is IMGUITHIRDPARTY_API
+#ifndef IMGUITHIRDPARTY_API
 	#undef IMGUI_UNREAL_COMMAND_ENABLED
 	#define IMGUI_UNREAL_COMMAND_ENABLED 0
 #endif

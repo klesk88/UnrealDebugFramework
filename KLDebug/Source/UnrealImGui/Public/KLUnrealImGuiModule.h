@@ -7,8 +7,10 @@
 
 // engine
 #include "CoreMinimal.h"
+#include "Delegates/IDelegateInstance.h"
 #include "Modules/ModuleInterface.h"
 
+class FImGuiContextProxy;
 class FImGuiModuleManager;
 
 // main editor module
@@ -27,5 +29,12 @@ public:
     void DisableImGuiSystem();
 
 private:
+    void OnContextProxyCreated(int32 _Index, FImGuiContextProxy& _Proxy) const;
+    void OnNetImGuiContextCreated() const;
+    void OnContextCreated() const;
+    
+private:
     FKLUnrealImGuiFontManager mImGuiFontManager;
+    FDelegateHandle           mOnContextProxyCreated;
+    FDelegateHandle           mOnNetImGuiContextCreated;
 };

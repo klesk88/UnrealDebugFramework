@@ -18,8 +18,10 @@ public class KLDebugImGui : ModuleRules
             new string[]
             {
                 "ImGuiThirdParty",
-				"KLDebugUtils",
+                "ImPlotThirdParty",
+                "KLDebugUtils",
                 "KLUnrealImGui",
+                "NetImGuiThirdParty",
                 "UnrealImGui",
 				
                 //engine
