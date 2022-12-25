@@ -1,5 +1,7 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
+#include "Config/KLDebugImGuiConfig.h"
+
 // KLUnrealImGui module
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 // UnrealImGui module
@@ -28,9 +30,18 @@ UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
 
 void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collection)
 {
+    InitFromConfig();
+
     mFeaturesContainer.Initialize();
     RegisterCallbacks();
     mInputManager.Init();
+}
+
+void UKLDebugImGuiEngineSubsystem::InitFromConfig()
+{
+    const UKLDebugImGuiConfig& ImGuiConfig = UKLDebugImGuiConfig::Get();
+
+    mImGuiWindow = ImGuiConfig.GetImGuiWindow();
 }
 
 void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
@@ -58,8 +69,10 @@ void UKLDebugImGuiEngineSubsystem::UnreagisterCallbacks()
     }
 }
 
-void UKLDebugImGuiEngineSubsystem::Update()
+void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiEngineSubsystem_Update);
 
+    FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
+    ImGuiWindow.Update(_World);
 }

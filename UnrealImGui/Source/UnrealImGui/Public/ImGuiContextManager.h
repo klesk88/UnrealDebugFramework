@@ -5,6 +5,9 @@
 #include "ImGuiContextProxy.h"
 #include "VersionCompatibility.h"
 
+// Begin KLMod
+class UWorld;
+//End KLMod
 
 class FImGuiModuleSettings;
 struct FImGuiDPIScaleInfo;
@@ -27,9 +30,10 @@ DECLARE_DELEGATE_TwoParams(FOnBuildFontAtlas, float, ImFontAtlas&);
 //			instead of accessing it directly)
 struct FContextData
 {
-	FContextData(const FString& ContextName, int32 ContextIndex, ImFontAtlas& FontAtlas, float DPIScale, int32 InPIEInstance = -1)
+	//Begin KLMod: Added world to constructor
+	FContextData(const UWorld& _World, const FString& ContextName, int32 ContextIndex, ImFontAtlas& FontAtlas, float DPIScale, int32 InPIEInstance = -1)
 		: PIEInstance(InPIEInstance)
-		, ContextProxy(new FImGuiContextProxy(ContextName, ContextIndex, &FontAtlas, DPIScale))
+        , ContextProxy(new FImGuiContextProxy(ContextName, ContextIndex, &FontAtlas, DPIScale, _World))
 	{
 	}
 
@@ -62,12 +66,14 @@ public:
 
 #if WITH_EDITOR
 	// Get or create editor ImGui context proxy.
-	FORCEINLINE FImGuiContextProxy& GetEditorContextProxy() { return *GetEditorContextData().ContextProxy; }
+	// // Begin KLMod: Removed unused function
+	//FORCEINLINE FImGuiContextProxy& GetEditorContextProxy() { return *GetEditorContextData().ContextProxy; }
 #endif
 
 #if !WITH_EDITOR
 	// Get or create standalone game ImGui context proxy.
-	FORCEINLINE FImGuiContextProxy& GetWorldContextProxy() { return *GetStandaloneWorldContextData().ContextProxy; }
+    // Begin KLMod: Removed unused function
+	//FORCEINLINE FImGuiContextProxy& GetWorldContextProxy() { return *GetStandaloneWorldContextData().ContextProxy; }
 #endif
 
 	// Get or create ImGui context proxy for given world.
@@ -103,11 +109,13 @@ private:
 #endif
 
 #if WITH_EDITOR
-	FContextData& GetEditorContextData();
+    // Begin KLMod: Added world to constructor
+    FContextData& GetEditorContextData(const UWorld& _World);
 #endif
 
 #if !WITH_EDITOR
-	FContextData& GetStandaloneWorldContextData();
+    // Begin KLMod: Removed unused function
+	//FContextData& GetStandaloneWorldContextData();
 #endif
 
 	FContextData& GetWorldContextData(const UWorld& World, int32* OutContextIndex = nullptr);

@@ -586,7 +586,11 @@ void SImGuiWidget::UpdateCanvasSize()
 			{
 				FVector2D ViewportSize;
 				GameViewport->GetViewportSize(ViewportSize);
-				CanvasSize = MaxVector(CanvasSize, ViewportSize);
+				
+				//Begin @KLMod Use the viewport size otherwise the shape of window is wrong and we can't
+				// //draw correctly in imgui from the bottom
+				//CanvasSize = MaxVector(CanvasSize, ViewportSize);
+                CanvasSize = ViewportSize;
 			}
 			else
 			{

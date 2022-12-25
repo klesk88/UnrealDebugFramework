@@ -19,10 +19,12 @@ namespace KL::Debug::ImGuiEditor::Module
 void FKLDebugImGuiEditorModule::StartupModule()
 {
     mInputManager.Init();
+    mMainImGuiWindow.Init();
 }
 
 void FKLDebugImGuiEditorModule::ShutdownModule()
 {
+    mMainImGuiWindow.Shutdown();
     mInputManager.Shutdown();
 }
 

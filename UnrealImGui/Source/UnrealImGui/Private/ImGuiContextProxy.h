@@ -11,6 +11,12 @@
 #include <imgui.h>
 #include <string>
 
+//@Begin KLMod: 
+#include "UObject/WeakObjectPtrTemplates.h"
+
+class UWorld;
+// End KLMod
+
 
 // Represents a single ImGui context. All the context updates should be done through this proxy. During update it
 // broadcasts draw events to allow listeners draw their controls. After update it stores draw data.
@@ -18,7 +24,8 @@ class FImGuiContextProxy
 {
 public:
 
-	FImGuiContextProxy(const FString& Name, int32 InContextIndex, ImFontAtlas* InFontAtlas, float InDPIScale);
+	//@Begin KLMod: Added UWorld to constructor
+	FImGuiContextProxy(const FString& Name, int32 InContextIndex, ImFontAtlas* InFontAtlas, float InDPIScale, const UWorld& _World);
 	~FImGuiContextProxy();
 
 	FImGuiContextProxy(const FImGuiContextProxy&) = delete;
@@ -118,4 +125,9 @@ private:
 	FSimpleMulticastDelegate DrawEvent;
 
 	std::string IniFilename;
+
+//@Begin KLMod: added world
+private:
+    TWeakObjectPtr<const UWorld> mWorld;
+//End KLMod
 };

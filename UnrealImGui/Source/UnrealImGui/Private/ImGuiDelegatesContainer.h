@@ -3,8 +3,10 @@
 #pragma once
 
 #include <Containers/Map.h>
-#include <Delegates/Delegate.h>
 
+// Begin KLMod point to new .h file
+// #include <Delegates/Delegate.h>
+#include "ImGuiDelegatesTypes.h"
 
 #if WITH_EDITOR
 struct FImGuiDelegatesContainerHandle;
@@ -26,22 +28,22 @@ public:
 #endif
 
 	// Get delegate to ImGui world early debug event from known world instance.
-	FSimpleMulticastDelegate& OnWorldEarlyDebug(UWorld* World) { return OnWorldEarlyDebug(GetContextIndex(World)); }
+	FOnImGuiDelegate& OnWorldEarlyDebug(UWorld* World) { return OnWorldEarlyDebug(GetContextIndex(World)); }
 
 	// Get delegate to ImGui world early debug event from known context index.
-	FSimpleMulticastDelegate& OnWorldEarlyDebug(int32 ContextIndex) { return WorldEarlyDebugDelegates.FindOrAdd(ContextIndex); }
+	FOnImGuiDelegate& OnWorldEarlyDebug(int32 ContextIndex) { return WorldEarlyDebugDelegates.FindOrAdd(ContextIndex); }
 
 	// Get delegate to ImGui multi-context early debug event.
-	FSimpleMulticastDelegate& OnMultiContextEarlyDebug() { return MultiContextEarlyDebugDelegate; }
+	FOnImGuiDelegate& OnMultiContextEarlyDebug() { return MultiContextEarlyDebugDelegate; }
 
 	// Get delegate to ImGui world debug event from known world instance.
-	FSimpleMulticastDelegate& OnWorldDebug(UWorld* World) { return OnWorldDebug(GetContextIndex(World)); }
+	FOnImGuiDelegate& OnWorldDebug(UWorld* World) { return OnWorldDebug(GetContextIndex(World)); }
 
 	// Get delegate to ImGui world debug event from known context index.
-	FSimpleMulticastDelegate& OnWorldDebug(int32 ContextIndex) { return WorldDebugDelegates.FindOrAdd(ContextIndex); }
+	FOnImGuiDelegate& OnWorldDebug(int32 ContextIndex) { return WorldDebugDelegates.FindOrAdd(ContextIndex); }
 
 	// Get delegate to ImGui multi-context debug event.
-	FSimpleMulticastDelegate& OnMultiContextDebug() { return MultiContextDebugDelegate; }
+	FOnImGuiDelegate& OnMultiContextDebug() { return MultiContextDebugDelegate; }
 
 private:
 
@@ -49,8 +51,8 @@ private:
 
 	void Clear();
 
-	TMap<int32, FSimpleMulticastDelegate> WorldEarlyDebugDelegates;
-	TMap<int32, FSimpleMulticastDelegate> WorldDebugDelegates;
-	FSimpleMulticastDelegate MultiContextEarlyDebugDelegate;
-	FSimpleMulticastDelegate MultiContextDebugDelegate;
+	TMap<int32, FOnImGuiDelegate> WorldEarlyDebugDelegates;
+    TMap<int32, FOnImGuiDelegate> WorldDebugDelegates;
+    FOnImGuiDelegate MultiContextEarlyDebugDelegate;
+    FOnImGuiDelegate MultiContextDebugDelegate;
 };

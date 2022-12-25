@@ -18,17 +18,17 @@ public class KLDebugImGui : ModuleRules
             new string[]
             {
                 "ImGuiThirdParty",
-                "KLDebugCore",
 				"KLDebugUtils",
                 "KLUnrealImGui",
                 "UnrealImGui",
 				
                 //engine
                 "AIModule",
+                "DeveloperSettings",
                 "Engine",
                 "GameplayTags",
                 "InputCore",
-                "StructUtils",
+                "StructUtils"
             }
         );
 

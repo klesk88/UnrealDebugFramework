@@ -4,8 +4,8 @@
 #include "Feature/Manager/KLDebugImGuiFeatureManager.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
-//debug core module
-#include "Core/Public/KLDebugLog.h"
+//debug utils module
+#include "Utils/Public/KLDebugLog.h"
 
 //engine
 #include "GameplayTagContainer.h"

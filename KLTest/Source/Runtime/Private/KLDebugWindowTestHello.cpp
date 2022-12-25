@@ -14,7 +14,7 @@ const FGameplayTag& FKLDebugWindowTest12::GetTag() const
     return TAg;
 }
 
-const FGameplayTag& FKLDebugWindowTest::GetTag() const
+const FGameplayTag& FKLDebugWindowTest34::GetTag() const
 {
     static FGameplayTag TAg = TESTDebugSf.GetTag();
     return TAg;

@@ -84,9 +84,17 @@ void FImGuiContextManager::Tick(float DeltaSeconds)
 	// In editor, worlds can get invalid. We could remove corresponding entries, but that would mean resetting ImGui
 	// context every time when PIE session is restarted. Instead we freeze contexts until their worlds are re-created.
 
+
 	for (auto& Pair : Contexts)
 	{
 		auto& ContextData = Pair.Value;
+        //@Begin KLMod: tick the editor world only if is the only world. If we are plying do not tick it
+        // Change code to allow to do so
+        if (ContextData.PIEInstance < 0 && Contexts.Num() > 1)
+        {
+			continue;
+        }
+
 		if (ContextData.CanTick())
 		{
 			ContextData.ContextProxy->Tick(DeltaSeconds);
@@ -142,13 +150,13 @@ void FImGuiContextManager::OnWorldPostActorTick(UWorld* World, ELevelTick TickTy
 #endif // ENGINE_COMPATIBILITY_WITH_WORLD_POST_ACTOR_TICK
 
 #if WITH_EDITOR
-FContextData& FImGuiContextManager::GetEditorContextData()
+FContextData& FImGuiContextManager::GetEditorContextData(const UWorld& _World)
 {
 	FContextData* Data = Contexts.Find(Utilities::EDITOR_CONTEXT_INDEX);
 
 	if (UNLIKELY(!Data))
 	{
-		Data = &Contexts.Emplace(Utilities::EDITOR_CONTEXT_INDEX, FContextData{ GetEditorContextName(), Utilities::EDITOR_CONTEXT_INDEX, FontAtlas, DPIScale, -1 });
+        Data = &Contexts.Emplace(Utilities::EDITOR_CONTEXT_INDEX, FContextData{_World, GetEditorContextName(), Utilities::EDITOR_CONTEXT_INDEX, FontAtlas, DPIScale, -1});
 		OnContextProxyCreated.Broadcast(Utilities::EDITOR_CONTEXT_INDEX, *Data->ContextProxy);
 	}
 
@@ -157,18 +165,19 @@ FContextData& FImGuiContextManager::GetEditorContextData()
 #endif // WITH_EDITOR
 
 #if !WITH_EDITOR
-FContextData& FImGuiContextManager::GetStandaloneWorldContextData()
-{
-	FContextData* Data = Contexts.Find(Utilities::STANDALONE_GAME_CONTEXT_INDEX);
-
-	if (UNLIKELY(!Data))
-	{
-		Data = &Contexts.Emplace(Utilities::STANDALONE_GAME_CONTEXT_INDEX, FContextData{ GetWorldContextName(), Utilities::STANDALONE_GAME_CONTEXT_INDEX, FontAtlas, DPIScale });
-		OnContextProxyCreated.Broadcast(Utilities::STANDALONE_GAME_CONTEXT_INDEX, *Data->ContextProxy);
-	}
-
-	return *Data;
-}
+// Begin KLMod: Removed unused function
+//FContextData& FImGuiContextManager::GetStandaloneWorldContextData()
+//{
+//	FContextData* Data = Contexts.Find(Utilities::STANDALONE_GAME_CONTEXT_INDEX);
+//
+//	if (UNLIKELY(!Data))
+//	{
+//		Data = &Contexts.Emplace(Utilities::STANDALONE_GAME_CONTEXT_INDEX, FContextData{ GetWorldContextName(), Utilities::STANDALONE_GAME_CONTEXT_INDEX, FontAtlas, DPIScale });
+//		OnContextProxyCreated.Broadcast(Utilities::STANDALONE_GAME_CONTEXT_INDEX, *Data->ContextProxy);
+//	}
+//
+//	return *Data;
+//}
 #endif // !WITH_EDITOR
 
 FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int32* OutIndex)
@@ -184,7 +193,7 @@ FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int
 			*OutIndex = Utilities::EDITOR_CONTEXT_INDEX;
 		}
 
-		return GetEditorContextData();
+		return GetEditorContextData(World);
 	}
 #endif
 
@@ -205,7 +214,8 @@ FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int
 #if WITH_EDITOR
 	if (UNLIKELY(!Data))
 	{
-		Data = &Contexts.Emplace(Index, FContextData{ GetWorldContextName(World), Index, FontAtlas, DPIScale, WorldContext->PIEInstance });
+        // Begin KLMod: Added world to constructor
+        Data = &Contexts.Emplace(Index, FContextData{ World, GetWorldContextName(World), Index, FontAtlas, DPIScale, WorldContext->PIEInstance});
 		OnContextProxyCreated.Broadcast(Index, *Data->ContextProxy);
 	}
 	else
@@ -216,7 +226,8 @@ FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int
 #else
 	if (UNLIKELY(!Data))
 	{
-		Data = &Contexts.Emplace(Index, FContextData{ GetWorldContextName(World), Index, FontAtlas, DPIScale });
+        // Begin KLMod: Added world to constructor
+        Data = &Contexts.Emplace(Index, FContextData{World, GetWorldContextName(World), Index, FontAtlas, DPIScale});
 		OnContextProxyCreated.Broadcast(Index, *Data->ContextProxy);
 	}
 #endif

@@ -12,6 +12,9 @@
 #include <GenericPlatform/GenericPlatformFile.h>
 #include <Misc/Paths.h>
 
+//@Begin KLMod
+#include "Engine/World.h"
+// End KLMod
 
 static constexpr float DEFAULT_CANVAS_WIDTH = 3840.f;
 static constexpr float DEFAULT_CANVAS_HEIGHT = 2160.f;
@@ -74,10 +77,11 @@ namespace
 	};
 }
 
-FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextIndex, ImFontAtlas* InFontAtlas, float InDPIScale)
+FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextIndex, ImFontAtlas* InFontAtlas, float InDPIScale, const UWorld& _World)
 	: Name(InName)
 	, ContextIndex(InContextIndex)
 	, IniFilename(TCHAR_TO_ANSI(*GetIniFile(InName)))
+    , mWorld(&_World)
 {
 	// Create context.
 	Context = ImGui::CreateContext(InFontAtlas);
@@ -296,20 +300,20 @@ void FImGuiContextProxy::BroadcastWorldEarlyDebug()
 {
 	if (ContextIndex != Utilities::INVALID_CONTEXT_INDEX)
 	{
-		FSimpleMulticastDelegate& WorldEarlyDebugEvent = FImGuiDelegatesContainer::Get().OnWorldEarlyDebug(ContextIndex);
-		if (WorldEarlyDebugEvent.IsBound())
+        FOnImGuiDelegate& WorldEarlyDebugEvent = FImGuiDelegatesContainer::Get().OnWorldEarlyDebug(ContextIndex);
+        if (mWorld.IsValid() && WorldEarlyDebugEvent.IsBound())
 		{
-			WorldEarlyDebugEvent.Broadcast();
+            WorldEarlyDebugEvent.Broadcast(*mWorld.Get());
 		}
 	}
 }
 
 void FImGuiContextProxy::BroadcastMultiContextEarlyDebug()
 {
-	FSimpleMulticastDelegate& MultiContextEarlyDebugEvent = FImGuiDelegatesContainer::Get().OnMultiContextEarlyDebug();
-	if (MultiContextEarlyDebugEvent.IsBound())
+    FOnImGuiDelegate& MultiContextEarlyDebugEvent = FImGuiDelegatesContainer::Get().OnMultiContextEarlyDebug();
+    if (mWorld.IsValid() && MultiContextEarlyDebugEvent.IsBound())
 	{
-		MultiContextEarlyDebugEvent.Broadcast();
+		MultiContextEarlyDebugEvent.Broadcast(*mWorld.Get());
 	}
 }
 
@@ -317,24 +321,24 @@ void FImGuiContextProxy::BroadcastWorldDebug()
 {
 	if (DrawEvent.IsBound())
 	{
-		DrawEvent.Broadcast();
+        DrawEvent.Broadcast();
 	}
 
 	if (ContextIndex != Utilities::INVALID_CONTEXT_INDEX)
 	{
-		FSimpleMulticastDelegate& WorldDebugEvent = FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex);
-		if (WorldDebugEvent.IsBound())
+        FOnImGuiDelegate& WorldDebugEvent = FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex);
+        if (mWorld.IsValid() && WorldDebugEvent.IsBound())
 		{
-			WorldDebugEvent.Broadcast();
+            WorldDebugEvent.Broadcast(*mWorld.Get());
 		}
 	}
 }
 
 void FImGuiContextProxy::BroadcastMultiContextDebug()
 {
-	FSimpleMulticastDelegate& MultiContextDebugEvent = FImGuiDelegatesContainer::Get().OnMultiContextDebug();
-	if (MultiContextDebugEvent.IsBound())
+    FOnImGuiDelegate& MultiContextDebugEvent = FImGuiDelegatesContainer::Get().OnMultiContextDebug();
+    if (mWorld.IsValid() && MultiContextDebugEvent.IsBound())
 	{
-		MultiContextDebugEvent.Broadcast();
+        MultiContextDebugEvent.Broadcast(*mWorld.Get());
 	}
 }

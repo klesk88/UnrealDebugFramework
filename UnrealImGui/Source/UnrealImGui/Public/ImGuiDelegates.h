@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include <Delegates/Delegate.h>
-
+//Begin KLMod point to new .h file
+//#include <Delegates/Delegate.h>
+#include "ImGuiDelegatesTypes.h"
 
 class UWorld;
 
@@ -24,39 +25,39 @@ public:
 	 * Get a delegate to ImGui world early debug event for current world (GWorld).
 	 * @returns Simple multicast delegate to debug events called once per frame to debug current world
 	 */
-	static FSimpleMulticastDelegate& OnWorldEarlyDebug();
+    static FOnImGuiDelegate& OnWorldEarlyDebug();
 
 	/**
 	 * Get a delegate to ImGui world early debug event for given world.
 	 * @param World - World for which we need a delegate
 	 * @returns Simple multicast delegate to debug events called once per frame to debug given world
 	 */
-	static FSimpleMulticastDelegate& OnWorldEarlyDebug(UWorld* World);
+    static FOnImGuiDelegate& OnWorldEarlyDebug(UWorld* World);
 
 	/**
 	 * Get a delegate to ImGui multi-context early debug event.
 	 * @returns Simple multicast delegate to debug events called once per frame for every world to debug
 	 */
-	static FSimpleMulticastDelegate& OnMultiContextEarlyDebug();
+    static FOnImGuiDelegate& OnMultiContextEarlyDebug();
 
 	/**
 	 * Get a delegate to ImGui world debug event for current world (GWorld).
 	 * @returns Simple multicast delegate to debug events called once per frame to debug current world
 	 */
-	static FSimpleMulticastDelegate& OnWorldDebug();
+    static FOnImGuiDelegate& OnWorldDebug();
 
 	/**
 	 * Get a delegate to ImGui world debug event for given world.
 	 * @param World - World for which we need a delegate
 	 * @returns Simple multicast delegate to debug events called once per frame to debug given world
 	 */
-	static FSimpleMulticastDelegate& OnWorldDebug(UWorld* World);
+    static FOnImGuiDelegate& OnWorldDebug(UWorld* World);
 
 	/**
 	 * Get a delegate to ImGui multi-context debug event.
 	 * @returns Simple multicast delegate to debug events called once per frame for every world to debug
 	 */
-	static FSimpleMulticastDelegate& OnMultiContextDebug();
+    static FOnImGuiDelegate& OnMultiContextDebug();
 };
 
 
@@ -66,7 +67,7 @@ public:
 #if IMGUI_WITH_OBSOLETE_DELEGATES
 
 /** Delegate that allows to subscribe for ImGui events.  */
-typedef FSimpleMulticastDelegate::FDelegate FImGuiDelegate;
+typedef FOnImGuiDelegate::FDelegate FImGuiDelegate;
 
 /**
  * Handle to ImGui delegate. Contains additional information locating delegates in different contexts.

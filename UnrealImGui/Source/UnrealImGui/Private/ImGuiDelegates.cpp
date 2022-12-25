@@ -6,32 +6,32 @@
 #include <Engine/World.h>
 
 
-FSimpleMulticastDelegate& FImGuiDelegates::OnWorldEarlyDebug()
+FOnImGuiDelegate& FImGuiDelegates::OnWorldEarlyDebug()
 {
 	return OnWorldEarlyDebug(GWorld);
 }
 
-FSimpleMulticastDelegate& FImGuiDelegates::OnWorldEarlyDebug(UWorld* World)
+FOnImGuiDelegate& FImGuiDelegates::OnWorldEarlyDebug(UWorld* World)
 {
 	return FImGuiDelegatesContainer::Get().OnWorldEarlyDebug(World);
 }
 
-FSimpleMulticastDelegate& FImGuiDelegates::OnMultiContextEarlyDebug()
+FOnImGuiDelegate& FImGuiDelegates::OnMultiContextEarlyDebug()
 {
 	return FImGuiDelegatesContainer::Get().OnMultiContextEarlyDebug();
 }
 
-FSimpleMulticastDelegate& FImGuiDelegates::OnWorldDebug()
+FOnImGuiDelegate& FImGuiDelegates::OnWorldDebug()
 {
 	return OnWorldDebug(GWorld);
 }
 
-FSimpleMulticastDelegate& FImGuiDelegates::OnWorldDebug(UWorld* World)
+FOnImGuiDelegate& FImGuiDelegates::OnWorldDebug(UWorld* World)
 {
 	return FImGuiDelegatesContainer::Get().OnWorldDebug(World);
 }
 
-FSimpleMulticastDelegate& FImGuiDelegates::OnMultiContextDebug()
+FOnImGuiDelegate& FImGuiDelegates::OnMultiContextDebug()
 {
 	return FImGuiDelegatesContainer::Get().OnMultiContextDebug();
 }

@@ -2,6 +2,7 @@
 
 #include "Feature/Container/KLDebugImGuiFeatureContainer.h"
 #include "Input/KLDebugImGuiInputManager.h"
+#include "Window/KLDebugImGuiWindow.h"
 
 //utils module
 #include "Utils/Public/Picker/KLDebugUtilsPicker.h"
@@ -12,11 +13,13 @@
 #include "Delegates/IDelegateInstance.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
- #include "Subsystems/EngineSubsystem.h"
+#include "InstancedStruct.h"
+#include "Subsystems/EngineSubsystem.h"
 
 #include "KLDebugImGuiEngineSubsystem.generated.h"
 
 class IKLDebugImGuiFeatureInterface;
+class UWorld;
 
 UCLASS()
 class KLDEBUGIMGUI_API UKLDebugImGuiEngineSubsystem final : public UEngineSubsystem
@@ -34,16 +37,19 @@ public:
     void ToogleImGuiSystemState();
 
 private:
+    void InitFromConfig();
+
     void RegisterCallbacks();
     void UnreagisterCallbacks();
 
-    void Update();
+    void Update(const UWorld& _World);
 
 private:
     FKLDebugImGuiFeatureContainer mFeaturesContainer;
     FKLDebugUtilsPicker           mPicker;
     FKLDebugImGuiInputManager     mInputManager;
-};
+    FInstancedStruct              mImGuiWindow;
+ };
 
 inline const FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPicker() const
 {

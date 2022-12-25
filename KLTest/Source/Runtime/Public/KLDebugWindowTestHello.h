@@ -27,10 +27,10 @@ private:
     bool TestVAlue = false;
 };
 
-class FKLDebugWindowTest final : public IKLDebugImGuiFeatureInterface
+class FKLDebugWindowTest34 final : public IKLDebugImGuiFeatureInterface
 {
 public:
-    FKLDebugWindowTest()
+    FKLDebugWindowTest34()
     {
         mString = TEXT("hello");
     }
@@ -53,7 +53,7 @@ private:
 };
 
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest, EFeatureEntryType::Default)
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest34, EFeatureEntryType::Default)
 KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12, EFeatureEntryType::Default)
 
 #endif
