@@ -40,6 +40,7 @@ public class KLDebugCore : ModuleRules
             else
             {
                 PublicDefinitions.Add("WITH_KL_DEBUGGER=1");
+                PublicDefinitions.Add("WITH_KL_TEST_DEBUGGER=1");
             }
         }
         else

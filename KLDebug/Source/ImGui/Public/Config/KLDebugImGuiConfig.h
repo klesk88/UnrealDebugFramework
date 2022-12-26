@@ -20,7 +20,7 @@ public:
     UE_NODISCARD const FInstancedStruct& GetImGuiWindow() const;
 
 private:
-    UPROPERTY(EditDefaultsOnly, config, NoClear, meta = (BaseStruct = "KLDebugImGuiWindow"))
+    UPROPERTY(EditDefaultsOnly, config, NoClear, meta = (BaseStruct = "/Script/KLDebugImGui.KLDebugImGuiWindow"))
     FInstancedStruct ImGuiWindowManager;
 };
 

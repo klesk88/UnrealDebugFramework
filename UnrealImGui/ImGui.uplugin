@@ -16,22 +16,22 @@
 	"Modules": [
 		{
 			"Name": "UnrealImGui",
-			"Type": "DeveloperTool",
+			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
 		},
 		{
 			"Name": "ImGuiThirdParty",
-			"Type": "DeveloperTool",
+			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
 		},
 		{
 			"Name": "ImPlotThirdParty",
-			"Type": "DeveloperTool",
+			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
 		},
 		{
 			"Name": "NetImGuiThirdParty",
-			"Type": "DeveloperTool",
+			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
 		}
 	]
