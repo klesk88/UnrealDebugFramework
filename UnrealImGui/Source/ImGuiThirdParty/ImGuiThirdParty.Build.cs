@@ -31,7 +31,9 @@ public class ImGuiThirdParty : ModuleRules
            }
        );
 
-       AddEngineThirdPartyPrivateStaticDependencies(Target, "FreeType2");
-       PublicDefinitions.Add("NETIMGUI_FREETYPE_ENABLED=1");
+        AddEngineThirdPartyPrivateStaticDependencies(Target, "FreeType2");
+        PublicDefinitions.Add("NETIMGUI_FREETYPE_ENABLED=1");
+        //Begin KLMod add this define here otherwise i receive warnings
+        PublicDefinitions.Add("_CRT_SECURE_NO_WARNINGS");
     }
 }
