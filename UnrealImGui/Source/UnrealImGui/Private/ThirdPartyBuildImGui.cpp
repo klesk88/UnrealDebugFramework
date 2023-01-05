@@ -26,14 +26,14 @@
 // Redirecting handle which will automatically bind to another one, if a different instance of the module is loaded.
 struct FImGuiContextHandle : public Utilities::TRedirectingHandle<ImGuiContext*>
 {
-	FImGuiContextHandle(ImGuiContext*& InDefaultContext)
-		: Utilities::TRedirectingHandle<ImGuiContext*>(InDefaultContext)
-	{
-		if (FUnrealImGuiModule* Module = FModuleManager::GetModulePtr<FUnrealImGuiModule>("ImGui"))
-		{
-			SetParent(Module->ImGuiContextHandle);
-		}
-	}
+    FImGuiContextHandle(ImGuiContext*& InDefaultContext)
+        : Utilities::TRedirectingHandle<ImGuiContext*>(InDefaultContext)
+    {
+        if (FUnrealImGuiModule* Module = FModuleManager::GetModulePtr<FUnrealImGuiModule>("UnrealImGui"))
+        {
+            SetParent(Module->ImGuiContextHandle);
+        }
+    }
 };
 
 static ImGuiContext* ImGuiContextPtr = nullptr;
@@ -62,14 +62,14 @@ static FImGuiContextHandle ImGuiContextPtrHandle(ImGuiContextPtr);
 namespace ImGuiImplementation
 {
 #if WITH_EDITOR
-	FImGuiContextHandle& GetContextHandle()
-	{
-		return ImGuiContextPtrHandle;
-	}
+    FImGuiContextHandle& GetContextHandle()
+    {
+        return ImGuiContextPtrHandle;
+    }
 
-	void SetParentContextHandle(FImGuiContextHandle& Parent)
-	{
-		ImGuiContextPtrHandle.SetParent(&Parent);
-	}
+    void SetParentContextHandle(FImGuiContextHandle& Parent)
+    {
+        ImGuiContextPtrHandle.SetParent(&Parent);
+    }
 #endif // WITH_EDITOR
 }

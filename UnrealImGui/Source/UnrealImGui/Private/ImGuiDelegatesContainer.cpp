@@ -13,8 +13,8 @@
 
 FImGuiDelegatesContainer& FImGuiDelegatesContainer::Get()
 {
-	static FImGuiDelegatesContainer* Container = new FImGuiDelegatesContainer();
-	return *Container;
+    static FImGuiDelegatesContainer* Container = new FImGuiDelegatesContainer();
+    return *Container;
 }
 
 #endif // !WITH_EDITOR
@@ -30,45 +30,45 @@ FImGuiDelegatesContainer& FImGuiDelegatesContainer::Get()
 // Redirecting handle which will always bind to a container from the currently loaded module.
 struct FImGuiDelegatesContainerHandle : Utilities::TRedirectingHandle<FImGuiDelegatesContainer>
 {
-	FImGuiDelegatesContainerHandle(FImGuiDelegatesContainer& InDefaultContainer)
-		: Utilities::TRedirectingHandle<FImGuiDelegatesContainer>(InDefaultContainer)
-	{
-		if (FUnrealImGuiModule* Module = FModuleManager::GetModulePtr<FUnrealImGuiModule>("ImGui"))
-		{
-			SetParent(Module->DelegatesContainerHandle);
-		}
-	}
+    FImGuiDelegatesContainerHandle(FImGuiDelegatesContainer& InDefaultContainer)
+        : Utilities::TRedirectingHandle<FImGuiDelegatesContainer>(InDefaultContainer)
+    {
+        if (FUnrealImGuiModule* Module = FModuleManager::GetModulePtr<FUnrealImGuiModule>("UnrealImGui"))
+        {
+            SetParent(Module->DelegatesContainerHandle);
+        }
+    }
 };
 
 FImGuiDelegatesContainer& FImGuiDelegatesContainer::Get()
 {
-	return GetHandle().Get();
+    return GetHandle().Get();
 }
 
 FImGuiDelegatesContainerHandle& FImGuiDelegatesContainer::GetHandle()
 {
-	struct FContainerInstance
-	{
-		FContainerInstance() : Container(), Handle(Container) {}
-		FImGuiDelegatesContainer Container;
-		FImGuiDelegatesContainerHandle Handle;
-	};
-	static FContainerInstance* Instance = new FContainerInstance();
-	return Instance->Handle;
+    struct FContainerInstance
+    {
+        FContainerInstance() : Container(), Handle(Container) {}
+        FImGuiDelegatesContainer Container;
+        FImGuiDelegatesContainerHandle Handle;
+    };
+    static FContainerInstance* Instance = new FContainerInstance();
+    return Instance->Handle;
 }
 
 void FImGuiDelegatesContainer::MoveContainer(FImGuiDelegatesContainerHandle& OtherContainerHandle)
 {
-	// Only move data if pointer points to default instance, otherwise our data has already been moved and we only
-	// keep pointer to a more recent version.
-	if (GetHandle().IsDefault())
-	{
-		OtherContainerHandle.Get() = MoveTemp(GetHandle().Get());
-		GetHandle().Get().Clear();
-	}
+    // Only move data if pointer points to default instance, otherwise our data has already been moved and we only
+    // keep pointer to a more recent version.
+    if (GetHandle().IsDefault())
+    {
+        OtherContainerHandle.Get() = MoveTemp(GetHandle().Get());
+        GetHandle().Get().Clear();
+    }
 
-	// Update pointer to the most recent version.
-	GetHandle().SetParent(&OtherContainerHandle);
+    // Update pointer to the most recent version.
+    GetHandle().SetParent(&OtherContainerHandle);
 }
 
 #endif // WITH_EDITOR
@@ -76,13 +76,13 @@ void FImGuiDelegatesContainer::MoveContainer(FImGuiDelegatesContainerHandle& Oth
 
 int32 FImGuiDelegatesContainer::GetContextIndex(UWorld* World)
 {
-	return Utilities::GetWorldContextIndex(*World);
+    return Utilities::GetWorldContextIndex(*World);
 }
 
 void FImGuiDelegatesContainer::Clear()
 {
-	WorldEarlyDebugDelegates.Empty();
-	WorldDebugDelegates.Empty();
-	MultiContextEarlyDebugDelegate.Clear();
-	MultiContextDebugDelegate.Clear();
+    WorldEarlyDebugDelegates.Empty();
+    WorldDebugDelegates.Empty();
+    MultiContextEarlyDebugDelegate.Clear();
+    MultiContextDebugDelegate.Clear();
 }

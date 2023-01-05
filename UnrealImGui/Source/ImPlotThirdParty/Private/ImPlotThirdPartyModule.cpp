@@ -10,4 +10,4 @@ void FImPlotThirdPartyModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FImPlotThirdPartyModule, ImPlotThirdPartyModule)
+IMPLEMENT_MODULE(FImPlotThirdPartyModule, ImPlotThirdParty)

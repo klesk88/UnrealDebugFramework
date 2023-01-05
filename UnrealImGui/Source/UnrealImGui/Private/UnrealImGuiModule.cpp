@@ -22,14 +22,14 @@
 
 struct EDelegateCategory
 {
-	enum
-	{
-		// Default per-context draw events.
-		Default,
+    enum
+    {
+        // Default per-context draw events.
+        Default,
 
-		// Multi-context draw event defined in context manager.
-		MultiContext
-	};
+        // Multi-context draw event defined in context manager.
+        MultiContext
+    };
 };
 
 FImGuiModuleManager* ImGuiModuleManager = nullptr;
@@ -43,74 +43,74 @@ static FImGuiEditor* ImGuiEditor = nullptr;
 #if WITH_EDITOR
 FImGuiDelegateHandle FUnrealImGuiModule::AddEditorImGuiDelegate(const FImGuiDelegate& Delegate)
 {
-	return { FImGuiDelegatesContainer::Get().OnWorldDebug(Utilities::EDITOR_CONTEXT_INDEX).Add(Delegate),
-		EDelegateCategory::Default, Utilities::EDITOR_CONTEXT_INDEX };
+    return { FImGuiDelegatesContainer::Get().OnWorldDebug(Utilities::EDITOR_CONTEXT_INDEX).Add(Delegate),
+        EDelegateCategory::Default, Utilities::EDITOR_CONTEXT_INDEX };
 }
 #endif
 
 FImGuiDelegateHandle FUnrealImGuiModule::AddWorldImGuiDelegate(const FImGuiDelegate& Delegate)
 {
-	const int32 ContextIndex = Utilities::GetWorldContextIndex((UWorld*)GWorld);
-	return { FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex).Add(Delegate), EDelegateCategory::Default, ContextIndex };
+    const int32 ContextIndex = Utilities::GetWorldContextIndex((UWorld*)GWorld);
+    return { FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex).Add(Delegate), EDelegateCategory::Default, ContextIndex };
 }
 
 FImGuiDelegateHandle FUnrealImGuiModule::AddWorldImGuiDelegate(const UWorld* World, const FImGuiDelegate& Delegate)
 {
-	const int32 ContextIndex = Utilities::GetWorldContextIndex(World);
-	return { FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex).Add(Delegate), EDelegateCategory::Default, ContextIndex };
+    const int32 ContextIndex = Utilities::GetWorldContextIndex(World);
+    return { FImGuiDelegatesContainer::Get().OnWorldDebug(ContextIndex).Add(Delegate), EDelegateCategory::Default, ContextIndex };
 }
 
 FImGuiDelegateHandle FUnrealImGuiModule::AddMultiContextImGuiDelegate(const FImGuiDelegate& Delegate)
 {
-	return { FImGuiDelegatesContainer::Get().OnMultiContextDebug().Add(Delegate), EDelegateCategory::MultiContext };
+    return { FImGuiDelegatesContainer::Get().OnMultiContextDebug().Add(Delegate), EDelegateCategory::MultiContext };
 }
 
 void FUnrealImGuiModule::RemoveImGuiDelegate(const FImGuiDelegateHandle& Handle)
 {
-	if (Handle.Category == EDelegateCategory::MultiContext)
-	{
-		FImGuiDelegatesContainer::Get().OnMultiContextDebug().Remove(Handle.Handle);
-	}
-	else
-	{
-		FImGuiDelegatesContainer::Get().OnWorldDebug(Handle.Index).Remove(Handle.Handle);
-	}
+    if (Handle.Category == EDelegateCategory::MultiContext)
+    {
+        FImGuiDelegatesContainer::Get().OnMultiContextDebug().Remove(Handle.Handle);
+    }
+    else
+    {
+        FImGuiDelegatesContainer::Get().OnWorldDebug(Handle.Index).Remove(Handle.Handle);
+    }
 }
 
 #endif // IMGUI_WITH_OBSOLETE_DELEGATES
 
 FImGuiTextureHandle FUnrealImGuiModule::FindTextureHandle(const FName& Name)
 {
-	const TextureIndex Index = ImGuiModuleManager->GetTextureManager().FindTextureIndex(Name);
-	return (Index != INDEX_NONE) ? FImGuiTextureHandle{ Name, ImGuiInterops::ToImTextureID(Index) } : FImGuiTextureHandle{};
+    const TextureIndex Index = ImGuiModuleManager->GetTextureManager().FindTextureIndex(Name);
+    return (Index != INDEX_NONE) ? FImGuiTextureHandle{ Name, ImGuiInterops::ToImTextureID(Index) } : FImGuiTextureHandle{};
 }
 
 FImGuiTextureHandle FUnrealImGuiModule::RegisterTexture(const FName& Name, class UTexture* Texture, bool bMakeUnique)
 {
-	FTextureManager& TextureManager = ImGuiModuleManager->GetTextureManager();
+    FTextureManager& TextureManager = ImGuiModuleManager->GetTextureManager();
 
-	checkf(!bMakeUnique || TextureManager.FindTextureIndex(Name) == INDEX_NONE,
-		TEXT("Trying to register a texture with a name '%s' that is already used. Chose a different name ")
-		TEXT("or use bMakeUnique false, to update existing texture resources."), *Name.ToString());
+    checkf(!bMakeUnique || TextureManager.FindTextureIndex(Name) == INDEX_NONE,
+        TEXT("Trying to register a texture with a name '%s' that is already used. Chose a different name ")
+        TEXT("or use bMakeUnique false, to update existing texture resources."), *Name.ToString());
 
-	const TextureIndex Index = TextureManager.CreateTextureResources(Name, Texture);
-	return FImGuiTextureHandle{ Name, ImGuiInterops::ToImTextureID(Index) };
+    const TextureIndex Index = TextureManager.CreateTextureResources(Name, Texture);
+    return FImGuiTextureHandle{ Name, ImGuiInterops::ToImTextureID(Index) };
 }
 
 void FUnrealImGuiModule::ReleaseTexture(const FImGuiTextureHandle& Handle)
 {
-	if (Handle.IsValid())
-	{
-		ImGuiModuleManager->GetTextureManager().ReleaseTextureResources(ImGuiInterops::ToTextureIndex(Handle.GetTextureId()));
-	}
+    if (Handle.IsValid())
+    {
+        ImGuiModuleManager->GetTextureManager().ReleaseTextureResources(ImGuiInterops::ToTextureIndex(Handle.GetTextureId()));
+    }
 }
 
 void FUnrealImGuiModule::RebuildFontAtlas()
 {
-	if (ImGuiModuleManager)
-	{
-		ImGuiModuleManager->RebuildFontAtlas();
-	}
+    if (ImGuiModuleManager)
+    {
+        ImGuiModuleManager->RebuildFontAtlas();
+    }
 }
 
 void FUnrealImGuiModule::StartupModule()
@@ -133,77 +133,77 @@ void FUnrealImGuiModule::ShutdownModule()
 #if WITH_EDITOR
 void FUnrealImGuiModule::SetProperties(const FImGuiModuleProperties& Properties)
 {
-	ImGuiModuleManager->GetProperties() = Properties;
+    ImGuiModuleManager->GetProperties() = Properties;
 }
 #endif
 
 FImGuiModuleProperties& FUnrealImGuiModule::GetProperties()
 {
-	return ImGuiModuleManager->GetProperties();
+    return ImGuiModuleManager->GetProperties();
 }
 
 const FImGuiModuleProperties& FUnrealImGuiModule::GetProperties() const
 {
-	return ImGuiModuleManager->GetProperties();
+    return ImGuiModuleManager->GetProperties();
 }
 
 bool FUnrealImGuiModule::IsInputMode() const
 {
-	return ImGuiModuleManager && ImGuiModuleManager->GetProperties().IsInputEnabled();
+    return ImGuiModuleManager && ImGuiModuleManager->GetProperties().IsInputEnabled();
 }
 
 void FUnrealImGuiModule::SetInputMode(bool bEnabled)
 {
-	if (ImGuiModuleManager)
-	{
-		ImGuiModuleManager->GetProperties().SetInputEnabled(bEnabled);
-	}
+    if (ImGuiModuleManager)
+    {
+        ImGuiModuleManager->GetProperties().SetInputEnabled(bEnabled);
+    }
 }
 
 void FUnrealImGuiModule::ToggleInputMode()
 {
-	if (ImGuiModuleManager)
-	{
-		ImGuiModuleManager->GetProperties().ToggleInput();
-	}
+    if (ImGuiModuleManager)
+    {
+        ImGuiModuleManager->GetProperties().ToggleInput();
+    }
 }
 
 bool FUnrealImGuiModule::IsShowingDemo() const
 {
-	return ImGuiModuleManager && ImGuiModuleManager->GetProperties().ShowDemo();
+    return ImGuiModuleManager && ImGuiModuleManager->GetProperties().ShowDemo();
 }
 
 void FUnrealImGuiModule::SetShowDemo(bool bShow)
 {
-	if (ImGuiModuleManager)
-	{
-		ImGuiModuleManager->GetProperties().SetShowDemo(bShow);
-	}
+    if (ImGuiModuleManager)
+    {
+        ImGuiModuleManager->GetProperties().SetShowDemo(bShow);
+    }
 }
 
 void FUnrealImGuiModule::ToggleShowDemo()
 {
-	if (ImGuiModuleManager)
-	{
-		ImGuiModuleManager->GetProperties().ToggleDemo();
-	}
+    if (ImGuiModuleManager)
+    {
+        ImGuiModuleManager->GetProperties().ToggleDemo();
+    }
 }
 
 bool FUnrealImGuiModule::IsRemoteDrawing() const
 {
 #if NETIMGUI_ENABLED
-	return NetImgui::IsDrawingRemote();
+    return NetImgui::IsDrawingRemote();
 #else
-	return false;
+    return false;
 #endif
 }
 
 bool FUnrealImGuiModule::IsRemoteConnected() const
 {
 #if NETIMGUI_ENABLED
-	return NetImgui::IsConnected();
+    return NetImgui::IsConnected();
 #else
-	return false;
+    return false;
 #endif
 }
 
@@ -215,39 +215,39 @@ bool FUnrealImGuiModule::IsRemoteConnected() const
 
 class FImGuiModuleLoader
 {
-	FImGuiModuleLoader()
-	{
-		if (!Load())
-		{
-			FModuleManager::Get().OnModulesChanged().AddRaw(this, &FImGuiModuleLoader::LoadAndRelease);
-		}
-	}
+    FImGuiModuleLoader()
+    {
+        if (!Load())
+        {
+            FModuleManager::Get().OnModulesChanged().AddRaw(this, &FImGuiModuleLoader::LoadAndRelease);
+        }
+    }
 
-	// For different engine versions.
-	static FORCEINLINE bool IsValid(const TSharedPtr<IModuleInterface>& Ptr) { return Ptr.IsValid(); }
-	static FORCEINLINE bool IsValid(const IModuleInterface* const Ptr) { return Ptr != nullptr; }
+    // For different engine versions.
+    static FORCEINLINE bool IsValid(const TSharedPtr<IModuleInterface>& Ptr) { return Ptr.IsValid(); }
+    static FORCEINLINE bool IsValid(const IModuleInterface* const Ptr) { return Ptr != nullptr; }
 
-	bool Load()
-	{
-		return IsValid(FModuleManager::Get().LoadModule(ModuleName));
-	}
+    bool Load()
+    {
+        return IsValid(FModuleManager::Get().LoadModule(ModuleName));
+    }
 
-	void LoadAndRelease(FName Name, EModuleChangeReason Reason)
-	{
-		// Avoid handling own load event.
-		if (Name != ModuleName)
-		{
-			// Try loading until success and then release.
-			if (Load())
-			{
-				FModuleManager::Get().OnModulesChanged().RemoveAll(this);
-			}
-		}
-	}
+    void LoadAndRelease(FName Name, EModuleChangeReason Reason)
+    {
+        // Avoid handling own load event.
+        if (Name != ModuleName)
+        {
+            // Try loading until success and then release.
+            if (Load())
+            {
+                FModuleManager::Get().OnModulesChanged().RemoveAll(this);
+            }
+        }
+    }
 
-	static FName ModuleName;
+    static FName ModuleName;
 
-	static FImGuiModuleLoader Instance;
+    static FImGuiModuleLoader Instance;
 };
 
 FName FImGuiModuleLoader::ModuleName = "ImGui";
@@ -264,8 +264,8 @@ FImGuiModuleLoader FImGuiModuleLoader::Instance;
 
 bool FImGuiTextureHandle::HasValidEntry() const
 {
-	const TextureIndex Index = ImGuiInterops::ToTextureIndex(TextureId);
-	return Index != INDEX_NONE && ImGuiModuleManager && ImGuiModuleManager->GetTextureManager().GetTextureName(Index) == Name;
+    const TextureIndex Index = ImGuiInterops::ToTextureIndex(TextureId);
+    return Index != INDEX_NONE && ImGuiModuleManager && ImGuiModuleManager->GetTextureManager().GetTextureName(Index) == Name;
 }
 
 //@Begin KLMod
@@ -281,7 +281,7 @@ void FUnrealImGuiModule::Init()
     // to the active one.
 
 #if WITH_EDITOR
-    ImGuiContextHandle       = &ImGuiImplementation::GetContextHandle();
+    ImGuiContextHandle = &ImGuiImplementation::GetContextHandle();
     DelegatesContainerHandle = &FImGuiDelegatesContainer::GetHandle();
 #endif
 
@@ -303,7 +303,7 @@ void FUnrealImGuiModule::Shutdown()
 {
     // In editor store data that we want to move to hot-reloaded module.
 #if WITH_EDITOR
-    static bool                   bMoveProperties  = true;
+    static bool                   bMoveProperties = true;
     static FImGuiModuleProperties PropertiesToMove = ImGuiModuleManager->GetProperties();
 #endif
 
@@ -331,31 +331,31 @@ void FUnrealImGuiModule::Shutdown()
     // or move data to a new module.
 
     FModuleManager::Get().OnModulesChanged().AddLambda([this](FName Name, EModuleChangeReason Reason)
-                                                       {
-		if (Reason == EModuleChangeReason::ModuleLoaded && Name == "ImGui")
-		{
-			FUnrealImGuiModule& LoadedModule = FUnrealImGuiModule::Get();
-			if (&LoadedModule != this)
-			{
-				// Statically bound functions can be bound to the obsolete module, so we need to manually redirect.
+        {
+            if (Reason == EModuleChangeReason::ModuleLoaded && Name == "UnrealImGui")
+            {
+                FUnrealImGuiModule& LoadedModule = FUnrealImGuiModule::Get();
+                if (&LoadedModule != this)
+                {
+                    // Statically bound functions can be bound to the obsolete module, so we need to manually redirect.
 
-				if (LoadedModule.ImGuiContextHandle)
-				{
-					ImGuiImplementation::SetParentContextHandle(*LoadedModule.ImGuiContextHandle);
-				}
+                    if (LoadedModule.ImGuiContextHandle)
+                    {
+                        ImGuiImplementation::SetParentContextHandle(*LoadedModule.ImGuiContextHandle);
+                    }
 
-				if (LoadedModule.DelegatesContainerHandle)
-				{
-					FImGuiDelegatesContainer::MoveContainer(*LoadedModule.DelegatesContainerHandle);
-				}
+                    if (LoadedModule.DelegatesContainerHandle)
+                    {
+                        FImGuiDelegatesContainer::MoveContainer(*LoadedModule.DelegatesContainerHandle);
+                    }
 
-				if (bMoveProperties)
-				{
-					bMoveProperties = false;
-					LoadedModule.SetProperties(PropertiesToMove);
-				}
-			}
-		} });
+                    if (bMoveProperties)
+                    {
+                        bMoveProperties = false;
+                        LoadedModule.SetProperties(PropertiesToMove);
+                    }
+                }
+            } });
 #endif  // WITH_EDITOR
 }
 
@@ -371,4 +371,4 @@ FImGuiModuleManager& FUnrealImGuiModule::GetImguiModuleManager() const
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FUnrealImGuiModule, ImGui)
+IMPLEMENT_MODULE(FUnrealImGuiModule, UnrealImGui)
