@@ -34,5 +34,5 @@ void FKLDebugImGuiEditorInputManager::OnEnableImGui()
         return;
     }
 
-    ImGuiEngineSubsystem->ToogleImGuiSystemState();
+   // ImGuiEngineSubsystem->ToogleImGuiSystemState();
 }

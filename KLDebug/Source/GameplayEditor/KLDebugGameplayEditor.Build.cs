@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
-public class KLDebugGameplay : ModuleRules
+public class KLDebugGameplayEditor : ModuleRules
 {
-    public KLDebugGameplay(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugGameplayEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -18,18 +18,17 @@ public class KLDebugGameplay : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugImGui",
+                "KLDebugGameplay",
                 "KLDebugUtils",
 
                 //engine
-                "ApplicationCore",
-                "DeveloperSettings",
                 "Engine",
                 "EnhancedInput",
                 "InputCore",
-                "Slate",
+                "InputEditor",
+                "UnrealEd"
             }
-            );
+        );
 
 
         PrivateDependencyModuleNames.AddRange(

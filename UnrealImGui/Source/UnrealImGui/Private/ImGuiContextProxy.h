@@ -132,6 +132,9 @@ private:
 //@End KLMod
 
 //@Begin KLMod: added world
+public:
+    void UpdateWorld(const UWorld& _World);
+
 private:
     TWeakObjectPtr<const UWorld> mWorld;
 

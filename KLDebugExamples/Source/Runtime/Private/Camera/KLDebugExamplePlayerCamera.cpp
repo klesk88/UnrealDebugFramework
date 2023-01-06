@@ -1,9 +1,9 @@
 #include "Camera/KLDebugExamplePlayerCamera.h"
 
-//KLDebugGameplay module
+// KLDebugGameplay module
 #include "Gameplay/Public/Input/KLDebugGameplayInputHelpers.h"
 
-//engine
+// engine
 #include "Components/InputComponent.h"
 
 #if WITH_KL_DEBUGGER
@@ -15,6 +15,6 @@ void AKLDebugExamplePlayerCamera::SetupInputComponent()
     Super::SetupInputComponent();
 
 #if WITH_KL_DEBUGGER
-    KL::Debug::Gameplay::Input::Helpers::BindMainInputsToComponent(*InputComponent);
+    KL::Debug::Gameplay::Input::Helpers::BindMainInputsToComponent(*this, *InputComponent);
 #endif
 }

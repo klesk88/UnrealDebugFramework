@@ -20,6 +20,7 @@ public class KLDebugImGuiEditor : ModuleRules
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
                 "KLDebugImGui",
+                "KLDebugGameplay",
                 "KLUnrealImGui",
                 "NetImGuiThirdParty",
                 "UnrealImGui",
@@ -39,7 +40,7 @@ public class KLDebugImGuiEditor : ModuleRules
                 "CoreUObject",
                 "Slate",
                 "SlateCore",
-				"UnrealEd"
+                "UnrealEd"
             }
         );
     }

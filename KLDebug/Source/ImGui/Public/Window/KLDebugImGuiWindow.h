@@ -3,6 +3,7 @@
 // engine
 #include "CoreMinimal.h"
 #include "Templates/UnrealTemplate.h"
+#include "UObject/Class.h"
 
 #include "KLDebugImGuiWindow.generated.h"
 
@@ -25,7 +26,7 @@ protected:
     virtual void DrawImGuiBar() const;
     virtual void DrawImGuiBottomBar(const UWorld& _World) const;
 
-    void DrawImGuiEngine() const; 
+    void DrawImGuiEngine() const;
 
 private:
     bool mDrawBottomBar = true;
