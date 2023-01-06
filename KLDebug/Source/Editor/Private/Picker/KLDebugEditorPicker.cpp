@@ -1,21 +1,21 @@
-#include "Picker/KLDebugImGuiEditorPicker.h"
+#include "Picker/KLDebugEditorPicker.h"
 
-//KLDebugImGui module
+// KLDebugImGui module
 #include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
-//KLUnrealImGui module
+// KLUnrealImGui module
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 
-//engine
+// engine
 #include "Engine/Selection.h"
 #include "UObject/Object.h"
 
-void FKLDebugImGuiEditorPicker::Init()
+void FKLDebugEditorPicker::Init()
 {
     FKLUnrealImGuiModule& ImGuiModule = FKLUnrealImGuiModule::Get();
-    mOnImGuiStateChangeHandle = ImGuiModule.BindToEnableStateChange(FOnNetImguiEnableStateChange::FDelegate::CreateRaw(this, &FKLDebugImGuiEditorPicker::OnImGuiEnable));
+    mOnImGuiStateChangeHandle         = ImGuiModule.BindToEnableStateChange(FOnNetImguiEnableStateChange::FDelegate::CreateRaw(this, &FKLDebugEditorPicker::OnImGuiEnable));
 }
 
-void FKLDebugImGuiEditorPicker::Shutdown()
+void FKLDebugEditorPicker::Shutdown()
 {
     FKLUnrealImGuiModule* ImGuiModule = FKLUnrealImGuiModule::TryGet();
     if (ImGuiModule && mOnImGuiStateChangeHandle.IsValid())
@@ -26,7 +26,7 @@ void FKLDebugImGuiEditorPicker::Shutdown()
     Clear();
 }
 
-void FKLDebugImGuiEditorPicker::Clear()
+void FKLDebugEditorPicker::Clear()
 {
     if (mOnSelectionHandle.IsValid())
     {
@@ -35,11 +35,11 @@ void FKLDebugImGuiEditorPicker::Clear()
     }
 }
 
-void FKLDebugImGuiEditorPicker::OnImGuiEnable(const bool _IsEnable)
+void FKLDebugEditorPicker::OnImGuiEnable(const bool _IsEnable)
 {
     if (_IsEnable)
     {
-        mOnSelectionHandle = USelection::SelectObjectEvent.AddRaw(this, &FKLDebugImGuiEditorPicker::OnSelection);
+        mOnSelectionHandle = USelection::SelectObjectEvent.AddRaw(this, &FKLDebugEditorPicker::OnSelection);
     }
     else
     {
@@ -47,7 +47,7 @@ void FKLDebugImGuiEditorPicker::OnImGuiEnable(const bool _IsEnable)
     }
 }
 
-void FKLDebugImGuiEditorPicker::OnSelection(UObject* _Object) const
+void FKLDebugEditorPicker::OnSelection(UObject* _Object) const
 {
     if (!_Object)
     {

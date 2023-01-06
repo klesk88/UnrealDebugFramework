@@ -3,21 +3,15 @@
 // engine
 #include "Components/InputComponent.h"
 #include "CoreMinimal.h"
-#include "Subsystems/EngineSubsystem.h"
 #include "UObject/ObjectPtr.h"
-
-#include "KLDebugGameplayEditorEngineSubsystem.generated.h"
 
 class UEnhancedInputEditorSubsystem;
 
-UCLASS(Transient)
-class KLDEBUGGAMEPLAYEDITOR_API UKLDebugGameplayEditorEngineSubsystem final : public UEngineSubsystem
+class KLDEBUGEDITOR_API FKLDebugEditorInputManager
 {
-    GENERATED_BODY()
-
 public:
-    void Initialize(FSubsystemCollectionBase& _Collection) final;
-    void Deinitialize() final;
+    void Init();
+    void Shutdown();
 
 private:
     void RegisterInputComponent() const;
@@ -26,6 +20,5 @@ private:
     UE_NODISCARD UEnhancedInputEditorSubsystem* GetInputEditorSubsystem() const;
 
 private:
-    UPROPERTY(Transient)
     TObjectPtr<UInputComponent> mEditorInputComponent;
 };

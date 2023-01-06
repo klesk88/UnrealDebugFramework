@@ -7,7 +7,7 @@
 
 class UObject;
 
-class KLDEBUGIMGUIEDITOR_API FKLDebugImGuiEditorPicker final : public FNoncopyable
+class KLDEBUGEDITOR_API FKLDebugEditorPicker final : public FNoncopyable
 {
 public:
     void Init();

@@ -45,14 +45,9 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "KLDebugGameplayEditor",
+      "Name": "KLDebugEditor",
       "Type": "Editor",
       "LoadingPhase": "PostEngineInit"
-    },
-    {
-      "Name": "KLDebugImGuiEditor",
-      "Type": "Editor",
-      "LoadingPhase": "Default"
     }
   ],
   "Plugins": [

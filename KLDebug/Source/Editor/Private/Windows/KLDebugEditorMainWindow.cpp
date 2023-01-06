@@ -1,4 +1,4 @@
-#include "Windows/KLDebugImGuiEditorMainWindow.h"
+#include "Windows/KLDebugEditorMainWindow.h"
 
 #include "Examples/NetImguiExample.h"
 
@@ -8,10 +8,10 @@
 #include "ImPlotThirdParty/Public/Library/implot.h"
 // KLImGui module
 #include "ImGui/Public/Window/KLDebugImGuiWindowDelegates.h"
-//NetImGuiThirdParty module
+// NetImGuiThirdParty module
 #include "NetImGuiThirdParty/Public/NetImGuiThirdPartyModule.h"
 
-//engine
+// engine
 #include "Editor/EditorEngine.h"
 #include "Engine/World.h"
 #include "LevelEditorViewport.h"
@@ -24,17 +24,17 @@ namespace KL::Debug::ImGuiEditor::MainWindow
     static bool ShowImGuiExample    = false;
     static bool ShowNetImGuiExample = false;
     static bool ShowImPlotExample   = false;
-}
+}  // namespace KL::Debug::ImGuiEditor::MainWindow
 
 /////////////////////////////////////////////////////////////////////////////////
 
-void FKLDebugImGuiEditorMainWindow::Init()
+void FKLDebugEditorMainWindow::Init()
 {
-    mDrawBottomBarHandle = KL::Debug::ImGui::MainWindow::Delegate::OnDrawBottomBarDelegate.AddRaw(this, &FKLDebugImGuiEditorMainWindow::OnDrawBottomBar);
-    mDrawTopBarHandle    = KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.AddRaw(this, &FKLDebugImGuiEditorMainWindow::OnDrawTopBar);
+    mDrawBottomBarHandle = KL::Debug::ImGui::MainWindow::Delegate::OnDrawBottomBarDelegate.AddRaw(this, &FKLDebugEditorMainWindow::OnDrawBottomBar);
+    mDrawTopBarHandle    = KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.AddRaw(this, &FKLDebugEditorMainWindow::OnDrawTopBar);
 }
 
-void FKLDebugImGuiEditorMainWindow::Shutdown()
+void FKLDebugEditorMainWindow::Shutdown()
 {
     if (mDrawBottomBarHandle.IsValid())
     {
@@ -49,14 +49,14 @@ void FKLDebugImGuiEditorMainWindow::Shutdown()
     }
 }
 
-void FKLDebugImGuiEditorMainWindow::OnDrawTopBar(const UWorld& _World) const
+void FKLDebugEditorMainWindow::OnDrawTopBar(const UWorld& _World) const
 {
     DrawExamplesMenu();
 
     DrawExamples();
 }
 
-void FKLDebugImGuiEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
+void FKLDebugEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
 {
     UUnrealEditorSubsystem* UnrealEditorSubsystem = GEditor->GetEditorSubsystem<UUnrealEditorSubsystem>();
     if (!UnrealEditorSubsystem)
@@ -69,7 +69,7 @@ void FKLDebugImGuiEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
         return;
     }
 
-    FVector Pos;
+    FVector  Pos;
     FRotator Rotator;
     UnrealEditorSubsystem->GetLevelViewportCameraInfo(Pos, Rotator);
 
@@ -77,7 +77,7 @@ void FKLDebugImGuiEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
     ImGui::Text(" Camera: [%ls]", *Pos.ToString());
 }
 
-bool FKLDebugImGuiEditorMainWindow::IsLevelEditorCurrentlySelected(const UWorld& _World) const
+bool FKLDebugEditorMainWindow::IsLevelEditorCurrentlySelected(const UWorld& _World) const
 {
     for (const FLevelEditorViewportClient* LevelVC : GEditor->GetLevelViewportClients())
     {
@@ -92,7 +92,7 @@ bool FKLDebugImGuiEditorMainWindow::IsLevelEditorCurrentlySelected(const UWorld&
     return false;
 }
 
-void FKLDebugImGuiEditorMainWindow::DrawExamplesMenu() const
+void FKLDebugEditorMainWindow::DrawExamplesMenu() const
 {
     if (!ImGui::BeginMenu("Examples"))
     {
@@ -106,7 +106,7 @@ void FKLDebugImGuiEditorMainWindow::DrawExamplesMenu() const
     ImGui::EndMenu();
 }
 
-void FKLDebugImGuiEditorMainWindow::DrawExamples() const
+void FKLDebugEditorMainWindow::DrawExamples() const
 {
     if (KL::Debug::ImGuiEditor::MainWindow::ShowImGuiExample)
     {

@@ -1,4 +1,4 @@
-#include "Subsystem/KLDebugGameplayEditorEngineSubsystem.h"
+#include "Input/KLDebugEditorInputManager.h"
 
 // KLDebugGameplay module
 #include "Gameplay/Public/Input/KLDebugGameplayInputHelpers.h"
@@ -11,27 +11,51 @@
 #include "EnhancedInputEditorSubsystem.h"
 #include "GameFramework/InputSettings.h"
 
-void UKLDebugGameplayEditorEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collection)
+// #include "Commands/KLDebugEditorCommands.h"
+//  KLImGui module
+//  #include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+//  #include "Framework/Commands/UIAction.h"
+//  #include "Framework/Commands/UICommandList.h"
+//  #include "Kismet2/DebuggerCommands.h"
+
+void FKLDebugEditorInputManager::Init()
 {
+    // FKLDebugEditorInputManager::Register();
+
+    // CommandList = FPlayWorldCommands::GlobalPlayWorldActions;
+    // CommandList->MapAction(FKLDebugEditorInputManager::Get().GetEnableImGuiCmd(),
+    //                        FExecuteAction::CreateRaw(this, &FKLDebugEditorInputManager::OnEnableImGui));
+
     const UClass* InputClassToSpawn = UEnhancedInputComponent::StaticClass();
     if (UInputSettings::GetDefaultInputComponentClass() && UInputSettings::GetDefaultInputComponentClass()->IsChildOf(UEnhancedInputComponent::StaticClass()))
     {
         InputClassToSpawn = UInputSettings::GetDefaultInputComponentClass();
     }
 
-    mEditorInputComponent = NewObject<UInputComponent>(this, InputClassToSpawn, TEXT("KLDebugGameplayEditor"), RF_Transient);
+    mEditorInputComponent = NewObject<UInputComponent>(GetTransientPackage(), InputClassToSpawn, TEXT("KLDebugGameplayEditor"), RF_Transient);
+    if (mEditorInputComponent)
+    {
+        mEditorInputComponent->AddToRoot();
+    }
 
     RegisterInputComponent();
 }
 
-void UKLDebugGameplayEditorEngineSubsystem::Deinitialize()
+void FKLDebugEditorInputManager::Shutdown()
 {
+    // FKLDebugGameplayEditorCommands::Unregister();
+
     UnregisterInputComponent();
+
+    if (mEditorInputComponent)
+    {
+        mEditorInputComponent->RemoveFromRoot();
+    }
 
     mEditorInputComponent = nullptr;
 }
 
-void UKLDebugGameplayEditorEngineSubsystem::RegisterInputComponent() const
+void FKLDebugEditorInputManager::RegisterInputComponent() const
 {
     ensureMsgf(mEditorInputComponent, TEXT("this must still be valid at this point"));
 
@@ -49,7 +73,7 @@ void UKLDebugGameplayEditorEngineSubsystem::RegisterInputComponent() const
     }
 }
 
-void UKLDebugGameplayEditorEngineSubsystem::UnregisterInputComponent() const
+void FKLDebugEditorInputManager::UnregisterInputComponent() const
 {
     ensureMsgf(mEditorInputComponent, TEXT("this must still be valid at this point"));
 
@@ -63,7 +87,7 @@ void UKLDebugGameplayEditorEngineSubsystem::UnregisterInputComponent() const
     }
 }
 
-UEnhancedInputEditorSubsystem* UKLDebugGameplayEditorEngineSubsystem::GetInputEditorSubsystem() const
+UEnhancedInputEditorSubsystem* FKLDebugEditorInputManager::GetInputEditorSubsystem() const
 {
     if (GEditor)
     {
@@ -72,3 +96,14 @@ UEnhancedInputEditorSubsystem* UKLDebugGameplayEditorEngineSubsystem::GetInputEd
 
     return nullptr;
 }
+
+// void FKLDebugEditorInputManager::OnEnableImGui()
+//{
+//     UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+//     if (!ImGuiEngineSubsystem)
+//     {
+//         return;
+//     }
+//
+//     ImGuiEngineSubsystem->ToogleImGuiSystemState();
+// }

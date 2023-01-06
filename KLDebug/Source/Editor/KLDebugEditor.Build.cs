@@ -1,17 +1,18 @@
+using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
-public class KLDebugImGuiEditor : ModuleRules
+public class KLDebugEditor : ModuleRules
 {
-    public KLDebugImGuiEditor(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PrivateIncludePaths.AddRange(
-          new string[]
-          {
+            new string[]
+            {
                 Path.Combine(ModuleDirectory, "Private"),
-          }
+            }
         );
 
         PublicDependencyModuleNames.AddRange(
@@ -21,15 +22,16 @@ public class KLDebugImGuiEditor : ModuleRules
                 "ImPlotThirdParty",
                 "KLDebugImGui",
                 "KLDebugGameplay",
+                "KLDebugUtils",
                 "KLUnrealImGui",
                 "NetImGuiThirdParty",
                 "UnrealImGui",
-				
+
                 //engine
-                "DeveloperSettings",
                 "Engine",
-                "GameplayTags",
-                "InputCore"
+                "EnhancedInput",
+                "InputCore",
+                "InputEditor"
             }
         );
 
@@ -42,6 +44,6 @@ public class KLDebugImGuiEditor : ModuleRules
                 "SlateCore",
                 "UnrealEd"
             }
-        );
+         );
     }
 }
