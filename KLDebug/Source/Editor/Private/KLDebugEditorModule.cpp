@@ -19,10 +19,12 @@ void KLDebugEditorModule::StartupModule()
     mInputManager.Init();
     mMainImGuiWindow.Init();
     mEditorPicker.Init();
+    mMenuExtender.Init();
 }
 
 void KLDebugEditorModule::ShutdownModule()
 {
+    mMenuExtender.Shutdown();
     mMainImGuiWindow.Shutdown();
     mInputManager.Shutdown();
     mEditorPicker.Shutdown();

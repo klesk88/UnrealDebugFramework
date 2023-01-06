@@ -4,7 +4,7 @@
 #include "Input/KLDebugImGuiInputManager.h"
 #include "Window/KLDebugImGuiWindow.h"
 
-//utils module
+// utils module
 #include "Utils/Public/Picker/KLDebugUtilsPicker.h"
 
 // engine
@@ -32,13 +32,14 @@ public:
     void Deinitialize() final;
 
     UE_NODISCARD static UKLDebugImGuiEngineSubsystem* Get();
-    UE_NODISCARD const FKLDebugUtilsPicker& GetPicker() const;
-    UE_NODISCARD FKLDebugUtilsPicker& GetPickerMutable();
+    UE_NODISCARD const FKLDebugUtilsPicker&           GetPicker() const;
+    UE_NODISCARD FKLDebugUtilsPicker&                 GetPickerMutable();
 
-    void ToogleImGuiSystemState();
+    void              ToogleImGuiSystemState();
+    UE_NODISCARD bool IsImGuiSystemEnabled() const;
 
-    //this can be called externally when an object is selected. For example from the editor module of the imgui
-    //to support editor selection
+    // this can be called externally when an object is selected. For example from the editor module of the imgui
+    // to support editor selection
     void OnObjectSelect(UObject& _Object);
 
 private:
@@ -54,7 +55,7 @@ private:
     FKLDebugUtilsPicker           mPicker;
     FKLDebugImGuiInputManager     mInputManager;
     FInstancedStruct              mImGuiWindow;
- };
+};
 
 inline const FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPicker() const
 {
@@ -69,4 +70,9 @@ inline FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPickerMutable()
 inline void UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState()
 {
     mInputManager.ToogleImGuiSystem();
+}
+
+inline bool UKLDebugImGuiEngineSubsystem::IsImGuiSystemEnabled() const
+{
+    return mInputManager.IsEnable();
 }

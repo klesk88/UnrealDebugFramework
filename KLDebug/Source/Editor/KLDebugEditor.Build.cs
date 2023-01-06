@@ -31,7 +31,9 @@ public class KLDebugEditor : ModuleRules
                 "Engine",
                 "EnhancedInput",
                 "InputCore",
-                "InputEditor"
+                "InputEditor",
+                "LevelEditor",
+                "Projects"
             }
         );
 

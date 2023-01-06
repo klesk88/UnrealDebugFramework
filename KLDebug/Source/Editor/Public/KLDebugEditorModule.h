@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Extender/KLDebugEditorMenuExtender.h"
 #include "Input/KLDebugEditorInputManager.h"
 #include "Picker/KLDebugEditorPicker.h"
 #include "Windows/KLDebugEditorMainWindow.h"
@@ -23,4 +24,5 @@ private:
     FKLDebugEditorInputManager mInputManager;
     FKLDebugEditorMainWindow   mMainImGuiWindow;
     FKLDebugEditorPicker       mEditorPicker;
+    FKLDebugEditorMenuExtender mMenuExtender;
 };
