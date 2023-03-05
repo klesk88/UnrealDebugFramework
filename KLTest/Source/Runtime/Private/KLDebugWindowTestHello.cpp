@@ -2,22 +2,39 @@
 
 #if WITH_KL_DEBUGGER
 
-// engine
-#include "NativeGameplayTags.h"
+#include "ImGui/Public/Filter/Implementations/KLDebugImGuiFilterAI.h"
+#include "ImGui/Public/Filter/Implementations/KLDebugImGuiFilterPlayer.h"
 
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TESTDebugGf, "KL.Debug.ImGui.AI.Testf");
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TESTDebugSf, "KL.Debug.ImGui.Physics.TestfSecond");
-
-const FGameplayTag& FKLDebugWindowTest12::GetTag() const
+const FName& FKLDebugWindowTest12::GetImGuiPath() const
 {
-    static FGameplayTag TAg = TESTDebugGf.GetTag();
-    return TAg;
+    static const FName WindowName(TEXT("WindowTest12"));
+    return WindowName;
 }
 
-const FGameplayTag& FKLDebugWindowTest34::GetTag() const
+void FKLDebugWindowTest12::GetFilterPath(TArray<FName>& _OutFilters) const
 {
-    static FGameplayTag TAg = TESTDebugSf.GetTag();
-    return TAg;
+    _OutFilters.Emplace(KLDebugImGuiFilterAI::StaticGetFilterID());
+}
+
+bool FKLDebugWindowTest12::DoesSupportObject(const UObject& _Object) const
+{
+    return true;
+}
+
+const FName& FKLDebugWindowTest34::GetImGuiPath() const
+{
+    static const FName WindowName(TEXT("WindowTest34"));
+    return WindowName;
+}
+
+void FKLDebugWindowTest34::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    _OutFilters.Emplace(KLDebugImGuiFilterPlayer::StaticGetFilterID());
+}
+
+bool FKLDebugWindowTest34::DoesSupportObject(const UObject& _Object) const
+{
+    return true;
 }
 
 #endif

@@ -2,58 +2,34 @@
 
 #if WITH_KL_DEBUGGER
 
-#include "ImGui/Public/Feature/Interface/KLDebugImGuiFeatureInterface.h"
+#include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 
 // engine
 #include "Containers/UnrealString.h"
 #include "CoreMinimal.h"
 
-class FKLDebugWindowTest12 final : public IKLDebugImGuiFeatureInterface
+class UObject;
+
+class FKLDebugWindowTest12 final : public IKLDebugImGuiFeatureInterface_SelectableObject
 {
 public:
-    void Initialize()
-    {
-        TestVAlue = true;
-    }
-
-    void Update()
-    {
-    }
-
-    
-    const FGameplayTag& GetTag() const;
+    const FName& GetImGuiPath() const final;
+    void         GetFilterPath(TArray<FName>& _OutFilters) const final;
+    bool         DoesSupportObject(const UObject& _Object) const final;
 
 private:
     bool TestVAlue = false;
 };
 
-class FKLDebugWindowTest34 final : public IKLDebugImGuiFeatureInterface
+class FKLDebugWindowTest34 final : public IKLDebugImGuiFeatureInterface_SelectableObject
 {
 public:
-    FKLDebugWindowTest34()
-    {
-        mString = TEXT("hello");
-    }
-
-    void Initialize()
-    {
-        mString = TEXT("hola");
-    }
-
-    void Update()
-    {
-    }
-
-    const FGameplayTag& GetTag() const;
-
-private:
-    float mTest = 0.f;
-    FString mString;
-
+    const FName& GetImGuiPath() const final;
+    void         GetFilterPath(TArray<FName>& _OutFilters) const final;
+    bool         DoesSupportObject(const UObject& _Object) const final;
 };
 
-
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest34, EFeatureEntryType::Default)
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12, EFeatureEntryType::Default)
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest34)
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12)
 
 #endif

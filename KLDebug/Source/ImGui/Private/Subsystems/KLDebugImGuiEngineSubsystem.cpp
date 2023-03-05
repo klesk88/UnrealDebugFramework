@@ -1,12 +1,15 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 #include "Config/KLDebugImGuiConfig.h"
+#include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
 // KLUnrealImGui module
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 // UnrealImGui module
 #include "UnrealImGui/Public/ImGuiDelegates.h"
 #include "UnrealImGui/Public/UnrealImGuiModule.h"
+// ImGuiThirdParty module
+#include "ImGuiThirdParty/Public/Library/imgui.h"
 
 // engine
 #include "Engine/Engine.h"
@@ -29,20 +32,41 @@ UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
     return nullptr;
 }
 
-void UKLDebugImGuiEngineSubsystem::OnObjectSelect(UObject& _Object)
+void UKLDebugImGuiEngineSubsystem::AddUpdatableSystem(IKLDebugImGuiSubsystemUpdatable& _System)
 {
-    if (!mInputManager.IsEnable())
+#if DO_ENSURE
+    for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& System : mUpdatableSystems)
     {
-        return;
+        if (System.Get() == &_System)
+        {
+            ensureMsgf(false, TEXT("system already present"));
+            break;
+        }
+    }
+#endif
+
+    mUpdatableSystems.Emplace(&_System);
+}
+
+void UKLDebugImGuiEngineSubsystem::RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System)
+{
+    for (int32 i = 0; i < mUpdatableSystems.Num(); ++i)
+    {
+        if (mUpdatableSystems[i].Get() == &_System)
+        {
+            mUpdatableSystems.RemoveAtSwap(i);
+            return;
+        }
     }
 
+    ensureMsgf(false, TEXT("system not found"));
 }
 
 void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collection)
 {
     InitFromConfig();
 
-    mFeaturesContainer.Initialize();
+    mFeatureContainersManger.Initialize();
     RegisterCallbacks();
     mInputManager.Init();
 
@@ -59,7 +83,7 @@ void UKLDebugImGuiEngineSubsystem::InitFromConfig()
 
 void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
 {
-    FKLUnrealImGuiModule& KLUnrealImgui = FKLUnrealImGuiModule::Get();
+    FKLUnrealImGuiModule& KLUnrealImgui               = FKLUnrealImGuiModule::Get();
     KL::Debug::ImGui::EngineSubsystem::mImGuiDelegate = KLUnrealImgui.AddMultiContextImGuiDelegate(FImGuiDelegate::CreateUObject(this, &UKLDebugImGuiEngineSubsystem::Update));
 }
 
@@ -70,7 +94,7 @@ void UKLDebugImGuiEngineSubsystem::Deinitialize()
 
     mInputManager.Shutdown();
     UnreagisterCallbacks();
-    mFeaturesContainer.Shutdown();
+    mFeatureContainersManger.Shutdown();
 }
 
 void UKLDebugImGuiEngineSubsystem::UnreagisterCallbacks()
@@ -91,4 +115,19 @@ void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
 
     FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
     ImGuiWindow.Update(_World);
+
+    UpdateSystems(_World);
+}
+
+void UKLDebugImGuiEngineSubsystem::UpdateSystems(const UWorld& _World)
+{
+    for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mUpdatableSystems)
+    {
+        if (!UpdatableSystem.IsValid())
+        {
+            continue;
+        }
+
+        UpdatableSystem->Update(_World, mFeatureContainersManger);
+    }
 }

@@ -1,41 +1,41 @@
 #pragma once
 
-#include "Feature/Interface/KLDebugImGuiFeatureInterface.h"
+#include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
-//engine
+// engine
 #include "GameplayTagContainer.h"
 #include "Templates/UnrealTypeTraits.h"
 
-class IKLDebugImGuiFeatureInterface;
+class IKLDebugImGuiFeatureInterfaceBase;
 
-template<typename WindowInterfaceType>
+template<typename FeatureInterfaceType>
 class TKLDebugImGuiFeatureManagerEntry final : public FKLDebugImGuiFeatureManagerEntryBase
 {
 public:
-    explicit TKLDebugImGuiFeatureManagerEntry(const EFeatureEntryType _EntryType);
+    TKLDebugImGuiFeatureManagerEntry();
 
-    //FKLDebugWindowManagerEntryBase
-    UE_NODISCARD IKLDebugImGuiFeatureInterface& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD size_t GetSize() const final;
-    //FKLDebugWindowManagerEntryBase
+    // FKLDebugWindowManagerEntryBase
+    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
+    UE_NODISCARD size_t                             GetSize() const final;
+    // FKLDebugWindowManagerEntryBase
 };
 
-template<typename WindowInterfaceType>
-TKLDebugImGuiFeatureManagerEntry<WindowInterfaceType>::TKLDebugImGuiFeatureManagerEntry(const EFeatureEntryType _EntryType)
-    : FKLDebugImGuiFeatureManagerEntryBase(sizeof(WindowInterfaceType), _EntryType)
+template<typename FeatureInterfaceType>
+TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureManagerEntry()
+    : FKLDebugImGuiFeatureManagerEntryBase(sizeof(FeatureInterfaceType))
 {
-    static_assert(TIsDerivedFrom<WindowInterfaceType, IKLDebugImGuiFeatureInterface>::IsDerived, "Class passed must derived from IKLDebugWindow");
+    static_assert(TIsDerivedFrom<FeatureInterfaceType, IKLDebugImGuiFeatureInterfaceBase>::IsDerived, "Class passed must derived from IKLDebugWindow");
 }
 
-template<typename WindowInterfaceType>
-IKLDebugImGuiFeatureInterface& TKLDebugImGuiFeatureManagerEntry<WindowInterfaceType>::AllocateInPlace(void* _PoolStartAddress) const
+template<typename FeatureInterfaceType>
+IKLDebugImGuiFeatureInterfaceBase& TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::AllocateInPlace(void* _PoolStartAddress) const
 {
-    return *reinterpret_cast<IKLDebugImGuiFeatureInterface*>(new (_PoolStartAddress) WindowInterfaceType());
+    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (_PoolStartAddress) FeatureInterfaceType());
 }
 
-template<typename WindowInterfaceType>
-size_t TKLDebugImGuiFeatureManagerEntry<WindowInterfaceType>::GetSize() const
+template<typename FeatureInterfaceType>
+size_t TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::GetSize() const
 {
-    return sizeof(WindowInterfaceType);
+    return sizeof(FeatureInterfaceType);
 }

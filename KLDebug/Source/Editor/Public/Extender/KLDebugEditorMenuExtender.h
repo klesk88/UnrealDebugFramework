@@ -11,6 +11,9 @@
 class FMenuBuilder;
 class FToolBarBuilder;
 
+// TODO: should we move all this in a separate editor module without any dependency from mine (so it can be included by this and the imgui one) and
+// have a callback system to populate the entries?
+
 /*
  * based on code from github project of nakdeyes/UnrealImGuiTools
  * this allow us to create a small button in editor after the play button to setup settings of the debug system

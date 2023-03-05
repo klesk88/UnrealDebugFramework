@@ -1,7 +1,8 @@
 #include "Picker/KLDebugEditorPicker.h"
 
 // KLDebugImGui module
-#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+#include "ImGui/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+
 // KLUnrealImGui module
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 
@@ -54,11 +55,9 @@ void FKLDebugEditorPicker::OnSelection(UObject* _Object) const
         return;
     }
 
-    UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
-    if (!ImGuiEngineSubsystem)
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = UKLDebugImGuiWorldSubsystem::TryGetMutable(*_Object);
+    if (ImGuiWorldSubsystem)
     {
-        return;
+        ImGuiWorldSubsystem->OnObjectSelected(*_Object);
     }
-
-    ImGuiEngineSubsystem->OnObjectSelect(*_Object);
 }
