@@ -8,7 +8,7 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "Misc/Optional.h"
 
-namespace KL::Debug::ImGuiVisualizer::Tree::Helpers
+namespace KL::Debug::ImGuiTreeBuilder::Helpers
 {
     namespace Private
     {
@@ -92,4 +92,4 @@ namespace KL::Debug::ImGuiVisualizer::Tree::Helpers
 
         Private::PreoderTraversalInternal(true, _TreeNodes, _KeepTraversingCbk, _NodeAlreadyVisitedCbk, _OperateOnNodeCbk, CloseParentLambda);
     }
-}  // namespace KL::Debug::ImGuiVisualizer::Tree::Helpers
+}  // namespace KL::Debug::ImGuiTreeBuilder::Helpers

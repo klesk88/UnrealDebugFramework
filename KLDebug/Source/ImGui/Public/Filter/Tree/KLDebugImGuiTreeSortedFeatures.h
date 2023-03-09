@@ -24,7 +24,7 @@ public:
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureOffset() const;
 
 private:
-    KL::Debug::ImGui::Features::Types::FeatureIndex              mOffset  = 0;
+    KL::Debug::ImGui::Features::Types::FeatureIndex       mOffset  = 0;
     const IKLDebugImGuiFeatureInterface_SelectableObject* mFeature = nullptr;
     TArray<FName>                                         mFilters;
     FName                                                 mFullFilter;

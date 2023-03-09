@@ -5,7 +5,7 @@
 // imgui module
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeaturesIterator.h"
-#include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeHelpers.h"
+#include "ImGui/Private/Helpers/KLDebugImGuiTreeBuilderHelpers.h"
 #include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
@@ -151,7 +151,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDe
         }
     };
 
-    KL::Debug::ImGuiVisualizer::Tree::Helpers::PreoderTraversal(TreeNodes, KeepTraversingTreeLambda, EvaluateNodeLambda);
+    KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversal(TreeNodes, KeepTraversingTreeLambda, EvaluateNodeLambda);
     return Success;
 }
 
@@ -204,7 +204,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
         }
     };
 
-    KL::Debug::ImGuiVisualizer::Tree::Helpers::PreoderTraversal(TreeNodes, KeepTraversingTreeLambda, EvaluateNodeLambda);
+    KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversal(TreeNodes, KeepTraversingTreeLambda, EvaluateNodeLambda);
     return Success;
 }
 
@@ -260,7 +260,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestImGuiPreorderTraversal(const 
         }
     };
 
-    KL::Debug::ImGuiVisualizer::Tree::Helpers::PreoderTraversalImGui(TreeNodes, KeepTraversingTreeLambda, EvaluateNodeLambda, EvaluateNodeLambda);
+    KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversalImGui(TreeNodes, KeepTraversingTreeLambda, EvaluateNodeLambda, EvaluateNodeLambda);
     return Success;
 }
 

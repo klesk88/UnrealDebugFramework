@@ -3,8 +3,8 @@
 #include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerStackData.h"
-#include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeHelpers.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
+#include "Helpers/KLDebugImGuiTreeBuilderHelpers.h"
 
 // ImGuiThirdParty module
 #include "ImGuiThirdParty/Public/Library/imgui.h"
@@ -60,7 +60,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree()
         }
     };
 
-    KL::Debug::ImGuiVisualizer::Tree::Helpers::PreoderTraversalImGui(mTreeNodes, KeepTraversingTreeLambda, NodeAlreadyVisistedLambda, EvaluateNodeLambda);
+    KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversalImGui(mTreeNodes, KeepTraversingTreeLambda, NodeAlreadyVisistedLambda, EvaluateNodeLambda);
 }
 
 void FKLDebugImGuiFeatureVisualizerTree::GatherAndSortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const
