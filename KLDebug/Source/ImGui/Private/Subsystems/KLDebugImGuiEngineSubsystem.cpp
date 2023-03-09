@@ -131,3 +131,27 @@ void UKLDebugImGuiEngineSubsystem::UpdateSystems(const UWorld& _World)
         UpdatableSystem->Update(_World, mFeatureContainersManger);
     }
 }
+
+void UKLDebugImGuiEngineSubsystem::DrawImGui()
+{
+    const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
+    if (!ImGui::Begin("DebugEditor", nullptr, WindowFlags))
+    {
+        return;
+    }
+
+    // if (ImGui::BeginTabBar("Engine", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    //{
+    //     FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
+    //     FKLDebugImGuiFeaturesIterator      Iterator        = EngineContainer.GetAllFeaturesIterator();
+    //     for (; Iterator; ++Iterator)
+    //     {
+    //         IKLDebugImGuiFeatureInterface_EngineSubsystem& EngineFeatureInterface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_EngineSubsystem>();
+    //         EngineFeatureInterface.Update();
+    //     }
+
+    //    ImGui::EndTabBar();
+    //}
+
+    ImGui::End();
+}

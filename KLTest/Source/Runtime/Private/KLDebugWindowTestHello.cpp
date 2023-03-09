@@ -5,6 +5,9 @@
 #include "ImGui/Public/Filter/Implementations/KLDebugImGuiFilterAI.h"
 #include "ImGui/Public/Filter/Implementations/KLDebugImGuiFilterPlayer.h"
 
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest34)
+KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12)
+
 const FName& FKLDebugWindowTest12::GetImGuiPath() const
 {
     static const FName WindowName(TEXT("WindowTest12"));

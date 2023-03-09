@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Feature/KLDebugFeatureTypes.h"
+#include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -12,10 +12,10 @@
 class FKLDebugImGuiFeatureContainerBase;
 class UObject;
 
-class KLDEBUGIMGUI_API FKLDebugFeatureVisualizer final : public FNoncopyable
+class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizer final : public FNoncopyable
 {
 public:
-    explicit FKLDebugFeatureVisualizer(UObject& _Object, TArray<KL::Debug::Features::Types::FeatureIndex>&& _FeaturesIndexes);
+    explicit FKLDebugImGuiFeatureVisualizer(UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     UE_NODISCARD bool operator==(const UObject& _Object) const;
 
     UE_NODISCARD bool IsValid() const;
@@ -24,6 +24,6 @@ public:
     void Render(FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const;
 
 private:
-    TArray<KL::Debug::Features::Types::FeatureIndex> mFeaturesIndexes;
-    TWeakObjectPtr<UObject>                          mObject;
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;
+    TWeakObjectPtr<UObject>                                 mObject;
 };

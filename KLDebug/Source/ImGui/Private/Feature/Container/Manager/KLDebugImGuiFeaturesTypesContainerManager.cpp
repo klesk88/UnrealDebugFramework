@@ -11,6 +11,10 @@
 // debug utils module
 #include "Utils/Public/KLDebugLog.h"
 
+// engine
+#include "Containers/UnrealString.h"
+#include "Math/NumericLimits.h"
+
 FKLDebugImGuiFeaturesTypesContainerManager::FKLDebugImGuiFeaturesTypesContainerManager()
 {
 }
@@ -79,12 +83,12 @@ void FKLDebugImGuiFeaturesTypesContainerManager::CreateContainers()
 
 void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
 {
-    TArray<uint32> ContainersOffset;
+    TArray<KL::Debug::ImGui::Features::Types::FeatureOffset> ContainersOffset;
     ContainersOffset.AddZeroed(mContainers.Num());
 
     const FKLDebugImGuiFeatureManager& FeatureManager = FKLDebugImGuiFeatureManager::Get();
 
-    TArray<uint8> TempAllocatedFeature;
+    TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> TempAllocatedFeature;
     TempAllocatedFeature.AddZeroed(FeatureManager.GetLargestEntrySize());
 
     for (const TUniquePtr<FKLDebugImGuiFeatureContainerBase>& FeatureContainer : mContainers)
@@ -94,11 +98,14 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
 
     FKLDebugImGuiFeatureManagerEntryBase* Entry = FeatureManager.GetStartEntry();
 
+    TArray<FString> ImGuiPathTokens;
+    ImGuiPathTokens.Reserve(20);
+
     while (Entry)
     {
-        FKLDebugImGuiFeatureContainerBase*       Container      = nullptr;
-        uint32*                                  OffsetIndex    = nullptr;
-        const IKLDebugImGuiFeatureInterfaceBase& TempWindowBase = Entry->AllocateInPlace(static_cast<void*>(&TempAllocatedFeature[0]));
+        FKLDebugImGuiFeatureContainerBase*                Container      = nullptr;
+        KL::Debug::ImGui::Features::Types::FeatureOffset* OffsetIndex    = nullptr;
+        const IKLDebugImGuiFeatureInterfaceBase&          TempWindowBase = Entry->AllocateInPlace(static_cast<void*>(&TempAllocatedFeature[0]));
 
         for (int32 i = 0; i < mContainers.Num(); ++i)
         {
@@ -113,7 +120,8 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
 
         check(Container != nullptr && OffsetIndex != nullptr);
 
-        Container->AllocateNewEntry(*Entry, *OffsetIndex);
+        Container->AllocateNewEntry(*Entry, *OffsetIndex, ImGuiPathTokens);
+        checkf(static_cast<uint64>((*OffsetIndex)) + static_cast<uint64>(Entry->GetSize()) < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureOffset>::Max(), TEXT("feature offset data type is not big enough"));
         (*OffsetIndex) += Entry->GetSize();
         Entry = Entry->GetNextEntry();
     }

@@ -54,6 +54,7 @@ private:
     void Update(const UWorld& _World);
 
     void UpdateSystems(const UWorld& _World);
+    void DrawImGui();
 
 private:
     FKLDebugImGuiFeaturesTypesContainerManager                 mFeatureContainersManger;

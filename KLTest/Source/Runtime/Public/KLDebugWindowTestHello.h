@@ -29,7 +29,4 @@ public:
     bool         DoesSupportObject(const UObject& _Object) const final;
 };
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest34)
-KL_DEBUG_CREATE_WINDOW(FKLDebugWindowTest12)
-
 #endif

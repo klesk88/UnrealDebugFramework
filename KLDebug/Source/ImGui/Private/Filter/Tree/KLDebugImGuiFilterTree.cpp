@@ -19,7 +19,7 @@ void FKLDebugImGuiFilterTree::Init(const int32 _FeaturesCount, FKLDebugImGuiFeat
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiFilterTree_Init);
 
-    checkf(_FeaturesCount < TNumericLimits<KL::Debug::Features::Types::FeatureIndex>::Max(), TEXT("too many features"));
+    checkf(_FeaturesCount < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("too many features"));
 
     GenerateFilters();
     if (mFiltersPool.IsEmpty())
@@ -35,7 +35,7 @@ void FKLDebugImGuiFilterTree::Init(const int32 _FeaturesCount, FKLDebugImGuiFeat
     GenerateTree(SortedFeatures);
 }
 
-void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
+void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
 {
     if (mTreeNodes.IsEmpty())
     {
@@ -44,7 +44,7 @@ void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Deb
     }
 
     TArray<const FKLDebugImGuiFilterTreeNode*> NodesStack;
-    NodesStack.Reserve(mFiltersOffset.Num());
+    NodesStack.Reserve(mTreeNodes.Num());
     NodesStack.Emplace(&mTreeNodes[0]);
 
     while (!NodesStack.IsEmpty())
@@ -137,7 +137,7 @@ void FKLDebugImGuiFilterTree::SortFeatures(FKLDebugImGuiFeaturesIterator& _Itera
     for (; _Iterator; ++_Iterator)
     {
         const IKLDebugImGuiFeatureInterface_SelectableObject& Feature  = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_SelectableObject>();
-        FKLDebugImGuiTreeSortedFeatures&                      NewEntry = _OutSortedFeatures.Emplace_GetRef(_Iterator.GetFeatureOffset(), Feature);
+        FKLDebugImGuiTreeSortedFeatures&                      NewEntry = _OutSortedFeatures.Emplace_GetRef(_Iterator.GetFeatureDataIndex(), Feature);
 
         FiltersNames.Reset();
         Feature.GetFilterPath(FiltersNames);
@@ -148,8 +148,9 @@ void FKLDebugImGuiFilterTree::SortFeatures(FKLDebugImGuiFeaturesIterator& _Itera
         NewEntry.SetFilters(FiltersNames, FullFilterPath);
     }
 
-    _OutSortedFeatures.Sort([](const FKLDebugImGuiTreeSortedFeatures& _Left, const FKLDebugImGuiTreeSortedFeatures& _Right)
-                            { return _Left.GetFullFilter().LexicalLess(_Right.GetFullFilter()); });
+    _OutSortedFeatures.Sort([](const FKLDebugImGuiTreeSortedFeatures& _Left, const FKLDebugImGuiTreeSortedFeatures& _Right) {
+        return _Left.GetFullFilter().LexicalLess(_Right.GetFullFilter());
+    });
 }
 
 void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedFeatures>& _SortedFeatures)
@@ -198,18 +199,25 @@ void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedF
             LastNodeInSameTreeLevel->SetNextTreeLevelNodeIndex(mTreeNodes.Num());
         }
 
+        FKLDebugImGuiFilterTreeNode* ParentNode = LastNodeInSameTreeLevel;
         for (int32 i = StopIndex + 1; i < FeatureFiltersSplitted.Num() - 1; ++i)
         {
             const FName&                  CurrentFilterID = FeatureFiltersSplitted[i];
-            const uint16                  FilterIdx       = GetFilterIndexFromID(CurrentFilterID, Feature.GetImGuiPath());
+            const uint16                  FilterIdx       = GetFilterIndexFromID(CurrentFilterID, Feature.StaticItemType());
             const TArrayView<const FName> FilterView      = MakeArrayView<const FName>(&FeatureFiltersSplitted[0], i);
             const FName                   FullFilterPath  = GenerateFullFilterPath(FilterView, FilterString);
 
-            mTreeNodes.Emplace(FilterIdx);
+            FKLDebugImGuiFilterTreeNode& NewTreeNode = mTreeNodes.Emplace_GetRef(FilterIdx);
+            if (ParentNode)
+            {
+                ParentNode->AddChild(mTreeNodes.Num() - 1);
+            }
+
+            ParentNode = &NewTreeNode;
             NodesStack.Emplace(FeatureFiltersSplitted[i], FullFilterPath, mTreeNodes.Num() - 1);
         }
 
-        const uint16 FilterIdx = GetFilterIndexFromID(FeatureFiltersSplitted.Last(), Feature.GetImGuiPath());
+        const uint16 FilterIdx = GetFilterIndexFromID(FeatureFiltersSplitted.Last(), Feature.StaticItemType());
 
         if (!NodesStack.IsEmpty())
         {
@@ -252,7 +260,7 @@ FKLDebugImGuiFilterTreeNode* FKLDebugImGuiFilterTree::FindMatchingParent(const T
     return LastNodeInSameTreeLevel;
 }
 
-uint16 FKLDebugImGuiFilterTree::GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureName) const
+uint16 FKLDebugImGuiFilterTree::GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureType) const
 {
     for (const uint32 FilterIdx : mFiltersOffset)
     {
@@ -264,6 +272,7 @@ uint16 FKLDebugImGuiFilterTree::GetFilterIndexFromID(const FName& _FilterID, con
         }
     }
 
+    UE_LOG(LogKL_Debug, Error, TEXT("filters not found for feature [%s]"), *_FeatureType.ToString())
     return TNumericLimits<uint16>::Max();
 }
 

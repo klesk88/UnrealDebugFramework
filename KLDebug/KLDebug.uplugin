@@ -48,6 +48,11 @@
       "Name": "KLDebugEditor",
       "Type": "Editor",
       "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "KLDebugTestSuite",
+      "Type": "UncookedOnly",
+      "LoadingPhase": "Default"
     }
   ],
   "Plugins": [

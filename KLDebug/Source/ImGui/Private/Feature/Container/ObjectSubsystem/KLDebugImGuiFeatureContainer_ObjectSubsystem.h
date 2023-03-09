@@ -10,7 +10,7 @@ public:
 
     // FKLDebugImGuiFeatureContainerBase
     UE_NODISCARD bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const final;
-    void              GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const final;
+    void              GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const final;
     // FKLDebugImGuiFeatureContainerBase
 
 private:

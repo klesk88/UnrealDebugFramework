@@ -7,7 +7,7 @@ bool FKLDebugImGuiFeatureContainer_EngineSubsystem::IsCorrectContainerForFeature
     return _DumbFeature.IsDerivedFrom<IKLDebugImGuiFeatureInterface_EngineSubsystem>();
 }
 
-void FKLDebugImGuiFeatureContainer_EngineSubsystem::GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
+void FKLDebugImGuiFeatureContainer_EngineSubsystem::GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
 {
-    _OutFeaturesIndexes = GetFeaturesOffset();
+    ensureMsgf(false, TEXT("should never hit this one"));
 }

@@ -13,10 +13,11 @@
 
 class IKLDebugImGuiFeatureInterfaceBase;
 
-class KLDEBUGIMGUI_API FKLDebugImGuiFeaturesIterator final : public FNoncopyable
+class KLDEBUGIMGUI_API FKLDebugImGuiFeaturesIterator_SelectableObject final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiFeaturesIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& _FeaturesPool);
+    explicit FKLDebugImGuiFeaturesIterator_SelectableObject(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& _FeaturesPool);
+
     explicit operator bool() const;
     void     operator++();
 
@@ -24,10 +25,6 @@ public:
     UE_NODISCARD const FeatureInterfaceType& GetFeatureInterfaceCasted() const;
     template<typename FeatureInterfaceType>
     UE_NODISCARD FeatureInterfaceType& GetFeatureInterfaceCastedMutable() const;
-
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
-    UE_NODISCARD int32                                           GetFeaturesCount() const;
-    UE_NODISCARD const FKLDebugImGuiFeatureData&                 GetFeatureData() const;
 
 private:
     UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& GetFeatureMutable() const;
@@ -37,6 +34,8 @@ private:
     // start address index of a new feature inside mFeaturesPool.
     const TArray<FKLDebugImGuiFeatureData>& mFeatureData;
 
+    const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& mFeaturesIndexes;
+
     // pool of features. This is a byte array and all features are allocated inside of it
     // in this way they are all packed in memory close together
     TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& mFeaturesPool;
@@ -44,46 +43,31 @@ private:
     uint32 mIndex = 0;
 };
 
-inline FKLDebugImGuiFeaturesIterator::operator bool() const
+inline FKLDebugImGuiFeaturesIterator_SelectableObject::operator bool() const
 {
-    return mIndex < static_cast<uint32>(mFeatureData.Num());
+    return mIndex < static_cast<uint32>(mFeaturesIndexes.Num());
 }
 
-inline void FKLDebugImGuiFeaturesIterator::operator++()
+inline void FKLDebugImGuiFeaturesIterator_SelectableObject::operator++()
 {
     ++mIndex;
 }
 
-inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiFeaturesIterator::GetFeatureDataIndex() const
-{
-    return mIndex;
-}
-
 template<typename FeatureInterfaceType>
-inline FeatureInterfaceType& FKLDebugImGuiFeaturesIterator::GetFeatureInterfaceCastedMutable() const
+inline FeatureInterfaceType& FKLDebugImGuiFeaturesIterator_SelectableObject::GetFeatureInterfaceCastedMutable() const
 {
     checkf(GetFeatureMutable().IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
     return reinterpret_cast<FeatureInterfaceType&>(GetFeatureMutable());
 }
 
 template<typename FeatureInterfaceType>
-inline const FeatureInterfaceType& FKLDebugImGuiFeaturesIterator::GetFeatureInterfaceCasted() const
+inline const FeatureInterfaceType& FKLDebugImGuiFeaturesIterator_SelectableObject::GetFeatureInterfaceCasted() const
 {
     return GetFeatureInterfaceCastedMutable<FeatureInterfaceType>();
 }
 
-inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIterator::GetFeatureMutable() const
+inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIterator_SelectableObject::GetFeatureMutable() const
 {
-    const FKLDebugImGuiFeatureData& FeatureData = mFeatureData[mIndex];
-    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureData.GetFeatureOffset()]);
-}
-
-inline int32 FKLDebugImGuiFeaturesIterator::GetFeaturesCount() const
-{
-    return mFeatureData.Num();
-}
-
-inline const FKLDebugImGuiFeatureData& FKLDebugImGuiFeaturesIterator::GetFeatureData() const
-{
-    return mFeatureData[mIndex];
+    const KL::Debug::ImGui::Features::Types::FeatureIndex Offset = mFeaturesIndexes[mIndex];
+    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[Offset]);
 }

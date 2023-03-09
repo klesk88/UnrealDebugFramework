@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Feature/KLDebugFeatureTypes.h"
+#include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -26,9 +26,9 @@ public:
     // the node is not guarantee to have a valid next tree level node
     UE_NODISCARD TOptional<uint16> GetNextTreeLevelNodeIndex() const;
     // the node is not guarantee to have a valid representation in the feature array
-    UE_NODISCARD TOptional<KL::Debug::Features::Types::FeatureIndex> GetStartDataOffset() const;
+    UE_NODISCARD TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> GetStartDataOffset() const;
     // the node is not guarantee to have a valid representation in the feature array
-    UE_NODISCARD TOptional<KL::Debug::Features::Types::FeatureIndex> GetEndDataOffset() const;
+    UE_NODISCARD TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> GetEndDataOffset() const;
     // get the index of the filter in the main filter array. This should be always valid
     // however to avoid problems handle also gracefully the case where there are bugs
     UE_NODISCARD TOptional<uint16> GetFilterIndex() const;
@@ -38,9 +38,9 @@ private:
     // this represents, in the tree, the next node location at the same level of this node
     uint16 mNextTreeLevelNode = TNumericLimits<uint16>::Max();
     // this represents the location of the feature in the main data array so we can retrieve it
-    KL::Debug::Features::Types::FeatureIndex mStartDataOffset = TNumericLimits<KL::Debug::Features::Types::FeatureIndex>::Max();
+    KL::Debug::ImGui::Features::Types::FeatureIndex mStartDataOffset = TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max();
     // this represents the location of the feature in the main data array so we can retrieve it
-    KL::Debug::Features::Types::FeatureIndex mEndDataOffset = TNumericLimits<KL::Debug::Features::Types::FeatureIndex>::Max();
+    KL::Debug::ImGui::Features::Types::FeatureIndex mEndDataOffset = TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max();
     // index of the filter in the main filter array
     uint16             mFilterIndex = TNumericLimits<uint16>::Max();
     TArray<ChildIndex> mChilds;
@@ -59,15 +59,15 @@ inline void FKLDebugImGuiFilterTreeNode::SetNextTreeLevelNodeIndex(const int32 _
 
 inline void FKLDebugImGuiFilterTreeNode::SetStartDataOffset(const int32 _Index)
 {
-    checkf(_Index < TNumericLimits<KL::Debug::Features::Types::FeatureIndex>::Max(), TEXT("index outside range. we don't expect a tree of this size"));
-    mStartDataOffset = static_cast<KL::Debug::Features::Types::FeatureIndex>(_Index);
+    checkf(_Index < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("index outside range. we don't expect a tree of this size"));
+    mStartDataOffset = static_cast<KL::Debug::ImGui::Features::Types::FeatureIndex>(_Index);
     mEndDataOffset   = mStartDataOffset + 1;
 }
 
 inline void FKLDebugImGuiFilterTreeNode::SetEndDataOffset(const int32 _Index)
 {
-    checkf(_Index < TNumericLimits<KL::Debug::Features::Types::FeatureIndex>::Max(), TEXT("index outside range. we don't expect a tree of this size"));
-    mEndDataOffset = static_cast<KL::Debug::Features::Types::FeatureIndex>(_Index);
+    checkf(_Index < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("index outside range. we don't expect a tree of this size"));
+    mEndDataOffset = static_cast<KL::Debug::ImGui::Features::Types::FeatureIndex>(_Index);
 }
 
 inline void FKLDebugImGuiFilterTreeNode::AddChild(const int32 _Index)
@@ -86,14 +86,14 @@ inline TOptional<uint16> FKLDebugImGuiFilterTreeNode::GetNextTreeLevelNodeIndex(
     return TOptional<uint16>();
 }
 
-inline TOptional<KL::Debug::Features::Types::FeatureIndex> FKLDebugImGuiFilterTreeNode::GetStartDataOffset() const
+inline TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> FKLDebugImGuiFilterTreeNode::GetStartDataOffset() const
 {
     if (mStartDataOffset != TNumericLimits<uint16>::Max())
     {
-        return TOptional<KL::Debug::Features::Types::FeatureIndex>(mStartDataOffset);
+        return TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex>(mStartDataOffset);
     }
 
-    return TOptional<KL::Debug::Features::Types::FeatureIndex>();
+    return TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex>();
 }
 
 inline TOptional<uint16> FKLDebugImGuiFilterTreeNode::GetFilterIndex() const
@@ -106,14 +106,14 @@ inline TOptional<uint16> FKLDebugImGuiFilterTreeNode::GetFilterIndex() const
     return TOptional<uint16>();
 }
 
-inline TOptional<KL::Debug::Features::Types::FeatureIndex> FKLDebugImGuiFilterTreeNode::GetEndDataOffset() const
+inline TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> FKLDebugImGuiFilterTreeNode::GetEndDataOffset() const
 {
-    if (mEndDataOffset != TNumericLimits<KL::Debug::Features::Types::FeatureIndex>::Max())
+    if (mEndDataOffset != TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max())
     {
-        return TOptional<KL::Debug::Features::Types::FeatureIndex>(mEndDataOffset);
+        return TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex>(mEndDataOffset);
     }
 
-    return TOptional<KL::Debug::Features::Types::FeatureIndex>();
+    return TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex>();
 }
 
 inline const TArray<FKLDebugImGuiFilterTreeNode::ChildIndex>& FKLDebugImGuiFilterTreeNode::GetChilds() const

@@ -9,6 +9,7 @@
 #include "UObject/NameTypes.h"
 
 class FString;
+class UWorld;
 class IKLDebugImGuiFilterInterface;
 
 #define DERIVED_KL_DEBUG_FEATURE_CLASS(ItemType, ParentItemType)                                      \
@@ -29,13 +30,15 @@ private:  // finish macro that allow us to have a basic RTTI system
 
 /*
  * Base class for any debug window to extend.
- * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() so that the class
+ * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() in the .cpp so that the class
  * can auto subscribe to the system. For example:
  *
  * class FClassDebug final : public IKLDebugImGuiFeatureInterface
  * {
  *   ...
  * };
+ *
+ * FClassDebug.cpp
  *
  * KL_DEBUG_CREATE_WINDOW(FClassDebug)
  */
@@ -51,12 +54,19 @@ public:
     virtual void Initialize();
     virtual void Update();
 
+    void         DrawImGui(const UWorld& _World);
+    virtual void Render(const UWorld& _World) const;
+
     template<typename FeatureType>
     UE_NODISCARD bool IsDerivedFrom() const;
 
 protected:
+    virtual void DrawImGuiChild(const UWorld& _World);
+
+    // implement the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual bool        IsDerivedInternal(const FName& _ItemTypeName) const;
     UE_NODISCARD static const FName& StaticItemType();
+    //
 };
 
 inline void IKLDebugImGuiFeatureInterfaceBase::Initialize()
@@ -64,6 +74,14 @@ inline void IKLDebugImGuiFeatureInterfaceBase::Initialize()
 }
 
 inline void IKLDebugImGuiFeatureInterfaceBase::Update()
+{
+}
+
+inline void IKLDebugImGuiFeatureInterfaceBase::DrawImGuiChild(const UWorld& _World)
+{
+}
+
+inline void IKLDebugImGuiFeatureInterfaceBase::Render(const UWorld& _World) const
 {
 }
 

@@ -1,17 +1,20 @@
 #pragma once
 
+#include "Feature/Container/KLDebugImGuiFeatureData.h"
 #include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
-#include "Feature/KLDebugFeatureTypes.h"
+#include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
+#include "Math/NumericLimits.h"
 #include "Templates/UnrealTemplate.h"
 
 class FKLDebugImGuiFeatureManager;
 class FKLDebugImGuiFeatureManagerEntryBase;
+class FString;
 class IKLDebugImGuiFeatureInterfaceBase;
 class UObject;
 
@@ -23,54 +26,51 @@ public:
     UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const = 0;
 
     void InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount);
-    void AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::Features::Types::FeatureIndex _OffsetIndex);
+    void AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
     void FinishGenerateFeatures();
 
-    void                                       GatherFeatures(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
-    UE_NODISCARD FKLDebugImGuiFeaturesIterator GetFeatureIterator(const TArray<KL::Debug::Features::Types::FeatureIndex>& _FeaturesIndexes);
+    void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
+
+    UE_NODISCARD FKLDebugImGuiFeaturesIterator GetFeaturesIterator();
 
 protected:
-    virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;
+    virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;
     virtual void FinishGenerateFeatureChild();
 
-    UE_NODISCARD FKLDebugImGuiFeaturesIterator GetFeatureIteratorMutable();
-    UE_NODISCARD KL::Debug::Features::Types::FeatureIndex GetFeaturesCount() const;
-    UE_NODISCARD const TArray<KL::Debug::Features::Types::FeatureIndex>& GetFeaturesOffset() const;
-    UE_NODISCARD const TArray<uint8>& GetFeaturesPool() const;
+    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeaturesCount() const;
+    UE_NODISCARD const TArray<FKLDebugImGuiFeatureData>& GetFeaturesData() const;
+    UE_NODISCARD TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPoolMutable();
+    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPool() const;
 
 private:
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutable(const KL::Debug::Features::Types::FeatureIndex _Offset);
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature(const KL::Debug::Features::Types::FeatureIndex _Offset) const;
+    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset);
+    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset) const;
 
 private:
     // offset between features so that we can retrieve them correctly from the pool. Each entry is the
     // start address index of a new feature inside mFeaturesPool.
-    // This array is sorted based on the game play tags used
-    TArray<KL::Debug::Features::Types::FeatureIndex> mFeaturesOffset;
+    TArray<FKLDebugImGuiFeatureData> mFeaturesData;
     // pool of features. This is a byte array and all features are allocated inside of it
     // in this way they are all packed in memory close together
-    TArray<uint8> mFeaturesPool;
+    TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> mFeaturesPool;
 };
 
-inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeatureIteratorMutable()
+inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesIterator()
 {
-    return GetFeatureIterator(mFeaturesOffset);
-}
-
-inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeatureIterator(const TArray<KL::Debug::Features::Types::FeatureIndex>& _FeaturesIndexes)
-{
-    return FKLDebugImGuiFeaturesIterator(_FeaturesIndexes, mFeaturesPool);
+    return FKLDebugImGuiFeaturesIterator(mFeaturesData, mFeaturesPool);
 }
 
 inline void FKLDebugImGuiFeatureContainerBase::InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount)
 {
-    mFeaturesOffset.Reserve(_EntryCount);
+    mFeaturesData.Reserve(_EntryCount);
     mFeaturesPool.AddZeroed(_Size);
 }
 
 inline void FKLDebugImGuiFeatureContainerBase::FinishGenerateFeatures()
 {
-    mFeaturesOffset.Shrink();
+    checkf(mFeaturesData.Num() < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("too many features"));
+
+    mFeaturesData.Shrink();
     mFeaturesPool.Shrink();
 
     FinishGenerateFeatureChild();
@@ -80,24 +80,29 @@ inline void FKLDebugImGuiFeatureContainerBase::FinishGenerateFeatureChild()
 {
 }
 
-inline KL::Debug::Features::Types::FeatureIndex FKLDebugImGuiFeatureContainerBase::GetFeaturesCount() const
+inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiFeatureContainerBase::GetFeaturesCount() const
 {
-    return mFeaturesOffset.Num();
+    return mFeaturesData.Num();
 }
 
-inline const TArray<KL::Debug::Features::Types::FeatureIndex>& FKLDebugImGuiFeatureContainerBase::GetFeaturesOffset() const
+inline const TArray<FKLDebugImGuiFeatureData>& FKLDebugImGuiFeatureContainerBase::GetFeaturesData() const
 {
-    return mFeaturesOffset;
+    return mFeaturesData;
 }
 
-inline const TArray<uint8>& FKLDebugImGuiFeatureContainerBase::GetFeaturesPool() const
+inline TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& FKLDebugImGuiFeatureContainerBase::GetFeaturesPoolMutable()
 {
     return mFeaturesPool;
 }
 
-inline void FKLDebugImGuiFeatureContainerBase::GatherFeatures(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
+inline const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& FKLDebugImGuiFeatureContainerBase::GetFeaturesPool() const
 {
-    _OutFeaturesIndexes.Reserve(mFeaturesOffset.Num());
+    return mFeaturesPool;
+}
+
+inline void FKLDebugImGuiFeatureContainerBase::GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
+{
+    _OutFeaturesIndexes.Reserve(mFeaturesData.Num());
     GatherFeaturesChild(_Obj, _OutFeaturesIndexes);
     _OutFeaturesIndexes.Shrink();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Feature/Visualizer/KLDebugFeatureVisualizer.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer.h"
 #include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
 // debug utils module
@@ -47,7 +47,7 @@ private:
     void UpdateSelectedObjectsVisualizers(FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
-    FKLDebugUtilsPicker                   mPicker;
-    TUniquePtr<FKLDebugFeatureVisualizer> mWorldVisualizer;
-    TArray<FKLDebugFeatureVisualizer>     mSelectedObjectsVisualizers;
+    FKLDebugUtilsPicker                        mPicker;
+    TUniquePtr<FKLDebugImGuiFeatureVisualizer> mWorldVisualizer;
+    TArray<FKLDebugImGuiFeatureVisualizer>     mSelectedObjectsVisualizers;
 };

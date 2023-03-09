@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Feature/KLDebugFeatureTypes.h"
+#include "Feature/KLDebugImGuiFeatureTypes.h"
 #include "Filter/Tree/KLDebugImGuiFilterTreeNode.h"
 
 // engine
@@ -25,8 +25,8 @@ class KLDEBUGIMGUI_API FKLDebugImGuiFilterTree final : public FNoncopyable
 {
 public:
     void Init(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
-    void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
-    
+    void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
+
     UE_NODISCARD bool HasFilters() const;
 
 private:
@@ -34,8 +34,8 @@ private:
     void                                      SortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiTreeSortedFeatures>& _OutSortedFeature);
     void                                      GenerateTree(const TArray<FKLDebugImGuiTreeSortedFeatures>& _SortedFeatures);
     UE_NODISCARD FKLDebugImGuiFilterTreeNode* FindMatchingParent(const TArray<FName>& _FeatureFiltersSplitted, TArray<FKLDebugImGuiFilterNodesStackData>& _TreeNodesStack, int32& _StopIndex);
-    UE_NODISCARD uint16                       GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureName) const;
-    FName                                     GenerateFullFilterPath(const TArrayView<const FName>& _Filters, FString& _FullFilterString) const;
+    UE_NODISCARD uint16                       GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureType) const;
+    UE_NODISCARD FName                        GenerateFullFilterPath(const TArrayView<const FName>& _Filters, FString& _FullFilterString) const;
 
 private:
     // offset between features so that we can retrieve them correctly from the pool. Each entry is the
@@ -44,9 +44,9 @@ private:
     TArray<uint32> mFiltersOffset;
     // pool of features. This is a byte array and all features are allocated inside of it
     // in this way they are all packed in memory close together
-    TArray<uint8>                                    mFiltersPool;
-    TArray<KL::Debug::Features::Types::FeatureIndex> mFilterFeaturesIndexes;
-    TArray<FKLDebugImGuiFilterTreeNode>              mTreeNodes;
+    TArray<uint8>                                           mFiltersPool;
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFilterFeaturesIndexes;
+    TArray<FKLDebugImGuiFilterTreeNode>                     mTreeNodes;
 
     static constexpr int32 mFilterStringSize = 300;
 };
