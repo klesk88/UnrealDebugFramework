@@ -12,7 +12,6 @@
 #include "UObject/NameTypes.h"
 
 class FKLDebugImGuiFeaturesIterator;
-class FKLDebugImGuiFeatureVisualizerStackData;
 class FKLDebugImGuiVisualizerTreeSortedFeatures;
 class FString;
 

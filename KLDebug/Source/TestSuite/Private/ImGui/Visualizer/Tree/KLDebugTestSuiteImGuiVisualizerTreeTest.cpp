@@ -5,11 +5,11 @@
 // imgui module
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeaturesIterator.h"
+#include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
+#include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
+#include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
 #include "ImGui/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 #include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
-#include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
-#include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
-#include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
 
 // ImGuiThirdParty module
 #include "ImGuiThirdParty/Public/Library/imgui.h"

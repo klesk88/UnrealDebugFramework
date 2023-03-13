@@ -2,7 +2,6 @@
 
 #include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
-#include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerStackData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
