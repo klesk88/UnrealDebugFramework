@@ -1,8 +1,6 @@
-#include "ImGui/Features/Helpers/KLDebugTestSuiteCreateTestFeatures.h"
+#include "ImGui/Features/Helpers/KLDebugTestSuiteTestFeatures.h"
 
-void FKLDebugTestFeatureBase::GetFilterPath(TArray<FName>& _OutFilters) const
-{
-}
+#include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFilters.h"
 
 bool FKLDebugTestFeatureBase::DoesSupportObject(const UObject& _Object) const
 {
@@ -10,6 +8,11 @@ bool FKLDebugTestFeatureBase::DoesSupportObject(const UObject& _Object) const
 }
 
 ////////////////////////////////////////////////////////////////
+
+void FKLDebugTestCoverFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterOne, KLDebugImGuiTestFilterTwo>(_OutFilters);
+}
 
 const FName& FKLDebugTestCoverFeature::GetImGuiPath() const
 {
@@ -19,6 +22,11 @@ const FName& FKLDebugTestCoverFeature::GetImGuiPath() const
 
 ////////////////////////////////////////////////////////////////
 
+void FKLDebugTestCoverChildFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterOne, KLDebugImGuiTestFilterTwo, KLDebugImGuiTestFilterThree, KLDebugImGuiTestFilterFour>(_OutFilters);
+}
+
 const FName& FKLDebugTestCoverChildFeature::GetImGuiPath() const
 {
     static const FName FeatureName(TEXT("ai.cover.1.a"));
@@ -26,6 +34,11 @@ const FName& FKLDebugTestCoverChildFeature::GetImGuiPath() const
 }
 
 ////////////////////////////////////////////////////////////////
+
+void FKLDebugTestCoverSecondChildFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterOne, KLDebugImGuiTestFilterTwo, KLDebugImGuiTestFilterFour, KLDebugImGuiTestFilterThree>(_OutFilters);
+}
 
 const FName& FKLDebugTestCoverSecondChildFeature::GetImGuiPath() const
 {
@@ -35,6 +48,11 @@ const FName& FKLDebugTestCoverSecondChildFeature::GetImGuiPath() const
 
 ////////////////////////////////////////////////////////////////
 
+void FKLDebugTestCoverThirdChildFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterOne, KLDebugImGuiTestFilterTwo, KLDebugImGuiTestFilterTen>(_OutFilters);
+}
+
 const FName& FKLDebugTestCoverThirdChildFeature::GetImGuiPath() const
 {
     static const FName FeatureName(TEXT("ai.cover.2"));
@@ -42,6 +60,11 @@ const FName& FKLDebugTestCoverThirdChildFeature::GetImGuiPath() const
 }
 
 ////////////////////////////////////////////////////////////////
+
+void FKLDebugTestCoverThirdChildChildFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterNine>(_OutFilters);
+}
 
 const FName& FKLDebugTestCoverThirdChildChildFeature::GetImGuiPath() const
 {
@@ -51,6 +74,11 @@ const FName& FKLDebugTestCoverThirdChildChildFeature::GetImGuiPath() const
 
 ////////////////////////////////////////////////////////////////
 
+void FKLDebugTestCoverChildChildFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterSeven, KLDebugImGuiTestFilterHeight>(_OutFilters);
+}
+
 const FName& FKLDebugTestCoverChildChildFeature::GetImGuiPath() const
 {
     static const FName FeatureName(TEXT("ai.cover.3.b"));
@@ -59,6 +87,11 @@ const FName& FKLDebugTestCoverChildChildFeature::GetImGuiPath() const
 
 ////////////////////////////////////////////////////////////////
 
+void FKLDebugTestCoverChildChildChildFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+    GetFilterPathHelper<KLDebugImGuiTestFilterOne, KLDebugImGuiTestFilterTwo>(_OutFilters);
+}
+
 const FName& FKLDebugTestCoverChildChildChildFeature::GetImGuiPath() const
 {
     static const FName FeatureName(TEXT("ai.cover.1.a.1"));
@@ -66,6 +99,10 @@ const FName& FKLDebugTestCoverChildChildChildFeature::GetImGuiPath() const
 }
 
 ////////////////////////////////////////////////////////////////
+
+void FKLDebugTestPerceptionFeature::GetFilterPath(TArray<FName>& _OutFilters) const
+{
+}
 
 const FName& FKLDebugTestPerceptionFeature::GetImGuiPath() const
 {

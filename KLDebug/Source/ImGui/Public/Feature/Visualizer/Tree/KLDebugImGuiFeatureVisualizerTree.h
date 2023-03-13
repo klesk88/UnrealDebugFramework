@@ -27,9 +27,6 @@ private:
     void GatherAndSortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const;
     void GenerateTree(const TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted);
 
-    UE_NODISCARD int32 FindMatchingParent(const TArray<FName>& _ImGuiPathTokens, TArray<FKLDebugImGuiFeatureVisualizerStackData>& _TreeNodesStack);
-    UE_NODISCARD FName GetImGuiPathName(const TArrayView<const FName>& _ImGuiSubPath, FString& _String) const;
-
 private:
     // list of tree nodes
     TArray<FKLDebugImGuiFeatureVisualizerTreeNode> mTreeNodes;

@@ -4,7 +4,8 @@
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerStackData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
-#include "Helpers/KLDebugImGuiTreeBuilderHelpers.h"
+#include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
+#include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
 
 // ImGuiThirdParty module
 #include "ImGuiThirdParty/Public/Library/imgui.h"
@@ -31,7 +32,14 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree()
     static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Selected;
 
     auto KeepTraversingTreeLambda = [this](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
-        FKLDebugImGuiFeatureVisualizerNodeData& NodeData = mNodesData[_TreeNode.GetNodeDataIndex()];
+        const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
+        if (!NodeDataIndex.IsSet())
+        {
+            ensureMsgf(false, TEXT("we should always have valid data"));
+            return false;
+        }
+
+        FKLDebugImGuiFeatureVisualizerNodeData& NodeData = mNodesData[NodeDataIndex.GetValue()];
         ImGuiTreeNodeFlags                      NodeFlags;
         if (_TreeNode.IsLeaf())
         {
@@ -74,7 +82,7 @@ void FKLDebugImGuiFeatureVisualizerTree::GatherAndSortFeatures(FKLDebugImGuiFeat
     }
 
     _FeaturesSorted.Sort([](const FKLDebugImGuiVisualizerTreeSortedFeatures& _Left, const FKLDebugImGuiVisualizerTreeSortedFeatures& _Right) -> bool {
-        return _Left.GetImGuiPath().LexicalLess(_Right.GetImGuiPath());
+        return _Left.GetFullPath().LexicalLess(_Right.GetFullPath());
     });
 }
 
@@ -92,125 +100,32 @@ void FKLDebugImGuiFeatureVisualizerTree::GenerateTree(const TArray<FKLDebugImGui
      *   ai.perception
      */
 
-    mTreeNodes.Reserve(_FeaturesSorted.Num());
-    mNodesData.Reserve(_FeaturesSorted.Num());
-
-    FString TempPath;
-    TempPath.Reserve(300);
-    TArray<FName> PathTokens;
-    PathTokens.Reserve(20);
-
-    TArray<FKLDebugImGuiFeatureVisualizerStackData> NodesStack;
-    NodesStack.Reserve(20);
-
-    for (const FKLDebugImGuiVisualizerTreeSortedFeatures& Feature : _FeaturesSorted)
-    {
-        if (!NodesStack.IsEmpty())
+    auto IsSameDataLambda = [this](const FKLDebugImGuiTreeBuilderStackData& _LastNodeInStack, const FKLDebugImGuiVisualizerTreeSortedFeatures& _Feature) -> bool {
+        if (_LastNodeInStack.GetFullPath() == _Feature.GetFullPath())
         {
-            const FKLDebugImGuiFeatureVisualizerStackData& LastStackNode = NodesStack.Last();
-            if (LastStackNode.GetFullPath() == Feature.GetImGuiPath())
-            {
-                LastStackNode.GetTreeNodeMutable(mTreeNodes).AddFeatureDataIndex(Feature.GetFeatureDataIndex());
-                continue;
-            }
+            const uint16                            TreeNodeIndex = _LastNodeInStack.GetTreeNodeIndex();
+            FKLDebugImGuiFeatureVisualizerTreeNode& TreeNode      = mTreeNodes[TreeNodeIndex];
+            TreeNode.AddFeatureDataIndex(_Feature.GetFeatureDataIndex());
+            return true;
         }
 
-        const FKLDebugImGuiFeatureData& FeatureData = Feature.GetFeatureData();
+        return false;
+    };
 
-        const int32                             StopIndex  = FindMatchingParent(FeatureData.GetImGuiPathTokens(), NodesStack);
-        FKLDebugImGuiFeatureVisualizerTreeNode* ParentNode = nullptr;
+    auto AllocateTreeNode = [this](const FName& _FilterToken) -> FKLDebugImGuiFeatureVisualizerTreeNode& {
+        mNodesData.Emplace(_FilterToken);
+        return mTreeNodes.Emplace_GetRef(mNodesData.Num() - 1);
+    };
 
-        for (int32 i = StopIndex + 1; i < FeatureData.GetImGuiPathTokens().Num() - 1; ++i)
-        {
-            const FName& ImGuiPath = FeatureData.GetImGuiPathTokens()[i];
-
-            mNodesData.Emplace(ImGuiPath);
-
-            if (ParentNode)
-            {
-                ParentNode->TrySetFirstChildIndex(mTreeNodes.Num());
-            }
-
-            FKLDebugImGuiFeatureVisualizerTreeNode& NewTreeNode = mTreeNodes.Emplace_GetRef(mNodesData.Num() - 1);
-            ParentNode                                          = &NewTreeNode;
-
-            TArrayView<const FName> SubPath     = MakeArrayView<const FName>(&FeatureData.GetImGuiPathTokens()[0], i + 1);
-            const FName             FullSubPath = GetImGuiPathName(SubPath, TempPath);
-
-            NodesStack.Emplace(FullSubPath, ImGuiPath, mTreeNodes.Num() - 1);
-        }
-
-        if (ParentNode)
-        {
-            ParentNode->TrySetFirstChildIndex(mTreeNodes.Num());
-        }
-
-        const FName& ImGuiPath = FeatureData.GetImGuiPathTokens().Last();
-        mNodesData.Emplace(ImGuiPath);
+    auto AllocateTreeNodeLeaf = [this](const FName& _FilterToken, const FKLDebugImGuiVisualizerTreeSortedFeatures& _SortedFeature) -> FKLDebugImGuiFeatureVisualizerTreeNode& {
+        mNodesData.Emplace(_FilterToken);
         FKLDebugImGuiFeatureVisualizerTreeNode& NewTreeNode = mTreeNodes.Emplace_GetRef(mNodesData.Num() - 1);
-        NewTreeNode.AddFeatureDataIndex(Feature.GetFeatureDataIndex());
-        NodesStack.Emplace(Feature.GetImGuiPath(), ImGuiPath, mTreeNodes.Num() - 1);
-    }
+        NewTreeNode.AddFeatureDataIndex(_SortedFeature.GetFeatureDataIndex());
+        return NewTreeNode;
+    };
+
+    KL::Debug::ImGuiTreeBuilder::Helpers::GenerateTree(_FeaturesSorted, mTreeNodes, IsSameDataLambda, AllocateTreeNode, AllocateTreeNodeLeaf);
 
     mTreeNodes.Shrink();
     mNodesData.Shrink();
-}
-
-int32 FKLDebugImGuiFeatureVisualizerTree::FindMatchingParent(const TArray<FName>& _ImGuiPathTokens, TArray<FKLDebugImGuiFeatureVisualizerStackData>& _TreeNodesStack)
-{
-    FKLDebugImGuiFeatureVisualizerTreeNode* LastNodeInSameTreeLevel = nullptr;
-    const int32                             Count                   = FMath::Min(_ImGuiPathTokens.Num(), _TreeNodesStack.Num());
-    int32                                   StopIndex               = -1;
-
-    if (Count == 0)
-    {
-        ensureMsgf(_TreeNodesStack.IsEmpty(), TEXT("imguiu path with no elements"));
-        return StopIndex;
-    }
-
-    for (int32 i = 0; i < Count; ++i)
-    {
-        FKLDebugImGuiFeatureVisualizerStackData& StackData   = _TreeNodesStack[i];
-        const FName&                             TokenName   = _ImGuiPathTokens[i];
-        FKLDebugImGuiFeatureVisualizerTreeNode&  NodeInStack = StackData.GetTreeNodeMutable(mTreeNodes);
-
-        if (StackData.GetNodeName() == TokenName)
-        {
-            StopIndex = i;
-
-            LastNodeInSameTreeLevel = &NodeInStack;
-            continue;
-        }
-
-        NodeInStack.SetNextTreeLevelNodeIndex(mTreeNodes.Num());
-        const int32 RemoveCount = _TreeNodesStack.Num() - i;
-        _TreeNodesStack.RemoveAt(i, RemoveCount, false);
-        return StopIndex;
-    }
-
-    if (LastNodeInSameTreeLevel)
-    {
-        LastNodeInSameTreeLevel->TrySetFirstChildIndex(mTreeNodes.Num());
-    }
-
-    return StopIndex;
-}
-
-FName FKLDebugImGuiFeatureVisualizerTree::GetImGuiPathName(const TArrayView<const FName>& _ImGuiSubPath, FString& _String) const
-{
-    _String.Reset();
-    if (_ImGuiSubPath.IsEmpty())
-    {
-        ensureMsgf(false, TEXT("we should have a path"));
-        return FName();
-    }
-
-    for (int32 i = 0; i < _ImGuiSubPath.Num() - 1; ++i)
-    {
-        const FName& Node = _ImGuiSubPath[i];
-        _String.Appendf(TEXT("%s."), *Node.ToString());
-    }
-
-    _String.Appendf(TEXT("%s"), *_ImGuiSubPath.Last().ToString());
-    return FName(_String);
 }

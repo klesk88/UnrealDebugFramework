@@ -14,7 +14,7 @@ public:
     UE_NODISCARD bool InstantTest() final;
 
 private:
-    UE_NODISCARD bool TestPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements);
-    UE_NODISCARD bool TestPreorderTraversalWithClosedNodes(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements);
-    UE_NODISCARD bool TestImGuiPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements);
+    UE_NODISCARD bool TestPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const;
+    UE_NODISCARD bool TestPreorderTraversalWithClosedNodes(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const;
+    UE_NODISCARD bool TestImGuiPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const;
 };

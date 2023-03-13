@@ -14,4 +14,29 @@ public:
 
     // should return true if the object passed as input is supported by this feature
     UE_NODISCARD virtual bool DoesSupportObject(const UObject& _Object) const = 0;
+
+protected:
+    template<typename... FilterType>
+    void GetFilterPathHelper(TArray<FName>& _OutFilters) const;
+
+private:
+    template<typename... FilterType>
+    void Dummy(FilterType&&...) const;
 };
+
+template<typename... FilterType>
+inline void IKLDebugImGuiFeatureInterface_SelectableObject::GetFilterPathHelper(TArray<FName>& _OutFilters) const
+{
+    Dummy((_OutFilters.Emplace(FilterType::StaticGetFilterID()))...);
+
+    const int32 Count = _OutFilters.Num();
+    for (int32 i = 0; i < Count / 2; ++i)
+    {
+        _OutFilters.SwapMemory(i, Count - 1 - i);
+    }
+}
+
+template<typename... FilterType>
+inline void IKLDebugImGuiFeatureInterface_SelectableObject::Dummy(FilterType&&...) const
+{
+}

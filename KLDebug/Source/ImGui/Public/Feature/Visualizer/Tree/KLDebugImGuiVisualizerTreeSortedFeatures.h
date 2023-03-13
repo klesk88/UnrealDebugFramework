@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
-#include "Feature/KLDebugImGuiFeatureTypes.h"
+#include "TreeBuilder/KLDebugImGuiTreeBuilderData.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -11,25 +11,24 @@
 
 class IKLDebugImGuiFeatureInterface_SelectableObject;
 
-class KLDEBUGIMGUI_API FKLDebugImGuiVisualizerTreeSortedFeatures final : public FNoncopyable
+class KLDEBUGIMGUI_API FKLDebugImGuiVisualizerTreeSortedFeatures final : public FKLDebugImGuiTreeBuilderData
 {
 public:
     explicit FKLDebugImGuiVisualizerTreeSortedFeatures(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex, const FKLDebugImGuiFeatureData& _FeatureData, const FName& _FeatureImGuiPath);
 
+    // FKLDebugImGuiTreeBuilderData
+    UE_NODISCARD const TArray<FName>& GetPathTokens() const final;
+    // FKLDebugImGuiTreeBuilderData
+
     UE_NODISCARD const FKLDebugImGuiFeatureData& GetFeatureData() const;
-    UE_NODISCARD const FName&                    GetImGuiPath() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
 
 private:
-    const FName&                                    mFeatureImGuiTreePath;
-    const FKLDebugImGuiFeatureData&                 mFeatureData;
-    KL::Debug::ImGui::Features::Types::FeatureIndex mFeatureDataIndex = 0;
+    const FKLDebugImGuiFeatureData& mFeatureData;
 };
 
 inline FKLDebugImGuiVisualizerTreeSortedFeatures::FKLDebugImGuiVisualizerTreeSortedFeatures(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex, const FKLDebugImGuiFeatureData& _FeatureData, const FName& _FeatureImGuiPath)
-    : mFeatureImGuiTreePath(_FeatureImGuiPath)
+    : FKLDebugImGuiTreeBuilderData(_FeatureDataIndex, _FeatureImGuiPath)
     , mFeatureData(_FeatureData)
-    , mFeatureDataIndex(_FeatureDataIndex)
 {
 }
 
@@ -38,12 +37,7 @@ inline const FKLDebugImGuiFeatureData& FKLDebugImGuiVisualizerTreeSortedFeatures
     return mFeatureData;
 }
 
-inline const FName& FKLDebugImGuiVisualizerTreeSortedFeatures::GetImGuiPath() const
+inline const TArray<FName>& FKLDebugImGuiVisualizerTreeSortedFeatures::GetPathTokens() const
 {
-    return mFeatureImGuiTreePath;
-}
-
-inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiVisualizerTreeSortedFeatures::GetFeatureDataIndex() const
-{
-    return mFeatureDataIndex;
+    return mFeatureData.GetImGuiPathTokens();
 }

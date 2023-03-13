@@ -1,11 +1,11 @@
 #include "ImGui/Visualizer/Tree/KLDebugTestSuiteImGuiVisualizerTreeTest.h"
 
-#include "ImGui/Features/Helpers/KLDebugTestSuiteCreateTestFeatures.h"
+#include "ImGui/Features/Helpers/KLDebugTestSuiteCreateFeaturesHelpers.h"
 
 // imgui module
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeaturesIterator.h"
-#include "ImGui/Private/Helpers/KLDebugImGuiTreeBuilderHelpers.h"
+#include "ImGui/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 #include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
@@ -21,72 +21,10 @@
 
 bool FKLDebugTestSuiteImGuiVisualizerTreeTest::InstantTest()
 {
-    uint32 FullSize = 0;
-    FullSize += sizeof(FKLDebugTestCoverFeature);
-    FullSize += sizeof(FKLDebugTestCoverChildFeature);
-    FullSize += sizeof(FKLDebugTestCoverSecondChildFeature);
-    FullSize += sizeof(FKLDebugTestCoverThirdChildFeature);
-    FullSize += sizeof(FKLDebugTestCoverThirdChildChildFeature);
-    FullSize += sizeof(FKLDebugTestCoverChildChildFeature);
-    FullSize += sizeof(FKLDebugTestCoverChildChildChildFeature);
-    FullSize += sizeof(FKLDebugTestPerceptionFeature);
-
-    TArray<FKLDebugImGuiFeatureData> FeatureData;
-    FeatureData.Reserve(8);
-
     TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> FeaturePool;
-    FeaturePool.AddZeroed(FullSize);
+    TArray<FKLDebugImGuiFeatureData>                            FeatureData;
 
-    TArray<FString> ImGuiPathTokens;
-    ImGuiPathTokens.Reserve(20);
-
-    KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = 0;
-    for (int32 i = 0; i < 8; ++i)
-    {
-        uint32                             Size           = 0;
-        IKLDebugImGuiFeatureInterfaceBase* DebugWindow    = nullptr;
-        FKLDebugImGuiFeatureData&          NewFeatureData = FeatureData.Emplace_GetRef(FeatureOffset);
-        switch (i)
-        {
-            case 0:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverFeature);
-                break;
-            case 1:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverChildFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverChildFeature);
-                break;
-            case 2:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverSecondChildFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverSecondChildFeature);
-                break;
-            case 3:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverThirdChildFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverThirdChildFeature);
-                break;
-            case 4:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverThirdChildChildFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverThirdChildChildFeature);
-                break;
-            case 5:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverChildChildFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverChildChildFeature);
-                break;
-            case 6:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestCoverChildChildChildFeature());
-                FeatureOffset += sizeof(FKLDebugTestCoverChildChildChildFeature);
-                break;
-            case 7:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&FeaturePool[FeatureOffset])) FKLDebugTestPerceptionFeature());
-                FeatureOffset += sizeof(FKLDebugTestPerceptionFeature);
-                break;
-            default:
-                checkNoEntry();
-                break;
-        }
-
-        NewFeatureData.Init(*DebugWindow, ImGuiPathTokens);
-    }
+    KL::Debug::TestSuite::Feature::Helpers::GetFeatures(FeaturePool, FeatureData);
 
     FKLDebugImGuiFeaturesIterator      Iterator(FeatureData, FeaturePool);
     FKLDebugImGuiFeatureVisualizerTree TreeVisualizer;
@@ -99,7 +37,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::InstantTest()
     return true;
 }
 
-bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements)
+bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const
 {
     /*
      *   ai.cover.1
@@ -140,8 +78,15 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDe
     };
 
     auto EvaluateNodeLambda = [&TreeNodesData, &Index, &_ExpetectedElements, &Success](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> void {
-        const uint16                                  DataIndex = _TreeNode.GetNodeDataIndex();
-        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData  = TreeNodesData[DataIndex];
+        const TOptional<uint16> DataIndex = _TreeNode.GetNodeDataIndex();
+        if (!DataIndex.IsSet())
+        {
+            ensureMsgf(false, TEXT("we expect to have always node data"));
+            Success = false;
+            return;
+        }
+
+        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[DataIndex.GetValue()];
 
         const FName  NodeName(NodeData.GetImGuiNodeString());
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
@@ -155,7 +100,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDe
     return Success;
 }
 
-bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNodes(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements)
+bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNodes(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const
 {
     /*
      *   ai.cover.1
@@ -187,14 +132,29 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
     bool  Success = true;
 
     auto KeepTraversingTreeLambda = [&Success, &ClosedNodes, &TreeNodesData](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
-        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[_TreeNode.GetNodeDataIndex()];
+        const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
+        if (!NodeDataIndex.IsSet())
+        {
+            ensureMsgf(false, TEXT("we expect to have always node data"));
+            Success = false;
+            return true;
+        }
+
+        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[NodeDataIndex.GetValue()];
         const FName                                   NodeName(NodeData.GetImGuiNodeString());
         return Success && ClosedNodes.Find(NodeName) == INDEX_NONE;
     };
 
     auto EvaluateNodeLambda = [&TreeNodesData, &Index, &_ExpetectedElements, &Success](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> void {
-        const uint16                                  DataIndex = _TreeNode.GetNodeDataIndex();
-        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData  = TreeNodesData[DataIndex];
+        const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
+        if (!NodeDataIndex.IsSet())
+        {
+            ensureMsgf(false, TEXT("we expect to have always node data"));
+            Success = false;
+            return;
+        }
+
+        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[NodeDataIndex.GetValue()];
 
         const FName  NodeName(NodeData.GetImGuiNodeString());
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
@@ -208,7 +168,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
     return Success;
 }
 
-bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestImGuiPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements)
+bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestImGuiPreorderTraversal(const FKLDebugImGuiFeatureVisualizerTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const
 {
     /*
      *   ai.cover.1
@@ -249,8 +209,15 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestImGuiPreorderTraversal(const 
     };
 
     auto EvaluateNodeLambda = [&TreeNodesData, &Index, &_ExpetectedElements, &Success](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> void {
-        const uint16                                  DataIndex = _TreeNode.GetNodeDataIndex();
-        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData  = TreeNodesData[DataIndex];
+        const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
+        if (!NodeDataIndex.IsSet())
+        {
+            ensureMsgf(false, TEXT("we expect to have always node data"));
+            Success = false;
+            return;
+        }
+
+        const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[NodeDataIndex.GetValue()];
 
         const FName  NodeName(NodeData.GetImGuiNodeString());
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
