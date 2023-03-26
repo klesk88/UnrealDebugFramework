@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
 
@@ -11,19 +12,18 @@
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
-class FKLDebugImGuiFeaturesIterator;
 class FKLDebugImGuiVisualizerTreeSortedFeatures;
 class FString;
 
 class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizerTree final : public FNoncopyable
 {
 public:
-    void CreateTree(FKLDebugImGuiFeaturesIterator& _Iterator);
+    void CreateTree(FKLDebugImGuiFeaturesConstIterator& _Iterator);
 
     void DrawImGuiTree();
 
 private:
-    void GatherAndSortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const;
+    void GatherAndSortFeatures(FKLDebugImGuiFeaturesConstIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const;
     void GenerateTree(const TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted);
 
 private:

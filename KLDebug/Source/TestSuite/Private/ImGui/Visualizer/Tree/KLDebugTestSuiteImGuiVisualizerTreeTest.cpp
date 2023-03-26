@@ -3,8 +3,8 @@
 #include "ImGui/Features/Helpers/KLDebugTestSuiteCreateFeaturesHelpers.h"
 
 // imgui module
+#include "ImGui/Private/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "ImGui/Private/Feature/Container/KLDebugImGuiFeatureData.h"
-#include "ImGui/Private/Feature/Container/KLDebugImGuiFeaturesIterator.h"
 #include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 #include "ImGui/Private/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
@@ -26,7 +26,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::InstantTest()
 
     KL::Debug::TestSuite::Feature::Helpers::GetFeatures(FeaturePool, FeatureData);
 
-    FKLDebugImGuiFeaturesIterator      Iterator(FeatureData, FeaturePool);
+    FKLDebugImGuiFeaturesConstIterator Iterator(FeatureData, FeaturePool);
     FKLDebugImGuiFeatureVisualizerTree TreeVisualizer;
     TreeVisualizer.CreateTree(Iterator);
 

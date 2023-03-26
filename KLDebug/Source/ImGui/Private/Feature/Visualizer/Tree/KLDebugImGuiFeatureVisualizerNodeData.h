@@ -13,12 +13,13 @@ public:
 
     UE_NODISCARD const FString& GetImGuiNodeString() const;
 
-    UE_NODISCARD bool& GetIsOpen();
-    UE_NODISCARD bool& GetIsSelected();
+    UE_NODISCARD bool GetIsSelected() const;
+
+    void SetIsSelected();
+    void ClearIsSelected();
 
 private:
     FString mNameAsString;
-    bool    mIsOpen     = false;
     bool    mIsSelected = false;
 };
 
@@ -27,12 +28,17 @@ inline const FString& FKLDebugImGuiFeatureVisualizerNodeData::GetImGuiNodeString
     return mNameAsString;
 }
 
-inline bool& FKLDebugImGuiFeatureVisualizerNodeData::GetIsOpen()
-{
-    return mIsOpen;
-}
-
-inline bool& FKLDebugImGuiFeatureVisualizerNodeData::GetIsSelected()
+inline bool FKLDebugImGuiFeatureVisualizerNodeData::GetIsSelected() const
 {
     return mIsSelected;
+}
+
+inline void FKLDebugImGuiFeatureVisualizerNodeData::SetIsSelected()
+{
+    mIsSelected = true;
+}
+
+inline void FKLDebugImGuiFeatureVisualizerNodeData::ClearIsSelected()
+{
+    mIsSelected = false;
 }

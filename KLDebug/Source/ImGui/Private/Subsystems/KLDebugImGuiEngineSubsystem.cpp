@@ -1,6 +1,8 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 #include "Config/KLDebugImGuiConfig.h"
+#include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_EngineSubsystem.h"
 #include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
 // KLUnrealImGui module
@@ -45,7 +47,7 @@ void UKLDebugImGuiEngineSubsystem::AddUpdatableSystem(IKLDebugImGuiSubsystemUpda
     }
 #endif
 
-    mUpdatableSystems.Emplace(&_System);
+    mPendingUpdatableSystems.Emplace(&_System);
 }
 
 void UKLDebugImGuiEngineSubsystem::RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System)
@@ -72,6 +74,9 @@ void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collect
 
     FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
     ImGuiWindow.Init();
+
+    mPendingUpdatableSystems.Reserve(10);
+    mUpdatableSystems.Reserve(10);
 }
 
 void UKLDebugImGuiEngineSubsystem::InitFromConfig()
@@ -113,10 +118,28 @@ void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiEngineSubsystem_Update);
 
+    AddPendingUpdatableSystems();
+
     FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
     ImGuiWindow.Update(_World);
 
     UpdateSystems(_World);
+}
+
+void UKLDebugImGuiEngineSubsystem::AddPendingUpdatableSystems()
+{
+    for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mPendingUpdatableSystems)
+    {
+        if (!UpdatableSystem.IsValid())
+        {
+            continue;
+        }
+
+        UpdatableSystem->Initialize(mFeatureContainersManger);
+        mUpdatableSystems.Emplace(UpdatableSystem);
+    }
+
+    mPendingUpdatableSystems.Reset();
 }
 
 void UKLDebugImGuiEngineSubsystem::UpdateSystems(const UWorld& _World)
@@ -132,7 +155,7 @@ void UKLDebugImGuiEngineSubsystem::UpdateSystems(const UWorld& _World)
     }
 }
 
-void UKLDebugImGuiEngineSubsystem::DrawImGui()
+void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
 {
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
     if (!ImGui::Begin("DebugEditor", nullptr, WindowFlags))
@@ -140,18 +163,28 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui()
         return;
     }
 
-    // if (ImGui::BeginTabBar("Engine", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
-    //{
-    //     FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
-    //     FKLDebugImGuiFeaturesIterator      Iterator        = EngineContainer.GetAllFeaturesIterator();
-    //     for (; Iterator; ++Iterator)
-    //     {
-    //         IKLDebugImGuiFeatureInterface_EngineSubsystem& EngineFeatureInterface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_EngineSubsystem>();
-    //         EngineFeatureInterface.Update();
-    //     }
+    if (ImGui::BeginTabBar("Engine", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    {
+        FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
+        FKLDebugImGuiFeaturesIterator      Iterator        = EngineContainer.GetFeaturesIterator();
+        for (; Iterator; ++Iterator)
+        {
+            IKLDebugImGuiFeatureInterface_EngineSubsystem& EngineFeatureInterface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_EngineSubsystem>();
+            EngineFeatureInterface.DrawImGui(_World);
+        }
 
-    //    ImGui::EndTabBar();
-    //}
+        ImGui::EndTabBar();
+    }
+
+    for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mUpdatableSystems)
+    {
+        if (!UpdatableSystem.IsValid())
+        {
+            continue;
+        }
+
+        UpdatableSystem->Update(_World, mFeatureContainersManger);
+    }
 
     ImGui::End();
 }

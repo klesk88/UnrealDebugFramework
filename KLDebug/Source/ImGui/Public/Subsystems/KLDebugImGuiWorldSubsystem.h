@@ -31,7 +31,9 @@ public:
     // UWorldSubsystem
 
     // IKLDebugImGuiSubsystemUpdatable
+    void Initialize(FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) final;
     void Update(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) final;
+    void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) final;
     // IKLDebugImGuiSubsystemUpdatable
 
     UE_NODISCARD static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
@@ -41,9 +43,7 @@ public:
     void OnObjectSelected(UObject& _Object);
 
 private:
-    void InitWorldVisualizer();
-
-    void UpateWorldVisualizer(FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
+    void DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
     void UpdateSelectedObjectsVisualizers(FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:

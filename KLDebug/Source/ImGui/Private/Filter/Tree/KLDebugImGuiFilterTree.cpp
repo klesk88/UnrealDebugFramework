@@ -1,6 +1,5 @@
 #include "Filter/Tree/KLDebugImGuiFilterTree.h"
 
-#include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 #include "Filter/Interface/KLDebugImGuiFilterInterface.h"
 #include "Filter/Manager/KLDebugImGuiFilterManager.h"

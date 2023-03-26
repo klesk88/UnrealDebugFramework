@@ -1,5 +1,7 @@
 #include "Feature/Container/ObjectSubsystem/KLDebugImGuiFeatureContainer_ObjectSubsystem.h"
 
+#include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_ObjectSubsystem.h"
+
 FKLDebugImGuiFeatureContainer_ObjectSubsystem::FKLDebugImGuiFeatureContainer_ObjectSubsystem(const EObjectSubsytemType _Type)
     : mType(_Type)
 {
@@ -14,18 +16,16 @@ bool FKLDebugImGuiFeatureContainer_ObjectSubsystem::IsCorrectContainerForFeature
 void FKLDebugImGuiFeatureContainer_ObjectSubsystem::GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
 {
     _OutFeaturesIndexes.Reserve(GetFeaturesCount());
-    const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& FeaturePool  = GetFeaturesPool();
-    const TArray<FKLDebugImGuiFeatureData>&                            FeaturesData = GetFeaturesData();
 
-    for (int32 i = 0; i < FeaturesData.Num(); ++i)
+    for (FKLDebugImGuiFeaturesConstIterator Iterator = GetFeaturesConstIterator(); Iterator; ++Iterator)
     {
-        const FKLDebugImGuiFeatureData& FeatureData = FeaturesData[i];
-        checkf(FeaturePool.IsValidIndex(FeatureData.GetFeatureOffset()), TEXT("index offset must be valid"));
-        const IKLDebugImGuiFeatureInterface_ObjectSubsystem& Feature = reinterpret_cast<const IKLDebugImGuiFeatureInterface_ObjectSubsystem&>(FeaturePool[FeatureData.GetFeatureOffset()]);
-        if (Feature.DoesSupportObject(_Obj))
+        const IKLDebugImGuiFeatureInterface_ObjectSubsystem& Feature = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_ObjectSubsystem>();
+        if (!Feature.DoesSupportObject(_Obj))
         {
-            _OutFeaturesIndexes.Emplace(i);
+            continue;
         }
+
+        _OutFeaturesIndexes.Emplace(Iterator.GetFeatureDataIndex());
     }
 
     _OutFeaturesIndexes.Shrink();

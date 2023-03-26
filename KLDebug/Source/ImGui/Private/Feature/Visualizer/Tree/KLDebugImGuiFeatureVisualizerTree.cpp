@@ -1,6 +1,5 @@
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
-#include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
@@ -13,7 +12,7 @@
 #include "Containers/UnrealString.h"
 #include "Math/UnrealMathUtility.h"
 
-void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesIterator& _Iterator)
+void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesConstIterator& _Iterator)
 {
     if (_Iterator.GetFeaturesCount() == 0)
     {
@@ -42,14 +41,24 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree()
         ImGuiTreeNodeFlags                      NodeFlags;
         if (_TreeNode.IsLeaf())
         {
-            NodeFlags = NodeData.GetIsSelected() ? LeafFlags | ImGuiTreeNodeFlags_Selected : LeafFlags;
+            NodeFlags |= LeafFlags;
         }
-        else
+
+        if (_TreeNode.HasFeatures())
         {
-            NodeFlags = NodeData.GetIsSelected() ? BaseFlags | ImGuiTreeNodeFlags_Selected : BaseFlags;
+            NodeFlags = NodeData.GetIsSelected() ? LeafFlags | ImGuiTreeNodeFlags_Selected : LeafFlags;
         }
 
         const bool NodeOpen = ImGui::TreeNodeEx(&NodeData, NodeFlags, TCHAR_TO_ANSI(*NodeData.GetImGuiNodeString()));
+        if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+        {
+            NodeData.SetIsSelected();
+        }
+        else
+        {
+            NodeData.ClearIsSelected();
+        }
+
         return NodeOpen;
     };
 
@@ -70,7 +79,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree()
     KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversalImGui(mTreeNodes, KeepTraversingTreeLambda, NodeAlreadyVisistedLambda, EvaluateNodeLambda);
 }
 
-void FKLDebugImGuiFeatureVisualizerTree::GatherAndSortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const
+void FKLDebugImGuiFeatureVisualizerTree::GatherAndSortFeatures(FKLDebugImGuiFeaturesConstIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const
 {
     _FeaturesSorted.Reserve(_Iterator.GetFeaturesCount());
 

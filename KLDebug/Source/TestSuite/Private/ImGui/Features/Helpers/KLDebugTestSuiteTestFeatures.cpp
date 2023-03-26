@@ -7,6 +7,16 @@ bool FKLDebugTestFeatureBase::DoesSupportObject(const UObject& _Object) const
     return true;
 }
 
+void FKLDebugTestFeatureBase::DrawImGuiChild(const UWorld& _World)
+{
+}
+
+const FString& FKLDebugTestFeatureBase::GetWindowName() const
+{
+    static FString EmptyName;
+    return EmptyName;
+}
+
 ////////////////////////////////////////////////////////////////
 
 void FKLDebugTestCoverFeature::GetFilterPath(TArray<FName>& _OutFilters) const

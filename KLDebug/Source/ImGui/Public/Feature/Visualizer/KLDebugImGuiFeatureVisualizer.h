@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Feature/KLDebugImGuiFeatureTypes.h"
+#include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
 // engine
 #include "Containers/Array.h"
@@ -20,10 +21,12 @@ public:
 
     UE_NODISCARD bool IsValid() const;
 
+    void DrawImGuiTree();
     void DrawImGui(FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const;
     void Render(FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const;
 
 private:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;
+    FKLDebugImGuiFeatureVisualizerTree                      mTreeVisualizer;
     TWeakObjectPtr<UObject>                                 mObject;
 };

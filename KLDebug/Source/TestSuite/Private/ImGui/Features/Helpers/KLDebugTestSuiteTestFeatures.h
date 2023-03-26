@@ -9,6 +9,10 @@ class FKLDebugTestFeatureBase : public IKLDebugImGuiFeatureInterface_SelectableO
 {
 public:
     bool DoesSupportObject(const UObject& _Object) const final;
+
+private:
+    void           DrawImGuiChild(const UWorld& _World) final;
+    const FString& GetWindowName() const final;
 };
 
 class FKLDebugTestCoverFeature final : public FKLDebugTestFeatureBase

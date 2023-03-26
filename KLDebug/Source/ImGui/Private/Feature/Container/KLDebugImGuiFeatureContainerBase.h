@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
+#include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
-#include "Feature/Container/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
@@ -31,7 +32,10 @@ public:
 
     void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
 
-    UE_NODISCARD FKLDebugImGuiFeaturesIterator GetFeaturesIterator();
+    UE_NODISCARD FKLDebugImGuiFeaturesIterator      GetFeaturesIterator();
+    UE_NODISCARD FKLDebugImGuiFeaturesConstIterator GetFeaturesConstIterator() const;
+
+    UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
 
 protected:
     virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;
@@ -58,6 +62,16 @@ private:
 inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesIterator()
 {
     return FKLDebugImGuiFeaturesIterator(mFeaturesData, mFeaturesPool);
+}
+
+inline FKLDebugImGuiFeaturesConstIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesConstIterator() const
+{
+    return FKLDebugImGuiFeaturesConstIterator(mFeaturesData, mFeaturesPool);
+}
+
+inline FKLDebugImGuiSubsetFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes)
+{
+    return FKLDebugImGuiSubsetFeaturesIterator(_FeaturesIndexes, mFeaturesData, mFeaturesPool);
 }
 
 inline void FKLDebugImGuiFeatureContainerBase::InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount)

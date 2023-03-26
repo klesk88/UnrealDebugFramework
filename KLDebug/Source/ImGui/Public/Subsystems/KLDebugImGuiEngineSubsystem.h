@@ -53,14 +53,16 @@ private:
 
     void Update(const UWorld& _World);
 
+    void AddPendingUpdatableSystems();
     void UpdateSystems(const UWorld& _World);
-    void DrawImGui();
+    void DrawImGui(const UWorld& _World);
 
 private:
     FKLDebugImGuiFeaturesTypesContainerManager                 mFeatureContainersManger;
     FKLDebugUtilsPicker                                        mPicker;
     FKLDebugImGuiInputManager                                  mInputManager;
     FInstancedStruct                                           mImGuiWindow;
+    TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>> mPendingUpdatableSystems;
     TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>> mUpdatableSystems;
 };
 

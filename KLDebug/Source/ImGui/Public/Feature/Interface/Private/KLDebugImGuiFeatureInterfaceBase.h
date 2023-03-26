@@ -8,7 +8,6 @@
 #include "CoreMinimal.h"
 #include "UObject/NameTypes.h"
 
-class FString;
 class UWorld;
 class IKLDebugImGuiFilterInterface;
 
@@ -54,15 +53,17 @@ public:
     virtual void Initialize();
     virtual void Update();
 
-    void         DrawImGui(const UWorld& _World);
+    virtual void DrawImGui(const UWorld& _World);
     virtual void Render(const UWorld& _World) const;
 
     template<typename FeatureType>
     UE_NODISCARD bool IsDerivedFrom() const;
 
 protected:
-    virtual void DrawImGuiChild(const UWorld& _World);
+    virtual void           DrawImGuiChild(const UWorld& _World) = 0;
+    virtual const FString& GetWindowName() const                = 0;
 
+protected:
     // implement the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual bool        IsDerivedInternal(const FName& _ItemTypeName) const;
     UE_NODISCARD static const FName& StaticItemType();
@@ -74,10 +75,6 @@ inline void IKLDebugImGuiFeatureInterfaceBase::Initialize()
 }
 
 inline void IKLDebugImGuiFeatureInterfaceBase::Update()
-{
-}
-
-inline void IKLDebugImGuiFeatureInterfaceBase::DrawImGuiChild(const UWorld& _World)
 {
 }
 

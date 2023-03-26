@@ -21,6 +21,11 @@ bool FKLDebugImGuiFeatureVisualizer::IsValid() const
     return mObject.IsValid();
 }
 
+void FKLDebugImGuiFeatureVisualizer::DrawImGuiTree()
+{
+    mTreeVisualizer.DrawImGuiTree();
+}
+
 void FKLDebugImGuiFeatureVisualizer::DrawImGui(FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const
 {
 }

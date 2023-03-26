@@ -16,7 +16,9 @@ public:
     FKLDebugImGuiFeatureVisualizerTreeNode() = default;
     explicit FKLDebugImGuiFeatureVisualizerTreeNode(const int32 _NodeDataIndex);
 
-    void AddFeatureDataIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex);
+    void               AddFeatureDataIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex);
+    UE_NODISCARD bool  HasFeatures() const;
+    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeatureIndexes() const;
 
 private:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;
@@ -25,4 +27,14 @@ private:
 inline void FKLDebugImGuiFeatureVisualizerTreeNode::AddFeatureDataIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex)
 {
     mFeaturesIndexes.Emplace(_FeatureDataIndex);
+}
+
+inline bool FKLDebugImGuiFeatureVisualizerTreeNode::HasFeatures() const
+{
+    return !mFeaturesIndexes.IsEmpty();
+}
+
+inline const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& FKLDebugImGuiFeatureVisualizerTreeNode::GetFeatureIndexes() const
+{
+    return mFeaturesIndexes;
 }
