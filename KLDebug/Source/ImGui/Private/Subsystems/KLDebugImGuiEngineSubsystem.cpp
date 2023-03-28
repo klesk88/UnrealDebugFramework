@@ -50,13 +50,14 @@ void UKLDebugImGuiEngineSubsystem::AddUpdatableSystem(IKLDebugImGuiSubsystemUpda
     mPendingUpdatableSystems.Emplace(&_System);
 }
 
-void UKLDebugImGuiEngineSubsystem::RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System)
+void UKLDebugImGuiEngineSubsystem::RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System, const bool _IsRegistered)
 {
-    for (int32 i = 0; i < mUpdatableSystems.Num(); ++i)
+    TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>>& ArrayToRemove = _IsRegistered ? mUpdatableSystems : mPendingUpdatableSystems;
+    for (int32 i = 0; i < ArrayToRemove.Num(); ++i)
     {
-        if (mUpdatableSystems[i].Get() == &_System)
+        if (ArrayToRemove[i].Get() == &_System)
         {
-            mUpdatableSystems.RemoveAtSwap(i);
+            ArrayToRemove.RemoveAtSwap(i, 1, false);
             return;
         }
     }
@@ -124,6 +125,7 @@ void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
     ImGuiWindow.Update(_World);
 
     UpdateSystems(_World);
+    DrawImGui(_World);
 }
 
 void UKLDebugImGuiEngineSubsystem::AddPendingUpdatableSystems()
@@ -163,7 +165,13 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
         return;
     }
 
-    if (ImGui::BeginTabBar("Engine", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    if (!ImGui::BeginTabBar("Systems", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    {
+        ImGui::End();
+        return;
+    }
+
+    if (ImGui::BeginTabItem("Engine"))
     {
         FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
         FKLDebugImGuiFeaturesIterator      Iterator        = EngineContainer.GetFeaturesIterator();
@@ -173,7 +181,7 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
             EngineFeatureInterface.DrawImGui(_World);
         }
 
-        ImGui::EndTabBar();
+        ImGui::EndTabItem();
     }
 
     for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mUpdatableSystems)
@@ -183,8 +191,9 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
             continue;
         }
 
-        UpdatableSystem->Update(_World, mFeatureContainersManger);
+        UpdatableSystem->DrawImGui(_World, mFeatureContainersManger);
     }
 
+    ImGui::EndTabBar();
     ImGui::End();
 }

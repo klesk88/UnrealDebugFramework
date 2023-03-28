@@ -15,8 +15,7 @@ public:
 
     UE_NODISCARD bool GetIsSelected() const;
 
-    void SetIsSelected();
-    void ClearIsSelected();
+    void ToogleIsSelected();
 
 private:
     FString mNameAsString;
@@ -33,12 +32,7 @@ inline bool FKLDebugImGuiFeatureVisualizerNodeData::GetIsSelected() const
     return mIsSelected;
 }
 
-inline void FKLDebugImGuiFeatureVisualizerNodeData::SetIsSelected()
+inline void FKLDebugImGuiFeatureVisualizerNodeData::ToogleIsSelected()
 {
-    mIsSelected = true;
-}
-
-inline void FKLDebugImGuiFeatureVisualizerNodeData::ClearIsSelected()
-{
-    mIsSelected = false;
+    mIsSelected = !mIsSelected;
 }

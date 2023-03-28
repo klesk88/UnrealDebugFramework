@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSelectableObject.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
 #include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
 // debug utils module
@@ -26,7 +27,7 @@ class KLDEBUGIMGUI_API UKLDebugImGuiWorldSubsystem final : public UWorldSubsyste
 public:
     // UWorldSubsystem
     bool ShouldCreateSubsystem(UObject* _Outer) const final;
-    void PostInitialize() final;
+    void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
     // UWorldSubsystem
 
@@ -43,11 +44,12 @@ public:
     void OnObjectSelected(UObject& _Object);
 
 private:
-    void DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
-    void UpdateSelectedObjectsVisualizers(FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGuiObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
-    FKLDebugUtilsPicker                        mPicker;
-    TUniquePtr<FKLDebugImGuiFeatureVisualizer> mWorldVisualizer;
-    TArray<FKLDebugImGuiFeatureVisualizer>     mSelectedObjectsVisualizers;
+    FKLDebugUtilsPicker                                    mPicker;
+    TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>    mWorldVisualizer;
+    TArray<FKLDebugImGuiFeatureVisualizerSelectableObject> mSelectedObjectsVisualizers;
+    bool                                                   mIsInitialized = false;
 };

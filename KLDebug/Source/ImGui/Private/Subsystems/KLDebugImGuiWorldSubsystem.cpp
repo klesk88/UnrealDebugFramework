@@ -17,10 +17,11 @@ bool UKLDebugImGuiWorldSubsystem::ShouldCreateSubsystem(UObject* _Outer) const
     return UKLDebugImGuiEngineSubsystem::Get() != nullptr;
 }
 
-void UKLDebugImGuiWorldSubsystem::PostInitialize()
+void UKLDebugImGuiWorldSubsystem::Initialize(FSubsystemCollectionBase& _Collection)
 {
     UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
     EngineSusbsytem->AddUpdatableSystem(*this);
+    mIsInitialized = false;
 }
 
 void UKLDebugImGuiWorldSubsystem::Deinitialize()
@@ -28,12 +29,16 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
     UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
     if (EngineSusbsytem)
     {
-        EngineSusbsytem->RemoveUpdatableSystem(*this);
+        EngineSusbsytem->RemoveUpdatableSystem(*this, mIsInitialized);
     }
 }
 
 void UKLDebugImGuiWorldSubsystem::Initialize(FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
 {
+    // Initialize the tree here. At this point all the world subsystems should have been spawn already. The same is not true if I do it in
+    // Initialize (note I could use here PostInitialize but all the other subsystems do not have such feature so for consistency use the same)
+
+    mIsInitialized                                          = true;
     const FKLDebugImGuiFeatureContainerBase& WorldContainer = _FeatureContainerManager.GetContainer(EContainerType::WORLD_SUBSYSTEM);
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
@@ -45,7 +50,7 @@ void UKLDebugImGuiWorldSubsystem::Initialize(FKLDebugImGuiFeaturesTypesContainer
         return;
     }
 
-    mWorldVisualizer = MakeUnique<FKLDebugImGuiFeatureVisualizer>(World, MoveTemp(Features));
+    mWorldVisualizer = MakeUnique<FKLDebugImGuiFeatureVisualizerSubsystem>(WorldContainer, MoveTemp(Features));
 }
 
 UKLDebugImGuiWorldSubsystem* UKLDebugImGuiWorldSubsystem::TryGetMutable(const UObject& _Object)
@@ -74,12 +79,11 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
     }
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
-
-    const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = EngineSusbsytem->GetFeatureContainerManager();
-    const FKLDebugImGuiFeatureContainerBase&          SelectedObjectFeatures  = FeatureContainerManager.GetContainer(EContainerType::SELECTABLE_OBJECTS);
+    const FKLDebugImGuiFeaturesTypesContainerManager&       FeatureContainerManager = EngineSusbsytem->GetFeatureContainerManager();
+    const FKLDebugImGuiFeatureContainerBase&                SelectedObjectFeatures  = FeatureContainerManager.GetContainer(EContainerType::SELECTABLE_OBJECTS);
 
     SelectedObjectFeatures.GatherFeatures(_Object, Features);
-    mSelectedObjectsVisualizers.Emplace(_Object, MoveTemp(Features));
+    mSelectedObjectsVisualizers.Emplace(SelectedObjectFeatures, _Object, MoveTemp(Features));
 }
 
 void UKLDebugImGuiWorldSubsystem::Update(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
@@ -88,8 +92,6 @@ void UKLDebugImGuiWorldSubsystem::Update(const UWorld& _CurrentWorldUpdated, FKL
     {
         return;
     }
-
-    UpdateSelectedObjectsVisualizers(_ContainerManager);
 }
 
 void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
@@ -99,44 +101,38 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
         return;
     }
 
-    if (!ImGui::BeginTabBar(TCHAR_TO_ANSI(*_CurrentWorldUpdated.GetName()), ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    if (!ImGui::BeginTabItem(TCHAR_TO_ANSI(*_CurrentWorldUpdated.GetName())))
     {
         return;
     }
 
     DrawImGuiWorld(_CurrentWorldUpdated, _ContainerManager);
+    DrawImGuiObjects(_CurrentWorldUpdated, _ContainerManager);
 
-    ImGui::EndTabBar();
+    ImGui::EndTabItem();
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
+void UKLDebugImGuiWorldSubsystem::DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
-    FKLDebugImGuiFeatureContainerBase& WorldContainer = _ContainerManager.GetContainerMutable(EContainerType::WORLD_SUBSYSTEM);
-    FKLDebugImGuiFeaturesIterator      Iterator       = WorldContainer.GetFeaturesIterator();
-    for (; Iterator; ++Iterator)
+    if (!mWorldVisualizer.IsValid())
     {
-        IKLDebugImGuiFeatureInterface_ObjectSubsystem& ObjectSubsystem = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_ObjectSubsystem>();
-        if (!ObjectSubsystem.DoesSupportObject(_World))
-        {
-            continue;
-        }
-
-        ObjectSubsystem.DrawImGui(_World);
+        return;
     }
+
+    FKLDebugImGuiFeatureContainerBase& WorldContainer = _ContainerManager.GetContainerMutable(EContainerType::WORLD_SUBSYSTEM);
+    mWorldVisualizer->DrawImGui(_World, WorldContainer);
 }
 
-void UKLDebugImGuiWorldSubsystem::UpdateSelectedObjectsVisualizers(FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     FKLDebugImGuiFeatureContainerBase& SelectableObjFeatures = _ContainerManager.GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
-
-    for (const FKLDebugImGuiFeatureVisualizer& ObjVisualizer : mSelectedObjectsVisualizers)
+    for (FKLDebugImGuiFeatureVisualizerBase& ObjVisualizer : mSelectedObjectsVisualizers)
     {
         if (!ObjVisualizer.IsValid())
         {
             continue;
         }
 
-        ObjVisualizer.DrawImGui(SelectableObjFeatures);
-        ObjVisualizer.Render(SelectableObjFeatures);
+        ObjVisualizer.DrawImGui(_World, SelectableObjFeatures);
     }
 }

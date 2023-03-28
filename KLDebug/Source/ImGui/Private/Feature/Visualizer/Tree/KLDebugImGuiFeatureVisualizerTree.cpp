@@ -1,7 +1,9 @@
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
+#include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
+#include "Helpers/KLDebugImGuiHelpers.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
 
@@ -24,12 +26,12 @@ void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesConstIt
     GenerateTree(SortedFeatures);
 }
 
-void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree()
+void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexesSelected)
 {
-    static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-    static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Selected;
+    static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+    static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-    auto KeepTraversingTreeLambda = [this](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
+    auto KeepTraversingTreeLambda = [this, &_FeaturesIndexesSelected](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
         const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
         if (!NodeDataIndex.IsSet())
         {
@@ -41,22 +43,57 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree()
         ImGuiTreeNodeFlags                      NodeFlags;
         if (_TreeNode.IsLeaf())
         {
-            NodeFlags |= LeafFlags;
+            NodeFlags = LeafFlags;
+        }
+        else
+        {
+            NodeFlags = BaseFlags;
+        }
+
+        if (NodeData.GetIsSelected())
+        {
+            NodeFlags |= ImGuiTreeNodeFlags_Selected;
         }
 
         if (_TreeNode.HasFeatures())
         {
-            NodeFlags = NodeData.GetIsSelected() ? LeafFlags | ImGuiTreeNodeFlags_Selected : LeafFlags;
+            ImGui::PushStyleColor(ImGuiCol_Text, KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow));
         }
 
         const bool NodeOpen = ImGui::TreeNodeEx(&NodeData, NodeFlags, TCHAR_TO_ANSI(*NodeData.GetImGuiNodeString()));
-        if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+
+        if (_TreeNode.HasFeatures())
         {
-            NodeData.SetIsSelected();
+            ImGui::PopStyleColor(1);
         }
-        else
+
+        if (_TreeNode.HasFeatures() && ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
-            NodeData.ClearIsSelected();
+            NodeData.ToogleIsSelected();
+            if (NodeData.GetIsSelected())
+            {
+                for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : _TreeNode.GetFeatureIndexes())
+                {
+                    ensureMsgf(_FeaturesIndexesSelected.IndexOfByKey(FeatureIndex) == INDEX_NONE, TEXT("adding same feature multiple times"));
+                    _FeaturesIndexesSelected.Emplace(FeatureIndex);
+                }
+            }
+            else
+            {
+                for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : _TreeNode.GetFeatureIndexes())
+                {
+                    const int32 Index = _FeaturesIndexesSelected.IndexOfByKey(FeatureIndex);
+#if DO_ENSURE
+                    if (Index == INDEX_NONE)
+                    {
+                        ensureMsgf(false, TEXT("feature not found"));
+                        continue;
+                    }
+#endif
+
+                    _FeaturesIndexesSelected.RemoveAtSwap(Index, 1, false);
+                }
+            }
         }
 
         return NodeOpen;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 #include "Filter/Tree/KLDebugImGuiFilterTreeNode.h"
 #include "Filter/Tree/KLDebugImGuiFilterTreeNodeData.h"
@@ -9,9 +8,11 @@
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
 #include "CoreMinimal.h"
+#include "Misc/AutomationTest.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
+class FKLDebugImGuiFeaturesIterator;
 class FKLDebugImGuiFilterNodesStackData;
 class FKLDebugImGuiTreeSortedFeatures;
 class FString;

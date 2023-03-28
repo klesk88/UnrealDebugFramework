@@ -11,7 +11,7 @@ public:
     bool DoesSupportObject(const UObject& _Object) const final;
 
 private:
-    void           DrawImGuiChild(const UWorld& _World) final;
+    void           DrawImGuiChild(const UWorld& _World, UObject& _Object) final;
     const FString& GetWindowName() const final;
 };
 

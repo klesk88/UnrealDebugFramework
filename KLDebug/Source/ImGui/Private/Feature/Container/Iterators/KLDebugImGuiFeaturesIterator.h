@@ -4,53 +4,90 @@
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 
-template<bool IsConst>
-class FKLDebugImGuiFeaturesIteratorCommon final : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIteratorCommon, IsConst>
+class FKLDebugImGuiFeaturesConstIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>
 {
 private:
-    template<template<bool IsConst> class Child, bool IsConst>
+    template<class Child, bool IsConst>
     friend class FKLDebugImGuiFeaturesIteratorBase;
 
 public:
-    explicit FKLDebugImGuiFeaturesIteratorCommon(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIteratorCommon, IsConst>::PoolType& _FeaturesPool);
+    explicit FKLDebugImGuiFeaturesConstIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>::PoolType& _FeaturesPool);
+    virtual ~FKLDebugImGuiFeaturesConstIterator() = default;
+
     explicit operator bool() const;
 
-private:
-    template<bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutableChild() const;
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeatureChild() const;
+protected:
+    UE_NODISCARD virtual bool                                     IsValid() const;
+    UE_NODISCARD virtual const IKLDebugImGuiFeatureInterfaceBase& GetFeatureChild() const;
 };
 
-template<bool IsConst>
-FKLDebugImGuiFeaturesIteratorCommon<IsConst>::FKLDebugImGuiFeaturesIteratorCommon(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIteratorCommon, IsConst>::PoolType& _FeaturesPool)
+FKLDebugImGuiFeaturesConstIterator::FKLDebugImGuiFeaturesConstIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>::PoolType& _FeaturesPool)
     : FKLDebugImGuiFeaturesIteratorBase(_FeatureData, _FeaturesPool)
 {
 }
 
-template<bool IsConst>
-inline FKLDebugImGuiFeaturesIteratorCommon<IsConst>::operator bool() const
+inline FKLDebugImGuiFeaturesConstIterator::operator bool() const
+{
+    return IsValid();
+}
+
+inline bool FKLDebugImGuiFeaturesConstIterator::IsValid() const
 {
     return mIndex < static_cast<uint32>(mFeatureData.Num());
 }
 
-template<bool IsConst>
-template<bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
-inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorCommon<IsConst>::GetFeatureMutableChild() const
-{
-    const FKLDebugImGuiFeatureData&                        FeatureData   = mFeatureData[mIndex];
-    const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = FeatureData.GetFeatureOffset();
-    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
-}
-
-template<bool IsConst>
-const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorCommon<IsConst>::GetFeatureChild() const
+inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesConstIterator::GetFeatureChild() const
 {
     const FKLDebugImGuiFeatureData&                        FeatureData   = mFeatureData[mIndex];
     const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = FeatureData.GetFeatureOffset();
     return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
 }
 
-//////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-using FKLDebugImGuiFeaturesIterator      = FKLDebugImGuiFeaturesIteratorCommon<false>;
-using FKLDebugImGuiFeaturesConstIterator = FKLDebugImGuiFeaturesIteratorCommon<true>;
+class FKLDebugImGuiFeaturesIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>
+{
+private:
+    template<class Child, bool IsConst>
+    friend class FKLDebugImGuiFeaturesIteratorBase;
+
+public:
+    explicit FKLDebugImGuiFeaturesIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>::PoolType& _FeaturesPool);
+    virtual ~FKLDebugImGuiFeaturesIterator() = default;
+
+    explicit operator bool() const;
+
+protected:
+    UE_NODISCARD virtual bool                                     IsValid() const;
+    UE_NODISCARD virtual const IKLDebugImGuiFeatureInterfaceBase& GetFeatureChild() const;
+    UE_NODISCARD virtual IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutableChild() const;
+};
+
+FKLDebugImGuiFeaturesIterator::FKLDebugImGuiFeaturesIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>::PoolType& _FeaturesPool)
+    : FKLDebugImGuiFeaturesIteratorBase(_FeatureData, _FeaturesPool)
+{
+}
+
+inline FKLDebugImGuiFeaturesIterator::operator bool() const
+{
+    return IsValid();
+}
+
+inline bool FKLDebugImGuiFeaturesIterator::IsValid() const
+{
+    return mIndex < static_cast<uint32>(mFeatureData.Num());
+}
+
+inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIterator::GetFeatureChild() const
+{
+    const FKLDebugImGuiFeatureData&                        FeatureData   = mFeatureData[mIndex];
+    const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = FeatureData.GetFeatureOffset();
+    return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
+}
+
+inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIterator::GetFeatureMutableChild() const
+{
+    const FKLDebugImGuiFeatureData&                        FeatureData   = mFeatureData[mIndex];
+    const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = FeatureData.GetFeatureOffset();
+    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
+}

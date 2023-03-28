@@ -15,7 +15,12 @@ public:
     // should return true if the object passed as input is supported by this feature
     UE_NODISCARD virtual bool DoesSupportObject(const UObject& _Object) const = 0;
 
+    virtual void DrawImGui(const UWorld& _World, UObject& _Object);
+    virtual void Render(const UObject& _Object, const UWorld& _World) const;
+
 protected:
+    virtual void DrawImGuiChild(const UWorld& _World, UObject& _Object) = 0;
+
     template<typename... FilterType>
     void GetFilterPathHelper(TArray<FName>& _OutFilters) const;
 
@@ -38,5 +43,9 @@ inline void IKLDebugImGuiFeatureInterface_SelectableObject::GetFilterPathHelper(
 
 template<typename... FilterType>
 inline void IKLDebugImGuiFeatureInterface_SelectableObject::Dummy(FilterType&&...) const
+{
+}
+
+inline void IKLDebugImGuiFeatureInterface_SelectableObject::Render(const UObject& _Object, const UWorld& _World) const
 {
 }

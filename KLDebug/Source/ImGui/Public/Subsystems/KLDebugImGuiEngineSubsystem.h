@@ -43,7 +43,7 @@ public:
     UE_NODISCARD bool IsImGuiSystemEnabled() const;
 
     void AddUpdatableSystem(IKLDebugImGuiSubsystemUpdatable& _System);
-    void RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System);
+    void RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System, const bool _IsRegistered);
 
 private:
     void InitFromConfig();

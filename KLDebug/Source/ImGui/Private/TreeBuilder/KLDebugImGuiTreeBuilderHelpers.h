@@ -37,6 +37,12 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
                 NodesStackPair<TreeNodeType> CurrentStackNode = NodesStack.Pop(false);
                 const TreeNodeType*          TreeNode         = CurrentStackNode.Value;
 
+                if (_CheckNodeAlreadyVisisted && CurrentStackNode.Key)
+                {
+                    _NodeAlreadyVisistedCbk(*TreeNode);
+                    continue;
+                }
+
                 if (!_KeepTraversingCbk(*TreeNode))
                 {
                     // this subtree is not open, try to see if the neighbor one is open
@@ -46,12 +52,6 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
                         NodesStack.Emplace(NodesStackPair<TreeNodeType>(false, &_TreeNodes[NextNode.GetValue()]));
                     }
 
-                    continue;
-                }
-
-                if (_CheckNodeAlreadyVisisted && CurrentStackNode.Key)
-                {
-                    _NodeAlreadyVisistedCbk(*TreeNode);
                     continue;
                 }
 

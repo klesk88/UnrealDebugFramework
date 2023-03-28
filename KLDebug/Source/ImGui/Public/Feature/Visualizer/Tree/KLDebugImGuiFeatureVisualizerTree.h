@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
 
@@ -9,9 +8,11 @@
 #include "Containers/ArrayView.h"
 #include "Containers/Map.h"
 #include "CoreMinimal.h"
+#include "Misc/AutomationTest.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
+class FKLDebugImGuiFeaturesConstIterator;
 class FKLDebugImGuiVisualizerTreeSortedFeatures;
 class FString;
 
@@ -20,7 +21,7 @@ class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizerTree final : public FNoncop
 public:
     void CreateTree(FKLDebugImGuiFeaturesConstIterator& _Iterator);
 
-    void DrawImGuiTree();
+    void DrawImGuiTree(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexesSelected);
 
 private:
     void GatherAndSortFeatures(FKLDebugImGuiFeaturesConstIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const;

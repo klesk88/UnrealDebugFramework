@@ -20,4 +20,11 @@ namespace KL::Debug::ImGuiHelpers
         //     ImGui::EndTooltip();
         // }
     }
+
+    ImVec4 ConvertUnrealColorToImGui(const FColor& _Color)
+    {
+        static constexpr float InvValue = 1.f / 255.f;
+        return ImVec4(_Color.R * InvValue, _Color.G * InvValue, _Color.B * InvValue, _Color.A * InvValue);
+    }
+
 }  // namespace KL::Debug::ImGuiHelpers

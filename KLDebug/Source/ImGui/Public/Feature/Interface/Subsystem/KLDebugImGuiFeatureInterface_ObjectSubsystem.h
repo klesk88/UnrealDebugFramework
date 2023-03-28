@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+#include "Feature/Interface/Private/KLDebugImGuiFeatureInterface_Subsystem.h"
 
 class UObject;
 
@@ -15,9 +15,9 @@ enum class KLDEBUGIMGUI_API EObjectSubsytemType : uint8
 /*
  * This interface can be extended for subsystems which are based on UObjects (currently everyone except Engine)
  */
-class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface_ObjectSubsystem : public IKLDebugImGuiFeatureInterfaceBase
+class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface_ObjectSubsystem : public IKLDebugImGuiFeatureInterface_Subsystem
 {
-    DERIVED_KL_DEBUG_FEATURE_CLASS(IKLDebugImGuiFeatureInterface_EngineSubsystem, IKLDebugImGuiFeatureInterfaceBase)
+    DERIVED_KL_DEBUG_FEATURE_CLASS(IKLDebugImGuiFeatureInterface_EngineSubsystem, IKLDebugImGuiFeatureInterface_Subsystem)
 
 public:
     // should return true if the object passed as input is supported by this feature
