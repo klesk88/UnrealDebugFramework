@@ -176,7 +176,8 @@ FReply SImGuiCanvasControl::OnDragOver(const FGeometry& MyGeometry, const FDragD
 	if (Operation.IsValid())
 	{
 		const FSlateRenderTransform ScreenToWidget = MyGeometry.GetAccumulatedRenderTransform().Inverse();
-		const FVector2D DragDelta = ScreenToWidget.TransformVector(DragDropEvent.GetScreenSpacePosition() - Operation->StartPosition);
+        const UE::Slate::FDeprecateVector2DResult& ScreenPosition = DragDropEvent.GetScreenSpacePosition();
+		const FVector2D DragDelta = ScreenToWidget.TransformVector(FVector2D(static_cast<double>(ScreenPosition.X), static_cast<double>(ScreenPosition.Y)) - Operation->StartPosition);
 	
 		if (Operation->DragType == EDragType::Content)
 		{

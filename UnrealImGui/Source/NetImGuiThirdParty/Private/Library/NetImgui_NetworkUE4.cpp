@@ -3,6 +3,8 @@
 #if NETIMGUI_ENABLED && defined(__UNREAL__)
 
 #include "CoreMinimal.h"
+#include "IPAddress.h"
+#include "IPAddressAsyncResolve.h"
 #include "Misc/OutputDeviceRedirector.h"
 #include "SocketSubsystem.h"
 #include "Sockets.h"
@@ -39,7 +41,7 @@ SocketInfo* Connect(const char* ServerHost, uint32_t ServerPort)
 {
 	SocketInfo* pSocketInfo					= nullptr;
 	ISocketSubsystem* SocketSubSystem		= ISocketSubsystem::Get();
-	auto ResolveInfo						= SocketSubSystem->GetHostByName(ServerHost);
+    FResolveInfo* ResolveInfo				= SocketSubSystem->GetHostByName(ServerHost);
 	while( !ResolveInfo->IsComplete() )
 		FPlatformProcess::Sleep(0.1);
 	
