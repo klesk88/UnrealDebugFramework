@@ -2,6 +2,7 @@
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
 #include "Helpers/KLDebugImGuiHelpers.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
@@ -26,7 +27,7 @@ void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesConstIt
     GenerateTree(SortedFeatures);
 }
 
-void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexesSelected)
+void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
 {
     static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
@@ -75,7 +76,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<KL::Debug::ImGui::
                 for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : _TreeNode.GetFeatureIndexes())
                 {
                     ensureMsgf(_FeaturesIndexesSelected.IndexOfByKey(FeatureIndex) == INDEX_NONE, TEXT("adding same feature multiple times"));
-                    _FeaturesIndexesSelected.Emplace(FeatureIndex);
+                    _FeaturesIndexesSelected.Emplace(FeatureIndex, NodeData.GetID());
                 }
             }
             else
@@ -114,6 +115,19 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<KL::Debug::ImGui::
     };
 
     KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversalImGui(mTreeNodes, KeepTraversingTreeLambda, NodeAlreadyVisistedLambda, EvaluateNodeLambda);
+}
+
+void FKLDebugImGuiFeatureVisualizerTree::ClearToogleNodeData(const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID)
+{
+    const int32 Index = mNodesData.IndexOfByKey(_NodeDataID);
+    if (Index == INDEX_NONE)
+    {
+        ensureMsgf(false, TEXT("element not found"));
+        return;
+    }
+
+    FKLDebugImGuiFeatureVisualizerNodeData& NodeData = mNodesData[Index];
+    NodeData.ClearIsSelected();
 }
 
 void FKLDebugImGuiFeatureVisualizerTree::GatherAndSortFeatures(FKLDebugImGuiFeaturesConstIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const
@@ -173,4 +187,6 @@ void FKLDebugImGuiFeatureVisualizerTree::GenerateTree(const TArray<FKLDebugImGui
 
     mTreeNodes.Shrink();
     mNodesData.Shrink();
+
+    checkf(mNodesData.Num() < TNumericLimits<KL::Debug::ImGui::Features::VisualizerTree::NodeDataID>::Max(), TEXT("the node data ID supports currently until uint16"));
 }

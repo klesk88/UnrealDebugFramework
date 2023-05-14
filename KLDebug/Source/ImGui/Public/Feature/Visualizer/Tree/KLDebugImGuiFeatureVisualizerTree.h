@@ -13,6 +13,7 @@
 #include "UObject/NameTypes.h"
 
 class FKLDebugImGuiFeaturesConstIterator;
+class FKLDebugImGuiFeatureVisualizerEntry;
 class FKLDebugImGuiVisualizerTreeSortedFeatures;
 class FString;
 
@@ -21,7 +22,8 @@ class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizerTree final : public FNoncop
 public:
     void CreateTree(FKLDebugImGuiFeaturesConstIterator& _Iterator);
 
-    void DrawImGuiTree(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexesSelected);
+    void DrawImGuiTree(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected);
+    void ClearToogleNodeData(const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID);
 
 private:
     void GatherAndSortFeatures(FKLDebugImGuiFeaturesConstIterator& _Iterator, TArray<FKLDebugImGuiVisualizerTreeSortedFeatures>& _FeaturesSorted) const;

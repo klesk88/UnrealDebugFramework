@@ -15,7 +15,7 @@ public:
     // should return true if the object passed as input is supported by this feature
     UE_NODISCARD virtual bool DoesSupportObject(const UObject& _Object) const = 0;
 
-    virtual void DrawImGui(const UWorld& _World, UObject& _Object);
+    virtual void DrawImGui(const UWorld& _World, bool& _IsOpen, UObject& _Object);
     virtual void Render(const UObject& _Object, const UWorld& _World) const;
 
 protected:

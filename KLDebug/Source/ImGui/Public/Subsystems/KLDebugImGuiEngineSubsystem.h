@@ -20,6 +20,7 @@
 #include "KLDebugImGuiEngineSubsystem.generated.h"
 
 class IKLDebugImGuiFeatureInterfaceBase;
+class FKLDebugImGuiFeatureVisualizerSubsystem;
 class IKLDebugImGuiSubsystemUpdatable;
 class UObject;
 class UWorld;
@@ -47,6 +48,7 @@ public:
 
 private:
     void InitFromConfig();
+    void InitEngineVisualizer();
 
     void RegisterCallbacks();
     void UnreagisterCallbacks();
@@ -64,6 +66,7 @@ private:
     FInstancedStruct                                           mImGuiWindow;
     TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>> mPendingUpdatableSystems;
     TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>> mUpdatableSystems;
+    TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>        mEngineFeaturesVisualizer;
 };
 
 inline const FKLDebugUtilsPicker& UKLDebugImGuiEngineSubsystem::GetPicker() const

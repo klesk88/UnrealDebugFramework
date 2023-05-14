@@ -13,7 +13,7 @@ class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface_Subsystem : public IKLDebug
     DERIVED_KL_DEBUG_FEATURE_CLASS(IKLDebugImGuiFeatureInterface_Subsystem, IKLDebugImGuiFeatureInterfaceBase)
 
 public:
-    virtual void DrawImGui(const UWorld& _World);
+    virtual void DrawImGui(const UWorld& _World, bool& _IsWindowOpen);
     virtual void Render(const UWorld& _World) const;
 
 protected:

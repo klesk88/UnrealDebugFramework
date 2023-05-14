@@ -6,11 +6,11 @@
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFiltersHelpers.h"
 
 // imgui module
-#include "ImGui/Private/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
-#include "ImGui/Private/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Private/Filter/Tree/KLDebugImGuiFilterTree.h"
 #include "ImGui/Private/Filter/Tree/KLDebugImGuiFilterTreeNode.h"
 #include "ImGui/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
+#include "ImGui/Public/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
+#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
 

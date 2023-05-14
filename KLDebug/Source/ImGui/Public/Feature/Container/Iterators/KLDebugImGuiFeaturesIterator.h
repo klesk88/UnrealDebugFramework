@@ -4,7 +4,7 @@
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 
-class FKLDebugImGuiFeaturesConstIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>
+class KLDEBUGIMGUI_API FKLDebugImGuiFeaturesConstIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>
 {
 private:
     template<class Child, bool IsConst>
@@ -21,7 +21,7 @@ protected:
     UE_NODISCARD virtual const IKLDebugImGuiFeatureInterfaceBase& GetFeatureChild() const;
 };
 
-FKLDebugImGuiFeaturesConstIterator::FKLDebugImGuiFeaturesConstIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>::PoolType& _FeaturesPool)
+inline FKLDebugImGuiFeaturesConstIterator::FKLDebugImGuiFeaturesConstIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>::PoolType& _FeaturesPool)
     : FKLDebugImGuiFeaturesIteratorBase(_FeatureData, _FeaturesPool)
 {
 }
@@ -45,7 +45,7 @@ inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesConstIterat
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class FKLDebugImGuiFeaturesIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>
+class KLDEBUGIMGUI_API FKLDebugImGuiFeaturesIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>
 {
 private:
     template<class Child, bool IsConst>
@@ -63,7 +63,7 @@ protected:
     UE_NODISCARD virtual IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutableChild() const;
 };
 
-FKLDebugImGuiFeaturesIterator::FKLDebugImGuiFeaturesIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>::PoolType& _FeaturesPool)
+inline FKLDebugImGuiFeaturesIterator::FKLDebugImGuiFeaturesIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>::PoolType& _FeaturesPool)
     : FKLDebugImGuiFeaturesIteratorBase(_FeatureData, _FeaturesPool)
 {
 }

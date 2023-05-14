@@ -17,6 +17,6 @@ public:
 private:
     // FKLDebugImGuiFeatureVisualizerBase
     void DrawImGuiTree(const UWorld& _World) final;
-    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const final;
+    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) final;
     // FKLDebugImGuiFeatureVisualizerBase
 };

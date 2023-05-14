@@ -27,19 +27,20 @@ void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiTree(const UWorld& _World
     ImGui::TreePop();
 }
 
-void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const
+void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer)
 {
-    FKLDebugImGuiSubsetFeaturesIterator Iterator = _FeatureContainer.GetFeaturesSubsetIterator(mSelectedFeaturesIndexes);
-    for (; Iterator; ++Iterator)
-    {
+    auto Callback = [&_World](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Subsystem& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Subsystem>();
-        Interface.DrawImGui(_World);
-    }
+        Interface.DrawImGui(_World, _Entry.GetIsEnableRef());
+        return _Entry.IsEnable();
+    };
+
+    DrawImguiFeaturesEnabledCommon(_FeatureContainer, Callback);
 }
 
 void FKLDebugImGuiFeatureVisualizerSubsystem::Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const
 {
-    FKLDebugImGuiSubsetFeaturesConstIterator Iterator = _FeatureContainer.GetFeaturesSubsetConstIterator(mSelectedFeaturesIndexes);
+    FKLDebugImGuiFeatureVisualizerConstIterator Iterator = _FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
         const IKLDebugImGuiFeatureInterface_Subsystem& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Subsystem>();

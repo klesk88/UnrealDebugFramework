@@ -2,6 +2,7 @@
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Filter/Interface/KLDebugImGuiFilterInterface.h"
 #include "Filter/Manager/KLDebugImGuiFilterManager.h"
 #include "Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
@@ -33,15 +34,17 @@ void FKLDebugImGuiFilterTree::Init(const int32 _FeaturesCount, FKLDebugImGuiFeat
 
 void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const
 {
+    _OutFeaturesIndexes.Reserve(mFeaturesWithoutFilters.Num() + mFilterFeaturesIndexes.Num());
+    for (const KL::Debug::ImGui::Features::Types::FeatureIndex Index : mFeaturesWithoutFilters)
+    {
+        _OutFeaturesIndexes.Emplace(Index);
+    }
+
     if (mTreeNodes.IsEmpty())
     {
-        _OutFeaturesIndexes = mFeaturesWithoutFilters;
         UE_LOG(LogKL_Debug, Error, TEXT("No filters"));
         return;
     }
-
-    _OutFeaturesIndexes.Reserve(mFeaturesWithoutFilters.Num() + mFilterFeaturesIndexes.Num());
-    _OutFeaturesIndexes = mFeaturesWithoutFilters;
 
     auto KeepTraversingTreeLambda = [this, &_Obj](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> bool {
         const uint16 FilterIndex = _TreeNode.GetFilterIndex();

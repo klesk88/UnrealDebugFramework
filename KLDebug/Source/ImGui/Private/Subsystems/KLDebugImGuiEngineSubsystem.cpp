@@ -3,6 +3,7 @@
 #include "Config/KLDebugImGuiConfig.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_EngineSubsystem.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
 #include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
 // KLUnrealImGui module
@@ -78,6 +79,8 @@ void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collect
 
     mPendingUpdatableSystems.Reserve(10);
     mUpdatableSystems.Reserve(10);
+
+    InitEngineVisualizer();
 }
 
 void UKLDebugImGuiEngineSubsystem::InitFromConfig()
@@ -85,6 +88,20 @@ void UKLDebugImGuiEngineSubsystem::InitFromConfig()
     const UKLDebugImGuiConfig& ImGuiConfig = UKLDebugImGuiConfig::Get();
 
     mImGuiWindow = ImGuiConfig.GetImGuiWindow();
+}
+
+void UKLDebugImGuiEngineSubsystem::InitEngineVisualizer()
+{
+    const FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
+    EngineContainer.GatherFeatures(*this, Features);
+
+    if (Features.IsEmpty())
+    {
+        return;
+    }
+
+    mEngineFeaturesVisualizer = MakeUnique<FKLDebugImGuiFeatureVisualizerSubsystem>(EngineContainer, MoveTemp(Features));
 }
 
 void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
@@ -171,16 +188,11 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
         return;
     }
 
-    if (ImGui::BeginTabItem("Engine"))
+    if (mEngineFeaturesVisualizer.IsValid() && ImGui::BeginTabItem("Engine"))
     {
         FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
-        FKLDebugImGuiFeaturesIterator      Iterator        = EngineContainer.GetFeaturesIterator();
-        for (; Iterator; ++Iterator)
-        {
-            IKLDebugImGuiFeatureInterface_EngineSubsystem& EngineFeatureInterface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_EngineSubsystem>();
-            EngineFeatureInterface.DrawImGui(_World);
-        }
-
+        mEngineFeaturesVisualizer->DrawImGui(_World, EngineContainer);
+        mEngineFeaturesVisualizer->Render(_World, EngineContainer);
         ImGui::EndTabItem();
     }
 

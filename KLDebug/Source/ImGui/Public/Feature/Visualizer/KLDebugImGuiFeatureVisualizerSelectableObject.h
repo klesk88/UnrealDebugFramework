@@ -18,14 +18,17 @@ public:
     void              Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const final;
     // FKLDebugImGuiFeatureVisualizerBase
 
+    UE_NODISCARD bool ShouldKeepAlive() const;
+
 private:
     // FKLDebugImGuiFeatureVisualizerBase
     void DrawImGuiTree(const UWorld& _World) final;
-    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const final;
+    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
 private:
     TWeakObjectPtr<UObject> mObject;
+    bool mKeepAlive = true;
 };
 
 inline bool FKLDebugImGuiFeatureVisualizerSelectableObject::operator==(const UObject& _Object) const
@@ -36,4 +39,9 @@ inline bool FKLDebugImGuiFeatureVisualizerSelectableObject::operator==(const UOb
 inline bool FKLDebugImGuiFeatureVisualizerSelectableObject::IsValid() const
 {
     return mObject.IsValid();
+}
+
+inline bool FKLDebugImGuiFeatureVisualizerSelectableObject::ShouldKeepAlive() const
+{
+    return mKeepAlive;
 }

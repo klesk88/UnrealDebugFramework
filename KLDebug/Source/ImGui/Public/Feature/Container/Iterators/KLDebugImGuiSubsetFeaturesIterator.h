@@ -16,7 +16,7 @@ private:
     const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& mFeaturesIndexes;
 };
 
-FKLDebugImGuiSubsetFeaturesConstIterator::FKLDebugImGuiSubsetFeaturesConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesConstIterator::PoolType& _FeaturesPool)
+inline FKLDebugImGuiSubsetFeaturesConstIterator::FKLDebugImGuiSubsetFeaturesConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesConstIterator::PoolType& _FeaturesPool)
     : FKLDebugImGuiFeaturesConstIterator(_FeatureData, _FeaturesPool)
     , mFeaturesIndexes(_FeaturesIndexes)
 {
@@ -53,7 +53,7 @@ private:
     const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& mFeaturesIndexes;
 };
 
-FKLDebugImGuiSubsetFeaturesIterator::FKLDebugImGuiSubsetFeaturesIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIterator::PoolType& _FeaturesPool)
+inline FKLDebugImGuiSubsetFeaturesIterator::FKLDebugImGuiSubsetFeaturesIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIterator::PoolType& _FeaturesPool)
     : FKLDebugImGuiFeaturesIterator(_FeatureData, _FeaturesPool)
     , mFeaturesIndexes(_FeaturesIndexes)
 {

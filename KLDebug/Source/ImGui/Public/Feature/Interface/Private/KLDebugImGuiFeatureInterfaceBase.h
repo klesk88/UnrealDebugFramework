@@ -59,8 +59,7 @@ public:
 protected:
     virtual const FString& GetWindowName() const = 0;
 
-protected:
-    // implement the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
+    // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual bool        IsDerivedInternal(const FName& _ItemTypeName) const;
     UE_NODISCARD static const FName& StaticItemType();
     //

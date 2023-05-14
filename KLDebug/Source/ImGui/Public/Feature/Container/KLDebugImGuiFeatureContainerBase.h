@@ -4,6 +4,7 @@
 #include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
+#include "Feature/Visualizer/Iterator/KLDebugImGuiFeatureVisualizerIterator.h"
 
 // engine
 #include "Containers/Array.h"
@@ -15,6 +16,7 @@
 
 class FKLDebugImGuiFeatureManager;
 class FKLDebugImGuiFeatureManagerEntryBase;
+class FKLDebugImGuiFeatureVisualizerEntry;
 class FString;
 class IKLDebugImGuiFeatureInterfaceBase;
 class UObject;
@@ -34,6 +36,9 @@ public:
 
     UE_NODISCARD FKLDebugImGuiFeaturesIterator      GetFeaturesIterator();
     UE_NODISCARD FKLDebugImGuiFeaturesConstIterator GetFeaturesConstIterator() const;
+    
+    UE_NODISCARD FKLDebugImGuiFeatureVisualizerIterator GetFeatureVisualizerIterator(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes);
+    UE_NODISCARD FKLDebugImGuiFeatureVisualizerConstIterator GetFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes) const;
 
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator      GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const;
@@ -78,6 +83,16 @@ inline FKLDebugImGuiSubsetFeaturesIterator FKLDebugImGuiFeatureContainerBase::Ge
 inline FKLDebugImGuiSubsetFeaturesConstIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const
 {
     return FKLDebugImGuiSubsetFeaturesConstIterator(_FeaturesIndexes, mFeaturesData, mFeaturesPool);
+}
+
+inline FKLDebugImGuiFeatureVisualizerIterator FKLDebugImGuiFeatureContainerBase::GetFeatureVisualizerIterator(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes)
+{
+    return FKLDebugImGuiFeatureVisualizerIterator(mFeaturesData, _FeaturesIndexes, mFeaturesPool);
+}
+
+inline FKLDebugImGuiFeatureVisualizerConstIterator FKLDebugImGuiFeatureContainerBase::GetFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes) const
+{
+    return FKLDebugImGuiFeatureVisualizerConstIterator(_FeaturesIndexes, mFeaturesData, mFeaturesPool);
 }
 
 inline void FKLDebugImGuiFeatureContainerBase::InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount)

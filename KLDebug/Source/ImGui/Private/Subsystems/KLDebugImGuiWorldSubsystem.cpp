@@ -42,7 +42,7 @@ void UKLDebugImGuiWorldSubsystem::Initialize(FKLDebugImGuiFeaturesTypesContainer
     const FKLDebugImGuiFeatureContainerBase& WorldContainer = _FeatureContainerManager.GetContainer(EContainerType::WORLD_SUBSYSTEM);
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
-    UWorld&                                                 World = *GetWorld();
+    UWorld&                                     World = *GetWorld();
     WorldContainer.GatherFeatures(World, Features);
 
     if (Features.IsEmpty())
@@ -106,8 +106,12 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
         return;
     }
 
+    ImGui::PushID(this);
+
     DrawImGuiWorld(_CurrentWorldUpdated, _ContainerManager);
     DrawImGuiObjects(_CurrentWorldUpdated, _ContainerManager);
+
+    ImGui::PopID();
 
     ImGui::EndTabItem();
 }
@@ -119,14 +123,31 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiWorld(const UWorld& _World, FKLDebugI
         return;
     }
 
+
+    if (!ImGui::CollapsingHeader("World_Systems"))
+    {
+        return;
+    }
+
+    ImGui::Indent();
+
     FKLDebugImGuiFeatureContainerBase& WorldContainer = _ContainerManager.GetContainerMutable(EContainerType::WORLD_SUBSYSTEM);
     mWorldVisualizer->DrawImGui(_World, WorldContainer);
+    mWorldVisualizer->Render(_World, WorldContainer);
+    ImGui::Unindent();
 }
 
 void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
+    if (mSelectedObjectsVisualizers.IsEmpty() || !ImGui::CollapsingHeader("Objects"))
+    {
+        return;
+    }
+
+    ImGui::Indent();
+
     FKLDebugImGuiFeatureContainerBase& SelectableObjFeatures = _ContainerManager.GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
-    for (FKLDebugImGuiFeatureVisualizerBase& ObjVisualizer : mSelectedObjectsVisualizers)
+    for (FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer : mSelectedObjectsVisualizers)
     {
         if (!ObjVisualizer.IsValid())
         {
@@ -134,5 +155,17 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, FKLDebu
         }
 
         ObjVisualizer.DrawImGui(_World, SelectableObjFeatures);
+        ObjVisualizer.Render(_World, SelectableObjFeatures);
     }
+
+    for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
+    {
+        const FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer = mSelectedObjectsVisualizers[i];
+        if (!ObjVisualizer.IsValid() || !ObjVisualizer.ShouldKeepAlive())
+        {
+            mSelectedObjectsVisualizers.RemoveAt(i, 1, false);
+        }
+    }
+
+    ImGui::Unindent();
 }

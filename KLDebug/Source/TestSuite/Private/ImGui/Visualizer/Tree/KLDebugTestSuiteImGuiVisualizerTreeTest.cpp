@@ -3,9 +3,9 @@
 #include "ImGui/Features/Helpers/KLDebugTestSuiteCreateFeaturesHelpers.h"
 
 // imgui module
-#include "ImGui/Private/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
-#include "ImGui/Private/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
+#include "ImGui/Public/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
+#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "ImGui/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"

@@ -5,14 +5,13 @@
 // ImGuiThirdParty module
 #include "ImGuiThirdParty/Public/Library/imgui.h"
 
-void IKLDebugImGuiFeatureInterface_SelectableObject::DrawImGui(const UWorld& _World, UObject& _Object)
+void IKLDebugImGuiFeatureInterface_SelectableObject::DrawImGui(const UWorld& _World, bool& _IsWindowOpen, UObject& _Object)
 {
-    const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
-    if (!ImGui::Begin(TCHAR_TO_ANSI(*GetWindowName()), nullptr, WindowFlags))
-    {
-        return;
-    }
+    auto Callback = [this, &_World, &_Object]()->void {
+        DrawImGuiChild(_World, _Object);
+    };
 
-    DrawImGuiChild(_World, _Object);
-    ImGui::End();
+    KL::Debug::ImGuiHelpers::CreateWindowCallCbk(TCHAR_TO_ANSI(*GetWindowName()),
+        _IsWindowOpen,
+        Callback);
 }
