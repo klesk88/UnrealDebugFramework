@@ -35,11 +35,6 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "KLDebugViewport",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
       "Name": "ImGuiNodeEditor",
       "Type": "Runtime",
       "LoadingPhase": "Default"
@@ -67,11 +62,6 @@
     {
       "Name": "KLUnrealImGui",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
-      "Name": "KLDebugEditorViewport",
-      "Type": "Editor",
       "LoadingPhase": "Default"
     },
     {
