@@ -1,6 +1,7 @@
 #include "Windows/KLDebugEditorMainWindow.h"
 
 #include "Examples/NetImguiExample.h"
+#include "Examples/NetImguiDemoNodeExample.h"
 
 // ImGuiThirdParty module
 #include "ImGuiThirdParty/Public/Library/imgui.h"
@@ -24,6 +25,7 @@ namespace KL::Debug::ImGuiEditor::MainWindow
     static bool ShowImGuiExample    = false;
     static bool ShowNetImGuiExample = false;
     static bool ShowImPlotExample   = false;
+    static bool ShowImNodeGraphExample = false;
 }  // namespace KL::Debug::ImGuiEditor::MainWindow
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -102,6 +104,7 @@ void FKLDebugEditorMainWindow::DrawExamplesMenu() const
     ImGui::MenuItem("DearImGui", nullptr, &KL::Debug::ImGuiEditor::MainWindow::ShowImGuiExample);
     ImGui::MenuItem("NetImGui", nullptr, &KL::Debug::ImGuiEditor::MainWindow::ShowNetImGuiExample);
     ImGui::MenuItem("ImPlot", nullptr, &KL::Debug::ImGuiEditor::MainWindow::ShowImPlotExample);
+    ImGui::MenuItem("NodeGraph", nullptr, &KL::Debug::ImGuiEditor::MainWindow::ShowImNodeGraphExample);
 
     ImGui::EndMenu();
 }
@@ -121,5 +124,10 @@ void FKLDebugEditorMainWindow::DrawExamples() const
     if (KL::Debug::ImGuiEditor::MainWindow::ShowImPlotExample)
     {
         ImPlot::ShowDemoWindow(&KL::Debug::ImGuiEditor::MainWindow::ShowImPlotExample);
+    }
+
+    if (KL::Debug::ImGuiEditor::MainWindow::ShowImNodeGraphExample)
+    {
+        NodeEditorDemo::ShowDemo(KL::Debug::ImGuiEditor::MainWindow::ShowImNodeGraphExample);
     }
 }

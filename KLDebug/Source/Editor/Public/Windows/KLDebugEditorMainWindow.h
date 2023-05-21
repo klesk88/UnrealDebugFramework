@@ -25,6 +25,8 @@ private:
     void DrawExamplesMenu() const;
     void DrawExamples() const;
 
+    void DrawNodeGraphExample() const;
+
 private:
     FDelegateHandle mDrawBottomBarHandle;
     FDelegateHandle mDrawTopBarHandle;
