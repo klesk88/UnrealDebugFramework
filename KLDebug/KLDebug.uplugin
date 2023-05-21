@@ -40,6 +40,31 @@
       "LoadingPhase": "Default"
     },
     {
+      "Name": "ImGuiNodeEditor",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ImGuiThirdParty",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ImPlotThirdParty",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "NetImGuiThirdParty",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "UnrealImGui",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
       "Name": "KLUnrealImGui",
       "Type": "Runtime",
       "LoadingPhase": "Default"
@@ -63,10 +88,6 @@
   "Plugins": [
     {
       "Name": "EnhancedInput",
-      "Enabled": true
-    },
-    {
-      "Name": "ImGui",
       "Enabled": true
     },
     {

@@ -2,9 +2,9 @@
 
 
 // ImGuiThirdParty module
-#include "ImGuiThirdParty/Public/Library/imgui.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 // ImPlotThirdParty module
-#include "ImPlotThirdParty/Public/Library/implot.h"
+#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
 // KLDebugUtils module
 #include "Utils/Public/KLDebugLog.h"
 // UnrealImGui module

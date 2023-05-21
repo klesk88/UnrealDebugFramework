@@ -4,9 +4,9 @@
 #include "Window/KLDebugImGuiWindowDelegates.h"
 
 //ImGuiThirdParty module
-#include "ImGuiThirdParty/Public/Library/imgui.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 //https://github.com/ocornut/imgui/issues/3518
-#include "ImGuiThirdParty/Public/Library/imgui_internal.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui_internal.h"
 
 //engine
 #include "Camera/PlayerCameraManager.h"

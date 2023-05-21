@@ -12,7 +12,7 @@
 
 //@Begin KLMod:
 // ImGuiThirdParty module
-#include "ImGuiThirdParty/Public/Library/imgui.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 //@End KLMod
 
 #define LOCTEXT_NAMESPACE "ImguiUnrealCommand"

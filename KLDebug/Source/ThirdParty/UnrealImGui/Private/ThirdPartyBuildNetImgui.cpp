@@ -8,7 +8,7 @@
 #include "ImGuiDelegatesContainer.h"
 
 //@Begin KLMod include also implot to create the context for it
-#include "ImPlotThirdParty/Public/Library/implot.h"
+#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
 
 enum : int { kDualUI_None, kDualUI_Mirror, kDualDisplay_On };
 

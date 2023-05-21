@@ -1,9 +1,9 @@
 ﻿#include "Font/KLUnrealImGuiFontManager.h"
 
 //ImPlotThirdParty module
-#include "ImPlotThirdParty/Public/Library/implot.h"
+#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
 //NetImGuiThirdParty module
-#include "NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
 // UnrealImGui module
 #include "UnrealImGui/Public/ImGuiContextManager.h"
 
@@ -14,42 +14,42 @@
 // Binary Font converted to c data array
 // (using Dear Imgui 'binary_to_compressed_c.cpp')
 //=================================================================================================
-#include "NetImGuiThirdParty/Public/Fonts/Cousine_Regular.cpp"
-#include "NetImGuiThirdParty/Public/Fonts/Droid_Sans.cpp"
-#include "NetImGuiThirdParty/Public/Fonts/Karla_Regular.cpp"
-#include "NetImGuiThirdParty/Public/Fonts/Proggy_Tiny.cpp"
-#include "NetImGuiThirdParty/Public/Fonts/Roboto_Medium.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/Cousine_Regular.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/Droid_Sans.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/Karla_Regular.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/Proggy_Tiny.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/Roboto_Medium.cpp"
 
 #if NETIMGUI_FREETYPE_ENABLED
-#include "ImGuiThirdParty/Public/Library/misc/freetype/imgui_freetype.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/misc/freetype/imgui_freetype.h"
 #endif
 
 #if NETIMGUI_FONT_ICON_GAMEKENNEY
-#include "NetImGuiThirdParty/Public/Fonts/FontKenney/KenneyIcon.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/FontKenney/KenneyIcon.cpp"
 // List of defines to easily use Icons available in 'Kenney's Game Icons'
 // For list available icons, see: https://kenney.nl/assets/game-icons and https://kenney.nl/assets/game-icons-expansion
-#include "NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsKenney.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsKenney.h"
 #endif
 
 #if NETIMGUI_FONT_ICON_AWESOME
-#include "NetImGuiThirdParty/Public/Fonts/FontAwesome6/fa-brands-400.cpp"
-#include "NetImGuiThirdParty/Public/Fonts/FontAwesome6/fa-regular-400.cpp"
-#include "NetImGuiThirdParty/Public/Fonts/FontAwesome6/fa-solid-900.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/FontAwesome6/fa-brands-400.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/FontAwesome6/fa-regular-400.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/FontAwesome6/fa-solid-900.cpp"
 // List of defines to easily use Icons available in 'Font Awesome Icons' (only the 'free' subset is made available)
 // For list of available icons, see: https://fontawesome.com/v6/search?m=free (Regular/Solid/Brands)
-#include "NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsFontAwesome6.h"
-#include "NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsFontAwesome6Brands.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsFontAwesome6.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsFontAwesome6Brands.h"
 #endif
 
 #if NETIMGUI_FONT_ICON_MATERIALDESIGN
-#include "NetImGuiThirdParty/Public/Fonts/FontMaterialDesign/MaterialIcons_Regular.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/FontMaterialDesign/MaterialIcons_Regular.cpp"
 // List of defines to easily use Icons available in 'Google's Material Design Icons'
 // For list of available icons, see: https://fonts.google.com/icons
-#include "NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsMaterialDesign.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/IconFontCppHeader/IconsMaterialDesign.h"
 #endif
 
 #if NETIMGUI_FONT_JAPANESE
-#include "NetImGuiThirdParty/Public/Fonts/FontIPAexMincho/IPAexMincho.cpp"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/FontIPAexMincho/IPAexMincho.cpp"
 #endif
 
 void FKLUnrealImGuiFontManager::PushFont(const KL::UnrealImGui::Fonts::eFont _Font)

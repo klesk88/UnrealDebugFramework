@@ -8,7 +8,7 @@
 //@BeginKLMod: fix includes
 // #include <NetImgui_Api.h>
 // NetImguiThirdPartyModule
-#include "NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
 //@EndKLMod
 
 #elif !defined(NETIMGUI_ENABLED)

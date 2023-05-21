@@ -11,10 +11,10 @@ public class KLUnrealImGui : ModuleRules
           new string[]
           {
                 Path.Combine(ModuleDirectory, "Private"),
-                Path.Combine(ModuleDirectory, "../../../UnrealImGui/Source/UnrealImGui/Private"),
-                Path.Combine(ModuleDirectory, "../../../UnrealImGui/Source/UnrealImGui/Private/Editor"),
-                Path.Combine(ModuleDirectory, "../../../UnrealImGui/Source/UnrealImGui/Private/Utilities"),
-                Path.Combine(ModuleDirectory, "../../../UnrealImGui/Source/UnrealImGui/Private/Widgets")
+                Path.Combine(ModuleDirectory, "../ThirdParty/UnrealImGui/Private"),
+                Path.Combine(ModuleDirectory, "../ThirdParty/UnrealImGui/Private/Editor"),
+                Path.Combine(ModuleDirectory, "../ThirdParty/UnrealImGui/Private/Utilities"),
+                Path.Combine(ModuleDirectory, "../ThirdParty/UnrealImGui/Private/Widgets")
           }
         );
 

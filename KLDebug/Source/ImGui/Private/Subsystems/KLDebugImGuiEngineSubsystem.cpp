@@ -12,7 +12,7 @@
 #include "UnrealImGui/Public/ImGuiDelegates.h"
 #include "UnrealImGui/Public/UnrealImGuiModule.h"
 // ImGuiThirdParty module
-#include "ImGuiThirdParty/Public/Library/imgui.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
 // engine
 #include "Engine/Engine.h"

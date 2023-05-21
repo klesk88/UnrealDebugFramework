@@ -4,13 +4,13 @@
 #include "Examples/NetImguiDemoNodeExample.h"
 
 // ImGuiThirdParty module
-#include "ImGuiThirdParty/Public/Library/imgui.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 // ImPlotThirdParty module
-#include "ImPlotThirdParty/Public/Library/implot.h"
+#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
 // KLImGui module
 #include "ImGui/Public/Window/KLDebugImGuiWindowDelegates.h"
 // NetImGuiThirdParty module
-#include "NetImGuiThirdParty/Public/NetImGuiThirdPartyModule.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/NetImGuiThirdPartyModule.h"
 
 // engine
 #include "Editor/EditorEngine.h"

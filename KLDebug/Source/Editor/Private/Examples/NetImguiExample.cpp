@@ -1,12 +1,12 @@
 ﻿#include "Examples/NetImguiExample.h"
 
 // ImGuiThirdParty module
-#include "ImGuiThirdParty/Public/Library/imgui.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 // KLUnrealImGui module
 #include "UnrealImGui/Public/Font/KLUnrealImGuiScopedFont.h"
 #include "UnrealImGui/Public/Font/KLUnrealImGuiFontDefines.h"
 // NetImGuiThirdParty module
-#include "NetImGuiThirdParty/Public/Fonts/NetImGuiFontListIncludes.h"
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/NetImGuiFontListIncludes.h"
 
 //engine
 #include "Containers/UnrealString.h"
