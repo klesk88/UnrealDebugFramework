@@ -44,7 +44,7 @@ namespace NetImGui::Demo
 
         if( ImGui::Begin("DemoActor: PerFrame") )
         {
-        	ImGui::TextWrapped(u8"This Windows is drawn once per frame (when NetImguiServer request it), using a NetImgui callback.");
+        	ImGui::TextWrapped("This Windows is drawn once per frame (when NetImguiServer request it), using a NetImgui callback.");
         	ImGui::NewLine();
         
         	//-------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ namespace NetImGui::Demo
         		ImGui::TextColored(kColorHighlight, TCHAR_TO_UTF8(*titleAwesome));
         
         		//--- Showcase using a utf8 string with icons inserted in it as a regular printf string constant ---
-        		ImGui::Text(u8"I %s icons in my text.", ICON_FA_HEART);
+        		ImGui::Text("I %s icons in my text.", ICON_FA_HEART);
         		{
                     FKLUnrealImGuiScopedFont iconFont(KL::UnrealImGui::Fonts::eFont::kIcons64);
         			const char* zAnimation[]={ICON_FA_BATTERY_EMPTY, ICON_FA_BATTERY_QUARTER, ICON_FA_BATTERY_HALF, ICON_FA_BATTERY_THREE_QUARTERS, ICON_FA_BATTERY_FULL };

@@ -9,7 +9,7 @@
 #include "Examples/NetImguiDemoNodeExample.h"
 
 // ImGuiNodeEditor module
-#include "ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
+#include "ThirdParty/ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
 
 namespace NodeEditorSampleNetImgui
 {

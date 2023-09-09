@@ -9,8 +9,8 @@
 // KLUnrealImGui module
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 // UnrealImGui module
-#include "UnrealImGui/Public/ImGuiDelegates.h"
-#include "UnrealImGui/Public/UnrealImGuiModule.h"
+#include "ThirdParty/UnrealImGui/Public/ImGuiDelegates.h"
+#include "ThirdParty/UnrealImGui/Public/UnrealImGuiModule.h"
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 

@@ -7,7 +7,7 @@
 // KLUnrealImGui
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 // UnrealImGui
-#include "UnrealImGui/Public/ImGuiModuleProperties.h"
+#include "ThirdParty/UnrealImGui/Public/ImGuiModuleProperties.h"
 
 // engine
 #include "Framework/MultiBox/MultiBoxBuilder.h"

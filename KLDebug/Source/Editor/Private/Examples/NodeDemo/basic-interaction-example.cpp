@@ -4,7 +4,7 @@
 #include "Examples/NetImguiDemoNodeExample.h"
 
 // ImGuiNodeEditor module
-#include "ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
+#include "ThirdParty/ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
 
 //#include <imgui.h>
 //#include <imgui_node_editor.h>

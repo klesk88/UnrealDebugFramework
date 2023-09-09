@@ -8,9 +8,9 @@
 // KLDebugUtils module
 #include "Utils/Public/KLDebugLog.h"
 // UnrealImGui module
-#include "UnrealImGui/Public/ImGuiContextManager.h"
-#include "UnrealImGui/Public/ImGuiModuleManager.h"
-#include "UnrealImGui/Public/ThirdPartyBuildNetImgui.h"
+#include "ThirdParty/UnrealImGui/Public/ImGuiContextManager.h"
+#include "ThirdParty/UnrealImGui/Public/ImGuiModuleManager.h"
+#include "ThirdParty/UnrealImGui/Public/ThirdPartyBuildNetImgui.h"
 
 // engine
 #include "Modules/ModuleManager.h"

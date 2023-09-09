@@ -23,7 +23,7 @@
 #include "Examples/NetImguiDemoNodeExample.h"
 
 // ImGuiNodeEditor module
-#include "ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
+#include "ThirdParty/ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui_internal.h"

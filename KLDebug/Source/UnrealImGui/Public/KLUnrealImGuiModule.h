@@ -3,7 +3,7 @@
 #include "Font/KLUnrealImGuiFontManager.h"
 
 //UnrealImGui module
-#include "UnrealImGui/Public/UnrealImGuiModule.h"
+#include "ThirdParty/UnrealImGui/Public/UnrealImGuiModule.h"
 
 // engine
 #include "CoreMinimal.h"
