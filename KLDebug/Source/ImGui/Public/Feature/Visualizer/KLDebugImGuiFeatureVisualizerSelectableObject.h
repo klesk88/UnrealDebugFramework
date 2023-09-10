@@ -7,10 +7,15 @@
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
+class UMaterialInterface;
+class UMeshComponent;
+
 class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizerSelectableObject final : public FKLDebugImGuiFeatureVisualizerBase
 {
 public:
-    explicit FKLDebugImGuiFeatureVisualizerSelectableObject(const FKLDebugImGuiFeatureContainerBase& _Container, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
+    explicit FKLDebugImGuiFeatureVisualizerSelectableObject(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
+    ~FKLDebugImGuiFeatureVisualizerSelectableObject();
+
     UE_NODISCARD bool operator==(const UObject& _Object) const;
 
     // FKLDebugImGuiFeatureVisualizerBase
@@ -26,8 +31,12 @@ private:
     void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
+    UE_NODISCARD UMeshComponent* TryGetMeshComponent() const;
+    void SetMaterialOverlay(UMaterialInterface* _MaterialInterface);
+
 private:
     TWeakObjectPtr<UObject> mObject;
+    TWeakObjectPtr<UMaterialInterface> mOriginalMaterialOverlay;
     bool mKeepAlive = true;
 };
 

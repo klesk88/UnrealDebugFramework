@@ -1,18 +1,26 @@
-#include "Picker/KLDebugUtilsPicker.h"
+#include "Features/Engine/Picker/KLDebugUtilsPicker.h"
 
-#include "Picker/KLDebugUtilsPickerScoredObjects.h"
+#include "Features/Engine/Picker/KLDebugUtilsPickerScoredObjects.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"
+#include "CollisionQueryParams.h"//trace picker
 #include "EngineUtils.h"
+#include "Engine/EngineTypes.h" //trace picker
+#include "Engine/LocalPlayer.h" //trace picker
+#include "Engine/GameViewportClient.h" //trace picker
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Box.h"
+#include "Math/Matrix.h" //trace picker
 #include "Math/Rotator.h"
 #include "Math/UnrealMathUtility.h"
+#include "Math/Vector2D.h" //trace picker
+#include "SceneView.h"//trace picker
+#include "UnrealClient.h" //trace picker
 #include "UObject/Object.h"
 
 namespace KL::Debug::Utils::Picker
@@ -83,6 +91,53 @@ bool FKLDebugUtilsPicker::GetCenterLocationFromScreenCoord(const UWorld& _World,
     PlayerCamera->GetCameraViewPoint(_OutLocation, CamRot);
     _OutDirecton = UKismetMathLibrary::GetForwardVector(CamRot);
     return true;
+}
+
+UObject* FKLDebugUtilsPicker::GetActorFromTrace(const UWorld& _World) const
+{
+    const ULocalPlayer* LP = _World.GetFirstLocalPlayerFromController();
+    if (!LP || !LP->ViewportClient)
+    {
+        return nullptr;
+    }
+
+    FSceneViewProjectionData ProjectionData;
+    if (!LP->GetProjectionData(LP->ViewportClient->Viewport, ProjectionData))
+    {
+        return nullptr;
+    }
+
+    //TODO
+    const FVector2D ScreenPos;
+    const FMatrix InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
+
+    FVector WorldPosition, WorldDirection;
+    FSceneView::DeprojectScreenToWorld(ScreenPos, ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, WorldPosition, WorldDirection);
+
+    FCollisionQueryParams Params("GetActorFromTrace", SCENE_QUERY_STAT_ONLY(KLDebugUtilsPicker), true);
+
+    FCollisionObjectQueryParams ObjectParams(
+        ECC_TO_BITFIELD(ECC_WorldStatic)
+        | ECC_TO_BITFIELD(ECC_WorldDynamic)
+        | ECC_TO_BITFIELD(ECC_Pawn)
+        | ECC_TO_BITFIELD(ECC_PhysicsBody)
+    );
+
+    UObject* PickedActor = nullptr;
+    FHitResult OutHit;
+    const bool Result = _World.LineTraceSingleByObjectType(
+        OutHit,
+        WorldPosition + WorldDirection * 100.0,
+        WorldPosition + WorldDirection * 10000.0,
+        ObjectParams,
+        Params);
+
+    if (Result)
+    {
+        PickedActor = OutHit.GetActor();
+    }
+
+    return PickedActor;
 }
 
 void FKLDebugUtilsPicker::GatherAllObjects(const UWorld& _World, TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const
@@ -179,6 +234,12 @@ void FKLDebugUtilsPicker::SortByDistance(TArray<FKLDebugUtilsPickerScoredObjects
 
 void FKLDebugUtilsPicker::ApplyScores(TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const
 {
+    //TODO: actual make scoring based on user data
+    for (FKLDebugUtilsPickerScoredObjects& Object : _OutObjects)
+    {
+        Object.SetScore(1.f);
+    }
+
     _OutObjects.Sort([](const FKLDebugUtilsPickerScoredObjects& _Left, const FKLDebugUtilsPickerScoredObjects& _Right) -> bool {
         return _Left.GetScore() < _Right.GetScore();
     });

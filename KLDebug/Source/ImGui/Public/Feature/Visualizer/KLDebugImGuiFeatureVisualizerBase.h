@@ -23,7 +23,7 @@ public:
 
     UE_NODISCARD virtual bool IsValid() const;
 
-    void         DrawImGui(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer);
+    void         DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeatureContainerBase& _FeatureContainer);
     virtual void Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const = 0;
 
 protected:

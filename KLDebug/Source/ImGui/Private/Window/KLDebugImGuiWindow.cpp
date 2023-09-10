@@ -44,7 +44,7 @@ void FKLDebugImGuiWindow::Update(const UWorld& _World)
 {
     DrawImGuiTopBar(_World);
     DrawImGuiBottomBar(_World);
-    DrawImGuiBar();
+    //DrawImGuiBar();
 
 #if IMGUI_UNREAL_COMMAND_ENABLED
     DrawCommands();
@@ -131,10 +131,10 @@ void FKLDebugImGuiWindow::DrawImGuiBar() const
 
 void FKLDebugImGuiWindow::DrawImGuiEngine() const
 {
-    if (ImGui::BeginTabItem("Engine"))
-    {
-        ImGui::EndTabItem();
-    }
+    //if (ImGui::BeginTabItem("Engine"))
+    //{
+    //    ImGui::EndTabItem();
+    //}
 }
 
 #if IMGUI_UNREAL_COMMAND_ENABLED

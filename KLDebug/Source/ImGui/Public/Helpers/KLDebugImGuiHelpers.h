@@ -15,6 +15,8 @@ namespace KL::Debug::ImGuiHelpers
 {
     KLDEBUGIMGUI_API void                HelpMarker(const char* _Description);
     KLDEBUGIMGUI_API UE_NODISCARD ImVec4 ConvertUnrealColorToImGui(const FColor& _Color);
+    KLDEBUGIMGUI_API UE_NODISCARD ImVec4 ConvertUnrealColorToImGui(const FLinearColor& _Color);
+    KLDEBUGIMGUI_API void                DrawColoredText(const FColor _Color, const FString& _Text);
 
     template<typename CallbackType>
     void CreateWindowCallCbk(const ANSICHAR* _WindowName, bool& _IsOpen, const CallbackType& _Callback)

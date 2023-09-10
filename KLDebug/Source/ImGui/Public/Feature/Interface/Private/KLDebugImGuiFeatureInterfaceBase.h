@@ -57,7 +57,7 @@ public:
     UE_NODISCARD bool IsDerivedFrom() const;
 
 protected:
-    virtual const FString& GetWindowName() const = 0;
+    UE_NODISCARD virtual const FString& GetWindowName() const = 0;
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual bool        IsDerivedInternal(const FName& _ItemTypeName) const;

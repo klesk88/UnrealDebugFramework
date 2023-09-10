@@ -105,13 +105,6 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<FKLDebugImGuiFeatu
     };
 
     auto EvaluateNodeLambda = [](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> void {
-        if (_TreeNode.IsLeaf())
-        {
-            ImGui::TreePop();
-        }
-        else
-        {
-        }
     };
 
     KL::Debug::ImGuiTreeBuilder::Helpers::PreoderTraversalImGui(mTreeNodes, KeepTraversingTreeLambda, NodeAlreadyVisistedLambda, EvaluateNodeLambda);

@@ -9,7 +9,7 @@
 
 #include "KLDebugGameplayConfig.generated.h"
 
-UCLASS(config = Plugins, defaultconfig, DisplayName = "KLImGui")
+UCLASS(config = Plugins, defaultconfig, DisplayName = "KLImGuiGameplay")
 class KLDEBUGGAMEPLAY_API UKLDebugGameplayConfig final : public UDeveloperSettings
 {
     GENERATED_BODY()

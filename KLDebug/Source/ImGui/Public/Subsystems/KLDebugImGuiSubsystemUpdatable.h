@@ -21,5 +21,5 @@ class KLDEBUGIMGUI_API IKLDebugImGuiSubsystemUpdatable
 public:
     virtual void Initialize(FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)                             = 0;
     virtual void Update(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)    = 0;
-    virtual void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) = 0;
+    virtual void DrawImGui(const UWorld& _CurrentWorldUpdated, const bool _TabOpen, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) = 0;
 };

@@ -4,9 +4,6 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
 #include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
-// debug utils module
-#include "Utils/Public/Picker/KLDebugUtilsPicker.h"
-
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -34,7 +31,7 @@ public:
     // IKLDebugImGuiSubsystemUpdatable
     void Initialize(FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) final;
     void Update(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) final;
-    void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) final;
+    void DrawImGui(const UWorld& _CurrentWorldUpdated, const bool _TabOpen, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) final;
     // IKLDebugImGuiSubsystemUpdatable
 
     UE_NODISCARD static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
@@ -44,11 +41,10 @@ public:
     void OnObjectSelected(UObject& _Object);
 
 private:
-    void DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImGuiObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGuiWorld(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
-    FKLDebugUtilsPicker                                    mPicker;
     TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>    mWorldVisualizer;
     TArray<FKLDebugImGuiFeatureVisualizerSelectableObject> mSelectedObjectsVisualizers;
     bool                                                   mIsInitialized = false;

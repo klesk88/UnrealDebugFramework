@@ -20,6 +20,6 @@ protected:
     virtual void DrawImGuiChild(const UWorld& _World) = 0;
 };
 
-inline void IKLDebugImGuiFeatureInterface_Subsystem::Render(const UWorld& _World) const
+inline void IKLDebugImGuiFeatureInterface_Subsystem::Render([[maybe_unused]] const UWorld& _World) const
 {
 }

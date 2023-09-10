@@ -83,7 +83,7 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
     const FKLDebugImGuiFeatureContainerBase&                SelectedObjectFeatures  = FeatureContainerManager.GetContainer(EContainerType::SELECTABLE_OBJECTS);
 
     SelectedObjectFeatures.GatherFeatures(_Object, Features);
-    mSelectedObjectsVisualizers.Emplace(SelectedObjectFeatures, _Object, MoveTemp(Features));
+    mSelectedObjectsVisualizers.Emplace(SelectedObjectFeatures, EngineSusbsytem->GetOverlayMaterial(), _Object, MoveTemp(Features));
 }
 
 void UKLDebugImGuiWorldSubsystem::Update(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
@@ -94,56 +94,57 @@ void UKLDebugImGuiWorldSubsystem::Update(const UWorld& _CurrentWorldUpdated, FKL
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, const bool _TabOpen, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     if (&_CurrentWorldUpdated != GetWorld())
     {
         return;
     }
 
-    if (!ImGui::BeginTabItem(TCHAR_TO_ANSI(*_CurrentWorldUpdated.GetName())))
-    {
-        return;
-    }
-
     ImGui::PushID(this);
 
-    DrawImGuiWorld(_CurrentWorldUpdated, _ContainerManager);
-    DrawImGuiObjects(_CurrentWorldUpdated, _ContainerManager);
+    if (mWorldVisualizer.IsValid())
+    {
+        if (ImGui::TreeNode("World"))
+        {
+            DrawImGuiWorld(_CurrentWorldUpdated, true, _ContainerManager);
+            ImGui::TreePop();
+        }
+        else
+        {
+            DrawImGuiWorld(_CurrentWorldUpdated, false, _ContainerManager);
+        }
+    }
+
+    if (!mSelectedObjectsVisualizers.IsEmpty())
+    {
+        if (ImGui::TreeNode("Selected_Objects"))
+        {
+            DrawImGuiObjects(_CurrentWorldUpdated, true, _ContainerManager);
+            ImGui::TreePop();
+        }
+        else
+        {
+            DrawImGuiObjects(_CurrentWorldUpdated, false, _ContainerManager);
+        }
+    }
 
     ImGui::PopID();
-
-    ImGui::EndTabItem();
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiWorld(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiWorld(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
-    if (!mWorldVisualizer.IsValid())
-    {
-        return;
-    }
-
-
-    if (!ImGui::CollapsingHeader("World_Systems"))
-    {
-        return;
-    }
-
     ImGui::Indent();
 
     FKLDebugImGuiFeatureContainerBase& WorldContainer = _ContainerManager.GetContainerMutable(EContainerType::WORLD_SUBSYSTEM);
-    mWorldVisualizer->DrawImGui(_World, WorldContainer);
+    mWorldVisualizer->DrawImGui(_World, _DrawTree, WorldContainer);
     mWorldVisualizer->Render(_World, WorldContainer);
+
     ImGui::Unindent();
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
-    if (mSelectedObjectsVisualizers.IsEmpty() || !ImGui::CollapsingHeader("Objects"))
-    {
-        return;
-    }
-
     ImGui::Indent();
 
     FKLDebugImGuiFeatureContainerBase& SelectableObjFeatures = _ContainerManager.GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
@@ -154,7 +155,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, FKLDebu
             continue;
         }
 
-        ObjVisualizer.DrawImGui(_World, SelectableObjFeatures);
+        ObjVisualizer.DrawImGui(_World, _DrawTree, SelectableObjFeatures);
         ObjVisualizer.Render(_World, SelectableObjFeatures);
     }
 

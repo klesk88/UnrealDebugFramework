@@ -16,6 +16,7 @@
 
 // engine
 #include "Engine/Engine.h"
+#include "Materials/MaterialInstance.h"
 #include "UObject/Object.h"
 
 namespace KL::Debug::ImGui::EngineSubsystem
@@ -66,6 +67,11 @@ void UKLDebugImGuiEngineSubsystem::RemoveUpdatableSystem(const IKLDebugImGuiSubs
     ensureMsgf(false, TEXT("system not found"));
 }
 
+UMaterialInterface* UKLDebugImGuiEngineSubsystem::GetOverlayMaterial() const
+{
+    return OverlayMaterial.Get();
+}
+
 void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collection)
 {
     InitFromConfig();
@@ -88,6 +94,8 @@ void UKLDebugImGuiEngineSubsystem::InitFromConfig()
     const UKLDebugImGuiConfig& ImGuiConfig = UKLDebugImGuiConfig::Get();
 
     mImGuiWindow = ImGuiConfig.GetImGuiWindow();
+
+    OverlayMaterial = ImGuiConfig.GeOverlayMaterial().LoadSynchronous();
 }
 
 void UKLDebugImGuiEngineSubsystem::InitEngineVisualizer()
@@ -188,12 +196,76 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
         return;
     }
 
-    if (mEngineFeaturesVisualizer.IsValid() && ImGui::BeginTabItem("Engine"))
+    bool TabOpen = false;
+    if (ImGui::BeginTabItem(TCHAR_TO_ANSI(*_World.GetName())))
+    {
+        TabOpen = true;
+    }
+
+    if (mEngineFeaturesVisualizer.IsValid())
+    {
+        ImGui::PushID(this);
+
+        FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
+        if (ImGui::TreeNode("Engine"))
+        {
+            mEngineFeaturesVisualizer->DrawImGui(_World, true, EngineContainer);
+            ImGui::TreePop();
+        }
+        else
+        {
+            mEngineFeaturesVisualizer->DrawImGui(_World, false, EngineContainer);
+        }
+
+        ImGui::PopID();
+        mEngineFeaturesVisualizer->Render(_World, EngineContainer);
+    }
+
+    for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mUpdatableSystems)
+    {
+        if (!UpdatableSystem.IsValid())
+        {
+            continue;
+        }
+
+        UpdatableSystem->DrawImGui(_World, TabOpen, mFeatureContainersManger);
+    }
+
+    if (TabOpen)
+    {
+        ImGui::EndTabItem();
+        ImGui::EndTabBar();
+        ImGui::End();
+    }
+
+    /*const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
+    if (!ImGui::Begin("DebugEditor", nullptr, WindowFlags))
+    {
+        return;
+    }
+
+    if (!ImGui::BeginTabBar("Systems", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    {
+        ImGui::End();
+        return;
+    }
+
+    if (mEngineFeaturesVisualizer.IsValid() )
     {
         FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
-        mEngineFeaturesVisualizer->DrawImGui(_World, EngineContainer);
+        bool TabOpen = false;
+        if (ImGui::BeginTabItem("Engine"))
+        {
+            TabOpen = true;
+        }
+
+        mEngineFeaturesVisualizer->DrawImGui(_World, TabOpen, EngineContainer);
+        if (DrawTree)
+        {
+            ImGui::EndTabItem();
+        }
+
         mEngineFeaturesVisualizer->Render(_World, EngineContainer);
-        ImGui::EndTabItem();
     }
 
     for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mUpdatableSystems)
@@ -207,5 +279,5 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
     }
 
     ImGui::EndTabBar();
-    ImGui::End();
+    ImGui::End();*/
 }

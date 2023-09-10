@@ -119,13 +119,13 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBTInfo(const UObject& _Object) con
 
     ImGui::Text("Behavior:");
     ImGui::SameLine();
-    ImGui::TextColored(KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow), TCHAR_TO_ANSI(*CurrentAIState));
+    KL::Debug::ImGuiHelpers::DrawColoredText(FColor::Yellow, CurrentAIState);
     ImGui::SameLine();
     ImGui::Text("Tree:");
     ImGui::SameLine();
-    ImGui::TextColored(KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow), TCHAR_TO_ANSI(*CurrentAIAssets));
+    KL::Debug::ImGuiHelpers::DrawColoredText(FColor::Yellow, CurrentAIAssets);
 
     ImGui::Text("Active task:");
     ImGui::SameLine();
-    ImGui::TextColored(KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow), TCHAR_TO_ANSI(*CurrentAITask));
+    KL::Debug::ImGuiHelpers::DrawColoredText(FColor::Yellow, CurrentAITask);
 }

@@ -1,13 +1,20 @@
 #pragma once
 
+#include "Features/Engine/Picker/KLDebugUtilsPicker.h"
+
 // imgui module
 #include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 
-class UBehaviorTreeComponent;
-class UBrainComponent;
-class UObject;
+//engine
+#include "Containers/Array.h"
+#include "UObject/WeakObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree : public IKLDebugImGuiFeatureInterface_SelectableObject
+class AActor;
+class FProperty;
+class UWorld;
+
+class KLDEBUGEXAMPLES_API FKLDebugFeatureObject_PropertyWatcher : public IKLDebugImGuiFeatureInterface_SelectableObject
 {
 public:
     //IKLDebugImGuiFeatureInterface_SelectableObject
@@ -22,9 +29,5 @@ private:
     UE_NODISCARD const FName&   GetImGuiPath() const final;
     //IKLDebugImGuiFeatureInterface_SelectableObject
 
-    UE_NODISCARD const UBehaviorTreeComponent* GetBTComponent(const UObject& _Object) const;
-    UE_NODISCARD const UBrainComponent*        GetBrainComponent(const UObject& _Object) const;
-
-    void ImGuiDrawBrainInfo(const UObject& _Object) const;
-    void ImGuiDrawBTInfo(const UObject& _Object) const;
+    void ImguiDrawProperty(FProperty& _Property, TArray<char>& _StringBuffer, UObject& _Object) const;
 };

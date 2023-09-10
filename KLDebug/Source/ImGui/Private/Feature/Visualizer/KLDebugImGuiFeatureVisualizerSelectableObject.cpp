@@ -3,17 +3,42 @@
 #include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
+#include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
 // engine
+#include "Components/MeshComponent.h"
 #include "Containers/UnrealString.h"
+#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
+#include "Materials/MaterialInterface.h"
 
-FKLDebugImGuiFeatureVisualizerSelectableObject::FKLDebugImGuiFeatureVisualizerSelectableObject(const FKLDebugImGuiFeatureContainerBase& _Container, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
+FKLDebugImGuiFeatureVisualizerSelectableObject::FKLDebugImGuiFeatureVisualizerSelectableObject(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
     : FKLDebugImGuiFeatureVisualizerBase(_Container, MoveTemp(_FeaturesIndexes))
     , mObject(&_Object)
 {
+    if (UMeshComponent* MeshCmp = TryGetMeshComponent())
+    {
+        mOriginalMaterialOverlay = MeshCmp->GetOverlayMaterial();
+        if (mOriginalMaterialOverlay.IsValid())
+        {
+            mOriginalMaterialOverlay->SetInternalFlags(EInternalObjectFlags::Async);
+        }
+    }
+
+    SetMaterialOverlay(_MaterialInterface);
+}
+
+FKLDebugImGuiFeatureVisualizerSelectableObject::~FKLDebugImGuiFeatureVisualizerSelectableObject()
+{
+    if (mOriginalMaterialOverlay.IsValid())
+    {
+        mOriginalMaterialOverlay->ClearInternalFlags(EInternalObjectFlags::Async);
+    }
+
+    SetMaterialOverlay(mOriginalMaterialOverlay.Get());
 }
 
 void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiTree(const UWorld& _World)
@@ -68,6 +93,35 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(co
     };
 
     DrawImguiFeaturesEnabledCommon(_FeatureContainer, Callback);
+}
+
+UMeshComponent* FKLDebugImGuiFeatureVisualizerSelectableObject::TryGetMeshComponent() const
+{
+    if (!mObject.IsValid())
+    {
+        return nullptr;
+    }
+
+    UMeshComponent* MeshCmp = nullptr;
+    if (const ACharacter* Character = Cast<const ACharacter>(mObject.Get()))
+    {
+        MeshCmp = Character->GetMesh();
+    }
+    else if(const AActor* Actor = Cast<const AActor>(mObject.Get()))
+    {
+        MeshCmp = Actor->FindComponentByClass<UMeshComponent>();
+    }
+
+    return MeshCmp;
+}
+
+void FKLDebugImGuiFeatureVisualizerSelectableObject::SetMaterialOverlay(UMaterialInterface* _MaterialInterface)
+{
+    UMeshComponent* MeshCmp = TryGetMeshComponent();
+    if (MeshCmp)
+    {
+        MeshCmp->SetOverlayMaterial(_MaterialInterface);
+    }
 }
 
 void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const

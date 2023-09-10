@@ -15,7 +15,7 @@ class UInterface;
 class UObject;
 class UWorld;
 
-class KLDEBUGUTILS_API FKLDebugUtilsPicker final : public FNoncopyable
+class KLDEBUGEXAMPLES_API FKLDebugUtilsPicker final : public FNoncopyable
 {
 public:
     FKLDebugUtilsPicker();
@@ -28,6 +28,8 @@ public:
     void SetMaxDistanceFromScreenCenter(const float _MaxDistance);
 
 private:
+    UE_NODISCARD UObject* GetActorFromTrace(const UWorld& _World) const;
+
     void GatherAllObjects(const UWorld& _World, TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const;
     UE_NODISCARD bool GetCenterLocationFromScreenCoord(const UWorld& _World, FVector& _Location, FVector& _OutDirecton) const;
     UE_NODISCARD bool IsRightDistance(const AActor& _Actor, const FVector& _Position, const FVector& _Direction, float& _OutDistance) const;
