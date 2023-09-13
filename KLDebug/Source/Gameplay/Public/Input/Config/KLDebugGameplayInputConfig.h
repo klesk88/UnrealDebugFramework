@@ -24,7 +24,7 @@ private:
     TObjectPtr<UInputMappingContext> MappingContext;
 
     UPROPERTY(EditDefaultsOnly, Category = "Enanched Input")
-    int32 InputContextPriority;
+    int32 InputContextPriority = 0;
 
     UPROPERTY(EditDefaultsOnly, Category = "Enanched Input")
     TObjectPtr<UInputAction> ToogleDebug;

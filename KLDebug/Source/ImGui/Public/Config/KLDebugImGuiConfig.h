@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config/KLDebugImGuiConfig_Networking.h"
+
 // engine
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
@@ -22,6 +24,7 @@ public:
 
     UE_NODISCARD const FInstancedStruct& GetImGuiWindow() const;
     UE_NODISCARD const TSoftObjectPtr<UMaterialInterface>& GeOverlayMaterial() const;
+    UE_NODISCARD const FKLDebugImGuiConfig_Networking& GetNetworkingConfig() const;
 
 private:
     UPROPERTY(EditDefaultsOnly, config, NoClear, meta = (BaseStruct = "/Script/KLDebugImGui.KLDebugImGuiWindow"))
@@ -29,6 +32,9 @@ private:
 
     UPROPERTY(EditDefaultsOnly, config)
     TSoftObjectPtr<UMaterialInterface> OverlayMaterial;
+
+    UPROPERTY(EditDefaultsOnly, config)
+    FKLDebugImGuiConfig_Networking NetworkingSettings;
 };
 
 inline const UKLDebugImGuiConfig& UKLDebugImGuiConfig::Get()
@@ -46,4 +52,9 @@ inline const FInstancedStruct& UKLDebugImGuiConfig::GetImGuiWindow() const
 inline const TSoftObjectPtr<UMaterialInterface>& UKLDebugImGuiConfig::GeOverlayMaterial() const
 {
     return OverlayMaterial;
+}
+
+inline const FKLDebugImGuiConfig_Networking& UKLDebugImGuiConfig::GetNetworkingConfig() const
+{
+    return NetworkingSettings;
 }

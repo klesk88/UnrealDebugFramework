@@ -237,47 +237,4 @@ void UKLDebugImGuiEngineSubsystem::DrawImGui(const UWorld& _World)
         ImGui::EndTabBar();
         ImGui::End();
     }
-
-    /*const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
-    if (!ImGui::Begin("DebugEditor", nullptr, WindowFlags))
-    {
-        return;
-    }
-
-    if (!ImGui::BeginTabBar("Systems", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
-    {
-        ImGui::End();
-        return;
-    }
-
-    if (mEngineFeaturesVisualizer.IsValid() )
-    {
-        FKLDebugImGuiFeatureContainerBase& EngineContainer = mFeatureContainersManger.GetContainerMutable(EContainerType::ENGINE_SUBSYTSTEM);
-        bool TabOpen = false;
-        if (ImGui::BeginTabItem("Engine"))
-        {
-            TabOpen = true;
-        }
-
-        mEngineFeaturesVisualizer->DrawImGui(_World, TabOpen, EngineContainer);
-        if (DrawTree)
-        {
-            ImGui::EndTabItem();
-        }
-
-        mEngineFeaturesVisualizer->Render(_World, EngineContainer);
-    }
-
-    for (const TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>& UpdatableSystem : mUpdatableSystems)
-    {
-        if (!UpdatableSystem.IsValid())
-        {
-            continue;
-        }
-
-        UpdatableSystem->DrawImGui(_World, mFeatureContainersManger);
-    }
-
-    ImGui::EndTabBar();
-    ImGui::End();*/
 }

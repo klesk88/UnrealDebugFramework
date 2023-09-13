@@ -10,22 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputEditorSubsystem.h"
 #include "GameFramework/InputSettings.h"
-
-// #include "Commands/KLDebugEditorCommands.h"
-//  KLImGui module
-//  #include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
-//  #include "Framework/Commands/UIAction.h"
-//  #include "Framework/Commands/UICommandList.h"
-//  #include "Kismet2/DebuggerCommands.h"
-
 void FKLDebugEditorInputManager::Init()
 {
-    // FKLDebugEditorInputManager::Register();
-
-    // CommandList = FPlayWorldCommands::GlobalPlayWorldActions;
-    // CommandList->MapAction(FKLDebugEditorInputManager::Get().GetEnableImGuiCmd(),
-    //                        FExecuteAction::CreateRaw(this, &FKLDebugEditorInputManager::OnEnableImGui));
-
     const UClass* InputClassToSpawn = UEnhancedInputComponent::StaticClass();
     if (UInputSettings::GetDefaultInputComponentClass() && UInputSettings::GetDefaultInputComponentClass()->IsChildOf(UEnhancedInputComponent::StaticClass()))
     {
@@ -43,8 +29,6 @@ void FKLDebugEditorInputManager::Init()
 
 void FKLDebugEditorInputManager::Shutdown()
 {
-    // FKLDebugGameplayEditorCommands::Unregister();
-
     UnregisterInputComponent();
 
     if (mEditorInputComponent)
@@ -69,7 +53,9 @@ void FKLDebugEditorInputManager::RegisterInputComponent() const
     }
     else
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("No UEnhancedInputEditorSubsystem found"));
+#if WITH_EDITOR
+        UE_LOG(LogKL_Debug, Warning, TEXT("No UEnhancedInputEditorSubsystem found"));
+#endif
     }
 }
 

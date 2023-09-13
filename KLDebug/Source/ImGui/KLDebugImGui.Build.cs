@@ -30,6 +30,8 @@ public class KLDebugImGui : ModuleRules
                 "Engine",
                 "GameplayTags",
                 "InputCore",
+                "Networking",
+                "Sockets",
                 "StructUtils"
             }
         );

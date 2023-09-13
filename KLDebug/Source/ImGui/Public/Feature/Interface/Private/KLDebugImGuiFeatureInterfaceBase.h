@@ -51,7 +51,6 @@ public:
 
     // this is called once at game startup from the engine module to initialize the class
     virtual void Initialize();
-    virtual void Update();
 
     template<typename FeatureType>
     UE_NODISCARD bool IsDerivedFrom() const;
@@ -66,10 +65,6 @@ protected:
 };
 
 inline void IKLDebugImGuiFeatureInterfaceBase::Initialize()
-{
-}
-
-inline void IKLDebugImGuiFeatureInterfaceBase::Update()
 {
 }
 

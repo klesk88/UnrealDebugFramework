@@ -11,6 +11,7 @@
 // engine
 #include "Engine/Engine.h"
 #include "Engine/World.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 bool UKLDebugImGuiWorldSubsystem::ShouldCreateSubsystem(UObject* _Outer) const
 {
@@ -24,6 +25,19 @@ void UKLDebugImGuiWorldSubsystem::Initialize(FSubsystemCollectionBase& _Collecti
     mIsInitialized = false;
 }
 
+void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
+{
+    if (UKismetSystemLibrary::IsStandalone(&_World))
+    {
+        return;
+    }
+
+    if (_World.GetNetMode() == NM_Client)
+    {
+        mClient.Init(_World);
+    }
+}
+
 void UKLDebugImGuiWorldSubsystem::Deinitialize()
 {
     UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
@@ -31,6 +45,8 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
     {
         EngineSusbsytem->RemoveUpdatableSystem(*this, mIsInitialized);
     }
+
+    mClient.Clear();
 }
 
 void UKLDebugImGuiWorldSubsystem::Initialize(FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)

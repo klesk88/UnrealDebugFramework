@@ -2,6 +2,7 @@
 
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSelectableObject.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
+#include "Networking/Client/KLDebugImGuiNetworkManager_Client.h"
 #include "Subsystems/KLDebugImGuiSubsystemUpdatable.h"
 
 // engine
@@ -25,6 +26,7 @@ public:
     // UWorldSubsystem
     bool ShouldCreateSubsystem(UObject* _Outer) const final;
     void Initialize(FSubsystemCollectionBase& _Collection) final;
+    void OnWorldBeginPlay(UWorld& _World) final;
     void Deinitialize() final;
     // UWorldSubsystem
 
@@ -45,6 +47,7 @@ private:
     void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
+    FKLDebugImGuiNetworkManager_Client mClient;
     TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>    mWorldVisualizer;
     TArray<FKLDebugImGuiFeatureVisualizerSelectableObject> mSelectedObjectsVisualizers;
     bool                                                   mIsInitialized = false;
