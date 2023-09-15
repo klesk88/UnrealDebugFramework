@@ -4,6 +4,8 @@
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 #include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_ObjectSubsystem.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "Window/KLDebugImGuiWindow.h"
 
@@ -148,45 +150,45 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
     ImGuiWindow.Update(_CurrentWorldUpdated);
 
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
-    if (!ImGui::Begin("DebugEditor", nullptr, WindowFlags))
-    {
-        return;
-    }
-
-    if (!ImGui::BeginTabBar("Systems", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    if (!ImGui::Begin(TCHAR_TO_ANSI(*mImGuiTreeName), nullptr, WindowFlags))
     {
         ImGui::End();
         return;
     }
 
-    bool TabOpen = false;
-    if (ImGui::BeginTabItem(TCHAR_TO_ANSI(*mImGuiTreeName)))
+    ImGui::Separator();
+
+    const ImGuiTabBarFlags TabFlags = ImGuiTabBarFlags_::ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyMask_;
+    if (!ImGui::BeginTabBar("##tabs", TabFlags))
     {
-        TabOpen = true;
+        ImGui::End();
+        return;
     }
 
-    ImGui::PushID(this);
-
-    DrawImGuiVisualizers(_CurrentWorldUpdated, _ContainerManager);
-    DrawImguiSelectedObjects(_CurrentWorldUpdated, _ContainerManager);
-
-    ImGui::PopID();
-
-    if (TabOpen)
+    if (ImGui::BeginTabItem("FeaturesTree"))
     {
+        ImGui::PushID(this);
+
+        DrawImGuiVisualizers(_CurrentWorldUpdated, _ContainerManager);
+        DrawImguiSelectedObjects(_CurrentWorldUpdated, _ContainerManager);
+
+        ImGui::PopID();
+
         ImGui::EndTabItem();
-        ImGui::EndTabBar();
-        ImGui::End();
     }
+
+    ImGui::EndTabBar();
+    ImGui::End();
 }
 
 void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
 {
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
+    const FKLDebugImGuiFeatureVisualizerRenderContext Context{ _CurrentWorldUpdated, _ContainerManager };
     for (const TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>& SubsystemVisualizer : mSubsystemsFeaturesVisualizer)
     {
-        SubsystemVisualizer->Render(_CurrentWorldUpdated,  _ContainerManager);
+        SubsystemVisualizer->Render(Context);
     }
 
     for (const FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer : mSelectedObjectsVisualizers)
@@ -196,15 +198,16 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
             continue;
         }
 
-        ObjVisualizer.Render(_CurrentWorldUpdated, _ContainerManager);
+        ObjVisualizer.Render(Context);
     }
 }
 
 void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
 {
+    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, _ContainerManager };
     for (const TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>& SubsystemVisualizer : mSubsystemsFeaturesVisualizer)
     {
-        SubsystemVisualizer->DrawImGui(_World, true, _ContainerManager);
+        SubsystemVisualizer->DrawImGui(Context);
     }
 }
 
@@ -230,6 +233,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
 {
     ImGui::Indent();
 
+    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, _DrawTree, _ContainerManager };
     for (FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer : mSelectedObjectsVisualizers)
     {
         if (!ObjVisualizer.IsValid())
@@ -237,7 +241,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
             continue;
         }
 
-        ObjVisualizer.DrawImGui(_World, _DrawTree, _ContainerManager);
+        ObjVisualizer.DrawImGui(Context);
     }
 
     ImGui::Unindent();

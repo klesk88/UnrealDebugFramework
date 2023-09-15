@@ -21,9 +21,10 @@ namespace KL::Debug::ImGuiHelpers
     template<typename CallbackType>
     void CreateWindowCallCbk(const ANSICHAR* _WindowName, bool& _IsOpen, const CallbackType& _Callback)
     {
-        const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
+        const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysHorizontalScrollbar;
         if (!::ImGui::Begin(_WindowName, &_IsOpen, WindowFlags))
         {
+            ::ImGui::End();
             return;
         }
 

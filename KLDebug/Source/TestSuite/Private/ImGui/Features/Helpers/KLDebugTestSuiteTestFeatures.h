@@ -11,7 +11,7 @@ public:
     bool DoesSupportObject(const UObject& _Object) const final;
 
 private:
-    void           DrawImGuiChild(const UWorld& _World, UObject& _Object) final;
+    void           DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context) final;
     const FString& GetWindowName() const final;
 };
 

@@ -5,13 +5,13 @@
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-void IKLDebugImGuiFeatureInterface_Subsystem::DrawImGui(const UWorld& _World, bool& _IsWindowOpen)
+void IKLDebugImGuiFeatureInterface_Subsystem::DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem& _Context)
 {
-    auto Callback = [this, &_World]()->void {
-        DrawImGuiChild(_World);
+    auto Callback = [this, &_Context]()->void {
+        DrawImGuiChild(_Context);
     };
 
     KL::Debug::ImGuiHelpers::CreateWindowCallCbk(TCHAR_TO_ANSI(*GetWindowName()),
-        _IsWindowOpen,
+        _Context.GetIsWindowOpen(),
         Callback);
 }

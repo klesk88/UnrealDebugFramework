@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+#include "Feature/Interface/Subsystem/Context/KLDebugImGuiFeatureInterfaceImGuiContext_Subsystem.h"
+#include "Feature/Interface/Subsystem/Context/KLDebugImGuiFeatureInterfaceRenderContext_Subsystem.h"
 
 class UWorld;
 
@@ -13,13 +15,13 @@ class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface_Subsystem : public IKLDebug
     DERIVED_KL_DEBUG_FEATURE_CLASS(IKLDebugImGuiFeatureInterface_Subsystem, IKLDebugImGuiFeatureInterfaceBase)
 
 public:
-    virtual void DrawImGui(const UWorld& _World, bool& _IsWindowOpen);
-    virtual void Render(const UWorld& _World) const;
+    virtual void DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem& _Context);
+    virtual void Render(const FKLDebugImGuiFeatureInterfaceRenderContext_Subsystem& _Context) const;
 
 protected:
-    virtual void DrawImGuiChild(const UWorld& _World) = 0;
+    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem& _Context) = 0;
 };
 
-inline void IKLDebugImGuiFeatureInterface_Subsystem::Render([[maybe_unused]] const UWorld& _World) const
+inline void IKLDebugImGuiFeatureInterface_Subsystem::Render([[maybe_unused]] const FKLDebugImGuiFeatureInterfaceRenderContext_Subsystem& _Context) const
 {
 }

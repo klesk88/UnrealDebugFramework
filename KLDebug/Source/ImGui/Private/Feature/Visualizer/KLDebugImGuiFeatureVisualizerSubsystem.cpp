@@ -4,6 +4,8 @@
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterface_Subsystem.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
@@ -19,7 +21,7 @@ FKLDebugImGuiFeatureVisualizerSubsystem::FKLDebugImGuiFeatureVisualizerSubsystem
     checkf(mContainerType != EContainerType::COUNT, TEXT("must be initialized correctly"));
 }
 
-void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiTree(const UWorld& _World)
+void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
     if (ImGui::TreeNode(this, TCHAR_TO_ANSI(*mTreeName)))
     {
@@ -28,25 +30,27 @@ void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiTree(const UWorld& _World
     }
 }
 
-void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
+void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
-    auto Callback = [&_World](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
+    auto Callback = [&_Context](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Subsystem& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Subsystem>();
-        Interface.DrawImGui(_World, _Entry.GetIsEnableRef());
+        const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef() };
+        Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };
 
-    FKLDebugImGuiFeatureContainerBase& FeaturesContainer = _FeatureContainerManager.GetContainerMutable(mContainerType);
+    FKLDebugImGuiFeatureContainerBase& FeaturesContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(mContainerType);
     DrawImguiFeaturesEnabledCommon(FeaturesContainer, Callback);
 }
 
-void FKLDebugImGuiFeatureVisualizerSubsystem::Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const
+void FKLDebugImGuiFeatureVisualizerSubsystem::Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const
 {
-    const FKLDebugImGuiFeatureContainerBase& FeaturesContainer = _FeatureContainerManager.GetContainer(mContainerType);
+    const FKLDebugImGuiFeatureInterfaceRenderContext_Subsystem FeatureContext{ _Context.GetWorld() };
+    const FKLDebugImGuiFeatureContainerBase& FeaturesContainer = _Context.GetFeaturesContainerManager().GetContainer(mContainerType);
     FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeaturesContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
         const IKLDebugImGuiFeatureInterface_Subsystem& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Subsystem>();
-        Interface.Render(_World);
+        Interface.Render(FeatureContext);
     }
 }

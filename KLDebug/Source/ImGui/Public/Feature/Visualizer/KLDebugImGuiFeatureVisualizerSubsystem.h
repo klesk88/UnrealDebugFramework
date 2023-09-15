@@ -7,6 +7,8 @@
 #include "Containers/UnrealString.h"
 
 class FKLDebugImGuiFeatureContainerBase;
+class FKLDebugImGuiFeatureVisualizerImGuiContext;
+class FKLDebugImGuiFeatureVisualizerRenderContext;
 class UWorld;
 
 class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizerSubsystem final : public FKLDebugImGuiFeatureVisualizerBase
@@ -15,13 +17,13 @@ public:
     explicit FKLDebugImGuiFeatureVisualizerSubsystem(const FKLDebugImGuiFeatureContainerBase& _Container, const FString& _TreeName, const EContainerType _ContainerType, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
 
     // FKLDebugImGuiFeatureVisualizerBase
-    void Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const final;
+    void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const final;
     // FKLDebugImGuiFeatureVisualizerBase
 
 private:
     // FKLDebugImGuiFeatureVisualizerBase
-    void DrawImGuiTree(const UWorld& _World) final;
-    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) final;
+    void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
+    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
 private:

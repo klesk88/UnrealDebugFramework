@@ -4,6 +4,8 @@
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 // ImGuiThirdParty module
@@ -42,7 +44,7 @@ FKLDebugImGuiFeatureVisualizerSelectableObject::~FKLDebugImGuiFeatureVisualizerS
     SetMaterialOverlay(mOriginalMaterialOverlay.Get());
 }
 
-void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiTree(const UWorld& _World)
+void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -75,7 +77,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiTree(const UWorld&
     ImGui::TreePop();
 }
 
-void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
+void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -87,13 +89,14 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(co
 
     UObject& Object = *mObject.Get();
 
-    auto Callback = [&_World, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool{
+    auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool{
         IKLDebugImGuiFeatureInterface_SelectableObject& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_SelectableObject>();
-        Interface.DrawImGui(_World, _Entry.GetIsEnableRef(), Object);
+        const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), Object };
+        Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };
 
-    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
+    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
     DrawImguiFeaturesEnabledCommon(FeatureContainer, Callback);
 }
 
@@ -126,7 +129,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::SetMaterialOverlay(UMateria
     }
 }
 
-void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const
+void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -137,11 +140,12 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const UWorld& _World
 #endif
 
     const UObject&                           Object   = *mObject.Get();
-    const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainer(EContainerType::SELECTABLE_OBJECTS);
+    const FKLDebugImGuiFeatureInterfaceRenderContext_Selectable FeatureContext{ _Context.GetWorld(), Object };
+    const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainer(EContainerType::SELECTABLE_OBJECTS);
     FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
         const IKLDebugImGuiFeatureInterface_SelectableObject& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_SelectableObject>();
-        Interface.Render(Object, _World);
+        Interface.Render(FeatureContext);
     }
 }

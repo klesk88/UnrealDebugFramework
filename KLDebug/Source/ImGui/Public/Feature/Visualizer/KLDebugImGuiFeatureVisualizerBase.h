@@ -2,6 +2,8 @@
 
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
@@ -13,6 +15,8 @@
 #include "UObject/WeakObjectPtrTemplates.h"
 
 class FKLDebugImGuiFeaturesTypesContainerManager;
+class FKLDebugImGuiFeatureVisualizerImGuiContext;
+class FKLDebugImGuiFeatureVisualizerRenderContext;
 class UObject;
 class UWorld;
 
@@ -24,12 +28,12 @@ public:
 
     UE_NODISCARD virtual bool IsValid() const;
 
-    void         DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
-    virtual void Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const = 0;
+    void         DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context);
+    virtual void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const = 0;
 
 protected:
-    virtual void DrawImGuiTree(const UWorld& _World)                                                                    = 0;
-    virtual void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer)   = 0;
+    virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
+    virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
 
     template<typename CallbackType>
     void DrawImguiFeaturesEnabledCommon(FKLDebugImGuiFeatureContainerBase& _FeatureContainer, const CallbackType& _Callback);

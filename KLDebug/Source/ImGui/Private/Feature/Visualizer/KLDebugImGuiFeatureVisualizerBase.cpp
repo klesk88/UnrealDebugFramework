@@ -2,6 +2,7 @@
 
 #include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 
 FKLDebugImGuiFeatureVisualizerBase::FKLDebugImGuiFeatureVisualizerBase(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
     : mFeaturesIndexes(MoveTemp(_FeaturesIndexes))
@@ -11,12 +12,12 @@ FKLDebugImGuiFeatureVisualizerBase::FKLDebugImGuiFeatureVisualizerBase(const FKL
     mSelectedFeaturesIndexes.Reserve(30);
 }
 
-void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer)
+void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
-    if (_DrawTree)
+    if (_Context.GetShouldDrawTree())
     {
-        DrawImGuiTree(_World);
+        DrawImGuiTree(_Context);
     }
 
-    DrawImGuiFeaturesEnabled(_World, _FeatureContainer);
+    DrawImGuiFeaturesEnabled(_Context);
 }

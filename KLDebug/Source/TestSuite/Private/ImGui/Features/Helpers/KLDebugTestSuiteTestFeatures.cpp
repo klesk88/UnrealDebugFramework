@@ -7,7 +7,7 @@ bool FKLDebugTestFeatureBase::DoesSupportObject(const UObject& _Object) const
     return true;
 }
 
-void FKLDebugTestFeatureBase::DrawImGuiChild(const UWorld& _World, UObject& _Object)
+void FKLDebugTestFeatureBase::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context)
 {
 }
 

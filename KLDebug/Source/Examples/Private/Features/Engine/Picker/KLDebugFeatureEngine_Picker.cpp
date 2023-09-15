@@ -30,11 +30,11 @@ const FName& FKLDebugFeatureEngine_Picker::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureEngine_Picker::DrawImGuiChild(const UWorld& _World)
+void FKLDebugFeatureEngine_Picker::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem& _Context)
 {
     if (ImGui::Button("PerformPick"))
     {
-        HandlePickerButton(_World);
+        HandlePickerButton(_Context.GetWorld());
     }
 
     ImguiDrawPickedCharacterInfo();
