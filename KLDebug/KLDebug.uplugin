@@ -30,6 +30,11 @@
       "LoadingPhase": "Default"
     },
     {
+      "Name": "KLDebugImGuiNetworkingRuntime",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
       "Name": "KLDebugUtils",
       "Type": "Runtime",
       "LoadingPhase": "Default"

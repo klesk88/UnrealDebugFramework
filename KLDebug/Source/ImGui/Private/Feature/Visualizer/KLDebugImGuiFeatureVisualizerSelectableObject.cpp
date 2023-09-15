@@ -2,6 +2,7 @@
 
 #include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
@@ -74,7 +75,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiTree(const UWorld&
     ImGui::TreePop();
 }
 
-void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer)
+void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -92,7 +93,8 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(co
         return _Entry.IsEnable();
     };
 
-    DrawImguiFeaturesEnabledCommon(_FeatureContainer, Callback);
+    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
+    DrawImguiFeaturesEnabledCommon(FeatureContainer, Callback);
 }
 
 UMeshComponent* FKLDebugImGuiFeatureVisualizerSelectableObject::TryGetMeshComponent() const
@@ -124,7 +126,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::SetMaterialOverlay(UMateria
     }
 }
 
-void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const
+void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -135,7 +137,8 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const UWorld& _World
 #endif
 
     const UObject&                           Object   = *mObject.Get();
-    FKLDebugImGuiFeatureVisualizerConstIterator Iterator = _FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
+    const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainer(EContainerType::SELECTABLE_OBJECTS);
+    FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
         const IKLDebugImGuiFeatureInterface_SelectableObject& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_SelectableObject>();

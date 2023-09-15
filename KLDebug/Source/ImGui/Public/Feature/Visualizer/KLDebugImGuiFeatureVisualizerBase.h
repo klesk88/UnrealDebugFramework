@@ -12,6 +12,7 @@
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
+class FKLDebugImGuiFeaturesTypesContainerManager;
 class UObject;
 class UWorld;
 
@@ -23,12 +24,12 @@ public:
 
     UE_NODISCARD virtual bool IsValid() const;
 
-    void         DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeatureContainerBase& _FeatureContainer);
-    virtual void Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const = 0;
+    void         DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
+    virtual void Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const = 0;
 
 protected:
     virtual void DrawImGuiTree(const UWorld& _World)                                                                    = 0;
-    virtual void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer)   = 0;
+    virtual void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer)   = 0;
 
     template<typename CallbackType>
     void DrawImguiFeaturesEnabledCommon(FKLDebugImGuiFeatureContainerBase& _FeatureContainer, const CallbackType& _Callback);

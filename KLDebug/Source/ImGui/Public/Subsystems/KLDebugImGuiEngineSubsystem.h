@@ -2,7 +2,6 @@
 
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Input/KLDebugImGuiInputManager.h"
-#include "Window/KLDebugImGuiWindow.h"
 
 // engine
 #include "Containers/Array.h"
@@ -10,16 +9,12 @@
 #include "Delegates/IDelegateInstance.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
-#include "InstancedStruct.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "UObject/ObjectPtr.h"
-#include "UObject/WeakInterfacePtr.h"
 
 #include "KLDebugImGuiEngineSubsystem.generated.h"
 
-class IKLDebugImGuiFeatureInterfaceBase;
-class FKLDebugImGuiFeatureVisualizerSubsystem;
-class IKLDebugImGuiSubsystemUpdatable;
+class UKLDebugImGuiWorldSubsystem;
 class UMaterialInterface;
 class UObject;
 class UWorld;
@@ -40,34 +35,22 @@ public:
     void              ToogleImGuiSystemState();
     UE_NODISCARD bool IsImGuiSystemEnabled() const;
 
-    void AddUpdatableSystem(IKLDebugImGuiSubsystemUpdatable& _System);
-    void RemoveUpdatableSystem(const IKLDebugImGuiSubsystemUpdatable& _System, const bool _IsRegistered);
-
     UE_NODISCARD UMaterialInterface* GetOverlayMaterial() const;
 
 private:
     void InitFromConfig();
-    void InitEngineVisualizer();
 
     void RegisterCallbacks();
     void UnreagisterCallbacks();
 
     void Update(const UWorld& _World);
 
-    void AddPendingUpdatableSystems();
-    void UpdateSystems(const UWorld& _World);
-    void DrawImGui(const UWorld& _World);
-
 private:
     UPROPERTY()
     TObjectPtr<UMaterialInterface> OverlayMaterial;
 
-    FKLDebugImGuiFeaturesTypesContainerManager                 mFeatureContainersManger;
-    FKLDebugImGuiInputManager                                  mInputManager;
-    FInstancedStruct                                           mImGuiWindow;
-    TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>> mPendingUpdatableSystems;
-    TArray<TWeakInterfacePtr<IKLDebugImGuiSubsystemUpdatable>> mUpdatableSystems;
-    TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>        mEngineFeaturesVisualizer;
+    FKLDebugImGuiFeaturesTypesContainerManager mFeatureContainersManger;
+    FKLDebugImGuiInputManager                  mInputManager;
 };
 
 inline void UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState()

@@ -11,7 +11,7 @@ FKLDebugImGuiFeatureVisualizerBase::FKLDebugImGuiFeatureVisualizerBase(const FKL
     mSelectedFeaturesIndexes.Reserve(30);
 }
 
-void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeatureContainerBase& _FeatureContainer)
+void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer)
 {
     if (_DrawTree)
     {

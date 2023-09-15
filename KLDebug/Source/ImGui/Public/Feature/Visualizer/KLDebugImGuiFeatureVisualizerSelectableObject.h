@@ -7,6 +7,7 @@
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
+class FKLDebugImGuiFeaturesTypesContainerManager;
 class UMaterialInterface;
 class UMeshComponent;
 
@@ -20,7 +21,7 @@ public:
 
     // FKLDebugImGuiFeatureVisualizerBase
     UE_NODISCARD bool IsValid() const final;
-    void              Render(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) const final;
+    void              Render(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD bool ShouldKeepAlive() const;
@@ -28,7 +29,7 @@ public:
 private:
     // FKLDebugImGuiFeatureVisualizerBase
     void DrawImGuiTree(const UWorld& _World) final;
-    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeatureContainerBase& _FeatureContainer) final;
+    void DrawImGuiFeaturesEnabled(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD UMeshComponent* TryGetMeshComponent() const;

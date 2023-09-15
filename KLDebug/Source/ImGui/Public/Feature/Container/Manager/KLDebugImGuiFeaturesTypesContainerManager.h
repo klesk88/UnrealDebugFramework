@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -9,18 +11,6 @@
 class FKLDebugImGuiFeatureManager;
 class FKLDebugImGuiFeatureContainerBase;
 class IKLDebugImGuiFeatureInterfaceBase;
-
-enum class KLDEBUGIMGUI_API EContainerType : uint8
-{
-    SELECTABLE_OBJECTS = 0,
-    ENGINE_SUBSYTSTEM,
-    EDITOR_SUBSYSTEM,
-    GAME_INSTANCE_SUBSYSTEM,
-    LOCAL_PLAYER_SUBSYSTEM,
-    WORLD_SUBSYSTEM,
-
-    COUNT
-};
 
 class KLDEBUGIMGUI_API FKLDebugImGuiFeaturesTypesContainerManager final : public FNoncopyable
 {

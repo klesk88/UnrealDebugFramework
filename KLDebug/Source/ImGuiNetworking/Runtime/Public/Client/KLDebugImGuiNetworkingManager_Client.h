@@ -1,30 +1,33 @@
 #pragma once
 
-#include "Networking/KLDebugImGuiNetworkManager_Base.h"
+#include "Common/KLDebugImGuiNetworkingManager_Base.h"
 
 //engine
 #include "Containers/Array.h"
+#include "Templates/SharedPointer.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
+class FInternetAddr;
 class FSocket;
 class FString;
+class UPackageMap;
 class UWorld;
 
 struct FBitReader;
 struct FBitWriter;
 
-class KLDEBUGIMGUI_API FKLDebugImGuiNetworkManager_Client final : public FKLDebugImGuiNetworkManager_Base
+class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingManager_Client final : public FKLDebugImGuiNetworkingManager_Base
 {
 public:
     //FKLDebugImGuiNetworkManager_Base
-    void Init(UWorld& _World) final;
     UE_NODISCARD bool IsSocketRegistered() const;
     //FKLDebugImGuiNetworkManager_Base
 
 private:
     //FKLDebugImGuiNetworkManager_Base
     void Tick(const float _DeltaTime) final;
+    void InitChild(UWorld& _World) final;
     void ClearChild() final;
     //FKLDebugImGuiNetworkManager_Base
 
@@ -33,18 +36,23 @@ private:
     void TickReadData();
     void TickWriteData();
 
+    void TryReconnect();
+
     void ReadData(FBitReader& _Reader);
+
+    UE_NODISCARD UPackageMap* GetServerPackageMap() const;
 
 private:
     TArray<uint8> mReceiverDataBuffer;
-    TWeakObjectPtr<UWorld> mWorld;
+    TSharedPtr<FInternetAddr> mServerAddress;
     FSocket* mServerSocket = nullptr;
     int32 mSendBufferSize = 0;
-
+    float mReconnectionTime = 1.f;
+    float mLastTimeTryToConnect = 0.f;
     bool hasWritten = false;
 };
 
-inline bool FKLDebugImGuiNetworkManager_Client::IsSocketRegistered() const
+inline bool FKLDebugImGuiNetworkingManager_Client::IsSocketRegistered() const
 {
     return mServerSocket != nullptr;
 }

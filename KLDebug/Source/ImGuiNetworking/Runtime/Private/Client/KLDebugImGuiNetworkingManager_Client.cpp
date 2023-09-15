@@ -1,6 +1,6 @@
-#include "Networking/Client/KLDebugImGuiNetworkManager_Client.h"
+#include "Client/KLDebugImGuiNetworkingManager_Client.h"
 
-#include "Config/KLDebugImGuiConfig_Networking.h"
+#include "Settings/KLDebugImGuiNetworkingSettings.h"
 
 //utils
 #include "Utils/Public/KLDebugLog.h"
@@ -8,6 +8,8 @@
 //engine
 #include "Common/TcpSocketBuilder.h"
 #include "Containers/UnrealString.h"
+#include "Engine/Engine.h"
+#include "Engine/NetDriver.h"
 #include "Interfaces/IPv4/IPv4Address.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
 #include "IPAddress.h"
@@ -19,20 +21,20 @@
 #include "Templates/SharedPointer.h"
 #include "UObject/CoreNet.h"
 
-void FKLDebugImGuiNetworkManager_Client::Init(UWorld& _World)
+void FKLDebugImGuiNetworkingManager_Client::InitChild(UWorld& _World)
 {
     const UNetDriver* ServerNetDriver = _World.GetNetDriver();
     const UNetConnection* NetConnection = ServerNetDriver ? ServerNetDriver->ServerConnection : nullptr;
     if (!NetConnection)
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("KLDebugImGuiNetworkManager_Client::Init>> Server Connection Is Not Initialized"));
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Server Connection Is Not Initialized"));
         return;
     }
 
-    mWorld = &_World;
-    const FKLDebugImGuiConfig_Networking& NetworkingConfig = GetNetworkConfig();
+    const UKLDebugImGuiNetworkingSettings& NetworkingConfig = GetNetworkConfig();
+    mReconnectionTime = NetworkingConfig.GetClientReconnectionTime();
 
-    UE_LOG(LogKL_Debug, Display, TEXT("KLDebugImGuiNetworkManager_Client::Init>> Trying to connecting to IP: [%s] Port: [%d]"),
+    UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Trying to connecting to IP: [%s] Port: [%d]"),
         *NetConnection->URL.Host,
         NetworkingConfig.GetPort());
 
@@ -42,26 +44,26 @@ void FKLDebugImGuiNetworkManager_Client::Init(UWorld& _World)
     {
         InitTick(_World);
 
-        UE_LOG(LogKL_Debug, Display, TEXT("KLDebugImGuiNetworkManager_Client::Init>> Connection to IP: [%s] Port: [%d] succeded"),
+        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] succeded"),
             *NetConnection->URL.Host,
             NetworkingConfig.GetPort());
     }
     else
     {
-        UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugImGuiNetworkManager_Client::Init>> Connection to IP: [%s] Port: [%d] failed"),
+        UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] failed"),
             *NetConnection->URL.Host,
             NetworkingConfig.GetPort());
     }
 }
 
-void FKLDebugImGuiNetworkManager_Client::InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize)
+void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize)
 {
     //based on FSocketImitationTrainer::FSocketImitationTrainer line 518
 
     ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     if (!SocketSubsystem)
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("KLDebugImGuiNetworkManager_Client::InitServerSocket>>Could not get socket subsystem"));
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::InitServerSocket>>Could not get socket subsystem"));
         return;
     }
 
@@ -70,7 +72,7 @@ void FKLDebugImGuiNetworkManager_Client::InitServerSocket(const FString& _Socket
     Address->SetIp(*_IP, IsValid);
     if (!IsValid)
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("KLDebugImGuiNetworkManager_Client::InitServerSocket>> Invalid Ip Address [%s]"), *_IP);
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::InitServerSocket>> Invalid Ip Address [%s]"), *_IP);
         return;
     }
 
@@ -82,7 +84,7 @@ void FKLDebugImGuiNetworkManager_Client::InitServerSocket(const FString& _Socket
 
     if (!mServerSocket)
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("KLDebugImGuiNetworkManager_Client::InitServerSocket>> Failed to create socket"));
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::InitServerSocket>> Failed to create socket"));
         return;
     }
 
@@ -92,10 +94,11 @@ void FKLDebugImGuiNetworkManager_Client::InitServerSocket(const FString& _Socket
 
     mReceiverDataBuffer.SetNumUninitialized(ReceiveBufferSize);
 
+    mServerAddress = Address;
     mServerSocket->Connect(*Address);
 }
 
-void FKLDebugImGuiNetworkManager_Client::ClearChild()
+void FKLDebugImGuiNetworkingManager_Client::ClearChild()
 {
     if (mServerSocket)
     {
@@ -103,9 +106,11 @@ void FKLDebugImGuiNetworkManager_Client::ClearChild()
         ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(mServerSocket);
         mServerSocket = nullptr;
     }
+
+    mServerAddress.Reset();
 }
 
-void FKLDebugImGuiNetworkManager_Client::Tick(const float _DeltaTime)
+void FKLDebugImGuiNetworkingManager_Client::Tick(const float _DeltaTime)
 {
     if (!mServerSocket)
     {
@@ -113,16 +118,22 @@ void FKLDebugImGuiNetworkManager_Client::Tick(const float _DeltaTime)
     }
 
     const ESocketConnectionState ConnState = mServerSocket->GetConnectionState();
-    if (ConnState != SCS_Connected)
+    switch (ConnState)
     {
-        return;
+    case ESocketConnectionState::SCS_Connected:
+        TickReadData();
+        TickWriteData();
+        break;
+    case ESocketConnectionState::SCS_NotConnected:
+    case ESocketConnectionState::SCS_ConnectionError:
+        TryReconnect();
+        break;
+    default:
+        ensureMsgf(false, TEXT("not implemented"));
     }
-
-    TickReadData();
-    TickWriteData();
 }
 
-void FKLDebugImGuiNetworkManager_Client::TickReadData()
+void FKLDebugImGuiNetworkingManager_Client::TickReadData()
 {   
     uint32 Size = 0;
     int32 BytesRead = 0;
@@ -141,33 +152,11 @@ void FKLDebugImGuiNetworkManager_Client::TickReadData()
     }
 }
 
-
-#include "Engine/Engine.h"
-#include "Engine/NetDriver.h"
-#include "GameFramework/PlayerController.h"
-
-void FKLDebugImGuiNetworkManager_Client::TickWriteData()
+void FKLDebugImGuiNetworkingManager_Client::TickWriteData()
 {
     //for eplications of actors or actor guid look at UObject* FindReplicatedObjectOnPIEServer
-
-    UNetDriver* ServerNetDriver = mWorld->GetNetDriver();
-    UPackageMap* PackageMap = nullptr;
-    if (UNetConnection* NetConnection = ServerNetDriver->ServerConnection)
-    {
-        PackageMap = NetConnection->PackageMap;
-    }
-    else if (ServerNetDriver->ClientConnections.Num() > 0)
-    {
-        PackageMap = ServerNetDriver->ClientConnections[0]->PackageMap;
-    }
-
+    UPackageMap* PackageMap = GetServerPackageMap();
     if(!PackageMap)
-    {
-        return;
-    }
-
-    APlayerController* Controller = GEngine->GetFirstLocalPlayerController(mWorld.Get());
-    if (!Controller)
     {
         return;
     }
@@ -178,15 +167,43 @@ void FKLDebugImGuiNetworkManager_Client::TickWriteData()
         return;
     }
 
-
-    Writer << Controller;
+    int32 Test = 89;
+    Writer << Test;
 
     hasWritten = SendData(*mServerSocket, Writer);
 }
 
-void FKLDebugImGuiNetworkManager_Client::ReadData(FBitReader& _Reader)
+void FKLDebugImGuiNetworkingManager_Client::TryReconnect()
+{
+    if (!mServerAddress.IsValid())
+    {
+        return;
+    }
+
+    const UWorld& World = GetWorld();
+    const float TimeSinceLastConnTry = World.TimeSince(mLastTimeTryToConnect);
+    if (TimeSinceLastConnTry > mReconnectionTime)
+    {
+        mLastTimeTryToConnect = World.GetTimeSeconds();
+        mServerSocket->Connect(*mServerAddress.Get());
+    }
+}
+
+void FKLDebugImGuiNetworkingManager_Client::ReadData(FBitReader& _Reader)
 {
     int32 a = 0;
     _Reader << a;
     a = 40;
+}
+
+UPackageMap* FKLDebugImGuiNetworkingManager_Client::GetServerPackageMap() const
+{
+    UNetDriver* ServerNetDriver = GetWorld().GetNetDriver();
+    UNetConnection* NetConnection = ServerNetDriver ? ServerNetDriver->ServerConnection : nullptr;
+    if (NetConnection)
+    {
+        return NetConnection->PackageMap;
+    }
+
+    return nullptr;
 }

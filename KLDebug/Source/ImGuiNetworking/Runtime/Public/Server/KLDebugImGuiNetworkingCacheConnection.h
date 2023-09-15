@@ -10,11 +10,11 @@ class FKLDebugImGuiNetworkManager_Base;
 class FSocket;
 
 //based on FEditorDomainSaveServer::FClientConnection
-class KLDEBUGIMGUI_API FKLDebugImGuiNetworkCacheConnection final : public FRefCountedObject
+class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingCacheConnection final : public FRefCountedObject
 {
 public:
-    explicit FKLDebugImGuiNetworkCacheConnection(FSocket& _ClientSocket);
-    ~FKLDebugImGuiNetworkCacheConnection();
+    explicit FKLDebugImGuiNetworkingCacheConnection(FSocket& _ClientSocket);
+    ~FKLDebugImGuiNetworkingCacheConnection();
 
     /** Release resources and indicate this connection should no longer be used. */
     void Shutdown();
@@ -29,12 +29,12 @@ private:
     int32 BufferOffset = 0;
 };
 
-inline bool FKLDebugImGuiNetworkCacheConnection::IsValid() const
+inline bool FKLDebugImGuiNetworkingCacheConnection::IsValid() const
 {
     return mClientSocket != nullptr;
 }
 
-inline FSocket& FKLDebugImGuiNetworkCacheConnection::GetSocket() const
+inline FSocket& FKLDebugImGuiNetworkingCacheConnection::GetSocket() const
 {
     return *mClientSocket;
 }

@@ -1,20 +1,20 @@
-#include "Networking/KLDebugImGuiNetworkCacheConnection.h"
+#include "Server/KLDebugImGuiNetworkingCacheConnection.h"
 
 //engine
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 
-FKLDebugImGuiNetworkCacheConnection::FKLDebugImGuiNetworkCacheConnection(FSocket& _ClientSocket)
+FKLDebugImGuiNetworkingCacheConnection::FKLDebugImGuiNetworkingCacheConnection(FSocket& _ClientSocket)
     : mClientSocket(&_ClientSocket)
 {
 }
 
-FKLDebugImGuiNetworkCacheConnection::~FKLDebugImGuiNetworkCacheConnection()
+FKLDebugImGuiNetworkingCacheConnection::~FKLDebugImGuiNetworkingCacheConnection()
 {
     Shutdown();
 }
 
-void FKLDebugImGuiNetworkCacheConnection::Shutdown()
+void FKLDebugImGuiNetworkingCacheConnection::Shutdown()
 {
     if (mClientSocket)
     {

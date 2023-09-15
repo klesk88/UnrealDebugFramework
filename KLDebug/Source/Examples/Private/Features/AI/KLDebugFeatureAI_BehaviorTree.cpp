@@ -64,6 +64,12 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBrainInfo(const UObject& _Object) 
     // based on FGameplayDebuggerCategory_BehaviorTree::DrawData
 
     const UBrainComponent* BrainComponent = GetBrainComponent(_Object);
+    if (!BrainComponent)
+    {
+        ImGui::Text("No Brain Component");
+        return;
+    }
+
     FString                TempString;
     TempString.Reserve(300);
 
@@ -111,7 +117,10 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBTInfo(const UObject& _Object) con
     // based on FGameplayDebuggerCategory_AI::DrawData
 
     const UBehaviorTreeComponent* BTComponent = GetBTComponent(_Object);
-
+    if (!BTComponent)
+    {
+        return;
+    }
     const FString CurrentAITask   = BTComponent->DescribeActiveTasks();
     const FString CurrentAIState  = BTComponent->IsRunning() ? TEXT("Running") : BTComponent->IsPaused() ? TEXT("Paused")
                                                                                                          : TEXT("Inactive");
