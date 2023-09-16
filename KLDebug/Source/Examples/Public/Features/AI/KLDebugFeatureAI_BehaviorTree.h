@@ -16,7 +16,7 @@ public:
 
 private:
     //IKLDebugImGuiFeatureInterface_SelectableObject
-    void                        DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context) final;
+    void                        DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input) final;
     UE_NODISCARD const FString& GetWindowName() const final;
     void                        GetFilterPath(TArray<FName>& _OutFilters) const final;
     UE_NODISCARD const FName&   GetImGuiPath() const final;

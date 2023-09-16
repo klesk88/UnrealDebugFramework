@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
-#include "Feature/Interface/Selectable/Context/KLDebugImGuiFeatureInterfaceImGuiContext_Selectable.h"
-#include "Feature/Interface/Selectable/Context/KLDebugImGuiFeatureInterfaceRenderContext_Selectable.h"
+#include "Feature/Interface/Selectable/Input/KLDebugImGuiFeatureInterfaceImGuiInput_Selectable.h"
+#include "Feature/Interface/Selectable/Input/KLDebugImGuiFeatureInterfaceRenderInput_Selectable.h"
 
 // engine
 #include "Containers/Array.h"
@@ -17,11 +17,11 @@ public:
     // should return true if the object passed as input is supported by this feature
     UE_NODISCARD virtual bool DoesSupportObject(const UObject& _Object) const = 0;
 
-    virtual void DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context);
-    virtual void Render(const FKLDebugImGuiFeatureInterfaceRenderContext_Selectable& _Context) const;
+    virtual void DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input);
+    virtual void Render(const FKLDebugImGuiFeatureInterfaceRenderInput_Selectable& _Input) const;
 
 protected:
-    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context) = 0;
+    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input) = 0;
 
     template<typename... FilterType>
     void GetFilterPathHelper(TArray<FName>& _OutFilters) const;
@@ -48,6 +48,6 @@ inline void IKLDebugImGuiFeatureInterface_SelectableObject::Dummy(FilterType&&..
 {
 }
 
-inline void IKLDebugImGuiFeatureInterface_SelectableObject::Render(const FKLDebugImGuiFeatureInterfaceRenderContext_Selectable& _Context) const
+inline void IKLDebugImGuiFeatureInterface_SelectableObject::Render(const FKLDebugImGuiFeatureInterfaceRenderInput_Selectable& _Input) const
 {
 }

@@ -91,7 +91,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(co
 
     auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool{
         IKLDebugImGuiFeatureInterface_SelectableObject& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_SelectableObject>();
-        const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), Object };
+        const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), Object };
         Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };
@@ -140,7 +140,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::Render(const FKLDebugImGuiF
 #endif
 
     const UObject&                           Object   = *mObject.Get();
-    const FKLDebugImGuiFeatureInterfaceRenderContext_Selectable FeatureContext{ _Context.GetWorld(), Object };
+    const FKLDebugImGuiFeatureInterfaceRenderInput_Selectable FeatureContext{ _Context.GetWorld(), Object };
     const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainer(EContainerType::SELECTABLE_OBJECTS);
     FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)

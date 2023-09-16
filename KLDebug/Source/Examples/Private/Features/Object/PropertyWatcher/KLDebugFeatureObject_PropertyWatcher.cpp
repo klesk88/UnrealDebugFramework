@@ -34,7 +34,7 @@ const FName& FKLDebugFeatureObject_PropertyWatcher::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context)
+void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input)
 {
     //Based on PropertyWatcher project
     //https://github.com/guitarfreak/PropertyWatcher/blob/main/PropertyWatcher.cpp#L2179
@@ -56,7 +56,7 @@ void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFe
     FString VariableName;
     TArray<char> StringBuffer;
     StringBuffer.Reserve(300);
-    for (TFieldIterator<FProperty> It(_Context.GetObject().GetClass()); It; ++It)
+    for (TFieldIterator<FProperty> It(_Input.GetObject().GetClass()); It; ++It)
     {
         FProperty* Property = *It;
         if (!Property)
@@ -72,7 +72,7 @@ void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFe
         ImGui::TableNextColumn();
         ImGui::TextUnformatted(TCHAR_TO_UTF8(*Property->GetName()));
         ImGui::TableNextColumn();
-        ImguiDrawProperty(*Property, StringBuffer, _Context.GetObjectMutable());
+        ImguiDrawProperty(*Property, StringBuffer, _Input.GetObjectMutable());
 
         ImGui::PopID();
     }

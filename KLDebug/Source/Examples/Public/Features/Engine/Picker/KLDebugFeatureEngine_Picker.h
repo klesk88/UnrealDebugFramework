@@ -21,7 +21,7 @@ private:
     //IKLDebugImGuiFeatureInterface_EngineSubsystem
     UE_NODISCARD const FName& GetImGuiPath() const;
     UE_NODISCARD const FString& GetWindowName() const final;
-    void DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem& _Context) final;
+    void DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Subsystem& _Input) final;
     //IKLDebugImGuiFeatureInterface_EngineSubsystem
 
     void HandlePickerButton(const UWorld& _World);

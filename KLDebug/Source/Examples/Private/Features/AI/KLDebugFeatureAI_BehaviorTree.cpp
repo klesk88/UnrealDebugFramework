@@ -53,10 +53,10 @@ const UBrainComponent* FKLDebugFeatureAI_BehaviorTree::GetBrainComponent(const U
     return BrainComp;
 }
 
-void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context)
+void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input)
 {
-    ImGuiDrawBrainInfo(_Context.GetObject());
-    ImGuiDrawBTInfo(_Context.GetObject());
+    ImGuiDrawBrainInfo(_Input.GetObject());
+    ImGuiDrawBTInfo(_Input.GetObject());
 }
 
 void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBrainInfo(const UObject& _Object) const

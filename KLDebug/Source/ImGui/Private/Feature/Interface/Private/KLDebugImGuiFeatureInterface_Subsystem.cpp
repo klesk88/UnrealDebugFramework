@@ -5,7 +5,7 @@
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-void IKLDebugImGuiFeatureInterface_Subsystem::DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiContext_Subsystem& _Context)
+void IKLDebugImGuiFeatureInterface_Subsystem::DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiInput_Subsystem& _Context)
 {
     auto Callback = [this, &_Context]()->void {
         DrawImGuiChild(_Context);

@@ -5,13 +5,13 @@
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-void IKLDebugImGuiFeatureInterface_SelectableObject::DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiContext_Selectable& _Context)
+void IKLDebugImGuiFeatureInterface_SelectableObject::DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input)
 {
-    auto Callback = [this, &_Context]()->void {
-        DrawImGuiChild(_Context);
+    auto Callback = [this, &_Input]()->void {
+        DrawImGuiChild(_Input);
     };
 
     KL::Debug::ImGuiHelpers::CreateWindowCallCbk(TCHAR_TO_ANSI(*GetWindowName()),
-        _Context.GetIsWindowOpen(),
+        _Input.GetIsWindowOpen(),
         Callback);
 }
