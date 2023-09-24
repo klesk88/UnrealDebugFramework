@@ -2,6 +2,7 @@
 
 #include "Config/KLDebugImGuiConfig.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 #include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_ObjectSubsystem.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
@@ -249,13 +250,22 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
 
     ImGui::Unindent();
 
+    const EContainerType SelectableContainerType = EContainerType::SELECTABLE_OBJECTS;
+    const FKLDebugImGuiFeatureContainerBase& SelectableObjectsContainer = _ContainerManager.GetContainer(SelectableContainerType);
+
     for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
     {
         const FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer = mSelectedObjectsVisualizers[i];
         if (!ObjVisualizer.IsValid() || !ObjVisualizer.ShouldKeepAlive())
         {
+            if (mOnFeaturesUpdatedDelegate.IsBound() && !ObjVisualizer.GetFeaturesIndexes().IsEmpty())
+            {
+                FKLDebugImGuiSubsetFeaturesConstIterator Iterator = SelectableObjectsContainer.GetFeaturesSubsetConstIterator(ObjVisualizer.GetFeaturesIndexes());
+                const FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, SelectableContainerType, ObjVisualizer.GetObjectKey(), Iterator };
+                mOnFeaturesUpdatedDelegate.Broadcast(DelegateData);
+            }
+
             mSelectedObjectsVisualizers.RemoveAt(i, 1, false);
         }
     }
-
 }

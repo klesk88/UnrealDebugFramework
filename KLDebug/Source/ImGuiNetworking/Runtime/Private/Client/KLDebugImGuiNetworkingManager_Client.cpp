@@ -28,6 +28,11 @@
 #include "Templates/SharedPointer.h"
 #include "UObject/CoreNet.h"
 
+#if !NO_LOGGING
+//engine
+#include "Containers/UnrealString.h"
+#endif
+
 void FKLDebugImGuiNetworkingManager_Client::InitChild(UWorld& _World)
 {
     const UNetDriver* ServerNetDriver = _World.GetNetDriver();
@@ -118,23 +123,19 @@ void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _Soc
 
 void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
 {
-    if (!_FeatureUpdateData.GetObject().GetClass()->IsChildOf(AActor::StaticClass()))
+    const AActor* ObjectAsActor = Cast<const AActor>(_FeatureUpdateData.TryGetObject());
+    if (ObjectAsActor && ObjectAsActor->GetLocalRole() == ROLE_Authority)
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate>> object is not an actor"));
+        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate>> actor [%s] is locally controlled no message sent to server"), 
+            *ObjectAsActor->GetName());
+
         return;
     }
 
-    const AActor& ObjectAsActor = *CastChecked<const AActor>(&_FeatureUpdateData.GetObject());
-    if (ObjectAsActor.GetLocalRole() == ROLE_Authority)
-    {
-        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate>> object is locally controlled"));
-        return;
-    }
-
-    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = mPendingFeaturesStatusUpdates.FindByKey(ObjectAsActor);
+    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = mPendingFeaturesStatusUpdates.FindByKey(_FeatureUpdateData.TryGetObject());
     if (!FeatureUpdate)
     {
-        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(ObjectAsActor);
+        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(_FeatureUpdateData.TryGetObject());
     }
 
     FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();

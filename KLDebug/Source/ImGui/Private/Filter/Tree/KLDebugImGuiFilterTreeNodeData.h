@@ -29,6 +29,7 @@ private:
 
 inline void FKLDebugImGuiFilterTreeNodeData::SetEndDataOffset(const int32 _Index)
 {
+    checkf(mStartDataOffset != TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("start index must be set at this point"));
     checkf(_Index < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("index outside range. we don't expect a tree of this size"));
     ensureMsgf(_Index > mStartDataOffset, TEXT("index must be higher"));
 

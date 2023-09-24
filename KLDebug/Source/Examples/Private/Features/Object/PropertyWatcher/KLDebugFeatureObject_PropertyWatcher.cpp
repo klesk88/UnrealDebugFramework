@@ -13,11 +13,6 @@
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureObject_PropertyWatcher)
 
-bool FKLDebugFeatureObject_PropertyWatcher::DoesSupportObject(const UObject& _Object) const
-{
-    return true;
-}
-
 const FString& FKLDebugFeatureObject_PropertyWatcher::GetWindowName() const
 {
     static const FString Name(TEXT("PropertyWatcher"));

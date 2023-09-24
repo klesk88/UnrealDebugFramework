@@ -19,11 +19,6 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureObject_PropertyWatcher : public IKLDebu
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureObject_PropertyWatcher, IKLDebugImGuiFeatureInterface_SelectableObject)
 
-public:
-    //IKLDebugImGuiFeatureInterface_SelectableObject
-    UE_NODISCARD bool DoesSupportObject(const UObject& _Object) const final;
-    //IKLDebugImGuiFeatureInterface_SelectableObject
-
 private:
     //IKLDebugImGuiFeatureInterface_SelectableObject
     void                        DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input) final;

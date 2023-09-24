@@ -155,11 +155,11 @@ void FKLDebugImGuiFilterTree::SortFeatures(FKLDebugImGuiFeaturesIterator& _Itera
 void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedFeatures>& _SortedFeatures)
 {
     auto IsSameDataLambda = [this](const FKLDebugImGuiTreeBuilderStackData& _LastNodeInStack, const FKLDebugImGuiTreeSortedFeatures& _Feature) -> bool {
+        bool IsSameFilter = false;
         if (_LastNodeInStack.GetFullPath() == _Feature.GetFullPath())
         {
-            // same filter so just store the index of the feature and keep going
             mFilterFeaturesIndexes.Emplace(_Feature.GetFeatureDataIndex());
-            return true;
+            IsSameFilter = true;
         }
 
         const uint16                  TreeNodeIndex = _LastNodeInStack.GetTreeNodeIndex();
@@ -172,7 +172,7 @@ void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedF
             TreNodeData.SetEndDataOffset(mFilterFeaturesIndexes.Num());
         }
 
-        return false;
+        return IsSameFilter;
     };
 
     auto AllocateTreeNode = [this](const FName& _FilterToken) -> FKLDebugImGuiFilterTreeNode& {

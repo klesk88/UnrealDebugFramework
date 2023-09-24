@@ -14,9 +14,6 @@ class KLDEBUGIMGUI_API IKLDebugImGuiFeatureInterface_SelectableObject : public I
 public:
     virtual void GetFilterPath(TArray<FName>& _OutFilters) const = 0;
 
-    // should return true if the object passed as input is supported by this feature
-    UE_NODISCARD virtual bool DoesSupportObject(const UObject& _Object) const = 0;
-
     virtual void DrawImGui(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input);
     virtual void Render(const FKLDebugImGuiFeatureInterfaceRenderInput_Selectable& _Input) const;
 

@@ -7,9 +7,6 @@ class UObject;
 
 class FKLDebugTestFeatureBase : public IKLDebugImGuiFeatureInterface_SelectableObject
 {
-public:
-    bool DoesSupportObject(const UObject& _Object) const final;
-
 private:
     void           DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input) final;
     const FString& GetWindowName() const final;

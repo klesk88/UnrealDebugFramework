@@ -24,12 +24,6 @@ private:
     KL::Debug::ImGui::Features::Types::FeatureIndex mFeatureDataIndex = 0;
 };
 
-inline FKLDebugImGuiTreeBuilderData::FKLDebugImGuiTreeBuilderData(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex, const FName& _FeatureImGuiPath)
-    : mTreePath(_FeatureImGuiPath)
-    , mFeatureDataIndex(_FeatureDataIndex)
-{
-}
-
 inline const FName& FKLDebugImGuiTreeBuilderData::GetFullPath() const
 {
     return mTreePath;

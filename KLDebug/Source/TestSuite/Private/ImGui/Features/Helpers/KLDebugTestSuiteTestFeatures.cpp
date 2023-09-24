@@ -2,11 +2,6 @@
 
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFilters.h"
 
-bool FKLDebugTestFeatureBase::DoesSupportObject(const UObject& _Object) const
-{
-    return true;
-}
-
 void FKLDebugTestFeatureBase::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input)
 {
 }

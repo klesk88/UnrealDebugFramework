@@ -42,7 +42,7 @@ void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiFeaturesEnabled(const FKL
     };
 
     FKLDebugImGuiFeatureContainerBase& FeaturesContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(mContainerType);
-    DrawImguiFeaturesEnabledCommon(FeaturesContainer, Callback);
+    DrawImguiFeaturesEnabledCommon(_Context, mContainerType, _Context.GetWorld(), Callback);
 }
 
 void FKLDebugImGuiFeatureVisualizerSubsystem::Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const

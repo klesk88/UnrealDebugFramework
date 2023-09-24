@@ -21,6 +21,7 @@
 FKLDebugImGuiFeatureVisualizerSelectableObject::FKLDebugImGuiFeatureVisualizerSelectableObject(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
     : FKLDebugImGuiFeatureVisualizerBase(_Container, MoveTemp(_FeaturesIndexes))
     , mObject(&_Object)
+    , mObjectKey(&_Object)
 {
     if (UMeshComponent* MeshCmp = TryGetMeshComponent())
     {
@@ -97,8 +98,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(co
         return _Entry.IsEnable();
     };
 
-    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(EContainerType::SELECTABLE_OBJECTS);
-    DrawImguiFeaturesEnabledCommon(FeatureContainer, Callback);
+    DrawImguiFeaturesEnabledCommon(_Context, EContainerType::SELECTABLE_OBJECTS, Object, Callback);
 }
 
 UMeshComponent* FKLDebugImGuiFeatureVisualizerSelectableObject::TryGetMeshComponent() const

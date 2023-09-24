@@ -18,11 +18,6 @@
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_BehaviorTree)
 
-bool FKLDebugFeatureAI_BehaviorTree::DoesSupportObject(const UObject& _Object) const
-{
-    return GetBTComponent(_Object) != nullptr;
-}
-
 TUniquePtr<FKLDebugImGuiFeatureContext_Base> FKLDebugFeatureAI_BehaviorTree::GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const
 {
     switch (_Input.GetCurrentNetMode())

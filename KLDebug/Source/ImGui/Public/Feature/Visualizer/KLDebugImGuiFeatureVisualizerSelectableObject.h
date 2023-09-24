@@ -4,6 +4,7 @@
 
 // engine
 #include "UObject/Object.h"
+#include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
@@ -27,6 +28,7 @@ public:
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD bool ShouldKeepAlive() const;
+    UE_NODISCARD const FObjectKey& GetObjectKey() const;
 
 private:
     // FKLDebugImGuiFeatureVisualizerBase
@@ -40,6 +42,7 @@ private:
 private:
     TWeakObjectPtr<UObject> mObject;
     TWeakObjectPtr<UMaterialInterface> mOriginalMaterialOverlay;
+    FObjectKey mObjectKey;
     bool mKeepAlive = true;
 };
 
@@ -56,4 +59,9 @@ inline bool FKLDebugImGuiFeatureVisualizerSelectableObject::IsValid() const
 inline bool FKLDebugImGuiFeatureVisualizerSelectableObject::ShouldKeepAlive() const
 {
     return mKeepAlive;
+}
+
+inline const FObjectKey& FKLDebugImGuiFeatureVisualizerSelectableObject::GetObjectKey() const
+{
+    return mObjectKey;
 }

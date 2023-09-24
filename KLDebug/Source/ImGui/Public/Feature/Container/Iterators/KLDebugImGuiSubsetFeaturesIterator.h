@@ -10,7 +10,7 @@ public:
 private:
     // FKLDebugImGuiFeaturesConstIterator
     UE_NODISCARD bool                                     IsValid() const final;
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeatureChild() const final;
+    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesConstIterator
 
     const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& mFeaturesIndexes;
@@ -27,12 +27,10 @@ inline bool FKLDebugImGuiSubsetFeaturesConstIterator::IsValid() const
     return mIndex < static_cast<uint32>(mFeaturesIndexes.Num());
 }
 
-inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiSubsetFeaturesConstIterator::GetFeatureChild() const
+inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiSubsetFeaturesConstIterator::GetFeatureDataIndexChild() const
 {
-    const KL::Debug::ImGui::Features::Types::FeatureIndex  FeatureDataIndex = mFeaturesIndexes[mIndex];
-    const FKLDebugImGuiFeatureData&                        FeatureData      = mFeatureData[FeatureDataIndex];
-    const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset    = FeatureData.GetFeatureOffset();
-    return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
+    const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex = mFeaturesIndexes[mIndex];
+    return FeatureIndex;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -45,8 +43,7 @@ public:
 private:
     // FKLDebugImGuiFeaturesIterator
     UE_NODISCARD bool                                     IsValid() const final;
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeatureChild() const final;
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutableChild() const final;
+    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesIterator
 
 private:
@@ -64,18 +61,8 @@ inline bool FKLDebugImGuiSubsetFeaturesIterator::IsValid() const
     return mIndex < static_cast<uint32>(mFeaturesIndexes.Num());
 }
 
-inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiSubsetFeaturesIterator::GetFeatureChild() const
+inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiSubsetFeaturesIterator::GetFeatureDataIndexChild() const
 {
-    const KL::Debug::ImGui::Features::Types::FeatureIndex  FeatureDataIndex = mFeaturesIndexes[mIndex];
-    const FKLDebugImGuiFeatureData&                        FeatureData      = mFeatureData[FeatureDataIndex];
-    const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset    = FeatureData.GetFeatureOffset();
-    return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
-}
-
-inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiSubsetFeaturesIterator::GetFeatureMutableChild() const
-{
-    const KL::Debug::ImGui::Features::Types::FeatureIndex  FeatureDataIndex = mFeaturesIndexes[mIndex];
-    const FKLDebugImGuiFeatureData&                        FeatureData      = mFeatureData[FeatureDataIndex];
-    const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset    = FeatureData.GetFeatureOffset();
-    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
+    const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex = mFeaturesIndexes[mIndex];
+    return FeatureIndex;
 }

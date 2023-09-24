@@ -20,8 +20,8 @@ private:
 
 public:
     explicit FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate() = default;
-    explicit FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate(const AActor& _Object);
-    UE_NODISCARD bool operator==(const  AActor& _Object) const;
+    explicit FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate(const UObject* _Object);
+    UE_NODISCARD bool operator==(const UObject* _Object) const;
 
     //FKLDebugImGuiNetworkingMessageBase
     UE_NODISCARD EKLDebugNetworkMessageTypes GetMessageType() const final;

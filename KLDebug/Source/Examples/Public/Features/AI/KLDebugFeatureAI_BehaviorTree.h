@@ -9,18 +9,17 @@ class UBehaviorTreeComponent;
 class UBrainComponent;
 class UObject;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworing_FeatureInterface
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworing_FeatureInterface
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_BehaviorTree, IKLDebugImGuiFeatureInterface_SelectableObject)
 
 public:
     //IKLDebugImGuiFeatureInterface_SelectableObject
-    UE_NODISCARD bool DoesSupportObject(const UObject& _Object) const final;
     UE_NODISCARD TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const final;
     //IKLDebugImGuiFeatureInterface_SelectableObject
 
     //IKLDebugImGuiNetworing_FeatureInterface
-    UE_NODISCARD bool Client_InformServerWhenActive() const;
+    UE_NODISCARD bool Client_InformServerWhenActive() const final;
     //IKLDebugImGuiNetworing_FeatureInterface
 
 private:

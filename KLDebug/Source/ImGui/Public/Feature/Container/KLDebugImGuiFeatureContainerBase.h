@@ -43,7 +43,7 @@ public:
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator      GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const;
 
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset) const;
+    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
 protected:
     virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;
@@ -53,9 +53,6 @@ protected:
     UE_NODISCARD const TArray<FKLDebugImGuiFeatureData>& GetFeaturesData() const;
     UE_NODISCARD TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPoolMutable();
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPool() const;
-
-private:
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset);
 
 private:
     // offset between features so that we can retrieve them correctly from the pool. Each entry is the

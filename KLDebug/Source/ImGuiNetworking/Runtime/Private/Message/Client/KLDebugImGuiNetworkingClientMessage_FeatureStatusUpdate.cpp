@@ -7,14 +7,14 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
-FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate(const AActor& _Object)
-    : mOwnerObject(&_Object)
+FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate(const UObject* _Object)
+    : mOwnerObject(_Object)
 {
 }
 
-bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::operator==(const AActor& _Object) const
+bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::operator==(const UObject* _Object) const
 {
-    return mOwnerObject.Get() == &_Object;
+    return mOwnerObject.Get() == _Object;
 }
 
 bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::CanWrite(const UWorld& _World) const
