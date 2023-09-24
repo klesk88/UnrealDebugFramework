@@ -1,5 +1,6 @@
 #include "Features/AI/KLDebugFeatureAI_BehaviorTree.h"
 
+#include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 // imgui module
@@ -20,6 +21,21 @@ KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_BehaviorTree)
 bool FKLDebugFeatureAI_BehaviorTree::DoesSupportObject(const UObject& _Object) const
 {
     return GetBTComponent(_Object) != nullptr;
+}
+
+TUniquePtr<FKLDebugImGuiFeatureContext_Base> FKLDebugFeatureAI_BehaviorTree::GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const
+{
+    switch (_Input.GetCurrentNetMode())
+    {
+    case ENetMode::NM_Client:
+        break;
+    case ENetMode::NM_DedicatedServer:
+        break;
+    default:
+        break;
+    }
+
+    return nullptr;
 }
 
 const FString& FKLDebugFeatureAI_BehaviorTree::GetWindowName() const
@@ -55,8 +71,16 @@ const UBrainComponent* FKLDebugFeatureAI_BehaviorTree::GetBrainComponent(const U
 
 void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input)
 {
-    ImGuiDrawBrainInfo(_Input.GetObject());
-    ImGuiDrawBTInfo(_Input.GetObject());
+    switch (_Input.GetWorld().GetNetMode())
+    {
+    case ENetMode::NM_Standalone:
+    case ENetMode::NM_ListenServer:     
+        ImGuiDrawBrainInfo(_Input.GetObject());
+        ImGuiDrawBTInfo(_Input.GetObject()); 
+        break;
+    default:
+        break;
+    }
 }
 
 void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBrainInfo(const UObject& _Object) const

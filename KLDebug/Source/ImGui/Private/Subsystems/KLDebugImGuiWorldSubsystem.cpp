@@ -14,6 +14,7 @@
 
 // engine
 #include "Engine/Engine.h"
+#include "Engine/EngineBaseTypes.h"
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -59,6 +60,8 @@ void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
 
     FString VisualizerName;
     VisualizerName.Reserve(200);
+
+    mSubsystemsFeaturesVisualizer.Reserve(static_cast<int32>(EContainerType::COUNT));
 
     for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
     {
@@ -204,7 +207,7 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
 
 void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
 {
-    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, _ContainerManager };
+    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, mOnFeaturesUpdatedDelegate, _ContainerManager };
     for (const TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>& SubsystemVisualizer : mSubsystemsFeaturesVisualizer)
     {
         SubsystemVisualizer->DrawImGui(Context);
@@ -233,7 +236,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
 {
     ImGui::Indent();
 
-    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, _DrawTree, _ContainerManager };
+    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, _DrawTree, mOnFeaturesUpdatedDelegate, _ContainerManager };
     for (FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer : mSelectedObjectsVisualizers)
     {
         if (!ObjVisualizer.IsValid())

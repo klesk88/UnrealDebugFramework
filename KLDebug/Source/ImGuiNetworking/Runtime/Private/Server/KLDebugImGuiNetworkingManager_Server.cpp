@@ -1,5 +1,7 @@
 #include "Server/KLDebugImGuiNetworkingManager_Server.h"
 
+#include "Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
+#include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 #include "Settings/KLDebugImGuiNetworkingSettings.h"
 
 //utils
@@ -136,7 +138,6 @@ UPackageMap* FKLDebugImGuiNetworkingManager_Server::GetClientPackageMap(const UW
 
 void FKLDebugImGuiNetworkingManager_Server::TickConnections()
 {
-    static bool send = false;
     for (int32 i = mConnectedSockets.Num() - 1; i >= 0; --i)
     {
         TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>& CacheConnection = mConnectedSockets[i];
@@ -154,13 +155,8 @@ void FKLDebugImGuiNetworkingManager_Server::TickConnections()
         }
 
         ReceiveConnectionData(ClientSocket);
-        if (!send)
-        {
-            SendConnectionData(ClientSocket);
-        }
+        SendConnectionData(ClientSocket);
     }
-
-    send = true;
 }
 
 void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FSocket& _ClientSocket)
@@ -187,17 +183,32 @@ void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FSocket& _Clie
 
 void FKLDebugImGuiNetworkingManager_Server::ReadData(FBitReader& _Reader)
 {
-    int32 Test = 0;
-    _Reader << Test;
-    Test = 87;
+    while (!_Reader.AtEnd())
+    {
+        EKLDebugNetworkMessageTypes MessageType = EKLDebugNetworkMessageTypes::Count;
+        _Reader << MessageType;
+    
+        switch (MessageType)
+        {
+        case EKLDebugNetworkMessageTypes::Client_FeatureStatusUpdate:
+        {
+            FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate Update;
+            Update.Read(GetWorld(), _Reader);
+        }
+            break;
+        case EKLDebugNetworkMessageTypes::Count:
+            ensureMsgf(false, TEXT("not handled"));
+            break;
+        }
+    }
 }
 
 void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(FSocket& _ClientSocket) const
 {
-    FNetBitWriter Writer(mClientWriteBufferSize * 8);
-    static int32 a = 25;
-    Writer << a;
-    a++;
+    //FNetBitWriter Writer(mClientWriteBufferSize * 8);
+    //static int32 a = 25;
+    //Writer << a;
+    //a++;
 
-    static_cast<void>(SendData(_ClientSocket, Writer));
+    //static_cast<void>(SendData(_ClientSocket, Writer));
 }

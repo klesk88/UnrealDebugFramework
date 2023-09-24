@@ -21,6 +21,7 @@ public class KLDebugExamples : ModuleRules
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
                 "KLDebugImGui",
+                "KLDebugImGuiNetworkingRuntime",
 
                 //engine
                 "AIModule",

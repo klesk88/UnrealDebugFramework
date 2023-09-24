@@ -1,6 +1,5 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerBase.h"
 
-#include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 

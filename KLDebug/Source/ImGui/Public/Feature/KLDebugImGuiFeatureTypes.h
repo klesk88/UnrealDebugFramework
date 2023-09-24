@@ -2,6 +2,7 @@
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
+#include "Math/NumericLimits.h"
 
 namespace KL::Debug::ImGui::Features::Types
 {
@@ -11,4 +12,6 @@ namespace KL::Debug::ImGui::Features::Types
 
     typedef uint16 FilterIndex;
     typedef uint8  FilterPoolValue;
+
+    static constexpr FeatureIndex InvalidFeatureIndex = TNumericLimits<FeatureIndex>::Max();
 }  // namespace KL::Debug::ImGui::Features::Types

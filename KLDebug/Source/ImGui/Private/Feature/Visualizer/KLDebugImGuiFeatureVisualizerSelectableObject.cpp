@@ -1,8 +1,8 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSelectableObject.h"
 
-#include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
@@ -72,7 +72,8 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiTree(const FKLDebu
         return;
     }
 
-    mTreeVisualizer.DrawImGuiTree(mSelectedFeaturesIndexes);
+    const FKLDebugImGuiFeatureContextInput ContextInput{ _Context.GetCurrentNetMode(), *mObject.Get() };
+    mTreeVisualizer.DrawImGuiTree(EContainerType::SELECTABLE_OBJECTS, ContextInput, _Context, mSelectedFeaturesIndexes);
 
     ImGui::TreePop();
 }
@@ -91,7 +92,7 @@ void FKLDebugImGuiFeatureVisualizerSelectableObject::DrawImGuiFeaturesEnabled(co
 
     auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool{
         IKLDebugImGuiFeatureInterface_SelectableObject& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_SelectableObject>();
-        const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), Object };
+        const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable(), Object };
         Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };

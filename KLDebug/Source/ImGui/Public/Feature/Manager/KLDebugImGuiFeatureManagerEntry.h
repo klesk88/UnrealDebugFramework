@@ -5,15 +5,12 @@
 
 // engine
 #include "GameplayTagContainer.h"
-#include "Templates/UnrealTypeTraits.h"
-
-class IKLDebugImGuiFeatureInterfaceBase;
 
 template<typename FeatureInterfaceType>
 class TKLDebugImGuiFeatureManagerEntry final : public FKLDebugImGuiFeatureManagerEntryBase
 {
 public:
-    TKLDebugImGuiFeatureManagerEntry();
+    explicit TKLDebugImGuiFeatureManagerEntry(const FName& _NameToCheck);
 
     // FKLDebugWindowManagerEntryBase
     UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
@@ -22,10 +19,12 @@ public:
 };
 
 template<typename FeatureInterfaceType>
-TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureManagerEntry()
+TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureManagerEntry(const FName& _NameToCheck)
     : FKLDebugImGuiFeatureManagerEntryBase(sizeof(FeatureInterfaceType))
 {
-    static_assert(TIsDerivedFrom<FeatureInterfaceType, IKLDebugImGuiFeatureInterfaceBase>::IsDerived, "Class passed must derived from IKLDebugWindow");
+    static_assert(TIsDerivedFrom<FeatureInterfaceType, IKLDebugImGuiFeatureInterfaceBase>::IsDerived, "Class passed must derived from IKLDebugImGuiFeatureInterfaceBase");
+    static_assert(FeatureInterfaceType::IsDerivedFromParent(), TEXT("feature has the DERIVED_KL_DEBUG_FEATURE_CLASS macro setup wrong has it doesnt derived from the passed parent"));
+    checkf(FeatureInterfaceType::StaticItemType() == _NameToCheck, TEXT("feature [%s] must define macro DERIVED_KL_DEBUG_FEATURE_CLASS in its .h file"), *_NameToCheck.ToString());
 }
 
 template<typename FeatureInterfaceType>

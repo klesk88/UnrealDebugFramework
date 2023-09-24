@@ -1,8 +1,8 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
 
-#include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterface_Subsystem.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
@@ -25,7 +25,9 @@ void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiTree(const FKLDebugImGuiF
 {
     if (ImGui::TreeNode(this, TCHAR_TO_ANSI(*mTreeName)))
     {
-        mTreeVisualizer.DrawImGuiTree(mSelectedFeaturesIndexes);
+        const FKLDebugImGuiFeatureContextInput ContextInput{ _Context.GetCurrentNetMode(), _Context.GetWorld() };
+        mTreeVisualizer.DrawImGuiTree(mContainerType, ContextInput, _Context, mSelectedFeaturesIndexes);
+
         ImGui::TreePop();
     }
 }
@@ -34,7 +36,7 @@ void FKLDebugImGuiFeatureVisualizerSubsystem::DrawImGuiFeaturesEnabled(const FKL
 {
     auto Callback = [&_Context](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Subsystem& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Subsystem>();
-        const FKLDebugImGuiFeatureInterfaceImGuiInput_Subsystem FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef() };
+        const FKLDebugImGuiFeatureInterfaceImGuiInput_Subsystem FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable() };
         Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };

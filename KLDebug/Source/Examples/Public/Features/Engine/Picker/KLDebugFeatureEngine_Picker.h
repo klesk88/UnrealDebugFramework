@@ -15,6 +15,9 @@ class UWorld;
 class KLDEBUGEXAMPLES_API FKLDebugFeatureEngine_Picker : public IKLDebugImGuiFeatureInterface_EngineSubsystem
 {
 public:
+    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureEngine_Picker, IKLDebugImGuiFeatureInterface_EngineSubsystem)
+
+public:
     FKLDebugFeatureEngine_Picker();
 
 private:

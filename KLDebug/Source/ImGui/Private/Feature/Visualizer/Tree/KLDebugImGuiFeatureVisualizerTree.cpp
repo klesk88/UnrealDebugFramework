@@ -1,7 +1,11 @@
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
+#include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+#include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiVisualizerTreeSortedFeatures.h"
 #include "Helpers/KLDebugImGuiHelpers.h"
@@ -27,12 +31,20 @@ void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesConstIt
     GenerateTree(SortedFeatures);
 }
 
-void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
+void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EContainerType _ContainerType, const FKLDebugImGuiFeatureContextInput& _ContextInput, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
 {
     static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+    
+    const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _ImguiContext.GetFeaturesContainerManager().GetContainer(_ContainerType);
 
-    auto KeepTraversingTreeLambda = [this, &_FeaturesIndexesSelected](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesUpdated;   
+    if (_ImguiContext.GetFeatureUpdateDelegate().IsBound())
+    {
+        FeaturesUpdated.Reserve(30);
+    }
+
+    auto KeepTraversingTreeLambda = [this, &_FeaturesIndexesSelected, &FeatureContainer, &_ContextInput, &_ImguiContext, &FeaturesUpdated, _ContainerType](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
         const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
         if (!NodeDataIndex.IsSet())
         {
@@ -68,6 +80,9 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<FKLDebugImGuiFeatu
             ImGui::PopStyleColor(1);
         }
 
+        FeaturesUpdated.Reset();
+        bool IsAdded = false;
+
         if (_TreeNode.HasFeatures() && ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
             NodeData.ToogleIsSelected();
@@ -76,7 +91,15 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<FKLDebugImGuiFeatu
                 for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : _TreeNode.GetFeatureIndexes())
                 {
                     ensureMsgf(_FeaturesIndexesSelected.IndexOfByKey(FeatureIndex) == INDEX_NONE, TEXT("adding same feature multiple times"));
-                    _FeaturesIndexesSelected.Emplace(FeatureIndex, NodeData.GetID());
+                    const IKLDebugImGuiFeatureInterfaceBase& NewFeatureInterface = FeatureContainer.GetFeature(FeatureIndex);
+                    
+                    {
+                        TUniquePtr<FKLDebugImGuiFeatureContext_Base> Context = NewFeatureInterface.GetFeatureContext(_ContextInput);
+                        _FeaturesIndexesSelected.Emplace(FeatureIndex, NodeData.GetID(), MoveTemp(Context));
+                    }
+
+                    FeaturesUpdated.Emplace(FeatureIndex);
+                    IsAdded = true;
                 }
             }
             else
@@ -93,7 +116,17 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(TArray<FKLDebugImGuiFeatu
 #endif
 
                     _FeaturesIndexesSelected.RemoveAtSwap(Index, 1, false);
+                    IsAdded = false;
+                    FeaturesUpdated.Emplace(FeatureIndex);
                 }
+            }
+
+            const FOnImGuiFeatureStateUpdated& Delegate = _ImguiContext.GetFeatureUpdateDelegate();
+            if (Delegate.IsBound() && !FeaturesUpdated.IsEmpty())
+            {
+                FKLDebugImGuiSubsetFeaturesConstIterator Iterator = FeatureContainer.GetFeaturesSubsetConstIterator(FeaturesUpdated);
+                const FKLDebugImGuiFeatureStatusUpdateData DelegateData{ IsAdded, _ContainerType, _ContextInput.GetObject(), Iterator };
+                Delegate.Broadcast(DelegateData);
             }
         }
 

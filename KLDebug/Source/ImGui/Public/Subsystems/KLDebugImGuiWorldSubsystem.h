@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+#include "Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
+#include "Feature/KLDebugImGuiFeatureTypes.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSelectableObject.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
 
@@ -15,6 +17,7 @@
 
 #include "KLDebugImGuiWorldSubsystem.generated.h"
 
+class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class IKLDebugImGuiFeatureInterfaceBase;
 
@@ -40,6 +43,9 @@ public:
     // to support editor selection
     void OnObjectSelected(UObject& _Object);
 
+    UE_NODISCARD FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
+    void UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle);
+
 private:
     TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem> GetVisualizer(const EContainerType _ContainerType, const FString& _VisualizerName, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const;
 
@@ -48,8 +54,21 @@ private:
     void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
-    TArray<TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>, TInlineAllocator<static_cast<int32>(EContainerType::COUNT)>> mSubsystemsFeaturesVisualizer;
+    TArray<TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>> mSubsystemsFeaturesVisualizer;
     TArray<FKLDebugImGuiFeatureVisualizerSelectableObject> mSelectedObjectsVisualizers;
     FString                                                mImGuiTreeName;
     FInstancedStruct                                       mImGuiWindow;
+    FOnImGuiFeatureStateUpdated                            mOnFeaturesUpdatedDelegate;
+    bool mShouldStoreDelta = false;
 };
+
+inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate)
+{
+    return mOnFeaturesUpdatedDelegate.Add(_Delegate);
+}
+
+inline void UKLDebugImGuiWorldSubsystem::UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle)
+{
+    mOnFeaturesUpdatedDelegate.Remove(_Handle);
+    _Handle.Reset();
+}

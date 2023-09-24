@@ -11,11 +11,14 @@
 #include "UObject/WeakObjectPtrTemplates.h"
 
 class AActor;
+class FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable;
 class FProperty;
 class UWorld;
 
 class KLDEBUGEXAMPLES_API FKLDebugFeatureObject_PropertyWatcher : public IKLDebugImGuiFeatureInterface_SelectableObject
 {
+    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureObject_PropertyWatcher, IKLDebugImGuiFeatureInterface_SelectableObject)
+
 public:
     //IKLDebugImGuiFeatureInterface_SelectableObject
     UE_NODISCARD bool DoesSupportObject(const UObject& _Object) const final;

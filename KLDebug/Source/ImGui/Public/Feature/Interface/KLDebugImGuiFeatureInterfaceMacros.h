@@ -11,8 +11,9 @@
  * NOTE: This ensures that we create also one class ever of the type passed (otherwise the compiler
  * will output an error for multiple class definitions)
  */
+
 #define KL_DEBUG_CREATE_WINDOW(_Class)                                                     \
     namespace KL::Debug::Windows                                                           \
     {                                                                                      \
-        static inline const TKLDebugImGuiFeatureManagerEntry<_Class> Instanced_##_Class{}; \
+        static inline const TKLDebugImGuiFeatureManagerEntry<_Class> Instanced_##_Class{#_Class}; \
     }

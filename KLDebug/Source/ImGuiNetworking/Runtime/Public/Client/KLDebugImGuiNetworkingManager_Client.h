@@ -1,14 +1,18 @@
 #pragma once
 
 #include "Common/KLDebugImGuiNetworkingManager_Base.h"
+#include "Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
 
 //engine
 #include "Containers/Array.h"
+#include "Delegates/IDelegateInstance.h"
 #include "Templates/SharedPointer.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
 class FInternetAddr;
+class FKLDebugImGuiFeatureStatusUpdateData;
+class FNetBitWriter;
 class FSocket;
 class FString;
 class UPackageMap;
@@ -33,10 +37,14 @@ private:
 
     void InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize);
 
+    void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
+
     void TickReadData();
     void TickWriteData();
 
     void TryReconnect();
+
+    void WritePendingFeaturesStatusUpdate(FNetBitWriter& _BitWriter);
 
     void ReadData(FBitReader& _Reader);
 
@@ -44,12 +52,13 @@ private:
 
 private:
     TArray<uint8> mReceiverDataBuffer;
+    TArray<FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate> mPendingFeaturesStatusUpdates;
     TSharedPtr<FInternetAddr> mServerAddress;
+    FDelegateHandle mOnFeaturesUpdatedDelegateHandle;
     FSocket* mServerSocket = nullptr;
     int32 mSendBufferSize = 0;
     float mReconnectionTime = 1.f;
     float mLastTimeTryToConnect = 0.f;
-    bool hasWritten = false;
 };
 
 inline bool FKLDebugImGuiNetworkingManager_Client::IsSocketRegistered() const

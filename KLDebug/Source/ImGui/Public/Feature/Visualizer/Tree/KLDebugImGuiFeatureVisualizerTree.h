@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
 
@@ -12,8 +13,11 @@
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
+class FKLDebugImGuiFeatureContainerBase;
+class FKLDebugImGuiFeatureContextInput;
 class FKLDebugImGuiFeaturesConstIterator;
 class FKLDebugImGuiFeatureVisualizerEntry;
+class FKLDebugImGuiFeatureVisualizerImGuiContext;
 class FKLDebugImGuiVisualizerTreeSortedFeatures;
 class FString;
 
@@ -22,7 +26,7 @@ class KLDEBUGIMGUI_API FKLDebugImGuiFeatureVisualizerTree final : public FNoncop
 public:
     void CreateTree(FKLDebugImGuiFeaturesConstIterator& _Iterator);
 
-    void DrawImGuiTree(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected);
+    void DrawImGuiTree(const EContainerType _ContainerType, const FKLDebugImGuiFeatureContextInput& _ContextInput, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected);
     void ClearToogleNodeData(const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID);
 
 private:

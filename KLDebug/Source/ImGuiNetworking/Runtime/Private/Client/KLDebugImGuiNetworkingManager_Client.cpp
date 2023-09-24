@@ -1,6 +1,12 @@
 #include "Client/KLDebugImGuiNetworkingManager_Client.h"
 
+#include "Interface/KLDebugImGuiNetworing_FeatureInterface.h"
 #include "Settings/KLDebugImGuiNetworkingSettings.h"
+
+//imgui module
+#include "ImGui/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
+#include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 
 //utils
 #include "Utils/Public/KLDebugLog.h"
@@ -10,6 +16,7 @@
 #include "Containers/UnrealString.h"
 #include "Engine/Engine.h"
 #include "Engine/NetDriver.h"
+#include "GameFramework/Actor.h"
 #include "Interfaces/IPv4/IPv4Address.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
 #include "IPAddress.h"
@@ -40,20 +47,31 @@ void FKLDebugImGuiNetworkingManager_Client::InitChild(UWorld& _World)
 
     InitServerSocket(TEXT("ClientSocket"), NetConnection->URL.Host, NetworkingConfig.GetPort(), NetworkingConfig.GetReadBufferSize(), NetworkingConfig.GetWriteBufferSize());
 
-    if (mServerSocket)
-    {
-        InitTick(_World);
-
-        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] succeded"),
-            *NetConnection->URL.Host,
-            NetworkingConfig.GetPort());
-    }
-    else
+    if (!mServerSocket)
     {
         UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] failed"),
             *NetConnection->URL.Host,
             NetworkingConfig.GetPort());
+
+        return;
     }
+
+    InitTick(_World);
+
+    UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] succeded"),
+        *NetConnection->URL.Host,
+        NetworkingConfig.GetPort());
+
+
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
+    if (!ImGuiWorldSubsystem)
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> UKLDebugImGuiWorldSubsystem not found"));
+        return;
+    }
+
+    FOnImGuiFeatureStateUpdated::FDelegate FeatureUpdateDelagate = FOnImGuiFeatureStateUpdated::FDelegate::CreateRaw(this, &FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate);
+    mOnFeaturesUpdatedDelegateHandle = ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
 }
 
 void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize)
@@ -98,6 +116,41 @@ void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _Soc
     mServerSocket->Connect(*Address);
 }
 
+void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
+{
+    if (!_FeatureUpdateData.GetObject().GetClass()->IsChildOf(AActor::StaticClass()))
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate>> object is not an actor"));
+        return;
+    }
+
+    const AActor& ObjectAsActor = *CastChecked<const AActor>(&_FeatureUpdateData.GetObject());
+    if (ObjectAsActor.GetLocalRole() == ROLE_Authority)
+    {
+        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate>> object is locally controlled"));
+        return;
+    }
+
+    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = mPendingFeaturesStatusUpdates.FindByKey(ObjectAsActor);
+    if (!FeatureUpdate)
+    {
+        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(ObjectAsActor);
+    }
+
+    FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
+    for (; FeaturesIterator; ++FeaturesIterator)
+    {
+        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+        const IKLDebugImGuiNetworing_FeatureInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+        if (!NetworkInterface || !NetworkInterface->Client_InformServerWhenActive())
+        {
+            continue;
+        }
+
+        FeatureUpdate->AddFeatureUpdate(FeaturesIterator.GetFeatureDataIndex(), _FeatureUpdateData.IsFeatureAdded());
+    }
+}
+
 void FKLDebugImGuiNetworkingManager_Client::ClearChild()
 {
     if (mServerSocket)
@@ -108,6 +161,12 @@ void FKLDebugImGuiNetworkingManager_Client::ClearChild()
     }
 
     mServerAddress.Reset();
+
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
+    if (ImGuiWorldSubsystem && mOnFeaturesUpdatedDelegateHandle.IsValid())
+    {
+        ImGuiWorldSubsystem->UnbindOnImGuiFeatureStateUpdated(mOnFeaturesUpdatedDelegateHandle);
+    }
 }
 
 void FKLDebugImGuiNetworkingManager_Client::Tick(const float _DeltaTime)
@@ -162,15 +221,9 @@ void FKLDebugImGuiNetworkingManager_Client::TickWriteData()
     }
 
     FNetBitWriter Writer(PackageMap, mSendBufferSize * 8);
-    if (hasWritten)
-    {
-        return;
-    }
+    WritePendingFeaturesStatusUpdate(Writer);
 
-    int32 Test = 89;
-    Writer << Test;
-
-    hasWritten = SendData(*mServerSocket, Writer);
+    static_cast<void>(SendData(*mServerSocket, Writer));
 }
 
 void FKLDebugImGuiNetworkingManager_Client::TryReconnect()
@@ -187,6 +240,25 @@ void FKLDebugImGuiNetworkingManager_Client::TryReconnect()
         mLastTimeTryToConnect = World.GetTimeSeconds();
         mServerSocket->Connect(*mServerAddress.Get());
     }
+}
+
+void FKLDebugImGuiNetworkingManager_Client::WritePendingFeaturesStatusUpdate(FNetBitWriter& _BitWriter)
+{
+    if (mPendingFeaturesStatusUpdates.IsEmpty())
+    {
+        return;
+    }
+
+    const UWorld& World = GetWorld();
+    for (FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate& UpdateStatus : mPendingFeaturesStatusUpdates)
+    {
+        if (UpdateStatus.CanWrite(World))
+        {
+            UpdateStatus.Write(World, _BitWriter);
+        }
+    }
+
+    mPendingFeaturesStatusUpdates.Reset();
 }
 
 void FKLDebugImGuiNetworkingManager_Client::ReadData(FBitReader& _Reader)
