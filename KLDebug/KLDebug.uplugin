@@ -36,7 +36,7 @@
     },
     {
       "Name": "KLDebugImGuiNetworkingClient",
-      "Type": "ClientOnly",
+      "Type": "ClientOnlyNoCommandlet",
       "LoadingPhase": "Default"
     },
     {

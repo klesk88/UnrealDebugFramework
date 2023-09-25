@@ -8,13 +8,12 @@ FKLDebugImGuiNetworkingManager_Server UKLDebugImGuiNetworkingServerSubsystem_Wor
 
 bool UKLDebugImGuiNetworkingServerSubsystem_World::ShouldCreateSubsystem(UObject* _Outer) const
 {
-#if WITH_SERVER_CODE
-    const UWorld* World = Cast<const UWorld>(_Outer);
-    const bool Result = World && IsValidWorld(*World);
-    return Result;
-#else
+    if (const UWorld* World = Cast<const UWorld>(_Outer))
+    {
+        return IsValid(*World);
+    }
+
     return false;
-#endif
 }
 
 void UKLDebugImGuiNetworkingServerSubsystem_World::Deinitialize()
@@ -26,8 +25,9 @@ void UKLDebugImGuiNetworkingServerSubsystem_World::Deinitialize()
 
 void UKLDebugImGuiNetworkingServerSubsystem_World::OnWorldBeginPlay(UWorld& _World)
 {
-    //in editor it can happen we reach here with the client because the world is not initialized.
-    if (!IsValidWorld(_World))
+    //we can reach here because the world was not yet initialized in editor. so double check at this point that we are
+    //really on a server
+    if (!IsValid(_World))
     {
         return;
     }
@@ -41,8 +41,7 @@ void UKLDebugImGuiNetworkingServerSubsystem_World::OnWorldBeginPlay(UWorld& _Wor
     }
 }
 
-bool UKLDebugImGuiNetworkingServerSubsystem_World::IsValidWorld(const UWorld& _World) const
+bool UKLDebugImGuiNetworkingServerSubsystem_World::IsValid(const UWorld& _World) const
 {
-    return UKismetSystemLibrary::IsServer(&_World) &&
-        !UKismetSystemLibrary::IsStandalone(&_World);
+    return UKismetSystemLibrary::IsDedicatedServer(&_World);
 }

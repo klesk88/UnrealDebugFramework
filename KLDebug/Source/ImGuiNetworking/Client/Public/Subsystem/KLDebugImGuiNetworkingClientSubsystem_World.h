@@ -5,10 +5,12 @@
 //engine
 #include "Subsystems/WorldSubsystem.h"
 
-#include "KLDebugImGuiNetworkingClientSubsystem.generated.h"
+#include "KLDebugImGuiNetworkingClientSubsystem_World.generated.h"
+
+class UWorld;
 
 UCLASS(Transient)
-class KLDEBUGIMGUINETWORKINGCLIENT_API UKLDebugImGuiNetworkingClientSubsystem final : public UWorldSubsystem
+class KLDEBUGIMGUINETWORKINGCLIENT_API UKLDebugImGuiNetworkingClientSubsystem_World final : public UWorldSubsystem
 {
     GENERATED_BODY()
 
@@ -20,7 +22,7 @@ public:
     //UWorldSubsystem
 
 private:
-    UE_NODISCARD bool IsValidWorld(const UWorld& _World) const;
+    UE_NODISCARD bool IsValid(const UWorld& _World) const;
 
 private:
     FKLDebugImGuiNetworkingManager_Client mClient;

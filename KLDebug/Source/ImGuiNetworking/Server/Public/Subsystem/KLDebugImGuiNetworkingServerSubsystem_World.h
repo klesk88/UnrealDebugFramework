@@ -7,6 +7,8 @@
 
 #include "KLDebugImGuiNetworkingServerSubsystem_World.generated.h"
 
+class UWorld;
+
 UCLASS(Transient)
 class KLDEBUGIMGUINETWORKINGSERVER_API UKLDebugImGuiNetworkingServerSubsystem_World final : public UWorldSubsystem
 {
@@ -20,7 +22,7 @@ public:
     //UWorldSubsystem
 
 private:
-    UE_NODISCARD bool IsValidWorld(const UWorld& _World) const;
+    UE_NODISCARD bool IsValid(const UWorld& _World) const;
 
 private:
     static FKLDebugImGuiNetworkingManager_Server mServer;
