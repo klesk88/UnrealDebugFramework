@@ -9,6 +9,7 @@
 
 //engine
 #include "Engine/Engine.h"
+#include "Engine/World.h"
 
 UKLDebugImGuiNetworkingServerSubsystem_Engine* UKLDebugImGuiNetworkingServerSubsystem_Engine::GetMutable()
 {
@@ -28,12 +29,24 @@ bool UKLDebugImGuiNetworkingServerSubsystem_Engine::ShouldCreateSubsystem(UObjec
 void UKLDebugImGuiNetworkingServerSubsystem_Engine::Initialize(FSubsystemCollectionBase& _Collection)
 {
     Super::Initialize(_Collection);
+
+    mServer.InitFromEngine();
 }
 
 void UKLDebugImGuiNetworkingServerSubsystem_Engine::Deinitialize()
 {
     Super::Deinitialize();
 
+    mServer.ClearFromEngine();
+}
+
+void UKLDebugImGuiNetworkingServerSubsystem_Engine::InitServerFromWorld(UWorld& _World)
+{
+    mServer.InitFromWorld(_World);
+
+#if !WITH_EDITOR
+    CookedOnly_InitFeatureMapIfNeeded();
+#endif
 }
 
 #if !WITH_EDITOR

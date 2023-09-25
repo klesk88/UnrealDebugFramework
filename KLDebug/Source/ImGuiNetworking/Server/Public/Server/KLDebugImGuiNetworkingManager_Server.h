@@ -21,16 +21,26 @@ struct FBitWriter;
 
 class KLDEBUGIMGUINETWORKINGSERVER_API FKLDebugImGuiNetworkingManager_Server final : public FKLDebugImGuiNetworkingManager_Base
 {
+private:
+    enum class EReadWriteDataResult : uint8
+    {
+        Succeeded = 0,
+        Fail
+    };
+
 public:
     //FKLDebugImGuiNetworkManager_Base
     UE_NODISCARD bool IsSocketRegistered() const;
     //FKLDebugImGuiNetworkManager_Base
 
+    void InitFromEngine();
+    void ClearFromEngine();
+
 private:
     //FKLDebugImGuiNetworkManager_Base
     void Tick(const float _DeltaTime) final;
-    void InitChild(UWorld& _World) final;
-    void ClearChild() final;
+    void InitFromWorldChild(UWorld& _World) final;
+    void ClearFromWorldChild(const UWorld& _World) final;
     //FKLDebugImGuiNetworkManager_Base
 
     void InitListenerSocket(const FString& _SocketName, const int32 _Port, const int32 _ReceiveBufferSize);
@@ -38,14 +48,14 @@ private:
     void TickListenerSocket();
     void TickConnections();
 
-    void ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket);
+    UE_NODISCARD FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket);
     void SendConnectionData(FSocket& _ClientSocket) const;
 
-    void ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
+    UE_NODISCARD EReadWriteDataResult ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
 
     UE_NODISCARD UPackageMap* GetClientPackageMap(const UWorld& _World, const FSocket& _ClientSocket) const;
 
-    void HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
+    UE_NODISCARD EReadWriteDataResult HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
 
 private:
     TArray<TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>> mConnectedSockets;

@@ -35,11 +35,14 @@ public:
 private:
     //FKLDebugImGuiNetworkManager_Base
     void Tick(const float _DeltaTime) final;
-    void InitChild(UWorld& _World) final;
-    void ClearChild() final;
+    void InitFromWorldChild(UWorld& _World) final;
+    void ClearFromWorldChild(const UWorld& _World) final;
     //FKLDebugImGuiNetworkManager_Base
 
     void InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize);
+
+    void InitWorldDelegates();
+    void ClearWorldDelegates();
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
 
@@ -64,6 +67,7 @@ private:
     int32 mSendBufferSize = 0;
     float mReconnectionTime = 1.f;
     float mLastTimeTryToConnect = 0.f;
+    bool mHasInitializedAfterConnection = false;
 };
 
 inline bool FKLDebugImGuiNetworkingManager_Client::IsSocketRegistered() const

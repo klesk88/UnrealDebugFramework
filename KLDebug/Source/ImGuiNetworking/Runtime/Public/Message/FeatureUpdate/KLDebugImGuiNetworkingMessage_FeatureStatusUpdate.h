@@ -16,7 +16,7 @@ class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingMessage_FeatureSt
 {
 public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate() = default;
-    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID);
+    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EContainerType _ContainerType);
 
     //FKLDebugImGuiNetworkingMessageBase
     UE_NODISCARD EKLDebugNetworkMessageTypes GetMessageType() const final;
@@ -58,7 +58,7 @@ inline void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Client_AddFeatur
 
 inline bool FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::CanWrite(const UWorld& _World) const
 {
-    return mNetworkID.IsValid();
+    return mNetworkID.IsValid() && mContainerType != EContainerType::COUNT;
 }
 
 inline bool FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Client_IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const

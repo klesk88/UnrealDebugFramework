@@ -18,7 +18,7 @@ void UKLDebugImGuiNetworkingClientSubsystem_World::Deinitialize()
 {
     Super::Deinitialize();
 
-    mClient.Clear(*GetWorld());
+    mClient.ClearFromWorld(*GetWorld());
 }
 
 void UKLDebugImGuiNetworkingClientSubsystem_World::OnWorldBeginPlay(UWorld& _World)
@@ -32,10 +32,10 @@ void UKLDebugImGuiNetworkingClientSubsystem_World::OnWorldBeginPlay(UWorld& _Wor
 
     ensureMsgf(!mClient.IsSocketRegistered(), TEXT("should not be registered"));
 
-    mClient.Init(_World);
+    mClient.InitFromWorld(_World);
     if (!mClient.IsSocketRegistered())
     {
-        mClient.Clear(_World);
+        mClient.ClearFromWorld(_World);
     }
 }
 

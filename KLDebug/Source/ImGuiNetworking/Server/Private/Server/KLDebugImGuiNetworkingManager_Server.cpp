@@ -32,18 +32,23 @@
 #include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_Engine.h"
 #endif
 
-void FKLDebugImGuiNetworkingManager_Server::InitChild(UWorld& _World)
+void FKLDebugImGuiNetworkingManager_Server::InitFromEngine()
 {
-    ensureMsgf(UKismetSystemLibrary::IsServer(&_World) && !UKismetSystemLibrary::IsStandalone(&_World), TEXT("this should be called only from servers"));
-
-    const UKLDebugImGuiNetworkingSettings& NetworkingConfig =  GetNetworkConfig();
+    const UKLDebugImGuiNetworkingSettings& NetworkingConfig = GetNetworkConfig();
     InitListenerSocket(TEXT("ServerSocket"), NetworkingConfig.GetPort(), NetworkingConfig.GetReadBufferSize());
     mClientWriteBufferSize = NetworkingConfig.GetWriteBufferSize();
     mClientReadBufferSize = NetworkingConfig.GetReadBufferSize();
+}
+
+void FKLDebugImGuiNetworkingManager_Server::ClearFromEngine()
+{
     if (mListenerSocket)
     {
-        InitTick(_World);
+        mListenerSocket->Close();
+        mListenerSocket = nullptr;
     }
+
+    mConnectedSockets.Reset();
 }
 
 void FKLDebugImGuiNetworkingManager_Server::InitListenerSocket(const FString& _SocketName, const int32 _Port, const int32 _ReceiveBufferSize)
@@ -83,15 +88,18 @@ void FKLDebugImGuiNetworkingManager_Server::InitListenerSocket(const FString& _S
     mReceiverDataBuffer.SetNumUninitialized(NewSize);
 }
 
-void FKLDebugImGuiNetworkingManager_Server::ClearChild()
+void FKLDebugImGuiNetworkingManager_Server::InitFromWorldChild(UWorld& _World)
 {
+    ensureMsgf(UKismetSystemLibrary::IsServer(&_World) && !UKismetSystemLibrary::IsStandalone(&_World), TEXT("this should be called only from servers"));
+
     if (mListenerSocket)
     {
-        mListenerSocket->Close();
-        mListenerSocket = nullptr;
+        InitTick(_World);
     }
+}
 
-    mConnectedSockets.Reset();
+void FKLDebugImGuiNetworkingManager_Server::ClearFromWorldChild(const UWorld& _World)
+{
 }
 
 void FKLDebugImGuiNetworkingManager_Server::Tick(const float _DeltaTime)
@@ -169,12 +177,22 @@ void FKLDebugImGuiNetworkingManager_Server::TickConnections()
             continue;
         }
 
-        ReceiveConnectionData(*CacheConnection, ClientSocket);
+        const EReadWriteDataResult ReadState = ReceiveConnectionData(*CacheConnection, ClientSocket);
+        switch (ReadState)
+        {
+        case EReadWriteDataResult::Fail:
+            //something went wrong drop connection
+            mConnectedSockets.RemoveAtSwap(i, 1, false);
+            continue;
+        case EReadWriteDataResult::Succeeded:
+            break;
+        }
+
         SendConnectionData(ClientSocket);
     }
 }
 
-void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket)
+FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket)
 {
     uint32 Size = 0;
     int32 BytesRead = 0;
@@ -192,11 +210,17 @@ void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FKLDebugImGuiN
      
         UPackageMap* PackageMap = GetClientPackageMap(World, _ClientSocket);
         FNetBitReader Reader(PackageMap, mReceiverDataBuffer.GetData(), BytesRead * 8);
-        ReadData(_Connection, Reader);
+        const EReadWriteDataResult ReadResult = ReadData(_Connection, Reader);
+        if (ReadResult != EReadWriteDataResult::Succeeded)
+        {
+            return ReadResult;
+        }
     }
+
+    return EReadWriteDataResult::Succeeded;
 }
 
-void FKLDebugImGuiNetworkingManager_Server::ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
+FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetworkingManager_Server::ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
 {
     const UWorld& World = GetWorld();
 
@@ -209,19 +233,28 @@ void FKLDebugImGuiNetworkingManager_Server::ReadData(FKLDebugImGuiNetworkingCach
         EKLDebugNetworkMessageTypes MessageType = EKLDebugNetworkMessageTypes::Count;
         _Reader << MessageType;
     
+        EReadWriteDataResult ReadResult = EReadWriteDataResult::Succeeded;
         switch (MessageType)
         {
         case EKLDebugNetworkMessageTypes::Client_FeatureStatusUpdate:
-            HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Connection, _Reader);
+            ReadResult = HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Connection, _Reader);
             break;
         case EKLDebugNetworkMessageTypes::Count:
             ensureMsgf(false, TEXT("not handled"));
+            return EReadWriteDataResult::Fail;
             break;
         }
+
+        if (ReadResult != EReadWriteDataResult::Succeeded)
+        {
+            return ReadResult;
+        }
     }
+
+    return EReadWriteDataResult::Succeeded;
 }
 
-void FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
+FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
 {
     FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate;
     FeatureStatusUpdate.Read(_World, _Reader);
@@ -251,12 +284,13 @@ void FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(cons
                 const TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> CurrentFeatureIndex = EngineSubystem->CookedOnly_TryGetFeatureFromName(FeatureData.Server_GetFeatureNameID());
                 if (!CurrentFeatureIndex.IsSet())
                 {
-                    continue;
+                    return EReadWriteDataResult::DropConnection;
                 }
 
                 FeatureIndex = CurrentFeatureIndex.GetValue();
 #else
-                continue;
+                ensureMsgf(false, TEXT("we could not find the feature client and server are out of sync not possible on editor builds. Dropping connection to client"));
+                return EReadWriteDataResult::Fail;
 #endif
             }
 
@@ -270,6 +304,8 @@ void FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(cons
             }
         }
     }
+
+    return EReadWriteDataResult::Succeeded;
 }
 
 void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(FSocket& _ClientSocket) const

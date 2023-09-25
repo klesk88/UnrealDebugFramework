@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Server/KLDebugImGuiNetworkingManager_Server.h"
-
 //engine
 #include "Subsystems/WorldSubsystem.h"
 
@@ -23,7 +21,4 @@ public:
 
 private:
     UE_NODISCARD bool IsValid(const UWorld& _World) const;
-
-private:
-    static FKLDebugImGuiNetworkingManager_Server mServer;
 };

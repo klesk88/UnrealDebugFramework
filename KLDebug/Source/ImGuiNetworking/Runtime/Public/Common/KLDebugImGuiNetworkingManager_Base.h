@@ -19,14 +19,14 @@ class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingManager_Base : pu
 public:
     virtual ~FKLDebugImGuiNetworkingManager_Base() = default;
 
-    void Init(UWorld& _World);
+    void InitFromWorld(UWorld& _World);
     UE_NODISCARD virtual bool IsSocketRegistered() const = 0;
 
-    void Clear(const UWorld& _World);
+    void ClearFromWorld(const UWorld& _World);
 
 protected:
-    virtual void InitChild(UWorld& _World);
-    virtual void ClearChild();
+    virtual void InitFromWorldChild(UWorld& _World);
+    virtual void ClearFromWorldChild(const UWorld& _World);
     virtual void Tick(const float _DeltaTime) = 0;
 
     void InitTick(UWorld& _World);
@@ -43,11 +43,11 @@ private:
     TWeakObjectPtr<UWorld> mWorld;
 };
 
-inline void FKLDebugImGuiNetworkingManager_Base::InitChild(UWorld& _World)
+inline void FKLDebugImGuiNetworkingManager_Base::InitFromWorldChild(UWorld& _World)
 {
 }
 
-inline void FKLDebugImGuiNetworkingManager_Base::ClearChild()
+inline void FKLDebugImGuiNetworkingManager_Base::ClearFromWorldChild(const UWorld& _World)
 {
 }
 

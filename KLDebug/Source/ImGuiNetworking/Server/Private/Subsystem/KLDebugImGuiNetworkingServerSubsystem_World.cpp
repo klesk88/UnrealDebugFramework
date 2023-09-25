@@ -1,17 +1,19 @@
 #include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_World.h"
 
+#include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_Engine.h"
+
 //engine
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#if WITH_EDITOR
-#include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_Engine.h"
-#endif
-
-FKLDebugImGuiNetworkingManager_Server UKLDebugImGuiNetworkingServerSubsystem_World::mServer;
-
 bool UKLDebugImGuiNetworkingServerSubsystem_World::ShouldCreateSubsystem(UObject* _Outer) const
 {
+    const UKLDebugImGuiNetworkingServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiNetworkingServerSubsystem_Engine::Get();
+    if (!ServerEngineSubsystem)
+    {
+        return false;
+    }
+
     if (const UWorld* World = Cast<const UWorld>(_Outer))
     {
         return IsValid(*World);
@@ -24,7 +26,11 @@ void UKLDebugImGuiNetworkingServerSubsystem_World::Deinitialize()
 {
     Super::Deinitialize();
 
-    mServer.Clear(*GetWorld());
+    UKLDebugImGuiNetworkingServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiNetworkingServerSubsystem_Engine::GetMutable();
+    if (ServerEngineSubsystem)
+    {
+        ServerEngineSubsystem->ClearServerFromWorld(*GetWorld());
+    }
 }
 
 void UKLDebugImGuiNetworkingServerSubsystem_World::OnWorldBeginPlay(UWorld& _World)
@@ -36,21 +42,8 @@ void UKLDebugImGuiNetworkingServerSubsystem_World::OnWorldBeginPlay(UWorld& _Wor
         return;
     }
 
-    ensureMsgf(!mServer.IsSocketRegistered(), TEXT("should not be registered"));
-
-    mServer.Init(_World);
-    if (!mServer.IsSocketRegistered())
-    {
-        mServer.Clear(_World);
-    }
-
-#if !WITH_EDITOR
     UKLDebugImGuiNetworkingServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiNetworkingServerSubsystem_Engine::GetMutable();
-    if (ServerEngineSubsystem)
-    {
-        ServerEngineSubsystem->CookedOnly_InitFeatureMapIfNeeded();
-    }
-#endif
+    ServerEngineSubsystem->InitServerFromWorld(_World);
 }
 
 bool UKLDebugImGuiNetworkingServerSubsystem_World::IsValid(const UWorld& _World) const

@@ -11,13 +11,13 @@
 #include "Serialization/BitWriter.h"
 #include "Sockets.h"
 
-void FKLDebugImGuiNetworkingManager_Base::Init(UWorld& _World)
+void FKLDebugImGuiNetworkingManager_Base::InitFromWorld(UWorld& _World)
 {
     mWorld = &_World;
-    InitChild(_World);
+    InitFromWorldChild(_World);
 }
 
-void FKLDebugImGuiNetworkingManager_Base::Clear(const UWorld& _World)
+void FKLDebugImGuiNetworkingManager_Base::ClearFromWorld(const UWorld& _World)
 {
     if (mWorld.Get() != &_World)
     {
@@ -25,7 +25,7 @@ void FKLDebugImGuiNetworkingManager_Base::Clear(const UWorld& _World)
     }
 
     UnregisterTick();
-    ClearChild();
+    ClearFromWorldChild(_World);
     mWorld.Reset();
 }
 

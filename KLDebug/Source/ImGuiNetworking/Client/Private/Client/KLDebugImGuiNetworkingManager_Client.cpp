@@ -36,7 +36,7 @@
 #include "Containers/UnrealString.h"
 #endif
 
-void FKLDebugImGuiNetworkingManager_Client::InitChild(UWorld& _World)
+void FKLDebugImGuiNetworkingManager_Client::InitFromWorldChild(UWorld& _World)
 {
     const UNetDriver* ServerNetDriver = _World.GetNetDriver();
     const UNetConnection* NetConnection = ServerNetDriver ? ServerNetDriver->ServerConnection : nullptr;
@@ -69,17 +69,6 @@ void FKLDebugImGuiNetworkingManager_Client::InitChild(UWorld& _World)
     UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] succeded"),
         *NetConnection->URL.Host,
         NetworkingConfig.GetPort());
-
-
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
-    if (!ImGuiWorldSubsystem)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> UKLDebugImGuiWorldSubsystem not found"));
-        return;
-    }
-
-    FOnImGuiFeatureStateUpdated::FDelegate FeatureUpdateDelagate = FOnImGuiFeatureStateUpdated::FDelegate::CreateRaw(this, &FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate);
-    mOnFeaturesUpdatedDelegateHandle = ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
 }
 
 void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize)
@@ -122,6 +111,28 @@ void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _Soc
 
     mServerAddress = Address;
     mServerSocket->Connect(*Address);
+}
+
+void FKLDebugImGuiNetworkingManager_Client::InitWorldDelegates()
+{
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
+    if (!ImGuiWorldSubsystem)
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> UKLDebugImGuiWorldSubsystem not found"));
+        return;
+    }
+
+    FOnImGuiFeatureStateUpdated::FDelegate FeatureUpdateDelagate = FOnImGuiFeatureStateUpdated::FDelegate::CreateRaw(this, &FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate);
+    mOnFeaturesUpdatedDelegateHandle = ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
+}
+
+void FKLDebugImGuiNetworkingManager_Client::ClearWorldDelegates()
+{
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
+    if (ImGuiWorldSubsystem && mOnFeaturesUpdatedDelegateHandle.IsValid())
+    {
+        ImGuiWorldSubsystem->UnbindOnImGuiFeatureStateUpdated(mOnFeaturesUpdatedDelegateHandle);
+    }
 }
 
 void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
@@ -198,7 +209,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
     
     if (!FeatureUpdate)
     {
-        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(NetworkID);
+        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(NetworkID, _FeatureUpdateData.GetContainerType());
     }
 
     if (_FeatureUpdateData.IsFullyRemoved())
@@ -217,7 +228,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
     }
 }
 
-void FKLDebugImGuiNetworkingManager_Client::ClearChild()
+void FKLDebugImGuiNetworkingManager_Client::ClearFromWorldChild(const UWorld& _World)
 {
     if (mServerSocket)
     {
@@ -228,11 +239,7 @@ void FKLDebugImGuiNetworkingManager_Client::ClearChild()
 
     mServerAddress.Reset();
 
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
-    if (ImGuiWorldSubsystem && mOnFeaturesUpdatedDelegateHandle.IsValid())
-    {
-        ImGuiWorldSubsystem->UnbindOnImGuiFeatureStateUpdated(mOnFeaturesUpdatedDelegateHandle);
-    }
+    ClearWorldDelegates();
 }
 
 void FKLDebugImGuiNetworkingManager_Client::Tick(const float _DeltaTime)
@@ -248,11 +255,23 @@ void FKLDebugImGuiNetworkingManager_Client::Tick(const float _DeltaTime)
     switch (ConnState)
     {
     case ESocketConnectionState::SCS_Connected:
+        if (!mHasInitializedAfterConnection)
+        {
+            InitWorldDelegates();
+            mHasInitializedAfterConnection = true;
+        }
+
         TickReadData();
         TickWriteData();
         break;
     case ESocketConnectionState::SCS_NotConnected:
     case ESocketConnectionState::SCS_ConnectionError:
+        if (mHasInitializedAfterConnection)
+        {
+            ClearWorldDelegates();
+            mHasInitializedAfterConnection = false;
+        }
+
         TryReconnect();
         break;
     default:
