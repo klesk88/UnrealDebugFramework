@@ -34,7 +34,6 @@ private:
     //FKLDebugImGuiNetworkManager_Base
 
     void InitListenerSocket(const FString& _SocketName, const int32 _Port, const int32 _ReceiveBufferSize);
-    void InitFeatureContainerMap();
 
     void TickListenerSocket();
     void TickConnections();

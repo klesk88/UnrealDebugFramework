@@ -12,6 +12,7 @@
 #include "Templates/ChooseClass.h"
 #include "Templates/EnableIf.h"
 #include "Templates/UnrealTemplate.h"
+#include "UObject/NameTypes.h"
 
 class FKLDebugImGuiFeatureData;
 class IKLDebugImGuiFeatureInterfaceBase;
@@ -35,6 +36,7 @@ public:
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
     UE_NODISCARD int32                                           GetFeaturesCount() const;
     UE_NODISCARD const FKLDebugImGuiFeatureData&                 GetFeatureData() const;
+    UE_NODISCARD const FName& GetFeatureNameID() const;
 
 protected:
     template<bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
@@ -117,4 +119,11 @@ inline const FKLDebugImGuiFeatureData& FKLDebugImGuiFeaturesIteratorBase<Child, 
     const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureDataIndex = GetFeatureDataIndex();
     const FKLDebugImGuiFeatureData& FeatureData = mFeatureData[FeatureDataIndex];
     return FeatureData;
+}
+
+template<class Child, bool IsConst>
+inline const FName& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureNameID() const
+{
+    const IKLDebugImGuiFeatureInterfaceBase& FeatureInterfaceBase = GetFeature();
+    return FeatureInterfaceBase.GetFeatureNameID();
 }

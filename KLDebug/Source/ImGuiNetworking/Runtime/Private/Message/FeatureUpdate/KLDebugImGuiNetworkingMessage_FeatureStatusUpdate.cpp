@@ -1,4 +1,4 @@
-#include "Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
+#include "Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 
 //utils
 #include "Utils/Public/KLDebugLog.h"
@@ -7,12 +7,12 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
-FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID)
+FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID)
     : mNetworkID(_NetworkID)
 {
 }
 
-void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::WriteChild(const UWorld& _World, FBitWriter& _BitWriter)
+void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::WriteChild(const UWorld& _World, FBitWriter& _BitWriter)
 {
     ensureMsgf(mNetworkID.IsValid(), TEXT("must be valid"));
 
@@ -27,13 +27,13 @@ void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::WriteChild(const 
     int32 NumElements = mFeatureData.Num();
     _BitWriter << NumElements;
 
-    for (TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, bool> FeatureData : mFeatureData)
+    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData& FeatureData : mFeatureData)
     {
-        _BitWriter << FeatureData;
+        FeatureData.Write(_BitWriter);
     }
 }
 
-void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::ReadChild(const UWorld& _World, FBitReader& _BitReader)
+void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::ReadChild(const UWorld& _World, FBitReader& _BitReader)
 {
     _BitReader << mNetworkID;
     if (!mNetworkID.IsValid())
@@ -51,10 +51,10 @@ void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::ReadChild(const U
 
     int32 NumElements;
     _BitReader << NumElements;
+    mFeatureData.Reserve(NumElements);
     for (int32 i = 0; i < NumElements; ++i)
     {
-        TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, bool> FeatureData;
-        _BitReader << FeatureData;
-        mFeatureData.Emplace(FeatureData);
+        FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData& NewData = mFeatureData.Emplace_GetRef();
+        NewData.Read(_BitReader);
     }
 }

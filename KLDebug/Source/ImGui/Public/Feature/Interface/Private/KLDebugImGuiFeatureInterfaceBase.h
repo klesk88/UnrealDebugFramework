@@ -116,6 +116,8 @@ public:
     template<typename FeatureType>
     UE_NODISCARD bool IsDerivedFrom() const;
 
+    UE_NODISCARD const FName& GetFeatureNameID() const;
+
 protected:
     UE_NODISCARD virtual const FString& GetWindowName() const = 0;
 
@@ -159,4 +161,9 @@ inline IKLDebugImGuiNetworking_FeatureInterface* IKLDebugImGuiFeatureInterfaceBa
 inline const IKLDebugImGuiNetworking_FeatureInterface* IKLDebugImGuiFeatureInterfaceBase::TryGetNetworkInterface() const
 {
     return nullptr;
+}
+
+inline const FName& IKLDebugImGuiFeatureInterfaceBase::GetFeatureNameID() const
+{
+    return GetImGuiPath();
 }

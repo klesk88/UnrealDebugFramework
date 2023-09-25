@@ -29,6 +29,7 @@
 #include "Stats/Stats2.h"
 #include "Templates/SharedPointer.h"
 #include "UObject/CoreNet.h"
+#include "UObject/NameTypes.h"
 
 #if !NO_LOGGING
 //engine
@@ -136,7 +137,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
         return;
     }
 
-    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesIndexes;
+    TArray<TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>> FeaturesIndexes;
     FeaturesIndexes.Reserve(_FeatureUpdateData.GetFeatureIterator().GetFeaturesCount());
 
     FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
@@ -149,7 +150,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
             continue;
         }
 
-        FeaturesIndexes.Emplace(FeaturesIterator.GetFeatureDataIndex());
+        FeaturesIndexes.Emplace(FeaturesIterator.GetFeatureDataIndex(), FeaturesIterator.GetFeatureNameID());
         if (_FeatureUpdateData.IsFullyRemoved())
         {
             break;
@@ -185,8 +186,8 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
     }
 
     //i dont expect mPendingFeaturesStatusUpdates to have elements but just in case 
-    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = nullptr;
-    for (FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate& Update : mPendingFeaturesStatusUpdates)
+    FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate* FeatureUpdate = nullptr;
+    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& Update : mPendingFeaturesStatusUpdates)
     {
         if (Update.Client_IsEqual(_FeatureUpdateData.GetContainerType(), NetworkID))
         {
@@ -209,9 +210,9 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
         //clear the flag just in case we reenable before send this packet
         FeatureUpdate->Client_ClearFullyRemoved();
 
-        for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : FeaturesIndexes)
+        for (const TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>& FeatureIndexPair : FeaturesIndexes)
         {
-            FeatureUpdate->Client_AddFeatureUpdate(FeatureIndex, _FeatureUpdateData.IsFeatureAdded());
+            FeatureUpdate->Client_AddFeatureUpdate(FeatureIndexPair.Key, FeatureIndexPair.Value, _FeatureUpdateData.IsFeatureAdded());
         }
     }
 }
@@ -323,7 +324,7 @@ void FKLDebugImGuiNetworkingManager_Client::WritePendingFeaturesStatusUpdate(FNe
     }
 
     const UWorld& World = GetWorld();
-    for (FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate& UpdateStatus : mPendingFeaturesStatusUpdates)
+    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& UpdateStatus : mPendingFeaturesStatusUpdates)
     {
         if (UpdateStatus.CanWrite(World))
         {

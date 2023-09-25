@@ -5,7 +5,7 @@
 #include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 //networking runtime module
-#include "ImGuiNetworking/Runtime/Public/Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
+#include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "ImGuiNetworking/Runtime/Public/Message/KLDebugImGuiNetworkingMessageTypes.h"
 #include "ImGuiNetworking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 //utils
@@ -28,6 +28,10 @@
 #include "Kismet/KismetSystemLibrary.h"
 #endif
 
+#if !WITH_EDITOR
+#include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_Engine.h"
+#endif
+
 void FKLDebugImGuiNetworkingManager_Server::InitChild(UWorld& _World)
 {
     ensureMsgf(UKismetSystemLibrary::IsServer(&_World) && !UKismetSystemLibrary::IsStandalone(&_World), TEXT("this should be called only from servers"));
@@ -38,7 +42,6 @@ void FKLDebugImGuiNetworkingManager_Server::InitChild(UWorld& _World)
     mClientReadBufferSize = NetworkingConfig.GetReadBufferSize();
     if (mListenerSocket)
     {
-        InitFeatureContainerMap();
         InitTick(_World);
     }
 }
@@ -78,24 +81,6 @@ void FKLDebugImGuiNetworkingManager_Server::InitListenerSocket(const FString& _S
     mListenerSocket->SetReceiveBufferSize(_ReceiveBufferSize, NewSize);
 
     mReceiverDataBuffer.SetNumUninitialized(NewSize);
-}
-
-void FKLDebugImGuiNetworkingManager_Server::InitFeatureContainerMap()
-{
-    //client and server can be out of sync in the sense that we can have a deployed server which was built with a
-    //different version then the one of the client. The Features indexes in this case could not match anymore.
-    //so make a pass here once so we store 
-
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Server_InitFeatureContainerMap);
-
-    UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
-    check(ImGuiEngineSubsystem != nullptr);
-    const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
-
-    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
-    {
-
-    }
 }
 
 void FKLDebugImGuiNetworkingManager_Server::ClearChild()
@@ -238,7 +223,7 @@ void FKLDebugImGuiNetworkingManager_Server::ReadData(FKLDebugImGuiNetworkingCach
 
 void FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
 {
-    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate FeatureStatusUpdate;
+    FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate;
     FeatureStatusUpdate.Read(_World, _Reader);
 
     if (FeatureStatusUpdate.Server_IsFullyRemoved())
@@ -253,17 +238,35 @@ void FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(cons
 
         const FKLDebugImGuiFeatureContainerBase& Container = _FeatureContainerManager.GetContainer(FeatureStatusUpdate.Server_GetContainerType());
 
-        for (const FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::FeatureData& FeatureDataPair : FeatureStatusUpdate.Server_GetFeaturesData())
-        {
-            ensureMsgf(Container.IsValidFeatureIndex(FeatureDataPair.Key), TEXT("Feature is not valid for this container"));
+#if !WITH_EDITOR
+        const UKLDebugImGuiNetworkingServerSubsystem_Engine* EngineSubystem = UKLDebugImGuiNetworkingServerSubsystem_Engine::Get();
+#endif
 
-            if (FeatureDataPair.Value)
+        for (const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData& FeatureData : FeatureStatusUpdate.Server_GetFeaturesData())
+        {
+            KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex = FeatureData.Server_GetFeatureIndex();
+            if (!Container.IsValidFeatureIndex(FeatureIndex, FeatureData.Server_GetFeatureNameID()))
             {
-                FeatureContainer.AddFeature(FeatureDataPair.Key);
+#if !WITH_EDITOR
+                const TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> CurrentFeatureIndex = EngineSubystem->CookedOnly_TryGetFeatureFromName(FeatureData.Server_GetFeatureNameID());
+                if (!CurrentFeatureIndex.IsSet())
+                {
+                    continue;
+                }
+
+                FeatureIndex = CurrentFeatureIndex.GetValue();
+#else
+                continue;
+#endif
+            }
+
+            if (FeatureData.Server_IsAdded())
+            {
+                FeatureContainer.AddFeature(FeatureIndex);
             }
             else
             {
-                FeatureContainer.RemoveFeature(FeatureDataPair.Key);
+                FeatureContainer.RemoveFeature(FeatureIndex);
             }
         }
     }

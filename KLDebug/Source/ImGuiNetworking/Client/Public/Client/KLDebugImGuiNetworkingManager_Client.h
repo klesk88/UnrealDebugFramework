@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Common/KLDebugImGuiNetworkingManager_Base.h"
-#include "Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
+//runtime module
+#include "ImGuiNetworking/Runtime/Public/Common/KLDebugImGuiNetworkingManager_Base.h"
+#include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 
 //engine
 #include "Containers/Array.h"
@@ -55,7 +56,7 @@ private:
 
 private:
     TArray<uint8> mReceiverDataBuffer;
-    TArray<FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate> mPendingFeaturesStatusUpdates;
+    TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate> mPendingFeaturesStatusUpdates;
     TMap<FObjectKey, FNetworkGUID> mObjectToNetworkID;
     TSharedPtr<FInternetAddr> mServerAddress;
     FDelegateHandle mOnFeaturesUpdatedDelegateHandle;

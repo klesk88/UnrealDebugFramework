@@ -12,6 +12,7 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
 #include "Math/NumericLimits.h"
+#include "Misc/Optional.h"
 #include "Templates/UnrealTemplate.h"
 
 class FKLDebugImGuiFeatureManager;
@@ -28,7 +29,9 @@ public:
 
     UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const = 0;
 
-    UE_NODISCARD bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+    UE_NODISCARD bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const;
+    UE_NODISCARD uint32 GetFeaturesCount() const;
+    UE_NODISCARD TOptional<FName> TryGetFeatureNameID(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
     void InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount);
     void AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
@@ -51,7 +54,6 @@ protected:
     virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;
     virtual void FinishGenerateFeatureChild();
 
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeaturesCount() const;
     UE_NODISCARD const TArray<FKLDebugImGuiFeatureData>& GetFeaturesData() const;
     UE_NODISCARD TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPoolMutable();
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPool() const;
@@ -65,9 +67,9 @@ private:
     TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> mFeaturesPool;
 };
 
-inline bool FKLDebugImGuiFeatureContainerBase::IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
+inline uint32 FKLDebugImGuiFeatureContainerBase::GetFeaturesCount() const
 {
-    return mFeaturesData.IsValidIndex(_FeatureIndex);
+    return static_cast<uint32>(mFeaturesData.Num());
 }
 
 inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesIterator()
@@ -118,11 +120,6 @@ inline void FKLDebugImGuiFeatureContainerBase::FinishGenerateFeatures()
 
 inline void FKLDebugImGuiFeatureContainerBase::FinishGenerateFeatureChild()
 {
-}
-
-inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiFeatureContainerBase::GetFeaturesCount() const
-{
-    return mFeaturesData.Num();
 }
 
 inline const TArray<FKLDebugImGuiFeatureData>& FKLDebugImGuiFeatureContainerBase::GetFeaturesData() const

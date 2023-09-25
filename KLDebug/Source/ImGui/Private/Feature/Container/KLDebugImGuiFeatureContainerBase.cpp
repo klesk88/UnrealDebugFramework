@@ -23,3 +23,27 @@ void FKLDebugImGuiFeatureContainerBase::AllocateNewEntry(const FKLDebugImGuiFeat
 
     DebugWindow.Initialize();
 }
+
+bool FKLDebugImGuiFeatureContainerBase::IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const
+{
+    const TOptional<FName> FeatureNameID = TryGetFeatureNameID(_FeatureIndex);
+    if (FeatureNameID.IsSet())
+    {
+        return FeatureNameID.GetValue() == _FeatureNameID;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+TOptional<FName> FKLDebugImGuiFeatureContainerBase::TryGetFeatureNameID(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
+{
+    if (!mFeaturesData.IsValidIndex(_FeatureIndex))
+    {
+        return TOptional<FName>();
+    }
+
+    const IKLDebugImGuiFeatureInterfaceBase& Feature = GetFeature(_FeatureIndex);
+    return TOptional<FName>(Feature.GetFeatureNameID());
+}

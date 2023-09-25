@@ -4,6 +4,10 @@
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#if WITH_EDITOR
+#include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_Engine.h"
+#endif
+
 FKLDebugImGuiNetworkingManager_Server UKLDebugImGuiNetworkingServerSubsystem_World::mServer;
 
 bool UKLDebugImGuiNetworkingServerSubsystem_World::ShouldCreateSubsystem(UObject* _Outer) const
@@ -39,6 +43,14 @@ void UKLDebugImGuiNetworkingServerSubsystem_World::OnWorldBeginPlay(UWorld& _Wor
     {
         mServer.Clear(_World);
     }
+
+#if !WITH_EDITOR
+    UKLDebugImGuiNetworkingServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiNetworkingServerSubsystem_Engine::GetMutable();
+    if (ServerEngineSubsystem)
+    {
+        ServerEngineSubsystem->CookedOnly_InitFeatureMapIfNeeded();
+    }
+#endif
 }
 
 bool UKLDebugImGuiNetworkingServerSubsystem_World::IsValid(const UWorld& _World) const

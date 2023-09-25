@@ -15,7 +15,7 @@ void FKLDebugImGuiFeatureContainer_EngineSubsystem::GatherFeaturesChild(const UO
     checkf(GetFeaturesCount() < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max(), TEXT("too many elements"));
 
     _OutFeaturesIndexes.Reserve(GetFeaturesCount());
-    for (int32 i = 0; i < GetFeaturesCount(); ++i)
+    for (uint32 i = 0; i < GetFeaturesCount(); ++i)
     {
         _OutFeaturesIndexes.Emplace(static_cast<KL::Debug::ImGui::Features::Types::FeatureIndex>(i));
     }
