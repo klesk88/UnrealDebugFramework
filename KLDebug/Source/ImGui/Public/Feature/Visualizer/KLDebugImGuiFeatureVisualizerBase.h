@@ -78,7 +78,12 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
     if (_Context.GetFeatureUpdateDelegate().IsBound() && !FeaturesToRemove.IsEmpty())
     {
         FKLDebugImGuiSubsetFeaturesConstIterator RemovedIterator = FeatureContainer.GetFeaturesSubsetConstIterator(FeaturesToRemove);
-        const FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, _ContainerType, _OwnerObject, RemovedIterator };
+        FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, _ContainerType, _OwnerObject, RemovedIterator };
+        if (mSelectedFeaturesIndexes.IsEmpty())
+        {
+            DelegateData.SetFullyRemoved();
+        }
+
         _Context.GetFeatureUpdateDelegate().Broadcast(DelegateData);
     }
 }

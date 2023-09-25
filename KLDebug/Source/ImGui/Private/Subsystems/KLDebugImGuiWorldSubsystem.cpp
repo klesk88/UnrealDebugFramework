@@ -18,6 +18,7 @@
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Stats/Stats2.h"
 
 bool UKLDebugImGuiWorldSubsystem::ShouldCreateSubsystem(UObject* _Outer) const
 {
@@ -126,6 +127,8 @@ UKLDebugImGuiWorldSubsystem* UKLDebugImGuiWorldSubsystem::TryGetMutable(const UO
 
 void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_OnObjectSelected);
+
     const UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
     if (!EngineSusbsytem->IsImGuiSystemEnabled())
     {
@@ -148,6 +151,8 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
 
 void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGui);
+
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
     FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
@@ -187,6 +192,8 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
 
 void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_Render);
+
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
     const FKLDebugImGuiFeatureVisualizerRenderContext Context{ _CurrentWorldUpdated, _ContainerManager };
@@ -208,6 +215,8 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
 
 void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGuiVisualizers);
+
     const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, mOnFeaturesUpdatedDelegate, _ContainerManager };
     for (const TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>& SubsystemVisualizer : mSubsystemsFeaturesVisualizer)
     {
@@ -217,6 +226,8 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKL
 
 void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImguiSelectedObjects);
+
     if (mSelectedObjectsVisualizers.IsEmpty())
     {
         return;
@@ -261,7 +272,8 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
             if (mOnFeaturesUpdatedDelegate.IsBound() && !ObjVisualizer.GetFeaturesIndexes().IsEmpty())
             {
                 FKLDebugImGuiSubsetFeaturesConstIterator Iterator = SelectableObjectsContainer.GetFeaturesSubsetConstIterator(ObjVisualizer.GetFeaturesIndexes());
-                const FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, SelectableContainerType, ObjVisualizer.GetObjectKey(), Iterator };
+                FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, SelectableContainerType, ObjVisualizer.GetObjectKey(), Iterator };
+                DelegateData.SetFullyRemoved();
                 mOnFeaturesUpdatedDelegate.Broadcast(DelegateData);
             }
 

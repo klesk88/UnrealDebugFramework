@@ -1,5 +1,6 @@
 #include "Client/KLDebugImGuiNetworkingManager_Client.h"
 
+#include "Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "Interface/KLDebugImGuiNetworing_FeatureInterface.h"
 #include "Settings/KLDebugImGuiNetworkingSettings.h"
 
@@ -25,6 +26,7 @@
 #include "Serialization/BitWriter.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
+#include "Stats/Stats2.h"
 #include "Templates/SharedPointer.h"
 #include "UObject/CoreNet.h"
 
@@ -123,6 +125,8 @@ void FKLDebugImGuiNetworkingManager_Client::InitServerSocket(const FString& _Soc
 
 void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_OnFeatureUpdate);
+
     const AActor* ObjectAsActor = Cast<const AActor>(_FeatureUpdateData.TryGetObject());
     if (ObjectAsActor && ObjectAsActor->GetLocalRole() == ROLE_Authority)
     {
@@ -132,11 +136,8 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
         return;
     }
 
-    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = mPendingFeaturesStatusUpdates.FindByKey(_FeatureUpdateData.TryGetObject());
-    if (!FeatureUpdate)
-    {
-        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(_FeatureUpdateData.TryGetObject());
-    }
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesIndexes;
+    FeaturesIndexes.Reserve(_FeatureUpdateData.GetFeatureIterator().GetFeaturesCount());
 
     FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
     for (; FeaturesIterator; ++FeaturesIterator)
@@ -148,7 +149,70 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
             continue;
         }
 
-        FeatureUpdate->AddFeatureUpdate(FeaturesIterator.GetFeatureDataIndex(), _FeatureUpdateData.IsFeatureAdded());
+        FeaturesIndexes.Emplace(FeaturesIterator.GetFeatureDataIndex());
+        if (_FeatureUpdateData.IsFullyRemoved())
+        {
+            break;
+        }
+    }
+
+    if (FeaturesIndexes.IsEmpty())
+    {
+        return;
+    }
+
+    FNetworkGUID NetworkID;
+    if (const FNetworkGUID* NetworkIDMap = mObjectToNetworkID.Find(_FeatureUpdateData.GetObjectKey()))
+    {
+        NetworkID = *NetworkIDMap;
+    }
+    else
+    {
+        if (!_FeatureUpdateData.TryGetObject())
+        {
+            ensureMsgf(false, TEXT("no valid object passed should not be possible"));
+            return;
+        }
+
+        NetworkID = KL::Debug::ImGuiNetworking::Helpers::TryGetNetworkGuid(*_FeatureUpdateData.TryGetObject());
+        if (!NetworkID.IsValid())
+        {
+            ensureMsgf(false, TEXT("no valid network ID"));
+            return;
+        }
+
+        mObjectToNetworkID.Emplace(_FeatureUpdateData.GetObjectKey(), NetworkID);
+    }
+
+    //i dont expect mPendingFeaturesStatusUpdates to have elements but just in case 
+    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = nullptr;
+    for (FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate& Update : mPendingFeaturesStatusUpdates)
+    {
+        if (Update.IsEqual(_FeatureUpdateData.GetContainerType(), NetworkID))
+        {
+            FeatureUpdate = &Update;
+            break;
+        }
+    }
+    
+    if (!FeatureUpdate)
+    {
+        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(NetworkID);
+    }
+
+    if (_FeatureUpdateData.IsFullyRemoved())
+    {
+        FeatureUpdate->SetFullyRemoved();
+    }
+    else
+    {
+        //clear the flag just in case we reenable before send this packet
+        FeatureUpdate->ClearFullyRemoved();
+
+        for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : FeaturesIndexes)
+        {
+            FeatureUpdate->AddFeatureUpdate(FeatureIndex, _FeatureUpdateData.IsFeatureAdded());
+        }
     }
 }
 
@@ -172,6 +236,8 @@ void FKLDebugImGuiNetworkingManager_Client::ClearChild()
 
 void FKLDebugImGuiNetworkingManager_Client::Tick(const float _DeltaTime)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_Tick);
+
     if (!mServerSocket)
     {
         return;
@@ -195,6 +261,8 @@ void FKLDebugImGuiNetworkingManager_Client::Tick(const float _DeltaTime)
 
 void FKLDebugImGuiNetworkingManager_Client::TickReadData()
 {   
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TickReadData);
+
     uint32 Size = 0;
     int32 BytesRead = 0;
     while (mServerSocket->HasPendingData(Size) && Size > 0)
@@ -214,6 +282,8 @@ void FKLDebugImGuiNetworkingManager_Client::TickReadData()
 
 void FKLDebugImGuiNetworkingManager_Client::TickWriteData()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TickWriteData);
+
     //for eplications of actors or actor guid look at UObject* FindReplicatedObjectOnPIEServer
     UPackageMap* PackageMap = GetServerPackageMap();
     if(!PackageMap)
@@ -229,6 +299,8 @@ void FKLDebugImGuiNetworkingManager_Client::TickWriteData()
 
 void FKLDebugImGuiNetworkingManager_Client::TryReconnect()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TryReconnect);
+
     if (!mServerAddress.IsValid())
     {
         return;

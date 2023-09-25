@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
 //engine
@@ -28,3 +29,14 @@ protected:
     UE_NODISCARD FNetworkGUID TryGetNetworkGuid(const UObject& _Object) const;
     UE_NODISCARD const UObject* TryGetObjectFromNetworkGUID(const UWorld& _World, const FNetworkGUID& _NetworkGUID) const;
 };
+
+inline FNetworkGUID FKLDebugImGuiNetworkingMessageBase::TryGetNetworkGuid(const UObject& _Object) const
+{
+    return KL::Debug::ImGuiNetworking::Helpers::TryGetNetworkGuid(_Object);
+}
+
+inline const UObject* FKLDebugImGuiNetworkingMessageBase::TryGetObjectFromNetworkGUID(const UWorld& _World, const FNetworkGUID& _NetworkGUID) const
+{
+    return KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUID(_World, _NetworkGUID);
+}
+

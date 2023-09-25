@@ -126,7 +126,12 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EContainerType _Con
             if (Delegate.IsBound() && !FeaturesUpdated.IsEmpty())
             {
                 FKLDebugImGuiSubsetFeaturesConstIterator Iterator = FeatureContainer.GetFeaturesSubsetConstIterator(FeaturesUpdated);
-                const FKLDebugImGuiFeatureStatusUpdateData DelegateData{ IsAdded, _ContainerType, _ContextInput.GetObject(), Iterator };
+                FKLDebugImGuiFeatureStatusUpdateData DelegateData{ IsAdded, _ContainerType, _ContextInput.GetObject(), Iterator };
+                if (_FeaturesIndexesSelected.IsEmpty())
+                {
+                    DelegateData.SetFullyRemoved();
+                }
+
                 Delegate.Broadcast(DelegateData);
             }
         }

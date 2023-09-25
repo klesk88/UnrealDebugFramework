@@ -18,6 +18,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Serialization/BitReader.h"
 #include "Serialization/BitWriter.h"
+#include "Stats/Stats2.h"
 
 #if DO_ENSURE
 #include "Kismet/KismetSystemLibrary.h"
@@ -87,6 +88,8 @@ void FKLDebugImGuiNetworkingManager_Server::ClearChild()
 
 void FKLDebugImGuiNetworkingManager_Server::Tick(const float _DeltaTime)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Server_Tick);
+
     if (!mListenerSocket)
     {
         return;
@@ -98,6 +101,8 @@ void FKLDebugImGuiNetworkingManager_Server::Tick(const float _DeltaTime)
 
 void FKLDebugImGuiNetworkingManager_Server::TickListenerSocket()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Server_TickListenerSocket);
+
     //gather new connections if any
     //based on FEditorDomainSaveServer::PollIncomingConnections
 
@@ -138,6 +143,8 @@ UPackageMap* FKLDebugImGuiNetworkingManager_Server::GetClientPackageMap(const UW
 
 void FKLDebugImGuiNetworkingManager_Server::TickConnections()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Server_TickConnections);
+
     for (int32 i = mConnectedSockets.Num() - 1; i >= 0; --i)
     {
         TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>& CacheConnection = mConnectedSockets[i];

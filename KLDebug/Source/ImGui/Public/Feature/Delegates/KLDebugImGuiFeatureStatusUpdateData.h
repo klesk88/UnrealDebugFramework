@@ -14,6 +14,9 @@ public:
     explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EContainerType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
     explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EContainerType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
 
+    void SetFullyRemoved();
+    UE_NODISCARD bool IsFullyRemoved() const;
+
     UE_NODISCARD bool IsFeatureAdded() const;
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator& GetFeatureIterator() const;
     UE_NODISCARD EContainerType GetContainerType() const;
@@ -25,6 +28,7 @@ private:
     const UObject* mObject = nullptr;
     FObjectKey mObjectKey;
     bool mIsAdded = false;
+    bool mFullyRemove = false;
     EContainerType mContainerType = EContainerType::COUNT;
 };
 
@@ -51,4 +55,14 @@ inline const UObject* FKLDebugImGuiFeatureStatusUpdateData::TryGetObject() const
 inline const FObjectKey& FKLDebugImGuiFeatureStatusUpdateData::GetObjectKey() const
 {
     return mObjectKey;
+}
+
+inline void FKLDebugImGuiFeatureStatusUpdateData::SetFullyRemoved()
+{
+    mFullyRemove = true;
+}
+
+inline bool FKLDebugImGuiFeatureStatusUpdateData::IsFullyRemoved() const
+{
+    return mFullyRemove;
 }

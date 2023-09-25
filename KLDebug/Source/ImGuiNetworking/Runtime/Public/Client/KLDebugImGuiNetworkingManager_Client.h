@@ -5,8 +5,11 @@
 
 //engine
 #include "Containers/Array.h"
+#include "Containers/Map.h"
 #include "Delegates/IDelegateInstance.h"
+#include "Misc/NetworkGuid.h"
 #include "Templates/SharedPointer.h"
+#include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
@@ -53,6 +56,7 @@ private:
 private:
     TArray<uint8> mReceiverDataBuffer;
     TArray<FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate> mPendingFeaturesStatusUpdates;
+    TMap<FObjectKey, FNetworkGUID> mObjectToNetworkID;
     TSharedPtr<FInternetAddr> mServerAddress;
     FDelegateHandle mOnFeaturesUpdatedDelegateHandle;
     FSocket* mServerSocket = nullptr;

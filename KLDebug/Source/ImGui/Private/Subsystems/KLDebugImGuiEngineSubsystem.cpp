@@ -17,6 +17,7 @@
 // engine
 #include "Engine/Engine.h"
 #include "Materials/MaterialInstance.h"
+#include "Stats/Stats2.h"
 #include "UObject/Object.h"
 
 namespace KL::Debug::ImGui::EngineSubsystem
@@ -43,6 +44,8 @@ UMaterialInterface* UKLDebugImGuiEngineSubsystem::GetOverlayMaterial() const
 
 void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collection)
 {
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiEngineSubsystem_Initialize);
+
     InitFromConfig();
 
     mFeatureContainersManger.Initialize();
