@@ -284,7 +284,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
                 const TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> CurrentFeatureIndex = EngineSubystem->CookedOnly_TryGetFeatureFromName(FeatureData.Server_GetFeatureNameID());
                 if (!CurrentFeatureIndex.IsSet())
                 {
-                    return EReadWriteDataResult::DropConnection;
+                    return EReadWriteDataResult::Fail;
                 }
 
                 FeatureIndex = CurrentFeatureIndex.GetValue();
