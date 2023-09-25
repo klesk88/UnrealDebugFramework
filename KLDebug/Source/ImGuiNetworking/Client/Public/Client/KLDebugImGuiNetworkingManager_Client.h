@@ -24,7 +24,7 @@ class UWorld;
 struct FBitReader;
 struct FBitWriter;
 
-class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingManager_Client final : public FKLDebugImGuiNetworkingManager_Base
+class KLDEBUGIMGUINETWORKINGCLIENT_API FKLDebugImGuiNetworkingManager_Client final : public FKLDebugImGuiNetworkingManager_Base
 {
 public:
     //FKLDebugImGuiNetworkManager_Base

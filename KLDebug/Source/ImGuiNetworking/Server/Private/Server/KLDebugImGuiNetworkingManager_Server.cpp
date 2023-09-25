@@ -1,9 +1,13 @@
 #include "Server/KLDebugImGuiNetworkingManager_Server.h"
 
-#include "Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
-#include "Message/KLDebugImGuiNetworkingMessageTypes.h"
-#include "Settings/KLDebugImGuiNetworkingSettings.h"
-
+//imgui module
+#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+//networking runtime module
+#include "ImGuiNetworking/Runtime/Public/Message/Client/KLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate.h"
+#include "ImGuiNetworking/Runtime/Public/Message/KLDebugImGuiNetworkingMessageTypes.h"
+#include "ImGuiNetworking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 //utils
 #include "Utils/Public/KLDebugLog.h"
 
@@ -34,6 +38,7 @@ void FKLDebugImGuiNetworkingManager_Server::InitChild(UWorld& _World)
     mClientReadBufferSize = NetworkingConfig.GetReadBufferSize();
     if (mListenerSocket)
     {
+        InitFeatureContainerMap();
         InitTick(_World);
     }
 }
@@ -73,6 +78,24 @@ void FKLDebugImGuiNetworkingManager_Server::InitListenerSocket(const FString& _S
     mListenerSocket->SetReceiveBufferSize(_ReceiveBufferSize, NewSize);
 
     mReceiverDataBuffer.SetNumUninitialized(NewSize);
+}
+
+void FKLDebugImGuiNetworkingManager_Server::InitFeatureContainerMap()
+{
+    //client and server can be out of sync in the sense that we can have a deployed server which was built with a
+    //different version then the one of the client. The Features indexes in this case could not match anymore.
+    //so make a pass here once so we store 
+
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Server_InitFeatureContainerMap);
+
+    UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
+    check(ImGuiEngineSubsystem != nullptr);
+    const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
+
+    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
+    {
+
+    }
 }
 
 void FKLDebugImGuiNetworkingManager_Server::ClearChild()
@@ -161,12 +184,12 @@ void FKLDebugImGuiNetworkingManager_Server::TickConnections()
             continue;
         }
 
-        ReceiveConnectionData(ClientSocket);
+        ReceiveConnectionData(*CacheConnection, ClientSocket);
         SendConnectionData(ClientSocket);
     }
 }
 
-void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FSocket& _ClientSocket)
+void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket)
 {
     uint32 Size = 0;
     int32 BytesRead = 0;
@@ -184,12 +207,18 @@ void FKLDebugImGuiNetworkingManager_Server::ReceiveConnectionData(FSocket& _Clie
      
         UPackageMap* PackageMap = GetClientPackageMap(World, _ClientSocket);
         FNetBitReader Reader(PackageMap, mReceiverDataBuffer.GetData(), BytesRead * 8);
-        ReadData(Reader);
+        ReadData(_Connection, Reader);
     }
 }
 
-void FKLDebugImGuiNetworkingManager_Server::ReadData(FBitReader& _Reader)
+void FKLDebugImGuiNetworkingManager_Server::ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
 {
+    const UWorld& World = GetWorld();
+
+    UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
+    check(ImGuiEngineSubsystem != nullptr);
+    const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
+
     while (!_Reader.AtEnd())
     {
         EKLDebugNetworkMessageTypes MessageType = EKLDebugNetworkMessageTypes::Count;
@@ -198,14 +227,44 @@ void FKLDebugImGuiNetworkingManager_Server::ReadData(FBitReader& _Reader)
         switch (MessageType)
         {
         case EKLDebugNetworkMessageTypes::Client_FeatureStatusUpdate:
-        {
-            FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate Update;
-            Update.Read(GetWorld(), _Reader);
-        }
+            HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Connection, _Reader);
             break;
         case EKLDebugNetworkMessageTypes::Count:
             ensureMsgf(false, TEXT("not handled"));
             break;
+        }
+    }
+}
+
+void FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
+{
+    FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate FeatureStatusUpdate;
+    FeatureStatusUpdate.Read(_World, _Reader);
+
+    if (FeatureStatusUpdate.Server_IsFullyRemoved())
+    {
+        _Connection.RemoveObjectFeatures(FeatureStatusUpdate.Server_GetNetworkID());
+    }
+    else
+    {
+        FKLDebugImGuiNetworking_ServerObjectFeatures& ServerObjectFeatureData = _Connection.GetOrAddFeaturesPerObject(_World, FeatureStatusUpdate.Server_GetNetworkID());
+        FKLDebugImGuiNetworking_ServerObjectContainerFeatures& FeatureContainer = ServerObjectFeatureData.GetContainerMutable(FeatureStatusUpdate.Server_GetContainerType());
+        FeatureContainer.InitIfNeeded();
+
+        const FKLDebugImGuiFeatureContainerBase& Container = _FeatureContainerManager.GetContainer(FeatureStatusUpdate.Server_GetContainerType());
+
+        for (const FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::FeatureData& FeatureDataPair : FeatureStatusUpdate.Server_GetFeaturesData())
+        {
+            ensureMsgf(Container.IsValidFeatureIndex(FeatureDataPair.Key), TEXT("Feature is not valid for this container"));
+
+            if (FeatureDataPair.Value)
+            {
+                FeatureContainer.AddFeature(FeatureDataPair.Key);
+            }
+            else
+            {
+                FeatureContainer.RemoveFeature(FeatureDataPair.Key);
+            }
         }
     }
 }

@@ -1,12 +1,17 @@
 #pragma once
 
-#include "Common/KLDebugImGuiNetworkingManager_Base.h"
 #include "Server/KLDebugImGuiNetworkingCacheConnection.h"
+
+//networking runtime module
+#include "ImGuiNetworking/Runtime/Public/Common/KLDebugImGuiNetworkingManager_Base.h"
 
 // engine
 #include "Containers/Array.h"
+#include "Containers/Map.h"
 #include "Templates/RefCounting.h"
+#include "UObject/NameTypes.h"
 
+class FKLDebugImGuiFeaturesTypesContainerManager;
 class FSocket;
 class FString;
 class UWorld;
@@ -14,7 +19,7 @@ class UWorld;
 struct FBitReader;
 struct FBitWriter;
 
-class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingManager_Server final : public FKLDebugImGuiNetworkingManager_Base
+class KLDEBUGIMGUINETWORKINGSERVER_API FKLDebugImGuiNetworkingManager_Server final : public FKLDebugImGuiNetworkingManager_Base
 {
 public:
     //FKLDebugImGuiNetworkManager_Base
@@ -29,20 +34,24 @@ private:
     //FKLDebugImGuiNetworkManager_Base
 
     void InitListenerSocket(const FString& _SocketName, const int32 _Port, const int32 _ReceiveBufferSize);
+    void InitFeatureContainerMap();
 
     void TickListenerSocket();
     void TickConnections();
 
-    void ReceiveConnectionData(FSocket& _ClientSocket);
+    void ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket);
     void SendConnectionData(FSocket& _ClientSocket) const;
 
-    void ReadData(FBitReader& _Reader);
+    void ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
 
     UE_NODISCARD UPackageMap* GetClientPackageMap(const UWorld& _World, const FSocket& _ClientSocket) const;
+
+    void HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
 
 private:
     TArray<TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>> mConnectedSockets;
     TArray<uint8> mReceiverDataBuffer;
+    TMap<FName, uint16> mFeatureToContainerIndex;
     FSocket* mListenerSocket = nullptr;
     uint32 mClientReadBufferSize = 0;
     uint32 mClientWriteBufferSize = 0;

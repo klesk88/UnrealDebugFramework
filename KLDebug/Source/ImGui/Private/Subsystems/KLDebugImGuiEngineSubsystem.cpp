@@ -27,7 +27,7 @@ namespace KL::Debug::ImGui::EngineSubsystem
 
 ////////////////////////////////////////////////////////////////////
 
-UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
+UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::GetMutable()
 {
     if (GEngine)
     {

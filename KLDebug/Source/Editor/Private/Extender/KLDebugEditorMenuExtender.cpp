@@ -95,13 +95,13 @@ TSharedRef<SWidget> FKLDebugEditorMenuExtender::ImGuiModuleSubMenu(TSharedPtr<FU
 
     MenuBuilder.BeginSection(TEXT("KLDebug.Main"), LOCTEXT("KLDebug", "KLDebug"));
 
-    UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+    const UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
     if (KLImGuiEngineSubsystem)
     {
         MenuBuilder.AddMenuEntry(LOCTEXT("KLDebugEnable", "Enable KLDebug"), FText(), FSlateIcon(),
                                  FUIAction(FExecuteAction::CreateLambda([]()
                                                                         {
-                                                                            UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+                                                                            UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
                                                                             KLImGuiEngineSubsystem->ToogleImGuiSystemState();
                                                                         }),
                                            FCanExecuteAction(), FIsActionChecked::CreateLambda([]() -> bool

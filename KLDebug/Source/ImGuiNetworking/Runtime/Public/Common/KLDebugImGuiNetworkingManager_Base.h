@@ -1,6 +1,6 @@
 #pragma once
 
-//utils moduule
+//utils module
 #include "Utils/Public/Tick/KLDebugUtilsTickObject.h"
 
 // engine

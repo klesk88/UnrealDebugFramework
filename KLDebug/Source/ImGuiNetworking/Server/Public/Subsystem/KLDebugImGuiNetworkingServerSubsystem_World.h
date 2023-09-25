@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Client/KLDebugImGuiNetworkingManager_Client.h"
+#include "Server/KLDebugImGuiNetworkingManager_Server.h"
 
 //engine
 #include "Subsystems/WorldSubsystem.h"
 
-#include "KLDebugImGuiNetworkingClientSubsystem.generated.h"
+#include "KLDebugImGuiNetworkingServerSubsystem_World.generated.h"
 
 UCLASS(Transient)
-class KLDEBUGIMGUINETWORKINGRUNTIME_API UKLDebugImGuiNetworkingClientSubsystem final : public UWorldSubsystem
+class KLDEBUGIMGUINETWORKINGSERVER_API UKLDebugImGuiNetworkingServerSubsystem_World final : public UWorldSubsystem
 {
     GENERATED_BODY()
 
@@ -23,5 +23,5 @@ private:
     UE_NODISCARD bool IsValidWorld(const UWorld& _World) const;
 
 private:
-    FKLDebugImGuiNetworkingManager_Client mClient;
+    static FKLDebugImGuiNetworkingManager_Server mServer;
 };

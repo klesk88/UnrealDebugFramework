@@ -28,7 +28,8 @@ public:
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
 
-    UE_NODISCARD static UKLDebugImGuiEngineSubsystem*              Get();
+    UE_NODISCARD static UKLDebugImGuiEngineSubsystem*              GetMutable();
+    UE_NODISCARD static const UKLDebugImGuiEngineSubsystem*        Get();
     UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetFeatureContainerManager() const;
     UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager&       GetContainerManagerMutable();
 
@@ -52,6 +53,11 @@ private:
     FKLDebugImGuiFeaturesTypesContainerManager mFeatureContainersManger;
     FKLDebugImGuiInputManager                  mInputManager;
 };
+
+inline const UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
+{
+    return GetMutable();
+}
 
 inline void UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState()
 {

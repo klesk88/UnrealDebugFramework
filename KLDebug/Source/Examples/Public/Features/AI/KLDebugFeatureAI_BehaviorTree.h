@@ -3,13 +3,13 @@
 // imgui module
 #include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 //ImGuiNetworkingShared module
-#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworing_FeatureInterface.h"
+#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
 
 class UBehaviorTreeComponent;
 class UBrainComponent;
 class UObject;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworing_FeatureInterface
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworking_FeatureInterface
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_BehaviorTree, IKLDebugImGuiFeatureInterface_SelectableObject)
 

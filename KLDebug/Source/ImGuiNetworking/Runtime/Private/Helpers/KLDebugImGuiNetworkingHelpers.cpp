@@ -38,7 +38,7 @@ namespace KL::Debug::ImGuiNetworking::Helpers
         return NetworkGUID;
     }
 
-    const UObject* TryGetObjectFromNetworkGUID(const UWorld& _World, const FNetworkGUID& _NetworkGUID)
+    UObject* TryGetObjectFromNetworkGUIDMutable(const UWorld& _World, const FNetworkGUID& _NetworkGUID)
     {
         const UNetDriver* NetDriver = _World.GetNetDriver();
         const TSharedPtr<FNetGUIDCache> GuidCache = NetDriver ? NetDriver->GuidCache : nullptr;
@@ -47,7 +47,12 @@ namespace KL::Debug::ImGuiNetworking::Helpers
             return nullptr;
         }
 
-        const UObject* Object = GuidCache->GetObjectFromNetGUID(_NetworkGUID, true);
+        UObject* Object = GuidCache->GetObjectFromNetGUID(_NetworkGUID, true);
         return Object;
+    }
+
+    const UObject* TryGetObjectFromNetworkGUID(const UWorld& _World, const FNetworkGUID& _NetworkGUID)
+    {
+        return TryGetObjectFromNetworkGUIDMutable(_World, _NetworkGUID);
     }
 } // KL::Debug::ImGuiNetworking::Helpers

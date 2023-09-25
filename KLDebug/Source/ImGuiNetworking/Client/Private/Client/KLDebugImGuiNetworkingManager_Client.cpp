@@ -1,13 +1,13 @@
 #include "Client/KLDebugImGuiNetworkingManager_Client.h"
 
-#include "Helpers/KLDebugImGuiNetworkingHelpers.h"
-#include "Interface/KLDebugImGuiNetworing_FeatureInterface.h"
-#include "Settings/KLDebugImGuiNetworkingSettings.h"
-
 //imgui module
 #include "ImGui/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+//networking runtime module
+#include "ImGuiNetworking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
+#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
+#include "ImGuiNetworking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 
 //utils
 #include "Utils/Public/KLDebugLog.h"
@@ -143,7 +143,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
     for (; FeaturesIterator; ++FeaturesIterator)
     {
         const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-        const IKLDebugImGuiNetworing_FeatureInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+        const IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
         if (!NetworkInterface || !NetworkInterface->Client_InformServerWhenActive())
         {
             continue;
@@ -188,7 +188,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
     FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate* FeatureUpdate = nullptr;
     for (FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate& Update : mPendingFeaturesStatusUpdates)
     {
-        if (Update.IsEqual(_FeatureUpdateData.GetContainerType(), NetworkID))
+        if (Update.Client_IsEqual(_FeatureUpdateData.GetContainerType(), NetworkID))
         {
             FeatureUpdate = &Update;
             break;
@@ -202,16 +202,16 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
 
     if (_FeatureUpdateData.IsFullyRemoved())
     {
-        FeatureUpdate->SetFullyRemoved();
+        FeatureUpdate->Client_SetFullyRemoved();
     }
     else
     {
         //clear the flag just in case we reenable before send this packet
-        FeatureUpdate->ClearFullyRemoved();
+        FeatureUpdate->Client_ClearFullyRemoved();
 
         for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : FeaturesIndexes)
         {
-            FeatureUpdate->AddFeatureUpdate(FeatureIndex, _FeatureUpdateData.IsFeatureAdded());
+            FeatureUpdate->Client_AddFeatureUpdate(FeatureIndex, _FeatureUpdateData.IsFeatureAdded());
         }
     }
 }

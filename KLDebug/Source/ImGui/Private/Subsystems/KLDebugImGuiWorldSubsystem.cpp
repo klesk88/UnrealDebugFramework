@@ -49,7 +49,7 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
 
 void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
 {
-    UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
+    const UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
     if (!EngineSusbsytem)
     {
         ensureMsgf(false, TEXT("should not be possible. We check in ShouldCreateSubsystem that the engine subsystem exists"));

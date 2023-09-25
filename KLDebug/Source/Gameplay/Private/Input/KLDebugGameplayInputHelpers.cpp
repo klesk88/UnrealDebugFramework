@@ -81,7 +81,7 @@ namespace KL::Debug::Gameplay::Input::Helpers
 
     void BindMainInputsToComponent(const APlayerController& _PlayerController, UInputComponent& _OutInputComponent)
     {
-        UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+        UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
         if (!KLImGuiEngineSubsystem)
         {
             ensureMsgf(false, TEXT("we expect to have a valid engine subsystem always"));
@@ -114,7 +114,7 @@ namespace KL::Debug::Gameplay::Input::Helpers
 
     void BindMainInputsToComponent(IEnhancedInputSubsystemInterface& _InputSubsystem, UEnhancedInputComponent& _InputComponent)
     {
-        UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+        UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
         if (!KLImGuiEngineSubsystem)
         {
             ensureMsgf(false, TEXT("we expect to have a valid engine subsystem always"));

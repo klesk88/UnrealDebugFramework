@@ -17,13 +17,12 @@ void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::WriteChild(const 
     ensureMsgf(mNetworkID.IsValid(), TEXT("must be valid"));
 
      _BitWriter << mNetworkID;
+     _BitWriter << mContainerType;
      _BitWriter << mFullyRemoved;
      if (mFullyRemoved)
      {
          return;
      }
-
-     _BitWriter << mContainerType;
 
     int32 NumElements = mFeatureData.Num();
     _BitWriter << NumElements;
@@ -39,18 +38,16 @@ void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::ReadChild(const U
     _BitReader << mNetworkID;
     if (!mNetworkID.IsValid())
     {
+        ensureMsgf(false, TEXT("must be valid"));
         return;
     }
 
+    _BitReader << mContainerType;
     _BitReader << mFullyRemoved;
     if (mFullyRemoved)
     {
         return;
     }
-
-    const UObject* Object = TryGetObjectFromNetworkGUID(_World, mNetworkID);
-
-    _BitReader << mContainerType;
 
     int32 NumElements;
     _BitReader << NumElements;

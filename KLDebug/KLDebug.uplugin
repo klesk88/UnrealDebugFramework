@@ -35,6 +35,16 @@
       "LoadingPhase": "Default"
     },
     {
+      "Name": "KLDebugImGuiNetworkingClient",
+      "Type": "ClientOnly",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiNetworkingServer",
+      "Type": "ServerOnly",
+      "LoadingPhase": "Default"
+    },
+    {
       "Name": "KLDebugUtils",
       "Type": "Runtime",
       "LoadingPhase": "Default"

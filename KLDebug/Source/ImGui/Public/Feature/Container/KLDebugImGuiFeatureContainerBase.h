@@ -28,6 +28,8 @@ public:
 
     UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const = 0;
 
+    UE_NODISCARD bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+
     void InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount);
     void AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
     void FinishGenerateFeatures();
@@ -62,6 +64,11 @@ private:
     // in this way they are all packed in memory close together
     TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> mFeaturesPool;
 };
+
+inline bool FKLDebugImGuiFeatureContainerBase::IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
+{
+    return mFeaturesData.IsValidIndex(_FeatureIndex);
+}
 
 inline FKLDebugImGuiFeaturesIterator FKLDebugImGuiFeatureContainerBase::GetFeaturesIterator()
 {

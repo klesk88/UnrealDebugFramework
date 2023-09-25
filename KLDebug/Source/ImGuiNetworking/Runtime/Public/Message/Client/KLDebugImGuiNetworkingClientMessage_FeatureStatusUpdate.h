@@ -7,17 +7,14 @@
 #include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 //engine
+#include "Containers/Map.h"
 #include "Misc/NetworkGuid.h"
-#include "UObject/ObjectKey.h"
-#include "UObject/WeakObjectPtr.h"
-#include "UObject/WeakObjectPtrTemplates.h"
 
-class AActor;
 class UWorld;
 
 class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate final : public FKLDebugImGuiNetworkingMessageBase
 {
-private:
+public:
     using FeatureData = TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, bool>;
 
 public:
@@ -31,11 +28,19 @@ public:
     void ReadChild(const UWorld& _World, FBitReader& _BitReader) final;
     //FKLDebugImGuiNetworkingMessageBase
 
-    UE_NODISCARD bool IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const;
-    void AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _Status);
-    UE_NODISCARD bool IsFullyRemoved() const;
-    void SetFullyRemoved();
-    void ClearFullyRemoved();
+    //client
+    UE_NODISCARD bool Client_IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const;
+    void Client_AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _Status);
+    void Client_SetFullyRemoved();
+    void Client_ClearFullyRemoved();
+    //client
+
+    //server
+    UE_NODISCARD bool Server_IsFullyRemoved() const;
+    UE_NODISCARD const FNetworkGUID& Server_GetNetworkID() const;
+    UE_NODISCARD EContainerType Server_GetContainerType() const;
+    UE_NODISCARD const TArray<FeatureData>& Server_GetFeaturesData() const;
+    //server
 
 private:
     TArray<FeatureData> mFeatureData;
@@ -49,7 +54,7 @@ inline EKLDebugNetworkMessageTypes FKLDebugImGuiNetworkingClientMessage_FeatureS
     return EKLDebugNetworkMessageTypes::Client_FeatureStatusUpdate;
 }
 
-inline void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _Status)
+inline void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Client_AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _Status)
 {
     mFeatureData.Emplace(_FeatureIndex, _Status);
 }
@@ -59,22 +64,37 @@ inline bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::CanWrite(c
     return mNetworkID.IsValid();
 }
 
-inline bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const
+inline bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Client_IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const
 {
     return mContainerType == _ContainerType && mNetworkID == _NetworkID;
 }
 
-inline bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::IsFullyRemoved() const
-{
-    return mFullyRemoved;
-}
-
-inline void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::SetFullyRemoved()
+inline void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Client_SetFullyRemoved()
 {
     mFullyRemoved = true;
 }
 
-inline void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::ClearFullyRemoved()
+inline void FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Client_ClearFullyRemoved()
 {
     mFullyRemoved = false;
+}
+
+inline bool FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Server_IsFullyRemoved() const
+{
+    return mFullyRemoved;
+}
+
+inline const FNetworkGUID& FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Server_GetNetworkID() const
+{
+    return mNetworkID;
+}
+
+inline EContainerType FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Server_GetContainerType() const
+{
+    return mContainerType;
+}
+
+inline const TArray<FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::FeatureData>& FKLDebugImGuiNetworkingClientMessage_FeatureStatusUpdate::Server_GetFeaturesData() const
+{
+    return mFeatureData;
 }
