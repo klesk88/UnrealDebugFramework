@@ -19,8 +19,10 @@ public:
     explicit FKLDebugImGuiNetworking_ServerObjectFeatures(const UWorld& _World, const FNetworkGUID& _NetworkID);
     UE_NODISCARD bool operator==(const FNetworkGUID& _NetworkID) const;
 
-    const FKLDebugImGuiNetworking_ServerObjectContainerFeatures& GetContainer(const EContainerType& _ContainerType) const;
-    FKLDebugImGuiNetworking_ServerObjectContainerFeatures& GetContainerMutable(const EContainerType& _ContainerType);
+    UE_NODISCARD const FKLDebugImGuiNetworking_ServerObjectContainerFeatures& GetContainer(const EContainerType& _ContainerType) const;
+    UE_NODISCARD FKLDebugImGuiNetworking_ServerObjectContainerFeatures& GetContainerMutable(const EContainerType& _ContainerType);
+
+    UE_NODISCARD const TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures>& GetContainers() const;
 
 private:
     TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures> mContainerFeatures;
@@ -43,4 +45,9 @@ inline FKLDebugImGuiNetworking_ServerObjectContainerFeatures& FKLDebugImGuiNetwo
 {
     check(_ContainerType != EContainerType::COUNT);
     return mContainerFeatures[static_cast<int32>(_ContainerType)];
+}
+
+inline const TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures>& FKLDebugImGuiNetworking_ServerObjectFeatures::GetContainers() const
+{
+    return mContainerFeatures;
 }

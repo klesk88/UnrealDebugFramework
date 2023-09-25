@@ -188,7 +188,7 @@ void FKLDebugImGuiNetworkingManager_Server::TickConnections()
             break;
         }
 
-        SendConnectionData(ClientSocket);
+        SendConnectionData(*CacheConnection, ClientSocket);
     }
 }
 
@@ -237,7 +237,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
         switch (MessageType)
         {
         case EKLDebugNetworkMessageTypes::Client_FeatureStatusUpdate:
-            ReadResult = HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Connection, _Reader);
+            ReadResult = Rcv_HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Connection, _Reader);
             break;
         case EKLDebugNetworkMessageTypes::Count:
             ensureMsgf(false, TEXT("not handled"));
@@ -254,7 +254,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
     return EReadWriteDataResult::Succeeded;
 }
 
-FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetworkingManager_Server::HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
+FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetworkingManager_Server::Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
 {
     FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate;
     FeatureStatusUpdate.Read(_World, _Reader);
@@ -308,12 +308,23 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
     return EReadWriteDataResult::Succeeded;
 }
 
-void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(FSocket& _ClientSocket) const
+void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(const FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket) const
 {
-    //FNetBitWriter Writer(mClientWriteBufferSize * 8);
-    //static int32 a = 25;
-    //Writer << a;
-    //a++;
+    const UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+    if (!ImGuiEngineSubsystem)
+    {
+        ensureMsgf(false, TEXT("ImGuiEngineSubsystem not present"));
+        return;
+    }
 
-    //static_cast<void>(SendData(_ClientSocket, Writer));
+    const FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainer = ImGuiEngineSubsystem->GetFeatureContainerManager();
+
+    FNetBitWriter Writer(mClientWriteBufferSize * 8);
+
+    _Connection.Write_ConnectionFeatures(FeaturesContainer, Writer);
+
+    if (Writer.GetNumBits() != 0)
+    {
+        static_cast<void>(SendData(_ClientSocket, Writer));
+    }
 }

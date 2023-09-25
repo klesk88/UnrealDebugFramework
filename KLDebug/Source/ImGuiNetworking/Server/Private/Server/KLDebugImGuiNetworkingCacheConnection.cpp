@@ -1,5 +1,11 @@
 #include "Server/KLDebugImGuiNetworkingCacheConnection.h"
 
+//imgui module
+#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+#include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+
 //engine
 #include "Sockets.h"
 #include "SocketSubsystem.h"
@@ -46,6 +52,22 @@ void FKLDebugImGuiNetworkingCacheConnection::RemoveObjectFeatures(const FNetwork
     if (Index != INDEX_NONE)
     {
         mFeaturesPerObject.RemoveAtSwap(Index, 1, false);
+    }
+}
+
+void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FNetBitWriter& _Writer) const
+{
+    for (const FKLDebugImGuiNetworking_ServerObjectFeatures& Feature : mFeaturesPerObject)
+    {
+        for (const FKLDebugImGuiNetworking_ServerObjectContainerFeatures& FeatureContainer : Feature.GetContainers())
+        {
+            const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& Features = FeatureContainer.GetEnableFetures();
+            const EContainerType ContainerType = FeatureContainer.GetContainerType();
+            if (Features.IsEmpty())
+            {
+                continue;
+            }
+        }
     }
 }
 

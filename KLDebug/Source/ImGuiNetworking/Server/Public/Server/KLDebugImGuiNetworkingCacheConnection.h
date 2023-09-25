@@ -8,7 +8,9 @@
 #include "HAL/Platform.h"
 #include "Templates/RefCounting.h"
 
+class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiNetworkManager_Base;
+class FNetBitWriter;
 class FNetworkGUID;
 class FSocket;
 class UWorld;
@@ -29,6 +31,8 @@ public:
     UE_NODISCARD FKLDebugImGuiNetworking_ServerObjectFeatures& GetOrAddFeaturesPerObject(const UWorld& _World, const FNetworkGUID& _NetworkID);
     UE_NODISCARD FKLDebugImGuiNetworking_ServerObjectFeatures* TryGetFeaturesPerObjectMutable(const FNetworkGUID& _NetworkID);
     void RemoveObjectFeatures(const FNetworkGUID& _NetworkID);
+
+    void Write_ConnectionFeatures(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FNetBitWriter& _Writer) const;
 
 private:
     TArray<FKLDebugImGuiNetworking_ServerObjectFeatures> mFeaturesPerObject;

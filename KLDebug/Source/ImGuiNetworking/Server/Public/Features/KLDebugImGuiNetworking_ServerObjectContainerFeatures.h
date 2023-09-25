@@ -19,6 +19,9 @@ public:
     void AddFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
     void RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
+    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetEnableFetures() const;
+    UE_NODISCARD EContainerType GetContainerType() const;
+
 private:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesEnable;
     EContainerType mContainerType = EContainerType::COUNT;
@@ -42,4 +45,14 @@ inline void FKLDebugImGuiNetworking_ServerObjectContainerFeatures::RemoveFeature
     {
         ensureMsgf(false, TEXT("Feature not present"));
     }
+}
+
+inline const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& FKLDebugImGuiNetworking_ServerObjectContainerFeatures::GetEnableFetures() const
+{
+    return mFeaturesEnable;
+}
+
+inline EContainerType FKLDebugImGuiNetworking_ServerObjectContainerFeatures::GetContainerType() const
+{
+    return mContainerType;
 }

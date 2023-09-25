@@ -48,14 +48,13 @@ private:
     void TickListenerSocket();
     void TickConnections();
 
-    UE_NODISCARD FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket);
-    void SendConnectionData(FSocket& _ClientSocket) const;
-
-    UE_NODISCARD EReadWriteDataResult ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
-
     UE_NODISCARD UPackageMap* GetClientPackageMap(const UWorld& _World, const FSocket& _ClientSocket) const;
 
-    UE_NODISCARD EReadWriteDataResult HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
+    UE_NODISCARD FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult ReceiveConnectionData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket);
+    UE_NODISCARD EReadWriteDataResult ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
+    UE_NODISCARD EReadWriteDataResult Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
+
+    void SendConnectionData(const FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket) const;
 
 private:
     TArray<TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>> mConnectedSockets;
