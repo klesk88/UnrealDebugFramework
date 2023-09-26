@@ -23,11 +23,13 @@ public:
     UE_NODISCARD FKLDebugImGuiNetworking_ServerObjectContainerFeatures& GetContainerMutable(const EContainerType& _ContainerType);
 
     UE_NODISCARD const TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures>& GetContainers() const;
+    UE_NODISCARD UObject* GetCachedObjectMutable() const;
+    UE_NODISCARD const UObject* GetCachedObject() const;
 
 private:
     TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures> mContainerFeatures;
     FNetworkGUID mNetworkID;
-    TWeakObjectPtr<const UObject> mCachedObject;
+    TWeakObjectPtr<UObject> mCachedObject;
 };
 
 inline bool FKLDebugImGuiNetworking_ServerObjectFeatures::operator==(const FNetworkGUID& _NetworkID) const
@@ -50,4 +52,14 @@ inline FKLDebugImGuiNetworking_ServerObjectContainerFeatures& FKLDebugImGuiNetwo
 inline const TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures>& FKLDebugImGuiNetworking_ServerObjectFeatures::GetContainers() const
 {
     return mContainerFeatures;
+}
+
+inline UObject* FKLDebugImGuiNetworking_ServerObjectFeatures::GetCachedObjectMutable() const
+{
+    return mCachedObject.Get();
+}
+
+inline const UObject* FKLDebugImGuiNetworking_ServerObjectFeatures::GetCachedObject() const
+{
+    return GetCachedObjectMutable();
 }

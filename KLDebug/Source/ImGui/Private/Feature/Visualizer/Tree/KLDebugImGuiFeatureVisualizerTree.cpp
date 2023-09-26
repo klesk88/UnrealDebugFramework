@@ -39,7 +39,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EContainerType _Con
     
     const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _ImguiContext.GetFeaturesContainerManager().GetContainer(_ContainerType);
 
-    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesUpdated;   
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesUpdated;
     if (_ImguiContext.GetFeatureUpdateDelegate().IsBound())
     {
         FeaturesUpdated.Reserve(30);

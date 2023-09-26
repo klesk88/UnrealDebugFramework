@@ -1,7 +1,7 @@
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 
-FKLDebugImGuiFeatureContextInput::FKLDebugImGuiFeatureContextInput(const ENetMode _CurrentNetMode, const UObject& _OptionalObject)
+FKLDebugImGuiFeatureContextInput::FKLDebugImGuiFeatureContextInput(const ENetMode _CurrentNetMode, const UObject& _Object)
     : mCurrentNetMode(_CurrentNetMode)
-    , mObject(_OptionalObject)
+    , mObject(_Object)
 {
 }

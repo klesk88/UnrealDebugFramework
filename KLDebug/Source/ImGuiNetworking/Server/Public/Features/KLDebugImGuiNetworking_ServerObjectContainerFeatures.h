@@ -1,13 +1,16 @@
 #pragma once
 
+#include "Features/KLDebugImGuiNetworking_ServerObjectFeatureData.h"
+
 //imgui module
 #include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
-#include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
-
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "Templates/UnrealTemplate.h"
+
+class FKLDebugImGuiFeatureContextInput;
+class IKLDebugImGuiFeatureInterfaceBase;
 
 class KLDEBUGIMGUINETWORKINGSERVER_API FKLDebugImGuiNetworking_ServerObjectContainerFeatures final : public FNoncopyable
 {
@@ -16,22 +19,22 @@ public:
 
     void InitIfNeeded();
 
-    void AddFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
+    void AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
     void RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
-    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetEnableFetures() const;
+    UE_NODISCARD const TArray<FKLDebugImGuiNetworking_ServerObjectFeatureData>& GetEnableFetures() const;
     UE_NODISCARD EContainerType GetContainerType() const;
 
 private:
-    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesEnable;
+    TArray<FKLDebugImGuiNetworking_ServerObjectFeatureData> mFeaturesEnable;
     EContainerType mContainerType = EContainerType::COUNT;
 };
 
-inline void FKLDebugImGuiNetworking_ServerObjectContainerFeatures::AddFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
+inline void FKLDebugImGuiNetworking_ServerObjectContainerFeatures::AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
 {
-    ensureMsgf(mFeaturesEnable.Find(_FeatureIndex) == INDEX_NONE, TEXT("Feature alreadu present"));
+    ensureMsgf(mFeaturesEnable.IndexOfByKey(_FeatureIndex) == INDEX_NONE, TEXT("Feature alreadu present"));
 
-    mFeaturesEnable.Emplace(_FeatureIndex);
+    mFeaturesEnable.Emplace(_Input, _FeatureInterface, _FeatureIndex);
 }
 
 inline void FKLDebugImGuiNetworking_ServerObjectContainerFeatures::RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
@@ -47,7 +50,7 @@ inline void FKLDebugImGuiNetworking_ServerObjectContainerFeatures::RemoveFeature
     }
 }
 
-inline const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& FKLDebugImGuiNetworking_ServerObjectContainerFeatures::GetEnableFetures() const
+inline const TArray<FKLDebugImGuiNetworking_ServerObjectFeatureData>& FKLDebugImGuiNetworking_ServerObjectContainerFeatures::GetEnableFetures() const
 {
     return mFeaturesEnable;
 }

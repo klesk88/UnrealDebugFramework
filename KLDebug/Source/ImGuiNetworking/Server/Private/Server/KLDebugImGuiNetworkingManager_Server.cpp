@@ -1,6 +1,7 @@
 #include "Server/KLDebugImGuiNetworkingManager_Server.h"
 
 //imgui module
+#include "ImGui/Public/Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 #include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
@@ -161,6 +162,8 @@ void FKLDebugImGuiNetworkingManager_Server::TickConnections()
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Server_TickConnections);
 
+    const UWorld& World = GetWorld();
+
     for (int32 i = mConnectedSockets.Num() - 1; i >= 0; --i)
     {
         TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>& CacheConnection = mConnectedSockets[i];
@@ -188,7 +191,7 @@ void FKLDebugImGuiNetworkingManager_Server::TickConnections()
             break;
         }
 
-        SendConnectionData(*CacheConnection, ClientSocket);
+        SendConnectionData(World, *CacheConnection, ClientSocket);
     }
 }
 
@@ -223,7 +226,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
 FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetworkingManager_Server::ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader)
 {
     const UWorld& World = GetWorld();
-
+    
     UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
     check(ImGuiEngineSubsystem != nullptr);
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
@@ -259,6 +262,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
     FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate;
     FeatureStatusUpdate.Read(_World, _Reader);
 
+    const ENetMode NetMode = _World.GetNetMode();
     if (FeatureStatusUpdate.Server_IsFullyRemoved())
     {
         _Connection.RemoveObjectFeatures(FeatureStatusUpdate.Server_GetNetworkID());
@@ -266,6 +270,12 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
     else
     {
         FKLDebugImGuiNetworking_ServerObjectFeatures& ServerObjectFeatureData = _Connection.GetOrAddFeaturesPerObject(_World, FeatureStatusUpdate.Server_GetNetworkID());
+        if (!ServerObjectFeatureData.GetCachedObject())
+        {
+            UE_LOG(LogKL_Debug, Error, TEXT("KLDebugImGuiNetworkingManager_Server::Rcv_HandleClientFeatureStatusUpdate>> received packet for feature but object does not exist anymore"));
+            return EReadWriteDataResult::Succeeded;
+        }
+
         FKLDebugImGuiNetworking_ServerObjectContainerFeatures& FeatureContainer = ServerObjectFeatureData.GetContainerMutable(FeatureStatusUpdate.Server_GetContainerType());
         FeatureContainer.InitIfNeeded();
 
@@ -296,7 +306,9 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
 
             if (FeatureData.Server_IsAdded())
             {
-                FeatureContainer.AddFeature(FeatureIndex);
+                const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureIndex);
+                const FKLDebugImGuiFeatureContextInput Input{ NetMode, *ServerObjectFeatureData.GetCachedObject()};
+                FeatureContainer.AddFeature(Input, FeatureInterface, FeatureIndex);
             }
             else
             {
@@ -308,7 +320,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
     return EReadWriteDataResult::Succeeded;
 }
 
-void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(const FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket) const
+void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(const UWorld& _World, const FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket) const
 {
     const UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
     if (!ImGuiEngineSubsystem)
@@ -321,7 +333,7 @@ void FKLDebugImGuiNetworkingManager_Server::SendConnectionData(const FKLDebugImG
 
     FNetBitWriter Writer(mClientWriteBufferSize * 8);
 
-    _Connection.Write_ConnectionFeatures(FeaturesContainer, Writer);
+    _Connection.Write_ConnectionFeatures(_World, FeaturesContainer, Writer);
 
     if (Writer.GetNumBits() != 0)
     {

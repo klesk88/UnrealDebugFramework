@@ -5,8 +5,11 @@
 #include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
-
+//ImGuiNetworking module
+#include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_GatherDataInput.h"
+#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
 //engine
+#include "Serialization/Archive.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 
@@ -55,17 +58,41 @@ void FKLDebugImGuiNetworkingCacheConnection::RemoveObjectFeatures(const FNetwork
     }
 }
 
-void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FNetBitWriter& _Writer) const
+void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive) const
 {
     for (const FKLDebugImGuiNetworking_ServerObjectFeatures& Feature : mFeaturesPerObject)
     {
+        UObject* OwnerObject = Feature.GetCachedObjectMutable();
+        if (!OwnerObject)
+        {
+            continue;
+        }
+
         for (const FKLDebugImGuiNetworking_ServerObjectContainerFeatures& FeatureContainer : Feature.GetContainers())
         {
-            const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& Features = FeatureContainer.GetEnableFetures();
+            const TArray<FKLDebugImGuiNetworking_ServerObjectFeatureData>& FeaturesList = FeatureContainer.GetEnableFetures();
             const EContainerType ContainerType = FeatureContainer.GetContainerType();
-            if (Features.IsEmpty())
+            if (FeaturesList.IsEmpty())
             {
                 continue;
+            }
+
+            const FKLDebugImGuiFeatureContainerBase& Container = _FeatureContainer.GetContainer(ContainerType);
+            for (const FKLDebugImGuiNetworking_ServerObjectFeatureData& FeatureData : FeaturesList)
+            {
+                const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureData.GetFeatureIndex());
+                const IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+                if (!NetworkInterface)
+                {
+                    ensureMsgf(false, TEXT("NetworkInterface must be valid at this point"));
+                    continue;
+                }
+
+                const FKLDebugImGuiNetworking_GatherDataInput GatherDataInput{ _World, EKLDebugImGuiNetworkingEnviroment::Server, *OwnerObject, FeatureData.GetContextMutable(), _Archive };
+                if (NetworkInterface->ShouldGatherData(GatherDataInput))
+                {
+                    NetworkInterface->GatherData(GatherDataInput);
+                }
             }
         }
     }

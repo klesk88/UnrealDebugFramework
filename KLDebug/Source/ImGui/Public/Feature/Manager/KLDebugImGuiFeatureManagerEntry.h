@@ -3,8 +3,8 @@
 #include "Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
-// engine
-#include "GameplayTagContainer.h"
+//engine
+#include "Templates/UnrealTypeTraits.h" 
 
 template<typename FeatureInterfaceType>
 class TKLDebugImGuiFeatureManagerEntry final : public FKLDebugImGuiFeatureManagerEntryBase

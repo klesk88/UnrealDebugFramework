@@ -25,13 +25,9 @@ public class KLDebugImGui : ModuleRules
                 "UnrealImGui",
 				
                 //engine
-                "AIModule",
                 "DeveloperSettings",
                 "Engine",
-                "GameplayTags",
                 "InputCore",
-                "Networking",
-                "Sockets",
                 "StructUtils"
             }
         );

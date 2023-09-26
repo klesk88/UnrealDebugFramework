@@ -2,11 +2,11 @@
 
 // imgui module
 #include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
-//ImGuiNetworkingShared module
+//ImGuiNetworking module
 #include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
 
-class UBehaviorTreeComponent;
-class UBrainComponent;
+class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
+class FKLDebugImGuiNetworking_GatherDataInput;
 class UObject;
 
 class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworking_FeatureInterface
@@ -20,6 +20,8 @@ public:
 
     //IKLDebugImGuiNetworing_FeatureInterface
     UE_NODISCARD bool Client_InformServerWhenActive() const final;
+    UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const final;
+    void GatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const final;
     //IKLDebugImGuiNetworing_FeatureInterface
 
 private:
@@ -30,11 +32,8 @@ private:
     UE_NODISCARD const FName&   GetImGuiPath() const final;
     //IKLDebugImGuiFeatureInterface_SelectableObject
 
-    UE_NODISCARD const UBehaviorTreeComponent* GetBTComponent(const UObject& _Object) const;
-    UE_NODISCARD const UBrainComponent*        GetBrainComponent(const UObject& _Object) const;
-
-    void ImGuiDrawBrainInfo(const UObject& _Object) const;
-    void ImGuiDrawBTInfo(const UObject& _Object) const;
+    void ImGuiDrawBrainInfo(const FKLDebugFeatureAI_BehaviorTreeNetworkContext& _Context) const;
+    void ImGuiDrawBTInfo(const FKLDebugFeatureAI_BehaviorTreeNetworkContext& _Context) const;
 };
 
 inline bool FKLDebugFeatureAI_BehaviorTree::Client_InformServerWhenActive() const

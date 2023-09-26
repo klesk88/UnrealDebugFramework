@@ -54,7 +54,7 @@ private:
     UE_NODISCARD EReadWriteDataResult ReadData(FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
     UE_NODISCARD EReadWriteDataResult Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiNetworkingCacheConnection& _Connection, FBitReader& _Reader);
 
-    void SendConnectionData(const FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket) const;
+    void SendConnectionData(const UWorld& _World, const FKLDebugImGuiNetworkingCacheConnection& _Connection, FSocket& _ClientSocket) const;
 
 private:
     TArray<TRefCountPtr<FKLDebugImGuiNetworkingCacheConnection>> mConnectedSockets;

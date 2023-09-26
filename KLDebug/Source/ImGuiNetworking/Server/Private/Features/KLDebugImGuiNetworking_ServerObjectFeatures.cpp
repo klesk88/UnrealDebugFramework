@@ -15,6 +15,6 @@ FKLDebugImGuiNetworking_ServerObjectFeatures::FKLDebugImGuiNetworking_ServerObje
         mContainerFeatures.Emplace(ContainerType);
     }
 
-    mCachedObject = KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUID(_World, _NetworkID);
+    mCachedObject = KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUIDMutable(_World, _NetworkID);
     ensureMsgf(mCachedObject.IsValid(), TEXT("object pointed should be valid"));
 }

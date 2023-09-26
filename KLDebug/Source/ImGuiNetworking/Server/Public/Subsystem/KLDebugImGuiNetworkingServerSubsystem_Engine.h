@@ -21,9 +21,11 @@ class KLDEBUGIMGUINETWORKINGSERVER_API UKLDebugImGuiNetworkingServerSubsystem_En
     GENERATED_BODY()
 
 public:
+    //UEngineSubsystem
     bool ShouldCreateSubsystem(UObject* _Outer) const final;
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
+    //UEngineSubsystem
 
     UE_NODISCARD static UKLDebugImGuiNetworkingServerSubsystem_Engine* GetMutable();
     UE_NODISCARD static const UKLDebugImGuiNetworkingServerSubsystem_Engine* Get();
