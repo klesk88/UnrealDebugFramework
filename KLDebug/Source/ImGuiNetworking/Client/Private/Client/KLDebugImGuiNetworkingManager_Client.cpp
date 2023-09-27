@@ -2,11 +2,15 @@
 
 //imgui module
 #include "ImGui/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
+#include "ImGui/Public/Feature/Input/KLDebugImGuiGatherFeatureInput.h"
 #include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 //networking runtime module
 #include "ImGuiNetworking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
+#include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_ReceiveDataInput.h"
 #include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
+#include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
 #include "ImGuiNetworking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 
 //utils
@@ -24,6 +28,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Serialization/BitReader.h"
 #include "Serialization/BitWriter.h"
+#include "Serialization/MemoryReader.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 #include "Stats/Stats2.h"
@@ -283,6 +288,17 @@ void FKLDebugImGuiNetworkingManager_Client::TickReadData()
 {   
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TickReadData);
 
+    const UWorld& World = GetWorld();
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
+    const UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+    if (!ImGuiWorldSubsystem || !ImGuiEngineSubsystem)
+    {
+        ensureMsgf(false, TEXT("not expected"));
+        return;
+    }
+
+    const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
+
     uint32 Size = 0;
     int32 BytesRead = 0;
     while (mServerSocket->HasPendingData(Size) && Size > 0)
@@ -295,8 +311,9 @@ void FKLDebugImGuiNetworkingManager_Client::TickReadData()
             continue;
         }
 
-        FNetBitReader Reader(nullptr, mReceiverDataBuffer.GetData(), BytesRead * 8);
-        ReadData(Reader);
+        UPackageMap* PackageMap = GetServerPackageMap();
+        FNetBitReader Reader(PackageMap, mReceiverDataBuffer.GetData(), BytesRead * 8);
+        ReadData(World, FeatureContainerManager, *ImGuiWorldSubsystem, Reader);
     }
 }
 
@@ -314,7 +331,10 @@ void FKLDebugImGuiNetworkingManager_Client::TickWriteData()
     FNetBitWriter Writer(PackageMap, mSendBufferSize * 8);
     WritePendingFeaturesStatusUpdate(Writer);
 
-    static_cast<void>(SendData(*mServerSocket, Writer));
+    if (Writer.GetNumBits() != 0)
+    {
+        static_cast<void>(SendData(*mServerSocket, Writer));
+    }
 }
 
 void FKLDebugImGuiNetworkingManager_Client::TryReconnect()
@@ -354,11 +374,37 @@ void FKLDebugImGuiNetworkingManager_Client::WritePendingFeaturesStatusUpdate(FNe
     mPendingFeaturesStatusUpdates.Reset();
 }
 
-void FKLDebugImGuiNetworkingManager_Client::ReadData(FBitReader& _Reader)
+void FKLDebugImGuiNetworkingManager_Client::ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UKLDebugImGuiWorldSubsystem& _ImGuiWorldSubsystem, FBitReader& _Reader)
 {
-    int32 a = 0;
-    _Reader << a;
-    a = 40;
+    while (!_Reader.AtEnd() && _Reader.GetBytesLeft() > 1)
+    {
+        EKLDebugNetworkMessageTypes MessageType = EKLDebugNetworkMessageTypes::Count;
+        _Reader << MessageType;
+        switch (MessageType)
+        {
+        case EKLDebugNetworkMessageTypes::Server_FeatureDataUpdate:
+        {
+            FKLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate RcvData;
+            RcvData.Read(_World, _Reader);
+            FKLDebugImGuiGatherFeatureInput Input{ RcvData.GetFeatureIndex(), EContainerType::SELECTABLE_OBJECTS, RcvData.GetObject(_World), _FeatureContainerManager };
+            _ImGuiWorldSubsystem.TryGatherFeatureAndContext(Input);
+            IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
+            IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;
+            if (NetworkInterface)
+            {
+                FMemoryReader MemoryReader{ RcvData.GetDataArray() };
+                const FKLDebugImGuiNetworking_ReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
+                NetworkInterface->ReceiveData(RcvDataInput);
+            }
+        }
+        break;
+        default:
+            ensureMsgf(false, TEXT("message not handle"));
+            break;
+        }
+    }
+
+    _Reader.SetAtEnd();
 }
 
 UPackageMap* FKLDebugImGuiNetworkingManager_Client::GetServerPackageMap() const

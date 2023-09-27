@@ -20,6 +20,7 @@
 class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class IKLDebugImGuiFeatureInterfaceBase;
+class FKLDebugImGuiGatherFeatureInput;
 
 UCLASS(Transient)
 class KLDEBUGIMGUI_API UKLDebugImGuiWorldSubsystem final : public UWorldSubsystem
@@ -45,6 +46,8 @@ public:
 
     UE_NODISCARD FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
     void UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle);
+
+    void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
 
 private:
     TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem> GetVisualizer(const EContainerType _ContainerType, const FString& _VisualizerName, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const;

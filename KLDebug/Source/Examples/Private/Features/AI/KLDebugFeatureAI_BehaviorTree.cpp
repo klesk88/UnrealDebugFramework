@@ -8,6 +8,7 @@
 #include "ImGui/Public/Helpers/KLDebugImGuiHelpers.h"
 //imgui networking module
 #include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_GatherDataInput.h"
+#include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_ReceiveDataInput.h"
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
@@ -67,6 +68,11 @@ void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureIn
         checkNoEntry();
         break;
     case ENetMode::NM_Client:
+    {
+        const FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContext<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+        ImGuiDrawBrainInfo(Context);
+        ImGuiDrawBTInfo(Context);
+    }
         break;
     }
 }
@@ -151,4 +157,10 @@ void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiNetworking_Ga
     case EKLDebugImGuiNetworkingEnviroment::Client:
         break;
     }
+}
+
+void FKLDebugFeatureAI_BehaviorTree::ReceiveData(const FKLDebugImGuiNetworking_ReceiveDataInput& _Input)
+{
+    FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+    Context.Network_GatherData(_Input.GetArchiveMutable());
 }

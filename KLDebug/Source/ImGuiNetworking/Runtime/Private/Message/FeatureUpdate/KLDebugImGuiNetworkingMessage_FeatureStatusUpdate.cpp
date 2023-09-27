@@ -13,7 +13,7 @@ FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingMessa
 {
 }
 
-void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::WriteChild(const UWorld& _World, FBitWriter& _BitWriter)
+void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::WriteChild(const UWorld& _World, FArchive& _BitWriter)
 {
     ensureMsgf(mNetworkID.IsValid(), TEXT("must be valid"));
 
@@ -34,7 +34,7 @@ void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::WriteChild(const UWorld
     }
 }
 
-void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::ReadChild(const UWorld& _World, FBitReader& _BitReader)
+void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::ReadChild(const UWorld& _World, FArchive& _BitReader)
 {
     _BitReader << mNetworkID;
     if (!mNetworkID.IsValid())

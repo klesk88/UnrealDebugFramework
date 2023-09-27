@@ -231,7 +231,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
     check(ImGuiEngineSubsystem != nullptr);
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
 
-    while (!_Reader.AtEnd())
+    while (!_Reader.AtEnd() && _Reader.GetBytesLeft() > 1)
     {
         EKLDebugNetworkMessageTypes MessageType = EKLDebugNetworkMessageTypes::Count;
         _Reader << MessageType;
@@ -254,6 +254,7 @@ FKLDebugImGuiNetworkingManager_Server::EReadWriteDataResult FKLDebugImGuiNetwork
         }
     }
 
+    _Reader.SetAtEnd();
     return EReadWriteDataResult::Succeeded;
 }
 

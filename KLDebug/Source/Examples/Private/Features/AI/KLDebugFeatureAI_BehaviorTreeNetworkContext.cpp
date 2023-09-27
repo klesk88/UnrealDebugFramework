@@ -14,7 +14,8 @@
 
 bool FKLDebugFeatureAI_BehaviorTreeNetworkContext::ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const
 {
-    return true;
+    const float TimeSinceReplicated = GetTimeSinceReplicated(_GatherDataInput.GetWorld());
+    return TimeSinceReplicated > 0.5f;
 }
 
 void FKLDebugFeatureAI_BehaviorTreeNetworkContext::UpdateData(const UObject& _OwnerObject)

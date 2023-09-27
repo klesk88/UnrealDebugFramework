@@ -1,8 +1,7 @@
 #include "Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdateData.h"
 
 //engine
-#include "Serialization/BitReader.h"
-#include "Serialization/BitWriter.h"
+#include "Serialization/Archive.h"
 
 FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData::FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData(const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _IsAdded)
     : mFeatureNameID(_FeatureNameID)
@@ -11,14 +10,14 @@ FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData::FKLDebugImGuiNetworkingM
 {
 }
 
-void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData::Write(FBitWriter& _BitWriter)
+void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData::Write(FArchive& _BitWriter)
 {
     _BitWriter << mFeatureNameID;
     _BitWriter << mFeatureIndex;
     _BitWriter << mIsAdded;
 }
 
-void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData::Read(FBitReader& _BitReader)
+void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData::Read(FArchive& _BitReader)
 {
     _BitReader << mFeatureNameID;
     _BitReader << mFeatureIndex;

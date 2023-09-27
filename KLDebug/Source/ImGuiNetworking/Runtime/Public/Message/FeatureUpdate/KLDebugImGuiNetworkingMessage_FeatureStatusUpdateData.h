@@ -6,8 +6,7 @@
 //engine
 #include "UObject/NameTypes.h"
 
-struct FBitReader;
-struct FBitWriter;
+class FArchive;
 
 class KLDEBUGIMGUINETWORKINGRUNTIME_API FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData
 {
@@ -15,8 +14,8 @@ public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData() = default;
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData(const FName& _FeatureNameID, const  KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _IsAdded);
 
-    void Write(FBitWriter& _BitWriter);
-    void Read(FBitReader& _BitReader);
+    void Write(FArchive& _BitWriter);
+    void Read(FArchive& _BitReader);
 
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex Server_GetFeatureIndex() const;
     UE_NODISCARD const FName& Server_GetFeatureNameID() const;

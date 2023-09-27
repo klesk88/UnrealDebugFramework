@@ -5,6 +5,7 @@
 #include "UObject/NameTypes.h"
 
 class FKLDebugImGuiNetworking_GatherDataInput;
+class FKLDebugImGuiNetworking_ReceiveDataInput;
 
 /*
 * interface that can be implemented on features to allow them to send/receive messages from client server
@@ -16,7 +17,8 @@ public:
 
     UE_NODISCARD virtual bool ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const = 0;
     virtual void GatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const = 0;
-    
+    virtual void ReceiveData(const FKLDebugImGuiNetworking_ReceiveDataInput& _Input) = 0;
+
     UE_NODISCARD virtual uint8 GetVersion() const;
     UE_NODISCARD virtual bool Client_InformServerWhenActive() const;
 };

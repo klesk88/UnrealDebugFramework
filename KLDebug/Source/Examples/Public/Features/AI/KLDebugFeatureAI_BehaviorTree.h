@@ -7,6 +7,7 @@
 
 class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
 class FKLDebugImGuiNetworking_GatherDataInput;
+class FKLDebugImGuiNetworking_ReceiveDataInput;
 class UObject;
 
 class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworking_FeatureInterface
@@ -22,6 +23,7 @@ public:
     UE_NODISCARD bool Client_InformServerWhenActive() const final;
     UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const final;
     void GatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const final;
+    void ReceiveData(const FKLDebugImGuiNetworking_ReceiveDataInput& _Input) final;
     //IKLDebugImGuiNetworing_FeatureInterface
 
 private:

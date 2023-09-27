@@ -8,8 +8,11 @@
 //ImGuiNetworking module
 #include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_GatherDataInput.h"
 #include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
+#include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
+
 //engine
 #include "Serialization/Archive.h"
+#include "Serialization/MemoryWriter.h"
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 
@@ -60,6 +63,12 @@ void FKLDebugImGuiNetworkingCacheConnection::RemoveObjectFeatures(const FNetwork
 
 void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive) const
 {
+    TArray<uint8> Data;
+    int32 BytesCount = 0;
+    int32 BytesMax = 0;
+    _Archive.CountBytes(BytesCount, BytesMax);
+    Data.Reserve(BytesMax);
+
     for (const FKLDebugImGuiNetworking_ServerObjectFeatures& Feature : mFeaturesPerObject)
     {
         UObject* OwnerObject = Feature.GetCachedObjectMutable();
@@ -88,10 +97,15 @@ void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const UWor
                     continue;
                 }
 
-                const FKLDebugImGuiNetworking_GatherDataInput GatherDataInput{ _World, EKLDebugImGuiNetworkingEnviroment::Server, *OwnerObject, FeatureData.GetContextMutable(), _Archive };
+                Data.Reset();
+                FMemoryWriter Writer{ Data };
+                const FKLDebugImGuiNetworking_GatherDataInput GatherDataInput{ _World, EKLDebugImGuiNetworkingEnviroment::Server, *OwnerObject, FeatureData.GetContextMutable(), Writer };
                 if (NetworkInterface->ShouldGatherData(GatherDataInput))
                 {
                     NetworkInterface->GatherData(GatherDataInput);
+
+                    FKLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate DataUpdate{ Feature.GetNetworkID(), FeatureData.GetFeatureIndex(), Data };
+                    DataUpdate.Write(_World, _Archive);
                 }
             }
         }

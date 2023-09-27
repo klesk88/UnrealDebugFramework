@@ -21,8 +21,8 @@ public:
     //FKLDebugImGuiNetworkingMessageBase
     UE_NODISCARD EKLDebugNetworkMessageTypes GetMessageType() const final;
     UE_NODISCARD bool CanWrite(const UWorld& _World) const final;
-    void WriteChild(const UWorld& _World, FBitWriter& _BitWriter) final;
-    void ReadChild(const UWorld& _World, FBitReader& _BitReader) final;
+    void WriteChild(const UWorld& _World, FArchive& _BitWriter) final;
+    void ReadChild(const UWorld& _World, FArchive& _BitReader) final;
     //FKLDebugImGuiNetworkingMessageBase
 
     //client

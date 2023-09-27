@@ -16,9 +16,11 @@
 
 class FInternetAddr;
 class FKLDebugImGuiFeatureStatusUpdateData;
+class FKLDebugImGuiFeaturesTypesContainerManager;
 class FNetBitWriter;
 class FSocket;
 class FString;
+class UKLDebugImGuiWorldSubsystem;
 class UPackageMap;
 class UWorld;
 
@@ -53,7 +55,7 @@ private:
 
     void WritePendingFeaturesStatusUpdate(FNetBitWriter& _BitWriter);
 
-    void ReadData(FBitReader& _Reader);
+    void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UKLDebugImGuiWorldSubsystem& _ImGuiWorldSubsystem, FBitReader& _Reader);
 
     UE_NODISCARD UPackageMap* GetServerPackageMap() const;
 

@@ -1,6 +1,6 @@
 #include "Message/KLDebugImGuiNetworkingMessageBase.h"
 
-void FKLDebugImGuiNetworkingMessageBase::Write(const UWorld& _World, FBitWriter& _BitWriter)
+void FKLDebugImGuiNetworkingMessageBase::Write(const UWorld& _World, FArchive& _BitWriter)
 {
     EKLDebugNetworkMessageTypes MessageType = GetMessageType();
     _BitWriter << MessageType;
@@ -8,7 +8,7 @@ void FKLDebugImGuiNetworkingMessageBase::Write(const UWorld& _World, FBitWriter&
     WriteChild(_World, _BitWriter);
 }
 
-void FKLDebugImGuiNetworkingMessageBase::Read(const UWorld& _World, FBitReader& _BitReader)
+void FKLDebugImGuiNetworkingMessageBase::Read(const UWorld& _World, FArchive& _BitReader)
 {
     ReadChild(_World, _BitReader);
 }

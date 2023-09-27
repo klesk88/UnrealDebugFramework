@@ -2,11 +2,14 @@
 
 #include "Config/KLDebugImGuiConfig.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
+#include "Feature/Input/KLDebugImGuiGatherFeatureInput.h"
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
 #include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_ObjectSubsystem.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "Window/KLDebugImGuiWindow.h"
 
@@ -147,6 +150,27 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
 
     SelectedObjectFeatures.GatherFeatures(_Object, Features);
     mSelectedObjectsVisualizers.Emplace(SelectedObjectFeatures, EngineSusbsytem->GetOverlayMaterial(), _Object, MoveTemp(Features));
+}
+
+void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const
+{
+    const FKLDebugImGuiFeaturesTypesContainerManager& ContainerManager = _Input.GetContainerManager();
+    FKLDebugImGuiFeatureContainerBase& Container = ContainerManager.GetContainerMutable(_Input.GetContainerType());
+    IKLDebugImGuiFeatureInterfaceBase& Interface = Container.GetFeatureMutable(_Input.GetFeatureIndex());
+    FKLDebugImGuiFeatureContext_Base* FeatureContext = nullptr;
+
+    if (const UObject* Object = _Input.TryGetObject())
+    {
+        const FKLDebugImGuiFeatureVisualizerSelectableObject* ObjectFeatures = mSelectedObjectsVisualizers.FindByKey(*Object);
+        const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = ObjectFeatures ? ObjectFeatures->TryGetSelectedFeature(_Input.GetFeatureIndex()) : nullptr;
+        FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
+    }
+    else
+    {
+
+    }
+
+    _Input.SetFeatureData(Interface, FeatureContext);
 }
 
 void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)

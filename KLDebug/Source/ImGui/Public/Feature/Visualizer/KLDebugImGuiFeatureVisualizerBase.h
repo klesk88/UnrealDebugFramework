@@ -33,6 +33,8 @@ public:
     void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context);
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeaturesIndexes() const;
 
+    UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+
 protected:
     virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
     virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
@@ -91,4 +93,9 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
 inline const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& FKLDebugImGuiFeatureVisualizerBase::GetFeaturesIndexes() const
 {
     return mFeaturesIndexes;
+}
+
+inline const FKLDebugImGuiFeatureVisualizerEntry* FKLDebugImGuiFeatureVisualizerBase::TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
+{
+    return mSelectedFeaturesIndexes.FindByKey(_FeatureIndex);
 }

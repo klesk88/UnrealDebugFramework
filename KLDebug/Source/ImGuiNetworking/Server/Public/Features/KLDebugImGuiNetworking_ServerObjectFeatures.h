@@ -25,6 +25,7 @@ public:
     UE_NODISCARD const TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures>& GetContainers() const;
     UE_NODISCARD UObject* GetCachedObjectMutable() const;
     UE_NODISCARD const UObject* GetCachedObject() const;
+    UE_NODISCARD const FNetworkGUID& GetNetworkID() const;
 
 private:
     TArray<FKLDebugImGuiNetworking_ServerObjectContainerFeatures> mContainerFeatures;
@@ -62,4 +63,9 @@ inline UObject* FKLDebugImGuiNetworking_ServerObjectFeatures::GetCachedObjectMut
 inline const UObject* FKLDebugImGuiNetworking_ServerObjectFeatures::GetCachedObject() const
 {
     return GetCachedObjectMutable();
+}
+
+inline const FNetworkGUID& FKLDebugImGuiNetworking_ServerObjectFeatures::GetNetworkID() const
+{
+    return mNetworkID;
 }

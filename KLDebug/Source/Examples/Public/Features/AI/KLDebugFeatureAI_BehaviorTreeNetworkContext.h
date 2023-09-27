@@ -6,6 +6,8 @@
 //engine
 #include "Containers/Array.h"
 #include "Containers/UnrealString.h"
+#include "Engine/World.h"
+#include "Math/NumericLimits.h"
 
 class FArchive;
 class FKLDebugImGuiNetworking_GatherDataInput;
@@ -30,6 +32,8 @@ public:
     UE_NODISCARD const FString& GetCurrentAIState() const;
     UE_NODISCARD const FString& GetCurrentAIAssets() const;
 
+    UE_NODISCARD float GetTimeSinceReplicated(const UWorld& _World) const;
+
 private:
     UE_NODISCARD const UBehaviorTreeComponent* GetBTComponent(const UObject& _Object) const;
     UE_NODISCARD const UBrainComponent* GetBrainComponent(const UObject& _Object) const;
@@ -45,6 +49,8 @@ private:
     FString mRepCurrentAIState;
     FString mRepCurrentAIAssets;
     //replicated
+
+    float mLastTimeReplicated = -1.f;
 };
 
 inline const TArray<FString>& FKLDebugFeatureAI_BehaviorTreeNetworkContext::GetBlackboardLines() const
@@ -70,4 +76,9 @@ inline const FString& FKLDebugFeatureAI_BehaviorTreeNetworkContext::GetCurrentAI
 inline const FString& FKLDebugFeatureAI_BehaviorTreeNetworkContext::GetCurrentAIAssets() const
 {
     return mRepCurrentAIAssets;
+}
+
+inline float FKLDebugFeatureAI_BehaviorTreeNetworkContext::GetTimeSinceReplicated(const UWorld& _World) const
+{
+    return mLastTimeReplicated == -1 ? TNumericLimits<float>::Max() : _World.TimeSince(mLastTimeReplicated);
 }
