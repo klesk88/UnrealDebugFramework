@@ -1,7 +1,7 @@
 #pragma once
 
-// imgui module
-#include "ImGui/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
+// imgui user module
+#include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
 
 class UObject;
 

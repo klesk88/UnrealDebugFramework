@@ -1,11 +1,11 @@
 #include "Subsystem/KLDebugImGuiNetworkingServerSubsystem_Engine.h"
 
-//imgui module
-#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
-#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
-#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
-#include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+//modules
+#include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 
 //engine
 #include "Engine/Engine.h"

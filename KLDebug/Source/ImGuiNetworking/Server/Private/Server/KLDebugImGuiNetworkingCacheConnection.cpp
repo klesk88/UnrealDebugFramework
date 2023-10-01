@@ -1,13 +1,12 @@
 #include "Server/KLDebugImGuiNetworkingCacheConnection.h"
 
-//imgui module
-#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
-#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
-#include "ImGui/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
-#include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
-//ImGuiNetworking module
-#include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_GatherDataInput.h"
-#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
+//modules
+#include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
+#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_GatherDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiNetworking_FeatureInterface.h"
 #include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
 
 //engine

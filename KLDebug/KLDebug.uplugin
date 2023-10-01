@@ -25,7 +25,12 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "KLDebugImGui",
+      "Name": "KLDebugImGuiFramework",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiUser",
       "Type": "Runtime",
       "LoadingPhase": "Default"
     },

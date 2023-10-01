@@ -3,8 +3,8 @@
 #include "Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdateData.h"
 #include "Message/KLDebugImGuiNetworkingMessageBase.h"
 
-//imgui module
-#include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
+//modules
+#include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 //engine
 #include "HAL/Platform.h"

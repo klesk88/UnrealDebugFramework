@@ -1,9 +1,8 @@
 #pragma once
 
-// imgui module
-#include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
-//ImGuiNetworking module
-#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
+// imgui user module
+#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiNetworking_FeatureInterface.h"
 
 class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
 class FKLDebugImGuiNetworking_GatherDataInput;

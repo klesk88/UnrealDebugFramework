@@ -18,7 +18,7 @@ public class KLTestRuntime : ModuleRules
             new string[]
             {
                 "KLDebugCore",
-                "KLDebugImGui",
+                "KLDebugImGuiUser",
 
                 //engine
                 "Engine",

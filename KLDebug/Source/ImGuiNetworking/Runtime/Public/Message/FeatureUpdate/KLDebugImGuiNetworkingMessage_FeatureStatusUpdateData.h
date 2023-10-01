@@ -1,7 +1,7 @@
 #pragma once
 
-//imgui module
-#include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
+//modules
+#include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 //engine
 #include "UObject/NameTypes.h"

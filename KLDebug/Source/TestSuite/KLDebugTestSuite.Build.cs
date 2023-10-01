@@ -12,14 +12,16 @@ public class KLDebugTestSuite : ModuleRules
             new string[]
             {
                 Path.Combine(ModuleDirectory, "Private"),
-                Path.Combine(ModuleDirectory, "../ImGui/Private"),
+                Path.Combine(ModuleDirectory, "../ImGui/Framework/Private"),
+                Path.Combine(ModuleDirectory, "../ImGui/User/Private"),
             }
         );
 
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugImGui",
+                "KLDebugImGuiFramework",
+                "KLDebugImGuiUser",
                 "ImGuiThirdParty",
 
                 //engine

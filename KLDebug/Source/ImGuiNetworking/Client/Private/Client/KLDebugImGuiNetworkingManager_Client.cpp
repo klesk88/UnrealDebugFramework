@@ -1,15 +1,14 @@
 #include "Client/KLDebugImGuiNetworkingManager_Client.h"
 
-//imgui module
-#include "ImGui/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
-#include "ImGui/Public/Feature/Input/KLDebugImGuiGatherFeatureInput.h"
-#include "ImGui/Public/Feature/Interface/Private/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
-#include "ImGui/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
-//networking runtime module
+//modules
+#include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
+#include "ImGui/Framework/Public/Feature/Input/KLDebugImGuiGatherFeatureInput.h"
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_ReceiveDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiNetworking_FeatureInterface.h"
 #include "ImGuiNetworking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
-#include "ImGuiNetworking/Runtime/Public/Interface/Input/KLDebugImGuiNetworking_ReceiveDataInput.h"
-#include "ImGuiNetworking/Runtime/Public/Interface/KLDebugImGuiNetworking_FeatureInterface.h"
 #include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
 #include "ImGuiNetworking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 

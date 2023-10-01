@@ -5,14 +5,14 @@
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFilters.h"
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFiltersHelpers.h"
 
-// imgui module
-#include "ImGui/Private/Filter/Tree/KLDebugImGuiFilterTree.h"
-#include "ImGui/Private/Filter/Tree/KLDebugImGuiFilterTreeNode.h"
-#include "ImGui/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
-#include "ImGui/Public/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
-#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureData.h"
-#include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
-#include "ImGui/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
+//modules
+#include "ImGui/Framework/Private/Filter/Tree/KLDebugImGuiFilterTree.h"
+#include "ImGui/Framework/Private/Filter/Tree/KLDebugImGuiFilterTreeNode.h"
+#include "ImGui/Framework/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
+#include "ImGui/Framework/Public/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
+#include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureData.h"
+#include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
+#include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
 
 // engine
 #include "AITestsCommon.h"

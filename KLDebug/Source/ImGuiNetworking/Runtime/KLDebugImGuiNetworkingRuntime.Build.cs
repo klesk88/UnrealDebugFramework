@@ -17,7 +17,7 @@ public class KLDebugImGuiNetworkingRuntime : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugImGui",
+                "KLDebugImGuiFramework",
                 "KLDebugUtils",
 
                 //engine

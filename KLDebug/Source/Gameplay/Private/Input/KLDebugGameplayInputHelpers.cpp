@@ -3,9 +3,8 @@
 #include "Config/KLDebugGameplayConfig.h"
 #include "Input/Config/KLDebugGameplayInputConfig.h"
 
-// KLDebugImGui module
-#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
-// KLDebugUtils module
+// modules
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine

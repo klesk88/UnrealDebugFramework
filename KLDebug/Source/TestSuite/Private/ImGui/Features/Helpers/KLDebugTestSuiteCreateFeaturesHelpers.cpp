@@ -2,8 +2,8 @@
 
 #include "ImGui/Features/Helpers/KLDebugTestSuiteTestFeatures.h"
 
-// imegui module
-#include "ImGui/Public/Feature/Container/KLDebugImGuiFeatureData.h"
+//modules
+#include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureData.h"
 
 // engine
 #include "Containers/UnrealString.h"

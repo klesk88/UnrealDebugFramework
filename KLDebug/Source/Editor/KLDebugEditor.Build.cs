@@ -21,7 +21,7 @@ public class KLDebugEditor : ModuleRules
                 "ImGuiNodeEditor",
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
-                "KLDebugImGui",
+                "KLDebugImGuiFramework",
                 "KLDebugGameplay",
                 "KLDebugUtils",
                 "KLUnrealImGui",

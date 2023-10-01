@@ -2,8 +2,8 @@
 
 #include "Server/KLDebugImGuiNetworkingManager_Server.h"
 
-//imgui module
-#include "ImGui/Public/Feature/KLDebugImGuiFeatureTypes.h"
+//modules
+#include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
 #include "Containers/Map.h"

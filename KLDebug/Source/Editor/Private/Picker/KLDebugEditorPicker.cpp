@@ -1,9 +1,7 @@
 #include "Picker/KLDebugEditorPicker.h"
 
-// KLDebugImGui module
-#include "ImGui/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
-
-// KLUnrealImGui module
+// modules
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 
 // engine

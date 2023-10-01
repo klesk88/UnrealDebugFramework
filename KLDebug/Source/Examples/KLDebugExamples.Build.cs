@@ -11,7 +11,7 @@ public class KLDebugExamples : ModuleRules
         PrivateIncludePaths.AddRange(
             new string[]
             {
-                Path.Combine(ModuleDirectory, "Private"),
+                Path.Combine(ModuleDirectory, "Private")
             }
         );
 
@@ -20,7 +20,8 @@ public class KLDebugExamples : ModuleRules
             {
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
-                "KLDebugImGui",
+                "KLDebugImGuiFramework",
+                "KLDebugImGuiUser",
                 "KLDebugImGuiNetworkingRuntime",
 
                 //engine

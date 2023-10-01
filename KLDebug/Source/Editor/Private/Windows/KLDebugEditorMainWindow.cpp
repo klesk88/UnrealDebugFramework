@@ -3,13 +3,10 @@
 #include "Examples/NetImguiExample.h"
 #include "Examples/NetImguiDemoNodeExample.h"
 
-// ImGuiThirdParty module
+// modules
+#include "ImGui/Framework/Public/Window/KLDebugImGuiWindowDelegates.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-// ImPlotThirdParty module
 #include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
-// KLImGui module
-#include "ImGui/Public/Window/KLDebugImGuiWindowDelegates.h"
-// NetImGuiThirdParty module
 #include "ThirdParty/NetImGuiThirdParty/Public/NetImGuiThirdPartyModule.h"
 
 // engine

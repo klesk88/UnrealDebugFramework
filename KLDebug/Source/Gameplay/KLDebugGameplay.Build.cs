@@ -18,7 +18,7 @@ public class KLDebugGameplay : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugImGui",
+                "KLDebugImGuiFramework",
                 "KLDebugUtils",
 
                 //engine
@@ -28,6 +28,7 @@ public class KLDebugGameplay : ModuleRules
                 "EnhancedInput",
                 "InputCore",
                 "Slate",
+                "StructUtils"
             }
             );
 

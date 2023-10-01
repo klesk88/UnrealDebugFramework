@@ -2,12 +2,10 @@
 
 #include "Extender/KLDebugEditorMenuExtender_Style.h"
 
-// KLDebugImGui module
-#include "ImGui/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
-// KLUnrealImGui
-#include "UnrealImGui/Public/KLUnrealImGuiModule.h"
-// UnrealImGui
+//modules
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ThirdParty/UnrealImGui/Public/ImGuiModuleProperties.h"
+#include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 
 // engine
 #include "Framework/MultiBox/MultiBoxBuilder.h"

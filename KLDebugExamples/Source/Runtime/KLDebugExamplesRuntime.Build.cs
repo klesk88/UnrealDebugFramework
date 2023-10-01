@@ -19,7 +19,7 @@ public class KLDebugExamplesRuntime : ModuleRules
             {
                 "KLDebugCore",
 				"KLDebugGameplay",
-                "KLDebugImGui",
+                "KLDebugImGuiUser",
 
                 //engine
                 "Engine",
