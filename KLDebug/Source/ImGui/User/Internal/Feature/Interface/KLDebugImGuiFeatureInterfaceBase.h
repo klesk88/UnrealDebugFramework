@@ -13,7 +13,7 @@
 
 class FKLDebugImGuiFeatureContextInput;
 class IKLDebugImGuiFilterInterface;
-class IKLDebugImGuiNetworking_FeatureInterface;
+class IKLDebugImGuiFeature_NetworkingInterface;
 class UWorld;
 
 #define DERIVED_KL_DEBUG_FEATURE_CLASS(ItemType, ParentItemType)                                      \
@@ -51,9 +51,9 @@ public:                                                                         
         return nullptr;                                                                               \
     }                                                                                                 \
                                                                                                       \
-    UE_NODISCARD IKLDebugImGuiNetworking_FeatureInterface* TryGetNetworkInterfaceMutable() override   \
+    UE_NODISCARD IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable() override   \
     {                                                                                                 \
-        if(IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = TryCastToInterfaceMutable<IKLDebugImGuiNetworking_FeatureInterface>()) \
+        if(IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = TryCastToInterfaceMutable<IKLDebugImGuiFeature_NetworkingInterface>()) \
         {                                                                                               \
             return NetworkInterface;                                                                    \
         }                                                                                               \
@@ -61,9 +61,9 @@ public:                                                                         
         return ParentItemType::TryGetNetworkInterfaceMutable();                                         \
     }                                                                                                   \
                                                                                                         \
-    UE_NODISCARD const IKLDebugImGuiNetworking_FeatureInterface* TryGetNetworkInterface() const override \
+    UE_NODISCARD const IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterface() const override \
     {                                                                                                   \
-        if (const IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = TryCastToInterface<IKLDebugImGuiNetworking_FeatureInterface>())\
+        if (const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = TryCastToInterface<IKLDebugImGuiFeature_NetworkingInterface>())\
         {                                                                                             \
             return NetworkInterface;                                                                  \
         }                                                                                             \
@@ -109,8 +109,8 @@ public:
     UE_NODISCARD virtual TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const;
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
-    UE_NODISCARD virtual IKLDebugImGuiNetworking_FeatureInterface* TryGetNetworkInterfaceMutable();
-    UE_NODISCARD virtual const IKLDebugImGuiNetworking_FeatureInterface* TryGetNetworkInterface() const;
+    UE_NODISCARD virtual IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable();
+    UE_NODISCARD virtual const IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterface() const;
     //DERIVED_KL_DEBUG_FEATURE_CLASS
 
     template<typename FeatureType>
@@ -153,12 +153,12 @@ inline TUniquePtr<FKLDebugImGuiFeatureContext_Base> IKLDebugImGuiFeatureInterfac
     return nullptr;
 }
 
-inline IKLDebugImGuiNetworking_FeatureInterface* IKLDebugImGuiFeatureInterfaceBase::TryGetNetworkInterfaceMutable()
+inline IKLDebugImGuiFeature_NetworkingInterface* IKLDebugImGuiFeatureInterfaceBase::TryGetNetworkInterfaceMutable()
 {
     return nullptr;
 }
 
-inline const IKLDebugImGuiNetworking_FeatureInterface* IKLDebugImGuiFeatureInterfaceBase::TryGetNetworkInterface() const
+inline const IKLDebugImGuiFeature_NetworkingInterface* IKLDebugImGuiFeatureInterfaceBase::TryGetNetworkInterface() const
 {
     return nullptr;
 }

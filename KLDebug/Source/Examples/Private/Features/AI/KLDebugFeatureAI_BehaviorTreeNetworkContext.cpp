@@ -1,7 +1,7 @@
 #include "Features/AI/KLDebugFeatureAI_BehaviorTreeNetworkContext.h"
 
-//ImGui user module
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_GatherDataInput.h"
+//modules
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 
 // engine
 #include "AIController.h"
@@ -12,7 +12,7 @@
 #include "GameFramework/Pawn.h"
 #include "Serialization/Archive.h"
 
-bool FKLDebugFeatureAI_BehaviorTreeNetworkContext::ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const
+bool FKLDebugFeatureAI_BehaviorTreeNetworkContext::ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
 {
     const float TimeSinceReplicated = GetTimeSinceReplicated(_GatherDataInput.GetWorld());
     return TimeSinceReplicated > 0.5f;

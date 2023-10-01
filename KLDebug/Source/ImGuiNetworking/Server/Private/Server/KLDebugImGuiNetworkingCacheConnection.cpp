@@ -5,8 +5,8 @@
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_GatherDataInput.h"
-#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiNetworking_FeatureInterface.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
 
 //engine
@@ -89,7 +89,7 @@ void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const UWor
             for (const FKLDebugImGuiNetworking_ServerObjectFeatureData& FeatureData : FeaturesList)
             {
                 const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureData.GetFeatureIndex());
-                const IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+                const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
                 if (!NetworkInterface)
                 {
                     ensureMsgf(false, TEXT("NetworkInterface must be valid at this point"));
@@ -98,7 +98,7 @@ void FKLDebugImGuiNetworkingCacheConnection::Write_ConnectionFeatures(const UWor
 
                 Data.Reset();
                 FMemoryWriter Writer{ Data };
-                const FKLDebugImGuiNetworking_GatherDataInput GatherDataInput{ _World, EKLDebugImGuiNetworkingEnviroment::Server, *OwnerObject, FeatureData.GetContextMutable(), Writer };
+                const FKLDebugImGuiFeature_NetworkingGatherDataInput GatherDataInput{ _World, EKLDebugImGuiNetworkingEnviroment::Server, *OwnerObject, FeatureData.GetContextMutable(), Writer };
                 if (NetworkInterface->ShouldGatherData(GatherDataInput))
                 {
                     NetworkInterface->GatherData(GatherDataInput);

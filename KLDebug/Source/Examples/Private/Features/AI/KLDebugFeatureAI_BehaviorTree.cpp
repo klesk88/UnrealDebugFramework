@@ -5,8 +5,8 @@
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 //modules
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_GatherDataInput.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_ReceiveDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
@@ -135,13 +135,13 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBTInfo(const FKLDebugFeatureAI_Beh
     KL::Debug::ImGuiHelpers::DrawColoredText(FColor::Yellow, _Context.GetCurrentAITask());
 }
 
-bool FKLDebugFeatureAI_BehaviorTree::ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const
+bool FKLDebugFeatureAI_BehaviorTree::ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
 {
     const FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContext<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
     return Context.ShouldGatherData(_GatherDataInput);
 }
 
-void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const
+void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
 {
     switch (_GatherDataInput.GetCurrentEnviroment())
     {
@@ -158,7 +158,7 @@ void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiNetworking_Ga
     }
 }
 
-void FKLDebugFeatureAI_BehaviorTree::ReceiveData(const FKLDebugImGuiNetworking_ReceiveDataInput& _Input)
+void FKLDebugFeatureAI_BehaviorTree::ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
 {
     FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
     Context.Network_GatherData(_Input.GetArchiveMutable());

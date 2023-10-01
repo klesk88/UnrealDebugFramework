@@ -2,14 +2,14 @@
 
 // imgui user module
 #include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
-#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiNetworking_FeatureInterface.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 
 class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
-class FKLDebugImGuiNetworking_GatherDataInput;
-class FKLDebugImGuiNetworking_ReceiveDataInput;
+class FKLDebugImGuiFeature_NetworkingGatherDataInput;
+class FKLDebugImGuiFeature_NetworkingReceiveDataInput;
 class UObject;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiNetworking_FeatureInterface
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_SelectableObject, public IKLDebugImGuiFeature_NetworkingInterface
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_BehaviorTree, IKLDebugImGuiFeatureInterface_SelectableObject)
 
@@ -20,9 +20,9 @@ public:
 
     //IKLDebugImGuiNetworing_FeatureInterface
     UE_NODISCARD bool Client_InformServerWhenActive() const final;
-    UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const final;
-    void GatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const final;
-    void ReceiveData(const FKLDebugImGuiNetworking_ReceiveDataInput& _Input) final;
+    UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
+    void GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
+    void ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
     //IKLDebugImGuiNetworing_FeatureInterface
 
 private:

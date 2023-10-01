@@ -10,7 +10,7 @@
 #include "Math/NumericLimits.h"
 
 class FArchive;
-class FKLDebugImGuiNetworking_GatherDataInput;
+class FKLDebugImGuiFeature_NetworkingGatherDataInput;
 class UBehaviorTreeComponent;
 class UBrainComponent;
 class UObject;
@@ -20,7 +20,7 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTreeNetworkContext final : p
     DERIVED_KL_DEBUG_FEATURE_CONTEXT_CLASS(FKLDebugFeatureAI_BehaviorTreeNetworkContext, FKLDebugImGuiFeatureContext_Base)
 
 public:
-    UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiNetworking_GatherDataInput& _GatherDataInput) const;
+    UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const;
 
     void UpdateData(const UObject& _OwnerObject);
 

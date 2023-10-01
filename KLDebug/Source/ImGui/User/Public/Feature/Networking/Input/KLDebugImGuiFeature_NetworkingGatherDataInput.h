@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
-#include "Feature/Networking/Input/KLDebugImGuiNetworkingFeatureInputDefines.h"
+#include "Feature/Networking/Input/KLDebugImGuiFeature_NetworkingInputDefines.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -14,10 +14,10 @@ class UWorld;
 
 /*
  */
-class KLDEBUGIMGUIUSER_API FKLDebugImGuiNetworking_GatherDataInput final : public FNoncopyable
+class KLDEBUGIMGUIUSER_API FKLDebugImGuiFeature_NetworkingGatherDataInput final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiNetworking_GatherDataInput(const UWorld& _World, const EKLDebugImGuiNetworkingEnviroment _Enviroment, UObject& _OwnerObject, FKLDebugImGuiFeatureContext_Base* _ContextData, FArchive& _Archive);
+    explicit FKLDebugImGuiFeature_NetworkingGatherDataInput(const UWorld& _World, const EKLDebugImGuiNetworkingEnviroment _Enviroment, UObject& _OwnerObject, FKLDebugImGuiFeatureContext_Base* _ContextData, FArchive& _Archive);
 
     UE_NODISCARD EKLDebugImGuiNetworkingEnviroment GetCurrentEnviroment() const;
     UE_NODISCARD const UWorld& GetWorld() const;
@@ -43,33 +43,33 @@ private:
     EKLDebugImGuiNetworkingEnviroment mCurrentEnviroment = EKLDebugImGuiNetworkingEnviroment::Count;
 };
 
-inline EKLDebugImGuiNetworkingEnviroment FKLDebugImGuiNetworking_GatherDataInput::GetCurrentEnviroment() const
+inline EKLDebugImGuiNetworkingEnviroment FKLDebugImGuiFeature_NetworkingGatherDataInput::GetCurrentEnviroment() const
 {
     return mCurrentEnviroment;
 }
 
-inline UObject& FKLDebugImGuiNetworking_GatherDataInput::GetOwnerObjectMutable() const
+inline UObject& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetOwnerObjectMutable() const
 {
     return mOwnerObject;
 }
 
-inline const UObject& FKLDebugImGuiNetworking_GatherDataInput::GetOwnerObject() const
+inline const UObject& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetOwnerObject() const
 {
     return GetOwnerObjectMutable();
 }
 
-inline const UWorld& FKLDebugImGuiNetworking_GatherDataInput::GetWorld() const
+inline const UWorld& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetWorld() const
 {
     return mWorld;
 }
 
-inline FArchive& FKLDebugImGuiNetworking_GatherDataInput::GetArchiveMutable() const
+inline FArchive& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetArchiveMutable() const
 {
     return mArchive;
 }
 
 template<typename ContextType>
-inline ContextType& FKLDebugImGuiNetworking_GatherDataInput::GetContextMutable() const
+inline ContextType& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetContextMutable() const
 {
     checkf(mContextData && mContextData->IsDerivedFrom<ContextType>(), TEXT("casting to wrong type or calling to a nullptr. User is expected to call this method only when a context is valid on the right type"));
 
@@ -77,7 +77,7 @@ inline ContextType& FKLDebugImGuiNetworking_GatherDataInput::GetContextMutable()
 }
 
 template<typename ContextType>
-inline const ContextType& FKLDebugImGuiNetworking_GatherDataInput::GetContext() const
+inline const ContextType& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetContext() const
 {
     return GetContextMutable<ContextType>();
 }

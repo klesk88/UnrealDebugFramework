@@ -6,8 +6,8 @@
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiNetworking_ReceiveDataInput.h"
-#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiNetworking_FeatureInterface.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "ImGuiNetworking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "ImGuiNetworking/Runtime/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
 #include "ImGuiNetworking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
@@ -159,7 +159,7 @@ void FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate(const FKLDebugImGuiF
     for (; FeaturesIterator; ++FeaturesIterator)
     {
         const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-        const IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+        const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
         if (!NetworkInterface || !NetworkInterface->Client_InformServerWhenActive())
         {
             continue;
@@ -388,11 +388,11 @@ void FKLDebugImGuiNetworkingManager_Client::ReadData(const UWorld& _World, const
             FKLDebugImGuiGatherFeatureInput Input{ RcvData.GetFeatureIndex(), EContainerType::SELECTABLE_OBJECTS, RcvData.GetObject(_World), _FeatureContainerManager };
             _ImGuiWorldSubsystem.TryGatherFeatureAndContext(Input);
             IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
-            IKLDebugImGuiNetworking_FeatureInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;
+            IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;
             if (NetworkInterface)
             {
                 FMemoryReader MemoryReader{ RcvData.GetDataArray() };
-                const FKLDebugImGuiNetworking_ReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
+                const FKLDebugImGuiFeature_NetworkingReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
                 NetworkInterface->ReceiveData(RcvDataInput);
             }
         }

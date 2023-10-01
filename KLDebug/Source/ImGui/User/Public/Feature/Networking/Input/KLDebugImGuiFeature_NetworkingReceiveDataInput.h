@@ -11,10 +11,10 @@ class UWorld;
 
 /*
  */
-class KLDEBUGIMGUIUSER_API FKLDebugImGuiNetworking_ReceiveDataInput final : public FNoncopyable
+class KLDEBUGIMGUIUSER_API FKLDebugImGuiFeature_NetworkingReceiveDataInput final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiNetworking_ReceiveDataInput(const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _FeatureContext, FArchive& _Archive);
+    explicit FKLDebugImGuiFeature_NetworkingReceiveDataInput(const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _FeatureContext, FArchive& _Archive);
 
     UE_NODISCARD const UWorld& GetWorld() const;
     UE_NODISCARD FArchive& GetArchiveMutable() const;
@@ -35,18 +35,18 @@ private:
     FArchive& mArchive;
 };
 
-inline const UWorld& FKLDebugImGuiNetworking_ReceiveDataInput::GetWorld() const
+inline const UWorld& FKLDebugImGuiFeature_NetworkingReceiveDataInput::GetWorld() const
 {
     return mWorld;
 }
 
-inline FArchive& FKLDebugImGuiNetworking_ReceiveDataInput::GetArchiveMutable() const
+inline FArchive& FKLDebugImGuiFeature_NetworkingReceiveDataInput::GetArchiveMutable() const
 {
     return mArchive;
 }
 
 template<typename ContextType>
-inline ContextType& FKLDebugImGuiNetworking_ReceiveDataInput::GetContextMutable() const
+inline ContextType& FKLDebugImGuiFeature_NetworkingReceiveDataInput::GetContextMutable() const
 {
     checkf(mContextData && mContextData->IsDerivedFrom<ContextType>(), TEXT("casting to wrong type or calling to a nullptr. User is expected to call this method only when a context is valid on the right type"));
 
@@ -54,7 +54,7 @@ inline ContextType& FKLDebugImGuiNetworking_ReceiveDataInput::GetContextMutable(
 }
 
 template<typename ContextType>
-inline const ContextType& FKLDebugImGuiNetworking_ReceiveDataInput::GetContext() const
+inline const ContextType& FKLDebugImGuiFeature_NetworkingReceiveDataInput::GetContext() const
 {
     return GetContextMutable<ContextType>();
 }
