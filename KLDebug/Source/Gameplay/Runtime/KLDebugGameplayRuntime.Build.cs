@@ -1,32 +1,37 @@
+using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
-public class KLDebugExamplesRuntime : ModuleRules
+public class KLDebugGameplayRuntime : ModuleRules
 {
-    public KLDebugExamplesRuntime(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugGameplayRuntime(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PrivateIncludePaths.AddRange(
-          new string[]
-          {
+            new string[]
+            {
                 Path.Combine(ModuleDirectory, "Private"),
-          }
+            }
         );
 
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugCore",
-                "KLDebugGameplayRuntime",
-                "KLDebugImGuiUser",
+                "KLDebugImGuiFramework",
+                "KLDebugUtils",
 
                 //engine
+                "ApplicationCore",
+                "DeveloperSettings",
                 "Engine",
-                "GameplayTags",
-                "StructUtils",
+                "EnhancedInput",
+                "InputCore",
+                "Slate",
+                "StructUtils"
             }
-        );
+            );
+
 
         PrivateDependencyModuleNames.AddRange(
             new string[]
@@ -34,6 +39,6 @@ public class KLDebugExamplesRuntime : ModuleRules
                 "Core",
                 "CoreUObject"
             }
-        );
+         );
     }
 }
