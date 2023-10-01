@@ -40,7 +40,12 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "KLDebugImGuiNetworkingRuntime",
+      "Name": "KLDebugImGuiNetworking",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugNetworkingRuntime",
       "Type": "Runtime",
       "LoadingPhase": "Default"
     },
@@ -80,14 +85,14 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "KLDebugImGuiNetworkingClient",
+      "Name": "KLDebugImGuiClient",
       "Type": "ClientOnlyNoCommandlet",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "PostEngineInit"
     },
     {
-      "Name": "KLDebugImGuiNetworkingServer",
+      "Name": "KLDebugImGuiServer",
       "Type": "ServerOnly",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "PostEngineInit"
     },
     {
       "Name": "KLDebugGameplayEditor",
