@@ -49,7 +49,7 @@ const FName& FKLDebugFeatureAI_BehaviorTree::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Selectable& _Input)
+void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
     switch (_Input.GetWorld().GetNetMode())
     {

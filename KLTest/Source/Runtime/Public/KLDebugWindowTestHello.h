@@ -2,7 +2,7 @@
 //
 // #if WITH_KL_DEBUGGER
 //
-// #include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
+// #include "ImGui/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
 //
 //// engine
 // #include "Containers/UnrealString.h"
@@ -10,7 +10,7 @@
 //
 // class UObject;
 //
-// class FKLDebugWindowTest12 final : public IKLDebugImGuiFeatureInterface_SelectableObject
+// class FKLDebugWindowTest12 final : public IKLDebugImGuiFeatureInterface_Selectable
 //{
 // public:
 //     const FName& GetImGuiPath() const final;
@@ -21,7 +21,7 @@
 //     bool TestVAlue = false;
 // };
 //
-// class FKLDebugWindowTest34 final : public IKLDebugImGuiFeatureInterface_SelectableObject
+// class FKLDebugWindowTest34 final : public IKLDebugImGuiFeatureInterface_Selectable
 //{
 // public:
 //     const FName& GetImGuiPath() const final;

@@ -3,9 +3,9 @@
 //modules
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
-#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 //engine
 #include "Engine/Engine.h"
@@ -73,18 +73,18 @@ void UKLDebugImGuiServerSubsystem_Engine::CookedOnly_InitFeatureMapIfNeeded()
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
 
     uint32 OverallSize = 0;
-    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
+    for (int32 i = 0; i < static_cast<int32>(EImGuiInterfaceType::COUNT); ++i)
     {
-        const EContainerType ContainerType = static_cast<EContainerType>(i);
+        const EImGuiInterfaceType ContainerType = static_cast<EImGuiInterfaceType>(i);
         const FKLDebugImGuiFeatureContainerBase& Container = FeatureContainerManager.GetContainer(ContainerType);
         OverallSize += Container.GetFeaturesCount();
     }
 
     mCookOnly_FeatureToContainerIndex.Reserve(OverallSize);
 
-    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
+    for (int32 i = 0; i < static_cast<int32>(EImGuiInterfaceType::COUNT); ++i)
     {
-        const EContainerType ContainerType = static_cast<EContainerType>(i);
+        const EImGuiInterfaceType ContainerType = static_cast<EImGuiInterfaceType>(i);
         const FKLDebugImGuiFeatureContainerBase& Container = FeatureContainerManager.GetContainer(ContainerType);
         FKLDebugImGuiFeaturesConstIterator FeatureIterator = Container.GetFeaturesConstIterator();
         for (; FeatureIterator; ++FeatureIterator)

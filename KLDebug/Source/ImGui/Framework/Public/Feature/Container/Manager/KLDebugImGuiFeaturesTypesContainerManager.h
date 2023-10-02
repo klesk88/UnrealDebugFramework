@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -21,20 +22,20 @@ public:
     void Initialize();
     void Shutdown();
 
-    UE_NODISCARD const FKLDebugImGuiFeatureContainerBase& GetContainer(const EContainerType _Type) const;
-    UE_NODISCARD FKLDebugImGuiFeatureContainerBase&       GetContainerMutable(const EContainerType _Type) const;
+    UE_NODISCARD const FKLDebugImGuiFeatureContainerBase& GetContainer(const EImGuiInterfaceType _Type) const;
+    UE_NODISCARD FKLDebugImGuiFeatureContainerBase&       GetContainerMutable(const EImGuiInterfaceType _Type) const;
 
 private:
     void CreateContainers();
     void GatherFeatures() const;
 
-    void GetContainerAndOffset(const EContainerType _ContainerType, TArray<uint32>& ContainersOffset, FKLDebugImGuiFeatureContainerBase*& _OutContainer, uint32*& _OutOffset);
+    void GetContainerAndOffset(const EImGuiInterfaceType _ContainerType, TArray<uint32>& ContainersOffset, FKLDebugImGuiFeatureContainerBase*& _OutContainer, uint32*& _OutOffset);
 
 private:
     TArray<TUniquePtr<FKLDebugImGuiFeatureContainerBase>> mContainers;
 };
 
-inline const FKLDebugImGuiFeatureContainerBase& FKLDebugImGuiFeaturesTypesContainerManager::GetContainer(const EContainerType _Type) const
+inline const FKLDebugImGuiFeatureContainerBase& FKLDebugImGuiFeaturesTypesContainerManager::GetContainer(const EImGuiInterfaceType _Type) const
 {
     return GetContainerMutable(_Type);
 }

@@ -9,6 +9,9 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -24,8 +27,11 @@ class UWorld;
 class FKLDebugImGuiFeatureVisualizerBase : public FNoncopyable
 {
 public:
+    explicit FKLDebugImGuiFeatureVisualizerBase() = default;
     explicit FKLDebugImGuiFeatureVisualizerBase(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     virtual ~FKLDebugImGuiFeatureVisualizerBase() = default;
+
+    void Init(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
 
     UE_NODISCARD virtual bool IsValid() const;
     virtual void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const = 0;
@@ -35,31 +41,34 @@ public:
 
     UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
+    UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const;
+
 protected:
     virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
     virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
 
     template<typename CallbackType>
-    void DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const EContainerType _ContainerType, const UObject& _OwnerObject, const CallbackType& _Callback);
+    void DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const UObject& _OwnerObject, const CallbackType& _Callback);
 
 protected:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;
     TArray<FKLDebugImGuiFeatureVisualizerEntry>             mSelectedFeaturesIndexes;
     FKLDebugImGuiFeatureVisualizerTree                      mTreeVisualizer;
+    EImGuiInterfaceType                                     mInterfaceType = EImGuiInterfaceType::COUNT;
 };
 
 inline bool FKLDebugImGuiFeatureVisualizerBase::IsValid() const
 {
-    return true;
+    return mInterfaceType != EImGuiInterfaceType::COUNT;
 }
 
 template<typename CallbackType>
-void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const EContainerType _ContainerType, const UObject& _OwnerObject, const CallbackType& _Callback)
+void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const UObject& _OwnerObject, const CallbackType& _Callback)
 {
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesToRemove;
     FeaturesToRemove.Reserve(30);
 
-    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(_ContainerType);
+    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(mInterfaceType);
     FKLDebugImGuiFeatureVisualizerIterator Iterator = FeatureContainer.GetFeatureVisualizerIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
@@ -80,7 +89,7 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
     if (_Context.GetFeatureUpdateDelegate().IsBound() && !FeaturesToRemove.IsEmpty())
     {
         FKLDebugImGuiSubsetFeaturesConstIterator RemovedIterator = FeatureContainer.GetFeaturesSubsetConstIterator(FeaturesToRemove);
-        FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, _ContainerType, _OwnerObject, RemovedIterator };
+        FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, mInterfaceType, _OwnerObject, RemovedIterator };
         if (mSelectedFeaturesIndexes.IsEmpty())
         {
             DelegateData.SetFullyRemoved();
@@ -98,4 +107,9 @@ inline const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& FKLDebugIm
 inline const FKLDebugImGuiFeatureVisualizerEntry* FKLDebugImGuiFeatureVisualizerBase::TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
 {
     return mSelectedFeaturesIndexes.FindByKey(_FeatureIndex);
+}
+
+inline EImGuiInterfaceType FKLDebugImGuiFeatureVisualizerBase::GetInterfaceType() const
+{
+    return mInterfaceType;
 }

@@ -6,6 +6,9 @@
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 #include "Feature/Visualizer/Iterator/KLDebugImGuiFeatureVisualizerIterator.h"
 
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -28,6 +31,7 @@ public:
     virtual ~FKLDebugImGuiFeatureContainerBase() = default;
 
     UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const = 0;
+    UE_NODISCARD virtual EImGuiInterfaceType GetContainerType() const = 0;
 
     UE_NODISCARD bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const;
     UE_NODISCARD uint32 GetFeaturesCount() const;

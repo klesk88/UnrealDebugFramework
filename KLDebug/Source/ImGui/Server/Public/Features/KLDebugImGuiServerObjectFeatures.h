@@ -19,8 +19,8 @@ public:
     explicit FKLDebugImGuiServerObjectFeatures(const UWorld& _World, const FNetworkGUID& _NetworkID);
     UE_NODISCARD bool operator==(const FNetworkGUID& _NetworkID) const;
 
-    UE_NODISCARD const FKLDebugImGuiServerObjectContainerFeatures& GetContainer(const EContainerType& _ContainerType) const;
-    UE_NODISCARD FKLDebugImGuiServerObjectContainerFeatures& GetContainerMutable(const EContainerType& _ContainerType);
+    UE_NODISCARD const FKLDebugImGuiServerObjectContainerFeatures& GetContainer(const EImGuiInterfaceType& _ContainerType) const;
+    UE_NODISCARD FKLDebugImGuiServerObjectContainerFeatures& GetContainerMutable(const EImGuiInterfaceType& _ContainerType);
 
     UE_NODISCARD const TArray<FKLDebugImGuiServerObjectContainerFeatures>& GetContainers() const;
     UE_NODISCARD UObject* GetCachedObjectMutable() const;
@@ -38,15 +38,15 @@ inline bool FKLDebugImGuiServerObjectFeatures::operator==(const FNetworkGUID& _N
     return mNetworkID == _NetworkID;
 }
 
-inline const FKLDebugImGuiServerObjectContainerFeatures& FKLDebugImGuiServerObjectFeatures::GetContainer(const EContainerType& _ContainerType) const
+inline const FKLDebugImGuiServerObjectContainerFeatures& FKLDebugImGuiServerObjectFeatures::GetContainer(const EImGuiInterfaceType& _ContainerType) const
 {
-    check(_ContainerType != EContainerType::COUNT);
+    check(_ContainerType != EImGuiInterfaceType::COUNT);
     return mContainerFeatures[static_cast<int32>(_ContainerType)];
 }
 
-inline FKLDebugImGuiServerObjectContainerFeatures& FKLDebugImGuiServerObjectFeatures::GetContainerMutable(const EContainerType& _ContainerType)
+inline FKLDebugImGuiServerObjectContainerFeatures& FKLDebugImGuiServerObjectFeatures::GetContainerMutable(const EImGuiInterfaceType& _ContainerType)
 {
-    check(_ContainerType != EContainerType::COUNT);
+    check(_ContainerType != EImGuiInterfaceType::COUNT);
     return mContainerFeatures[static_cast<int32>(_ContainerType)];
 }
 

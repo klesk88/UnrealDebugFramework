@@ -24,11 +24,9 @@ public class KLDebugImGuiClient : ModuleRules
                 "KLDebugUtils",
 
                 //engine
-                "DeveloperSettings",
                 "Engine",
                 "Networking",
-                "Sockets",
-                "StructUtils"
+                "Sockets"
             }
         );
 

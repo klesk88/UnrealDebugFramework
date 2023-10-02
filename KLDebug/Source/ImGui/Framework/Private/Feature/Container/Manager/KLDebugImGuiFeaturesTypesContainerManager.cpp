@@ -1,9 +1,8 @@
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 
-#include "Feature/Container/EngineSubsystem/KLDebugImGuiFeatureContainer_EngineSubsystem.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
-#include "Feature/Container/ObjectSubsystem/KLDebugImGuiFeatureContainer_ObjectSubsystem.h"
-#include "Feature/Container/SelectableObject/KLDebugImGuiFeatureContainer_SelectableObject.h"
+#include "Feature/Container/Selectable/KLDebugImGuiFeatureContainer_Selectable.h"
+#include "Feature/Container/Unique/KLDebugImGuiFeatureContainer_Unique.h"
 
 //modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
@@ -34,15 +33,15 @@ void FKLDebugImGuiFeaturesTypesContainerManager::Shutdown()
     mContainers.Empty();
 }
 
-FKLDebugImGuiFeatureContainerBase& FKLDebugImGuiFeaturesTypesContainerManager::GetContainerMutable(const EContainerType _Type) const
+FKLDebugImGuiFeatureContainerBase& FKLDebugImGuiFeaturesTypesContainerManager::GetContainerMutable(const EImGuiInterfaceType _Type) const
 {
-    check(_Type != EContainerType::COUNT);
+    check(_Type != EImGuiInterfaceType::COUNT);
 
     const TUniquePtr<FKLDebugImGuiFeatureContainerBase>& Container = mContainers[static_cast<int32>(_Type)];
     return *Container.Get();
 }
 
-void FKLDebugImGuiFeaturesTypesContainerManager::GetContainerAndOffset(const EContainerType _ContainerType, TArray<uint32>& ContainersOffset, FKLDebugImGuiFeatureContainerBase*& _OutContainer, uint32*& _OutOffset)
+void FKLDebugImGuiFeaturesTypesContainerManager::GetContainerAndOffset(const EImGuiInterfaceType _ContainerType, TArray<uint32>& ContainersOffset, FKLDebugImGuiFeatureContainerBase*& _OutContainer, uint32*& _OutOffset)
 {
     _OutContainer = mContainers[static_cast<int32>(_ContainerType)].Get();
     _OutOffset    = &ContainersOffset[static_cast<int32>(_ContainerType)];
@@ -50,29 +49,17 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GetContainerAndOffset(const ECo
 
 void FKLDebugImGuiFeaturesTypesContainerManager::CreateContainers()
 {
-    mContainers.Reserve(static_cast<int32>(EContainerType::COUNT));
+    mContainers.Reserve(static_cast<int32>(EImGuiInterfaceType::COUNT));
 
-    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
+    for (int32 i = 0; i < static_cast<int32>(EImGuiInterfaceType::COUNT); ++i)
     {
-        switch (static_cast<EContainerType>(i))
+        switch (static_cast<EImGuiInterfaceType>(i))
         {
-            case EContainerType::SELECTABLE_OBJECTS:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_SelectableObject>());
+            case EImGuiInterfaceType::SELECTABLE:
+                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_Selectable>());
                 break;
-            case EContainerType::ENGINE_SUBSYTSTEM:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_EngineSubsystem>());
-                break;
-            case EContainerType::EDITOR_SUBSYSTEM:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_ObjectSubsystem>(EObjectSubsytemType::EDITOR));
-                break;
-            case EContainerType::GAME_INSTANCE_SUBSYSTEM:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_ObjectSubsystem>(EObjectSubsytemType::GAME_INSTANCE));
-                break;
-            case EContainerType::LOCAL_PLAYER_SUBSYSTEM:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_ObjectSubsystem>(EObjectSubsytemType::LOCAL_PLAYER));
-                break;
-            case EContainerType::WORLD_SUBSYSTEM:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_ObjectSubsystem>(EObjectSubsytemType::WORLD));
+            case EImGuiInterfaceType::UNIQUE:
+                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_Unique>());
                 break;
             default:
                 checkNoEntry();
@@ -88,9 +75,6 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
 
     const FKLDebugImGuiFeatureManager& FeatureManager = FKLDebugImGuiFeatureManager::Get();
 
-    TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> TempAllocatedFeature;
-    TempAllocatedFeature.AddZeroed(FeatureManager.GetLargestEntrySize());
-
     for (const TUniquePtr<FKLDebugImGuiFeatureContainerBase>& FeatureContainer : mContainers)
     {
         FeatureContainer->InitGenerateFeatures(FeatureManager.GetTotalSizeRequired(), FeatureManager.GetEntryCount());
@@ -103,26 +87,20 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
 
     while (Entry)
     {
-        FKLDebugImGuiFeatureContainerBase*                Container      = nullptr;
-        KL::Debug::ImGui::Features::Types::FeatureOffset* OffsetIndex    = nullptr;
-        const IKLDebugImGuiFeatureInterfaceBase&          TempWindowBase = Entry->AllocateInPlace(static_cast<void*>(&TempAllocatedFeature[0]));
+        const EImGuiInterfaceType InterfaceType = Entry->GetInterfaceType();
+        checkf(InterfaceType != EImGuiInterfaceType::COUNT, TEXT("interface type must be valid"));
 
-        for (int32 i = 0; i < mContainers.Num(); ++i)
-        {
-            const TUniquePtr<FKLDebugImGuiFeatureContainerBase>& FeatureContainer = mContainers[i];
-            if (FeatureContainer->IsCorrectContainerForFeature(TempWindowBase))
-            {
-                Container   = FeatureContainer.Get();
-                OffsetIndex = &ContainersOffset[i];
-                break;
-            }
-        }
+        const int32 ContainerIndex = static_cast<int32>(InterfaceType);
 
-        check(Container != nullptr && OffsetIndex != nullptr);
+        checkf(mContainers.IsValidIndex(ContainerIndex) && mContainers[ContainerIndex]->GetContainerType() == InterfaceType, TEXT("wrong container picked"));
+        checkf(ContainersOffset.IsValidIndex(ContainerIndex), TEXT("wrong container offset picked"));
 
-        Container->AllocateNewEntry(*Entry, *OffsetIndex, ImGuiPathTokens);
-        checkf(static_cast<uint64>((*OffsetIndex)) + static_cast<uint64>(Entry->GetSize()) < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureOffset>::Max(), TEXT("feature offset data type is not big enough"));
-        (*OffsetIndex) += Entry->GetSize();
+        FKLDebugImGuiFeatureContainerBase& Container = *mContainers[ContainerIndex].Get();
+        const KL::Debug::ImGui::Features::Types::FeatureOffset OffsetIndex = ContainersOffset[ContainerIndex];
+
+        Container.AllocateNewEntry(*Entry, OffsetIndex, ImGuiPathTokens);
+        checkf(static_cast<uint64>(OffsetIndex) + static_cast<uint64>(Entry->GetSize()) < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureOffset>::Max(), TEXT("feature offset data type is not big enough"));
+        ContainersOffset[ContainerIndex] += Entry->GetSize();
         Entry = Entry->GetNextEntry();
     }
 

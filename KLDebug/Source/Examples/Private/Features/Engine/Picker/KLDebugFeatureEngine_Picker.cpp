@@ -2,8 +2,8 @@
 
 // modules
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
-#include "ImGui/User/Public/Feature/Interface/Subsystem/Input/KLDebugImGuiFeatureInterfaceImGuiInput_Subsystem.h"
-#include "ImGui/User/Public/Feature/Interface/Subsystem/Input/KLDebugImGuiFeatureInterfaceRenderInput_Subsystem.h"
+#include "ImGui/User/Public/Feature/Interface/Unique/Input/KLDebugImGuiFeatureImGuiInput_Unique.h"
+#include "ImGui/User/Public/Feature/Interface/Unique/Input/KLDebugImGuiFeatureRenderInput_Unique.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
@@ -30,7 +30,7 @@ const FName& FKLDebugFeatureEngine_Picker::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureEngine_Picker::DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Subsystem& _Input)
+void FKLDebugFeatureEngine_Picker::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
 {
     if (ImGui::Button("PerformPick"))
     {

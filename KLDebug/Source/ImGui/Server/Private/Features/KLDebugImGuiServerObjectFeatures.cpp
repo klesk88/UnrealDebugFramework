@@ -8,10 +8,10 @@ FKLDebugImGuiServerObjectFeatures::FKLDebugImGuiServerObjectFeatures(const UWorl
 {
     ensureMsgf(mNetworkID.IsValid(), TEXT("netowrk id must be valid"));
 
-    mContainerFeatures.Reserve(static_cast<int32>(EContainerType::COUNT));
-    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
+    mContainerFeatures.Reserve(static_cast<int32>(EImGuiInterfaceType::COUNT));
+    for (int32 i = 0; i < static_cast<int32>(EImGuiInterfaceType::COUNT); ++i)
     {
-        const EContainerType ContainerType = static_cast<EContainerType>(i);
+        const EImGuiInterfaceType ContainerType = static_cast<EImGuiInterfaceType>(i);
         mContainerFeatures.Emplace(ContainerType);
     }
 

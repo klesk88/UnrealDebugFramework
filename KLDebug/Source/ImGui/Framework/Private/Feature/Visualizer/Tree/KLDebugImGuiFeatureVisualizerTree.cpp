@@ -32,7 +32,7 @@ void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesConstIt
     GenerateTree(SortedFeatures);
 }
 
-void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EContainerType _ContainerType, const FKLDebugImGuiFeatureContextInput& _ContextInput, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
+void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType _ContainerType, const FKLDebugImGuiFeatureContextInput& _ContextInput, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
 {
     static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;

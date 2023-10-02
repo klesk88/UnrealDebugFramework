@@ -2,8 +2,8 @@
 
 #include "Features/Engine/Picker/KLDebugUtilsPicker.h"
 
-// imgui user module
-#include "ImGui/User/Public/Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_EngineSubsystem.h"
+//modules
+#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 
 //engine
 #include "UObject/WeakObjectPtr.h"
@@ -12,19 +12,20 @@
 class AActor;
 class UWorld;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureEngine_Picker : public IKLDebugImGuiFeatureInterface_EngineSubsystem
+class KLDEBUGEXAMPLES_API FKLDebugFeatureEngine_Picker : public IKLDebugImGuiFeatureInterface_Unique
 {
 public:
-    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureEngine_Picker, IKLDebugImGuiFeatureInterface_EngineSubsystem)
+    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureEngine_Picker, IKLDebugImGuiFeatureInterface_Unique)
 
 public:
     FKLDebugFeatureEngine_Picker();
 
 private:
     //IKLDebugImGuiFeatureInterface_EngineSubsystem
+    UE_NODISCARD bool DoesSupportObject(const UObject& _Object) const final;
     UE_NODISCARD const FName& GetImGuiPath() const;
     UE_NODISCARD const FString& GetWindowName() const final;
-    void DrawImGuiChild(const FKLDebugImGuiFeatureInterfaceImGuiInput_Subsystem& _Input) final;
+    void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input) final;
     //IKLDebugImGuiFeatureInterface_EngineSubsystem
 
     void HandlePickerButton(const UWorld& _World);
@@ -34,3 +35,8 @@ private:
     FKLDebugUtilsPicker mPicker;
     TWeakObjectPtr<AActor> mPickedActor;
 };
+
+inline bool FKLDebugFeatureEngine_Picker::DoesSupportObject(const UObject& _Object) const
+{
+    return true;
+}

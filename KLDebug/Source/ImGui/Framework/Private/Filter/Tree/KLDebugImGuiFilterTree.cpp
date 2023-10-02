@@ -9,7 +9,7 @@
 //modules
 #include "ImGui/User/Internal/Filter/Manager/KLDebugImGuiFilterManager.h"
 #include "ImGui/User/Internal/Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
+#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
 #include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
 #include "Utils/Public/KLDebugLog.h"
 
@@ -131,7 +131,7 @@ void FKLDebugImGuiFilterTree::SortFeatures(FKLDebugImGuiFeaturesIterator& _Itera
     int32 Index = 0;
     for (; _Iterator; ++_Iterator)
     {
-        const IKLDebugImGuiFeatureInterface_SelectableObject& Feature = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_SelectableObject>();
+        const IKLDebugImGuiFeatureInterface_Selectable& Feature = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Selectable>();
         FiltersNames.Reset();
         Feature.GetFilterPath(FiltersNames);
         if (FiltersNames.IsEmpty())
@@ -181,7 +181,7 @@ void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedF
     };
 
     auto AllocateTreeNodeLeaf = [this](const FName& _FilterToken, const FKLDebugImGuiTreeSortedFeatures& _SortedFeature) -> FKLDebugImGuiFilterTreeNode& {
-        const IKLDebugImGuiFeatureInterface_SelectableObject& Feature   = _SortedFeature.GetFeature();
+        const IKLDebugImGuiFeatureInterface_Selectable& Feature   = _SortedFeature.GetFeature();
         const uint16                                          FilterIdx = GetFilterIndexFromID(_FilterToken, Feature.StaticItemType());
 
         mTreeNodesData.Emplace(mFilterFeaturesIndexes.Num());

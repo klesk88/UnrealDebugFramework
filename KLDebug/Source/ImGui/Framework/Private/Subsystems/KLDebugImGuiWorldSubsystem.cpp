@@ -5,15 +5,17 @@
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "Feature/Input/KLDebugImGuiGatherFeatureInput.h"
-#include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_SelectableObject.h"
-#include "Feature/Interface/Subsystem/KLDebugImGuiFeatureInterface_ObjectSubsystem.h"
+
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "Window/KLDebugImGuiWindow.h"
 
-// ImGuiThirdParty module
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
+#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
 // engine
@@ -63,58 +65,16 @@ void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
 
     mImGuiTreeName = FString::Format(TEXT("{0} {1}"), { *GetDebugStringForWorld(&_World), *_World.GetName() });
 
-    FString VisualizerName;
-    VisualizerName.Reserve(200);
-
-    mSubsystemsFeaturesVisualizer.Reserve(static_cast<int32>(EContainerType::COUNT));
-
-    for (int32 i = 0; i < static_cast<int32>(EContainerType::COUNT); ++i)
-    {
-        const EContainerType ContainerType = static_cast<EContainerType>(i);
-        switch (ContainerType)
-        {
-        case EContainerType::SELECTABLE_OBJECTS:
-            continue;
-        case EContainerType::ENGINE_SUBSYTSTEM:
-            VisualizerName = TEXT("Engine Subsystems");
-            break;
-        case EContainerType::WORLD_SUBSYSTEM:
-            VisualizerName = TEXT("World Subsystems");
-            break;
-        case EContainerType::EDITOR_SUBSYSTEM:
-            VisualizerName = TEXT("Editor Subsystems");
-            break;
-        case EContainerType::GAME_INSTANCE_SUBSYSTEM:
-            VisualizerName = TEXT("Game Instance Subsystems");
-            break;
-        case EContainerType::LOCAL_PLAYER_SUBSYSTEM:
-            VisualizerName = TEXT("Local Player Subsystems");
-            break;
-        default:
-            ensureMsgf(false, TEXT("we should not enter here"));
-            continue;
-        }
-
-        TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem> NewVisualizer = GetVisualizer(ContainerType, VisualizerName, FeatureContainerManager);
-        if (NewVisualizer.IsValid())
-        {
-            mSubsystemsFeaturesVisualizer.Emplace(MoveTemp(NewVisualizer));
-        }
-    }
-}
-
-TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem> UKLDebugImGuiWorldSubsystem::GetVisualizer(const EContainerType _ContainerType, const FString& _VisualizerName, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const
-{
-    const FKLDebugImGuiFeatureContainerBase& FeaturesContainer = _FeatureContainerManager.GetContainerMutable(_ContainerType);
+    const FKLDebugImGuiFeatureContainerBase& FeaturesContainer = FeatureContainerManager.GetContainerMutable(EImGuiInterfaceType::UNIQUE);
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
     FeaturesContainer.GatherFeatures(*this, Features);
 
     if (Features.IsEmpty())
     {
-        return nullptr;
+        return;
     }
 
-    return MakeUnique<FKLDebugImGuiFeatureVisualizerSubsystem>(FeaturesContainer, _VisualizerName, _ContainerType, MoveTemp(Features));
+    mUniqueFeaturesVisualizer.Init(FeaturesContainer, TEXT("Systems"), MoveTemp(Features));
 }
 
 UKLDebugImGuiWorldSubsystem* UKLDebugImGuiWorldSubsystem::TryGetMutable(const UObject& _Object)
@@ -146,7 +106,7 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
     const FKLDebugImGuiFeaturesTypesContainerManager&       FeatureContainerManager = EngineSusbsytem->GetFeatureContainerManager();
-    const FKLDebugImGuiFeatureContainerBase&                SelectedObjectFeatures  = FeatureContainerManager.GetContainer(EContainerType::SELECTABLE_OBJECTS);
+    const FKLDebugImGuiFeatureContainerBase&                SelectedObjectFeatures  = FeatureContainerManager.GetContainer(EImGuiInterfaceType::SELECTABLE);
 
     SelectedObjectFeatures.GatherFeatures(_Object, Features);
     mSelectedObjectsVisualizers.Emplace(SelectedObjectFeatures, EngineSusbsytem->GetOverlayMaterial(), _Object, MoveTemp(Features));
@@ -161,7 +121,7 @@ void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGather
 
     if (const UObject* Object = _Input.TryGetObject())
     {
-        const FKLDebugImGuiFeatureVisualizerSelectableObject* ObjectFeatures = mSelectedObjectsVisualizers.FindByKey(*Object);
+        const FKLDebugImGuiFeatureVisualizer_Selectable* ObjectFeatures = mSelectedObjectsVisualizers.FindByKey(*Object);
         const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = ObjectFeatures ? ObjectFeatures->TryGetSelectedFeature(_Input.GetFeatureIndex()) : nullptr;
         FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
     }
@@ -221,12 +181,13 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
     const FKLDebugImGuiFeatureVisualizerRenderContext Context{ _CurrentWorldUpdated, _ContainerManager };
-    for (const TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>& SubsystemVisualizer : mSubsystemsFeaturesVisualizer)
+    
+    if (mUniqueFeaturesVisualizer.IsValid())
     {
-        SubsystemVisualizer->Render(Context);
+        mUniqueFeaturesVisualizer.Render(Context);
     }
 
-    for (const FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer : mSelectedObjectsVisualizers)
+    for (const FKLDebugImGuiFeatureVisualizer_Selectable& ObjVisualizer : mSelectedObjectsVisualizers)
     {
         if (!ObjVisualizer.IsValid())
         {
@@ -237,15 +198,17 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
+void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGuiVisualizers);
 
-    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, mOnFeaturesUpdatedDelegate, _ContainerManager };
-    for (const TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>& SubsystemVisualizer : mSubsystemsFeaturesVisualizer)
+    if (!mUniqueFeaturesVisualizer.IsValid())
     {
-        SubsystemVisualizer->DrawImGui(Context);
+        return;
     }
+
+    const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, mOnFeaturesUpdatedDelegate, _ContainerManager };
+    mUniqueFeaturesVisualizer.DrawImGui(Context);
 }
 
 void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
@@ -273,7 +236,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
     ImGui::Indent();
 
     const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, _DrawTree, mOnFeaturesUpdatedDelegate, _ContainerManager };
-    for (FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer : mSelectedObjectsVisualizers)
+    for (FKLDebugImGuiFeatureVisualizer_Selectable& ObjVisualizer : mSelectedObjectsVisualizers)
     {
         if (!ObjVisualizer.IsValid())
         {
@@ -285,12 +248,12 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
 
     ImGui::Unindent();
 
-    const EContainerType SelectableContainerType = EContainerType::SELECTABLE_OBJECTS;
+    const EImGuiInterfaceType SelectableContainerType = EImGuiInterfaceType::SELECTABLE;
     const FKLDebugImGuiFeatureContainerBase& SelectableObjectsContainer = _ContainerManager.GetContainer(SelectableContainerType);
 
     for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
     {
-        const FKLDebugImGuiFeatureVisualizerSelectableObject& ObjVisualizer = mSelectedObjectsVisualizers[i];
+        const FKLDebugImGuiFeatureVisualizer_Selectable& ObjVisualizer = mSelectedObjectsVisualizers[i];
         if (!ObjVisualizer.IsValid() || !ObjVisualizer.ShouldKeepAlive())
         {
             if (mOnFeaturesUpdatedDelegate.IsBound() && !ObjVisualizer.GetFeaturesIndexes().IsEmpty())

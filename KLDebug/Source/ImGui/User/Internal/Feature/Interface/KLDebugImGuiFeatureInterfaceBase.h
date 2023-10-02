@@ -2,6 +2,7 @@
 
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceMacros.h"
+#include "Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"

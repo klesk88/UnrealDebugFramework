@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -18,6 +20,7 @@ public:
     void                                               AddNextEntry(FKLDebugImGuiFeatureManagerEntryBase& _NextEntry);
     UE_NODISCARD FKLDebugImGuiFeatureManagerEntryBase* GetNextEntry() const;
 
+    UE_NODISCARD virtual EImGuiInterfaceType GetInterfaceType() const = 0;
     UE_NODISCARD virtual IKLDebugImGuiFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const = 0;
     UE_NODISCARD virtual size_t                             GetSize() const                                = 0;
 

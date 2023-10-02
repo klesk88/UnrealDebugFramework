@@ -383,7 +383,7 @@ void FKLDebugImGuiClientManager::ReadData(const UWorld& _World, const FKLDebugIm
         {
             FKLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate RcvData;
             RcvData.Read(_World, _Reader);
-            FKLDebugImGuiGatherFeatureInput Input{ RcvData.GetFeatureIndex(), EContainerType::SELECTABLE_OBJECTS, RcvData.GetObject(_World), _FeatureContainerManager };
+            FKLDebugImGuiGatherFeatureInput Input{ RcvData.GetFeatureIndex(), EImGuiInterfaceType::SELECTABLE, RcvData.GetObject(_World), _FeatureContainerManager };
             _ImGuiWorldSubsystem.TryGatherFeatureAndContext(Input);
             IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
             IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;

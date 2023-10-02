@@ -9,7 +9,7 @@
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
-class IKLDebugImGuiFeatureInterface_SelectableObject;
+class IKLDebugImGuiFeatureInterface_Selectable;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiVisualizerTreeSortedFeatures final : public FKLDebugImGuiTreeBuilderData
 {

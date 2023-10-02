@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
-#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
+
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -11,15 +13,15 @@
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureStatusUpdateData
 {
 public:
-    explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EContainerType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
-    explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EContainerType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
+    explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
+    explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
 
     void SetFullyRemoved();
     UE_NODISCARD bool IsFullyRemoved() const;
 
     UE_NODISCARD bool IsFeatureAdded() const;
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator& GetFeatureIterator() const;
-    UE_NODISCARD EContainerType GetContainerType() const;
+    UE_NODISCARD EImGuiInterfaceType GetContainerType() const;
     UE_NODISCARD const UObject* TryGetObject() const;
     UE_NODISCARD const FObjectKey& GetObjectKey() const;
 
@@ -29,7 +31,7 @@ private:
     FObjectKey mObjectKey;
     bool mIsAdded = false;
     bool mFullyRemove = false;
-    EContainerType mContainerType = EContainerType::COUNT;
+    EImGuiInterfaceType mContainerType = EImGuiInterfaceType::COUNT;
 };
 
 inline bool FKLDebugImGuiFeatureStatusUpdateData::IsFeatureAdded() const
@@ -42,7 +44,7 @@ inline FKLDebugImGuiSubsetFeaturesConstIterator& FKLDebugImGuiFeatureStatusUpdat
     return mFeaturesIterator;
 }
 
-inline EContainerType FKLDebugImGuiFeatureStatusUpdateData::GetContainerType() const
+inline EImGuiInterfaceType FKLDebugImGuiFeatureStatusUpdateData::GetContainerType() const
 {
     return mContainerType;
 }

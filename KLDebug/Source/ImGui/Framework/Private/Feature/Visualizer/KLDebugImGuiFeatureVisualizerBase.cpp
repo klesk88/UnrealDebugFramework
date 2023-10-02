@@ -5,7 +5,22 @@
 
 FKLDebugImGuiFeatureVisualizerBase::FKLDebugImGuiFeatureVisualizerBase(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
     : mFeaturesIndexes(MoveTemp(_FeaturesIndexes))
+    , mInterfaceType(_Container.GetContainerType())
 {
+    checkf(mInterfaceType != EImGuiInterfaceType::COUNT, TEXT("passed count as container"));
+
+    FKLDebugImGuiSubsetFeaturesConstIterator Iterator(_Container.GetFeaturesSubsetConstIterator(mFeaturesIndexes));
+    mTreeVisualizer.CreateTree(Iterator);
+    mSelectedFeaturesIndexes.Reserve(30);
+}
+
+void FKLDebugImGuiFeatureVisualizerBase::Init(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
+{
+    mFeaturesIndexes = MoveTemp(_FeaturesIndexes);
+    mInterfaceType = _Container.GetContainerType();
+
+    checkf(mInterfaceType != EImGuiInterfaceType::COUNT, TEXT("passed count as container"));
+
     FKLDebugImGuiSubsetFeaturesConstIterator Iterator(_Container.GetFeaturesSubsetConstIterator(mFeaturesIndexes));
     mTreeVisualizer.CreateTree(Iterator);
     mSelectedFeaturesIndexes.Reserve(30);

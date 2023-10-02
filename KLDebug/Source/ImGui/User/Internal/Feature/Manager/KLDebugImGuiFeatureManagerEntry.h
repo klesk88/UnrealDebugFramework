@@ -13,6 +13,7 @@ public:
     explicit TKLDebugImGuiFeatureManagerEntry(const FName& _NameToCheck);
 
     // FKLDebugWindowManagerEntryBase
+    UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const final;
     UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
     UE_NODISCARD size_t                             GetSize() const final;
     // FKLDebugWindowManagerEntryBase
@@ -37,4 +38,10 @@ template<typename FeatureInterfaceType>
 size_t TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::GetSize() const
 {
     return sizeof(FeatureInterfaceType);
+}
+
+template<typename FeatureInterfaceType>
+inline EImGuiInterfaceType TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::GetInterfaceType() const
+{
+    return FeatureInterfaceType::GetInterfaceType();
 }

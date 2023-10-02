@@ -1,6 +1,6 @@
 #include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 
-FKLDebugImGuiFeatureStatusUpdateData::FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EContainerType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator)
+FKLDebugImGuiFeatureStatusUpdateData::FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator)
     : mFeaturesIterator(_FeaturesUpdatedIterator)
     , mObject(&_Object)
     , mObjectKey(&_Object)
@@ -9,7 +9,7 @@ FKLDebugImGuiFeatureStatusUpdateData::FKLDebugImGuiFeatureStatusUpdateData(const
 {
 }
 
-FKLDebugImGuiFeatureStatusUpdateData::FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EContainerType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator)
+FKLDebugImGuiFeatureStatusUpdateData::FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator)
     : mFeaturesIterator(_FeaturesUpdatedIterator)
     , mObjectKey(_ObjectKey)
     , mIsAdded(_IsAdded)

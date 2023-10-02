@@ -17,16 +17,14 @@ public class KLDebugImGuiNetworking : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugImGuiFramework",
+                "KLDebugImGuiUser",
                 "KLDebugNetworkingRuntime",
                 "KLDebugUtils",
 
                 //engine
-                "DeveloperSettings",
                 "Engine",
                 "Networking",
-                "Sockets",
-                "StructUtils"
+                "Sockets"
             }
         );
 

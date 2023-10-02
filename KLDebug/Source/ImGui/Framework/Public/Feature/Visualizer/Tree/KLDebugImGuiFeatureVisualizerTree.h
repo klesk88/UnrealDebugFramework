@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
+
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -26,7 +28,7 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerTree final : publi
 public:
     void CreateTree(FKLDebugImGuiFeaturesConstIterator& _Iterator);
 
-    void DrawImGuiTree(const EContainerType _ContainerType, const FKLDebugImGuiFeatureContextInput& _ContextInput, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected);
+    void DrawImGuiTree(const EImGuiInterfaceType _ContainerType, const FKLDebugImGuiFeatureContextInput& _ContextInput, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected);
     void ClearToogleNodeData(const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID);
 
 private:

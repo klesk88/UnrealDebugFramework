@@ -3,7 +3,6 @@
 //modules
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
-#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "ImGui/Networking/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
@@ -79,7 +78,7 @@ void FKLDebugImGuiServerCacheConnection::Write_ConnectionFeatures(const UWorld& 
         for (const FKLDebugImGuiServerObjectContainerFeatures& FeatureContainer : Feature.GetContainers())
         {
             const TArray<FKLDebugImGuiServerObjectFeatureData>& FeaturesList = FeatureContainer.GetEnableFetures();
-            const EContainerType ContainerType = FeatureContainer.GetContainerType();
+            const EImGuiInterfaceType ContainerType = FeatureContainer.GetContainerType();
             if (FeaturesList.IsEmpty())
             {
                 continue;

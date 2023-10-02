@@ -7,7 +7,7 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
-FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EContainerType _ContainerType)
+FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType)
     : mNetworkID(_NetworkID)
     , mContainerType(_ContainerType)
 {

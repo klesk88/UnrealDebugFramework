@@ -3,7 +3,7 @@
 #include "Features/KLDebugImGuiServerObjectFeatureData.h"
 
 //modules
-#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -16,7 +16,7 @@ class IKLDebugImGuiFeatureInterfaceBase;
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerObjectContainerFeatures final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiServerObjectContainerFeatures(const EContainerType _ContainerType);
+    explicit FKLDebugImGuiServerObjectContainerFeatures(const EImGuiInterfaceType _ContainerType);
 
     void InitIfNeeded();
 
@@ -24,11 +24,11 @@ public:
     void RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
     UE_NODISCARD const TArray<FKLDebugImGuiServerObjectFeatureData>& GetEnableFetures() const;
-    UE_NODISCARD EContainerType GetContainerType() const;
+    UE_NODISCARD EImGuiInterfaceType GetContainerType() const;
 
 private:
     TArray<FKLDebugImGuiServerObjectFeatureData> mFeaturesEnable;
-    EContainerType mContainerType = EContainerType::COUNT;
+    EImGuiInterfaceType mContainerType = EImGuiInterfaceType::COUNT;
 };
 
 inline void FKLDebugImGuiServerObjectContainerFeatures::AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
@@ -56,7 +56,7 @@ inline const TArray<FKLDebugImGuiServerObjectFeatureData>& FKLDebugImGuiServerOb
     return mFeaturesEnable;
 }
 
-inline EContainerType FKLDebugImGuiServerObjectContainerFeatures::GetContainerType() const
+inline EImGuiInterfaceType FKLDebugImGuiServerObjectContainerFeatures::GetContainerType() const
 {
     return mContainerType;
 }

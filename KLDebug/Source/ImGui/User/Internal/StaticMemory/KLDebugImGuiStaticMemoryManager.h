@@ -23,7 +23,6 @@ public:
     UE_NODISCARD EntryType* GetStartEntry() const;
     UE_NODISCARD size_t     GetTotalSizeRequired() const;
     UE_NODISCARD uint32     GetEntryCount() const;
-    UE_NODISCARD uint32     GetLargestEntrySize() const;
 
 protected:
     TKLDebugImGuiStaticMemoryManager() = default;
@@ -33,7 +32,6 @@ private:
     EntryType* mTail             = nullptr;
     size_t     mTotalBytesCount  = 0;
     uint32     mEntryCount       = 0;
-    uint32     mLargestEntrySize = 0;
 };
 
 template<typename Child, typename EntryType>
@@ -68,11 +66,6 @@ void TKLDebugImGuiStaticMemoryManager<Child, EntryType>::AddEntry(const size_t _
     mTotalBytesCount += _ClassSize;
     ++mEntryCount;
 
-    if (mLargestEntrySize < _ClassSize)
-    {
-        mLargestEntrySize = _ClassSize;
-    }
-
     if (!mHead)
     {
         mHead = &_NewEntry;
@@ -84,8 +77,3 @@ void TKLDebugImGuiStaticMemoryManager<Child, EntryType>::AddEntry(const size_t _
     mTail = &_NewEntry;
 }
 
-template<typename Child, typename EntryType>
-inline uint32 TKLDebugImGuiStaticMemoryManager<Child, EntryType>::GetLargestEntrySize() const
-{
-    return mLargestEntrySize;
-}

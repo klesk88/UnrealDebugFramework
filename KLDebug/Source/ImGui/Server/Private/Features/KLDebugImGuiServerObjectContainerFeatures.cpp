@@ -1,6 +1,6 @@
 #include "Features/KLDebugImGuiServerObjectContainerFeatures.h"
 
-FKLDebugImGuiServerObjectContainerFeatures::FKLDebugImGuiServerObjectContainerFeatures(const EContainerType _ContainerType)
+FKLDebugImGuiServerObjectContainerFeatures::FKLDebugImGuiServerObjectContainerFeatures(const EImGuiInterfaceType _ContainerType)
     : mContainerType(_ContainerType)
 {
 }

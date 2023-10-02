@@ -1,10 +1,12 @@
 #pragma once
 
-#include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
 #include "Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
-#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSelectableObject.h"
-#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerSubsystem.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Selectable.h"
+#include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Unique.h"
+
+//modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -50,18 +52,16 @@ public:
     void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
 
 private:
-    TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem> GetVisualizer(const EContainerType _ContainerType, const FString& _VisualizerName, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) const;
-
-    void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
+    void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
     void DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
     void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
-    TArray<TUniquePtr<FKLDebugImGuiFeatureVisualizerSubsystem>> mSubsystemsFeaturesVisualizer;
-    TArray<FKLDebugImGuiFeatureVisualizerSelectableObject> mSelectedObjectsVisualizers;
-    FString                                                mImGuiTreeName;
-    FInstancedStruct                                       mImGuiWindow;
-    FOnImGuiFeatureStateUpdated                            mOnFeaturesUpdatedDelegate;
+    FKLDebugImGuiFeatureVisualizer_Unique                   mUniqueFeaturesVisualizer;
+    TArray<FKLDebugImGuiFeatureVisualizer_Selectable>       mSelectedObjectsVisualizers;
+    FString                                                 mImGuiTreeName;
+    FInstancedStruct                                        mImGuiWindow;
+    FOnImGuiFeatureStateUpdated                             mOnFeaturesUpdatedDelegate;
     bool mShouldStoreDelta = false;
 };
 

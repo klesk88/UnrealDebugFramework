@@ -4,7 +4,7 @@
 #include "Message/KLDebugImGuiNetworkingMessageBase.h"
 
 //modules
-#include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManagerTypes.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 //engine
 #include "Misc/NetworkGuid.h"
@@ -16,7 +16,7 @@ class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureStatusUpd
 {
 public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate() = default;
-    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EContainerType _ContainerType);
+    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType);
 
     //FKLDebugImGuiNetworkingMessageBase
     UE_NODISCARD EKLDebugNetworkMessageTypes GetMessageType() const final;
@@ -26,7 +26,7 @@ public:
     //FKLDebugImGuiNetworkingMessageBase
 
     //client
-    UE_NODISCARD bool Client_IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const;
+    UE_NODISCARD bool Client_IsEqual(const EImGuiInterfaceType _ContainerType, const FNetworkGUID& _NetworkID) const;
     void Client_AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID, const bool _Status);
     void Client_SetFullyRemoved();
     void Client_ClearFullyRemoved();
@@ -35,7 +35,7 @@ public:
     //server
     UE_NODISCARD bool Server_IsFullyRemoved() const;
     UE_NODISCARD const FNetworkGUID& Server_GetNetworkID() const;
-    UE_NODISCARD EContainerType Server_GetContainerType() const;
+    UE_NODISCARD EImGuiInterfaceType Server_GetContainerType() const;
     UE_NODISCARD const TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData>& Server_GetFeaturesData() const;
     //server
 
@@ -43,7 +43,7 @@ private:
     TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData> mFeatureData;
     FNetworkGUID mNetworkID;
     bool mFullyRemoved = false;
-    EContainerType mContainerType = EContainerType::COUNT;
+    EImGuiInterfaceType mContainerType = EImGuiInterfaceType::COUNT;
 };
 
 inline EKLDebugNetworkMessageTypes FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::GetMessageType() const
@@ -58,10 +58,10 @@ inline void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Client_AddFeatur
 
 inline bool FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::CanWrite(const UWorld& _World) const
 {
-    return mNetworkID.IsValid() && mContainerType != EContainerType::COUNT;
+    return mNetworkID.IsValid() && mContainerType != EImGuiInterfaceType::COUNT;
 }
 
-inline bool FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Client_IsEqual(const EContainerType _ContainerType, const FNetworkGUID& _NetworkID) const
+inline bool FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Client_IsEqual(const EImGuiInterfaceType _ContainerType, const FNetworkGUID& _NetworkID) const
 {
     return mContainerType == _ContainerType && mNetworkID == _NetworkID;
 }
@@ -86,7 +86,7 @@ inline const FNetworkGUID& FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::S
     return mNetworkID;
 }
 
-inline EContainerType FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Server_GetContainerType() const
+inline EImGuiInterfaceType FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::Server_GetContainerType() const
 {
     return mContainerType;
 }
