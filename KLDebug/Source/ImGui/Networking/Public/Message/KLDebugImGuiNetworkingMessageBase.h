@@ -3,7 +3,7 @@
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
 //modules
-#include "Networking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
+#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 
 //engine
 #include "CoreMinimal.h"

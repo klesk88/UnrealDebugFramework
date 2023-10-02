@@ -9,8 +9,8 @@
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
-#include "Networking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
-#include "Networking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
+#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
+#include "Networking/Runtime/Public/Settings/KLDebugNetworkingSettings.h"
 #include "Utils/Public/KLDebugLog.h"
 
 //engine
@@ -48,7 +48,7 @@ void FKLDebugImGuiClientManager::InitFromWorldChild(UWorld& _World)
         return;
     }
 
-    const UKLDebugImGuiNetworkingSettings& NetworkingConfig = GetNetworkConfig();
+    const UKLDebugNetworkingSettings& NetworkingConfig = GetNetworkConfig();
     mReconnectionTime = NetworkingConfig.GetClientReconnectionTime();
 
     UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Trying to connecting to IP: [%s] Port: [%d]"),

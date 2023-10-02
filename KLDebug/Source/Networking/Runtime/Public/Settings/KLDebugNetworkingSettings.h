@@ -1,21 +1,20 @@
 #pragma once
 
 // engine
-// engine
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 #include "InstancedStruct.h"
 #include "UObject/SoftObjectPtr.h"
 
-#include "KLDebugImGuiNetworkingSettings.generated.h"
+#include "KLDebugNetworkingSettings.generated.h"
 
-UCLASS(config=Plugins, defaultconfig, DisplayName = "KLImGuiNetworking")
-class KLDEBUGNETWORKINGRUNTIME_API UKLDebugImGuiNetworkingSettings final : public UDeveloperSettings
+UCLASS(config=Plugins, defaultconfig, DisplayName = "KLDebugNetworking")
+class KLDEBUGNETWORKINGRUNTIME_API UKLDebugNetworkingSettings final : public UDeveloperSettings
 {
     GENERATED_BODY()
 
 public:
-    UE_NODISCARD static const UKLDebugImGuiNetworkingSettings& Get();
+    UE_NODISCARD static const UKLDebugNetworkingSettings& Get();
 
     UE_NODISCARD int32 GetPort() const;
     UE_NODISCARD uint32 GetReadBufferSize() const;
@@ -37,29 +36,29 @@ private:
     float ClientReconnectionTime = 1.f;
 };
 
-inline const UKLDebugImGuiNetworkingSettings& UKLDebugImGuiNetworkingSettings::Get()
+inline const UKLDebugNetworkingSettings& UKLDebugNetworkingSettings::Get()
 {
-    const UKLDebugImGuiNetworkingSettings* Config = GetDefault<UKLDebugImGuiNetworkingSettings>();
+    const UKLDebugNetworkingSettings* Config = GetDefault<UKLDebugNetworkingSettings>();
     checkf(Config != nullptr, TEXT("config should be valid"));
     return *Config;
 }
 
-inline int32 UKLDebugImGuiNetworkingSettings::GetPort() const
+inline int32 UKLDebugNetworkingSettings::GetPort() const
 {
     return Port;
 }
 
-inline uint32 UKLDebugImGuiNetworkingSettings::GetReadBufferSize() const
+inline uint32 UKLDebugNetworkingSettings::GetReadBufferSize() const
 {
     return ReadBufferSize;
 }
 
-inline uint32 UKLDebugImGuiNetworkingSettings::GetWriteBufferSize() const
+inline uint32 UKLDebugNetworkingSettings::GetWriteBufferSize() const
 {
     return WriteBufferSize;
 }
 
-inline float UKLDebugImGuiNetworkingSettings::GetClientReconnectionTime() const
+inline float UKLDebugNetworkingSettings::GetClientReconnectionTime() const
 {
     return ClientReconnectionTime;
 }

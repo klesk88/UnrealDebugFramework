@@ -2,7 +2,7 @@
 
 //modules
 #include "ImGui/Networking/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
-#include "Networking/Runtime/Public/Common/KLDebugImGuiNetworkingManager_Base.h"
+#include "Networking/Runtime/Public/Common/KLDebugNetworkingManager_Base.h"
 
 //engine
 #include "Containers/Array.h"
@@ -27,7 +27,7 @@ class UWorld;
 struct FBitReader;
 struct FBitWriter;
 
-class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientManager final : public FKLDebugImGuiNetworkingManager_Base
+class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientManager final : public FKLDebugNetworkingManager_Base
 {
 public:
     //FKLDebugImGuiNetworkManager_Base

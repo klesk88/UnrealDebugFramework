@@ -1,6 +1,6 @@
-#include "Common/KLDebugImGuiNetworkingManager_Base.h"
+#include "Common/KLDebugNetworkingManager_Base.h"
 
-#include "Settings/KLDebugImGuiNetworkingSettings.h"
+#include "Settings/KLDebugNetworkingSettings.h"
 
 //utils
 #include "Utils/Public/KLDebugLog.h"
@@ -11,13 +11,13 @@
 #include "Serialization/BitWriter.h"
 #include "Sockets.h"
 
-void FKLDebugImGuiNetworkingManager_Base::InitFromWorld(UWorld& _World)
+void FKLDebugNetworkingManager_Base::InitFromWorld(UWorld& _World)
 {
     mWorld = &_World;
     InitFromWorldChild(_World);
 }
 
-void FKLDebugImGuiNetworkingManager_Base::ClearFromWorld(const UWorld& _World)
+void FKLDebugNetworkingManager_Base::ClearFromWorld(const UWorld& _World)
 {
     if (mWorld.Get() != &_World)
     {
@@ -29,13 +29,13 @@ void FKLDebugImGuiNetworkingManager_Base::ClearFromWorld(const UWorld& _World)
     mWorld.Reset();
 }
 
-const UKLDebugImGuiNetworkingSettings& FKLDebugImGuiNetworkingManager_Base::GetNetworkConfig() const
+const UKLDebugNetworkingSettings& FKLDebugNetworkingManager_Base::GetNetworkConfig() const
 {
-    const UKLDebugImGuiNetworkingSettings& Config = UKLDebugImGuiNetworkingSettings::Get();
+    const UKLDebugNetworkingSettings& Config = UKLDebugNetworkingSettings::Get();
     return Config;
 }
 
-void FKLDebugImGuiNetworkingManager_Base::UnregisterTick()
+void FKLDebugNetworkingManager_Base::UnregisterTick()
 {
     if (mTickObject.IsTickFunctionRegistered())
     {
@@ -45,7 +45,7 @@ void FKLDebugImGuiNetworkingManager_Base::UnregisterTick()
     mTickObject.ClearDelegate();
 }
 
-bool FKLDebugImGuiNetworkingManager_Base::SendData(FSocket& _Socket, FBitWriter& _Writer) const
+bool FKLDebugNetworkingManager_Base::SendData(FSocket& _Socket, FBitWriter& _Writer) const
 {
     int32 BytesSent = 0;
     _Socket.Send(_Writer.GetData(), _Writer.GetNumBytes(), BytesSent);
@@ -59,7 +59,7 @@ bool FKLDebugImGuiNetworkingManager_Base::SendData(FSocket& _Socket, FBitWriter&
     return true;
 }
 
-void FKLDebugImGuiNetworkingManager_Base::InitTick(UWorld& _World)
+void FKLDebugNetworkingManager_Base::InitTick(UWorld& _World)
 {
     mTickObject.SetTickFunctionEnable(true);
     mTickObject.bStartWithTickEnabled = true;
@@ -70,12 +70,12 @@ void FKLDebugImGuiNetworkingManager_Base::InitTick(UWorld& _World)
     mTickObject.TickGroup = ETickingGroup::TG_LastDemotable;
     mTickObject.EndTickGroup = ETickingGroup::TG_LastDemotable;
 
-    mTickObject.BindDelegate(FOnTick::CreateRaw(this, &FKLDebugImGuiNetworkingManager_Base::Tick));
+    mTickObject.BindDelegate(FOnTick::CreateRaw(this, &FKLDebugNetworkingManager_Base::Tick));
 
     mTickObject.RegisterTickFunction(_World.PersistentLevel);
 }
 
-UWorld& FKLDebugImGuiNetworkingManager_Base::GetWorldMutable() const
+UWorld& FKLDebugNetworkingManager_Base::GetWorldMutable() const
 {
     checkf(mWorld.IsValid(), TEXT("must be valid still"));
     return *mWorld.Get();

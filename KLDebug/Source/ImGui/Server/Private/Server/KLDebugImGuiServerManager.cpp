@@ -7,7 +7,7 @@
 #include "ImGui/Networking/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "ImGui/Networking/Public/Message/KLDebugImGuiNetworkingMessageTypes.h"
 #include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
-#include "Networking/Runtime/Public/Settings/KLDebugImGuiNetworkingSettings.h"
+#include "Networking/Runtime/Public/Settings/KLDebugNetworkingSettings.h"
 #include "Utils/Public/KLDebugLog.h"
 
 //engine
@@ -33,7 +33,7 @@
 
 void FKLDebugImGuiServerManager::InitFromEngine()
 {
-    const UKLDebugImGuiNetworkingSettings& NetworkingConfig = GetNetworkConfig();
+    const UKLDebugNetworkingSettings& NetworkingConfig = GetNetworkConfig();
     InitListenerSocket(TEXT("ServerSocket"), NetworkingConfig.GetPort(), NetworkingConfig.GetReadBufferSize());
     mClientWriteBufferSize = NetworkingConfig.GetWriteBufferSize();
     mClientReadBufferSize = NetworkingConfig.GetReadBufferSize();

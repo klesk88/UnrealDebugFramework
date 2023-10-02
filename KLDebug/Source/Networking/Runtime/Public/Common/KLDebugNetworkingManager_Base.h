@@ -11,13 +11,13 @@
 
 class FSocket;
 class FString;
-class UKLDebugImGuiNetworkingSettings;
+class UKLDebugNetworkingSettings;
 class UWorld;
 
-class KLDEBUGNETWORKINGRUNTIME_API FKLDebugImGuiNetworkingManager_Base : public FNoncopyable
+class KLDEBUGNETWORKINGRUNTIME_API FKLDebugNetworkingManager_Base : public FNoncopyable
 {
 public:
-    virtual ~FKLDebugImGuiNetworkingManager_Base() = default;
+    virtual ~FKLDebugNetworkingManager_Base() = default;
 
     void InitFromWorld(UWorld& _World);
     UE_NODISCARD virtual bool IsSocketRegistered() const = 0;
@@ -30,7 +30,7 @@ protected:
     virtual void Tick(const float _DeltaTime) = 0;
 
     void InitTick(UWorld& _World);
-    UE_NODISCARD const UKLDebugImGuiNetworkingSettings& GetNetworkConfig() const;
+    UE_NODISCARD const UKLDebugNetworkingSettings& GetNetworkConfig() const;
 
     void UnregisterTick();
     UE_NODISCARD bool SendData(FSocket& _Socket, FBitWriter& _Writer) const;
@@ -43,15 +43,15 @@ private:
     TWeakObjectPtr<UWorld> mWorld;
 };
 
-inline void FKLDebugImGuiNetworkingManager_Base::InitFromWorldChild(UWorld& _World)
+inline void FKLDebugNetworkingManager_Base::InitFromWorldChild(UWorld& _World)
 {
 }
 
-inline void FKLDebugImGuiNetworkingManager_Base::ClearFromWorldChild(const UWorld& _World)
+inline void FKLDebugNetworkingManager_Base::ClearFromWorldChild(const UWorld& _World)
 {
 }
 
-inline const UWorld& FKLDebugImGuiNetworkingManager_Base::GetWorld() const
+inline const UWorld& FKLDebugNetworkingManager_Base::GetWorld() const
 {
     return GetWorldMutable();
 }

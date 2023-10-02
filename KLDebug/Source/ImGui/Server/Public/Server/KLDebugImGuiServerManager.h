@@ -3,7 +3,7 @@
 #include "Server/KLDebugImGuiServerCacheConnection.h"
 
 //modules
-#include "Networking/Runtime/Public/Common/KLDebugImGuiNetworkingManager_Base.h"
+#include "Networking/Runtime/Public/Common/KLDebugNetworkingManager_Base.h"
 
 // engine
 #include "Containers/Array.h"
@@ -19,7 +19,7 @@ class UWorld;
 struct FBitReader;
 struct FBitWriter;
 
-class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerManager final : public FKLDebugImGuiNetworkingManager_Base
+class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerManager final : public FKLDebugNetworkingManager_Base
 {
 private:
     enum class EReadWriteDataResult : uint8

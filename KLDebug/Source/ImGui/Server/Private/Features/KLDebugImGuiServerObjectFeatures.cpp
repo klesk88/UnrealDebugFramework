@@ -1,7 +1,7 @@
 #include "Features/KLDebugImGuiServerObjectFeatures.h"
 
 //networking runtime module
-#include "Networking/Runtime/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
+#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 
 FKLDebugImGuiServerObjectFeatures::FKLDebugImGuiServerObjectFeatures(const UWorld& _World, const FNetworkGUID& _NetworkID)
     : mNetworkID(_NetworkID)
