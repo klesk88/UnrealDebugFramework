@@ -52,7 +52,6 @@ private:
 
     UE_NODISCARD FKLDebugImGuiServerManager::EReadWriteDataResult ReceiveConnectionData(FKLDebugImGuiServerCacheConnection& _Connection, FSocket& _ClientSocket);
     UE_NODISCARD EReadWriteDataResult ReadData(FKLDebugImGuiServerCacheConnection& _Connection, FBitReader& _Reader);
-    UE_NODISCARD EReadWriteDataResult Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiServerCacheConnection& _Connection, FBitReader& _Reader);
 
     void SendConnectionData(const UWorld& _World, const FKLDebugImGuiServerCacheConnection& _Connection, FSocket& _ClientSocket) const;
 

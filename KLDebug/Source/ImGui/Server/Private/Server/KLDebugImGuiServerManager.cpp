@@ -238,7 +238,14 @@ FKLDebugImGuiServerManager::EReadWriteDataResult FKLDebugImGuiServerManager::Rea
         switch (MessageType)
         {
         case EKLDebugNetworkMessageTypes::Client_FeatureStatusUpdate:
-            ReadResult = Rcv_HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Connection, _Reader);
+            if (_Connection.Rcv_HandleClientFeatureStatusUpdate(FeatureContainerManager, World, _Reader))
+            {
+                ReadResult = EReadWriteDataResult::Succeeded;
+            }
+            else
+            {
+                ReadResult = EReadWriteDataResult::Fail;
+            }
             break;
         case EKLDebugNetworkMessageTypes::Count:
             ensureMsgf(false, TEXT("not handled"));
@@ -253,69 +260,6 @@ FKLDebugImGuiServerManager::EReadWriteDataResult FKLDebugImGuiServerManager::Rea
     }
 
     _Reader.SetAtEnd();
-    return EReadWriteDataResult::Succeeded;
-}
-
-FKLDebugImGuiServerManager::EReadWriteDataResult FKLDebugImGuiServerManager::Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FKLDebugImGuiServerCacheConnection& _Connection, FBitReader& _Reader)
-{
-    FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate;
-    FeatureStatusUpdate.Read(_World, _Reader);
-
-    const ENetMode NetMode = _World.GetNetMode();
-    if (FeatureStatusUpdate.Server_IsFullyRemoved())
-    {
-        _Connection.RemoveObjectFeatures(FeatureStatusUpdate.Server_GetNetworkID());
-    }
-    else
-    {
-        FKLDebugImGuiServerObjectFeatures& ServerObjectFeatureData = _Connection.GetOrAddFeaturesPerObject(_World, FeatureStatusUpdate.Server_GetNetworkID());
-        if (!ServerObjectFeatureData.GetCachedObject())
-        {
-            UE_LOG(LogKL_Debug, Error, TEXT("KLDebugImGuiNetworkingManager_Server::Rcv_HandleClientFeatureStatusUpdate>> received packet for feature but object does not exist anymore"));
-            return EReadWriteDataResult::Succeeded;
-        }
-
-        FKLDebugImGuiServerObjectContainerFeatures& FeatureContainer = ServerObjectFeatureData.GetContainerMutable(FeatureStatusUpdate.Server_GetContainerType());
-        FeatureContainer.InitIfNeeded();
-
-        const FKLDebugImGuiFeatureContainerBase& Container = _FeatureContainerManager.GetContainer(FeatureStatusUpdate.Server_GetContainerType());
-
-#if !WITH_EDITOR
-        const UKLDebugImGuiServerSubsystem_Engine* EngineSubystem = UKLDebugImGuiServerSubsystem_Engine::Get();
-#endif
-
-        for (const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData& FeatureData : FeatureStatusUpdate.Server_GetFeaturesData())
-        {
-            KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex = FeatureData.Server_GetFeatureIndex();
-            if (!Container.IsValidFeatureIndex(FeatureIndex, FeatureData.Server_GetFeatureNameID()))
-            {
-#if !WITH_EDITOR
-                const TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> CurrentFeatureIndex = EngineSubystem->CookedOnly_TryGetFeatureFromName(FeatureData.Server_GetFeatureNameID());
-                if (!CurrentFeatureIndex.IsSet())
-                {
-                    return EReadWriteDataResult::Fail;
-                }
-
-                FeatureIndex = CurrentFeatureIndex.GetValue();
-#else
-                ensureMsgf(false, TEXT("we could not find the feature client and server are out of sync not possible on editor builds. Dropping connection to client"));
-                return EReadWriteDataResult::Fail;
-#endif
-            }
-
-            if (FeatureData.Server_IsAdded())
-            {
-                const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureIndex);
-                const FKLDebugImGuiFeatureContextInput Input{ NetMode, *ServerObjectFeatureData.GetCachedObject()};
-                FeatureContainer.AddFeature(Input, FeatureInterface, FeatureIndex);
-            }
-            else
-            {
-                FeatureContainer.RemoveFeature(FeatureIndex);
-            }
-        }
-    }
-
     return EReadWriteDataResult::Succeeded;
 }
 

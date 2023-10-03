@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Features/KLDebugImGuiServerObjectContainerFeatures.h"
+#include "Features/KLDebugImGuiServerObjectFeatureData.h"
 
 // engine
 #include "Containers/Array.h"
@@ -19,16 +19,17 @@ public:
     explicit FKLDebugImGuiServerObjectFeatures(const UWorld& _World, const FNetworkGUID& _NetworkID);
     UE_NODISCARD bool operator==(const FNetworkGUID& _NetworkID) const;
 
-    UE_NODISCARD const FKLDebugImGuiServerObjectContainerFeatures& GetContainer(const EImGuiInterfaceType& _ContainerType) const;
-    UE_NODISCARD FKLDebugImGuiServerObjectContainerFeatures& GetContainerMutable(const EImGuiInterfaceType& _ContainerType);
+    void AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
+    void RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
-    UE_NODISCARD const TArray<FKLDebugImGuiServerObjectContainerFeatures>& GetContainers() const;
+    UE_NODISCARD const TArray<FKLDebugImGuiServerObjectFeatureData>& GetEnableFetures() const;
+
     UE_NODISCARD UObject* GetCachedObjectMutable() const;
     UE_NODISCARD const UObject* GetCachedObject() const;
     UE_NODISCARD const FNetworkGUID& GetNetworkID() const;
 
 private:
-    TArray<FKLDebugImGuiServerObjectContainerFeatures> mContainerFeatures;
+    TArray<FKLDebugImGuiServerObjectFeatureData> mFeaturesEnable;
     FNetworkGUID mNetworkID;
     TWeakObjectPtr<UObject> mCachedObject;
 };
@@ -38,22 +39,31 @@ inline bool FKLDebugImGuiServerObjectFeatures::operator==(const FNetworkGUID& _N
     return mNetworkID == _NetworkID;
 }
 
-inline const FKLDebugImGuiServerObjectContainerFeatures& FKLDebugImGuiServerObjectFeatures::GetContainer(const EImGuiInterfaceType& _ContainerType) const
+inline void FKLDebugImGuiServerObjectFeatures::AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
 {
-    check(_ContainerType != EImGuiInterfaceType::COUNT);
-    return mContainerFeatures[static_cast<int32>(_ContainerType)];
+    ensureMsgf(mFeaturesEnable.IndexOfByKey(_FeatureIndex) == INDEX_NONE, TEXT("Feature alreadu present"));
+
+    mFeaturesEnable.Emplace(_Input, _FeatureInterface, _FeatureIndex);
 }
 
-inline FKLDebugImGuiServerObjectContainerFeatures& FKLDebugImGuiServerObjectFeatures::GetContainerMutable(const EImGuiInterfaceType& _ContainerType)
+inline void FKLDebugImGuiServerObjectFeatures::RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
 {
-    check(_ContainerType != EImGuiInterfaceType::COUNT);
-    return mContainerFeatures[static_cast<int32>(_ContainerType)];
+    const int32 Index = mFeaturesEnable.IndexOfByKey(_FeatureIndex);
+    if (Index != INDEX_NONE)
+    {
+        mFeaturesEnable.RemoveAtSwap(Index, 1, false);
+    }
+    else
+    {
+        ensureMsgf(false, TEXT("Feature not present"));
+    }
 }
 
-inline const TArray<FKLDebugImGuiServerObjectContainerFeatures>& FKLDebugImGuiServerObjectFeatures::GetContainers() const
+inline const TArray<FKLDebugImGuiServerObjectFeatureData>& FKLDebugImGuiServerObjectFeatures::GetEnableFetures() const
 {
-    return mContainerFeatures;
+    return mFeaturesEnable;
 }
+
 
 inline UObject* FKLDebugImGuiServerObjectFeatures::GetCachedObjectMutable() const
 {
