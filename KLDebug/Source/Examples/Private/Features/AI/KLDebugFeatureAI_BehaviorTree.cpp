@@ -148,7 +148,7 @@ void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiFeature_Netwo
     case EKLDebugImGuiNetworkingEnviroment::Server:
     {
         FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
-        Context.UpdateData(_GatherDataInput.GetOwnerObject());
+        Context.UpdateData(_GatherDataInput.TryGetOwnerObject<FKLDebugFeatureAI_BehaviorTree>());
         Context.Network_GatherData(_GatherDataInput.GetArchiveMutable());
     }
 

@@ -13,8 +13,10 @@
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureStatusUpdateData
 {
 public:
-    explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
-    explicit FKLDebugImGuiFeatureStatusUpdateData(const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
+    explicit FKLDebugImGuiFeatureStatusUpdateData(const UWorld& _World, const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
+    explicit FKLDebugImGuiFeatureStatusUpdateData(const UWorld& _World, const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
+
+    UE_NODISCARD const UWorld& GetOwnerWorld() const;
 
     void SetFullyRemoved();
     UE_NODISCARD bool IsFullyRemoved() const;
@@ -27,12 +29,18 @@ public:
 
 private:
     FKLDebugImGuiSubsetFeaturesConstIterator& mFeaturesIterator;
+    const UWorld& mWorld;
     const UObject* mObject = nullptr;
     FObjectKey mObjectKey;
     bool mIsAdded = false;
     bool mFullyRemove = false;
     EImGuiInterfaceType mContainerType = EImGuiInterfaceType::COUNT;
 };
+
+inline const UWorld& FKLDebugImGuiFeatureStatusUpdateData::GetOwnerWorld() const
+{
+    return mWorld;
+}
 
 inline bool FKLDebugImGuiFeatureStatusUpdateData::IsFeatureAdded() const
 {

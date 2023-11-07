@@ -25,4 +25,16 @@ void FKLDebugImGuiInputManager::ToogleImGuiSystem()
     }
 
     mIsImGuiEnable = !mIsImGuiEnable;
+    if (!mIsImGuiEnable)
+    {
+        KLUnrealImgui.GetProperties().SetInputEnabled(false);
+        KLUnrealImgui.GetProperties().SetKeyboardInputShared(false);
+    }
+}
+
+void FKLDebugImGuiInputManager::ToogleImGuiInput()
+{
+    FKLUnrealImGuiModule& KLUnrealImgui = FKLUnrealImGuiModule::Get();
+    KLUnrealImgui.GetProperties().ToggleInput();
+    KLUnrealImgui.GetProperties().SetKeyboardInputShared(KLUnrealImgui.GetProperties().IsInputEnabled());
 }

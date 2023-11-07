@@ -87,17 +87,12 @@
     {
       "Name": "KLDebugImGuiClient",
       "Type": "ClientOnlyNoCommandlet",
-      "LoadingPhase": "PostEngineInit"
+      "LoadingPhase": "Default"
     },
     {
       "Name": "KLDebugImGuiServer",
       "Type": "ServerOnly",
-      "LoadingPhase": "PostEngineInit"
-    },
-    {
-      "Name": "KLDebugGameplayEditor",
-      "Type": "Editor",
-      "LoadingPhase": "PostEngineInit"
+      "LoadingPhase": "Default"
     },
     {
       "Name": "KLDebugImGuiEditor",

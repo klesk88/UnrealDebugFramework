@@ -1,0 +1,5 @@
+#include "Subsystem/Engine/KLDebugImGuiNetworkingGameThreadUpdateContextBase.h"
+
+FKLDebugImGuiNetworkingGameThreadUpdateContextBase::~FKLDebugImGuiNetworkingGameThreadUpdateContextBase()
+{
+}

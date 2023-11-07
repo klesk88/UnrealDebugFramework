@@ -19,7 +19,6 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizer_Selectable final 
 public:
     explicit FKLDebugImGuiFeatureVisualizer_Selectable(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     ~FKLDebugImGuiFeatureVisualizer_Selectable();
-
     UE_NODISCARD bool operator==(const UObject& _Object) const;
 
     // FKLDebugImGuiFeatureVisualizerBase

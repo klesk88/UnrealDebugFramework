@@ -21,6 +21,10 @@ public:
 
     UE_NODISCARD virtual uint8 GetVersion() const;
     UE_NODISCARD virtual bool Client_InformServerWhenActive() const;
+    //if true we will check the crc of the data buffer gather trough GatherData before sending the message
+    //if is the same then we will skip the message
+    UE_NODISCARD virtual bool ShouldVerifyCRCBeforeSendData() const;
+    UE_NODISCARD virtual bool ShouldCompressData() const;
 };
 
 inline bool IKLDebugImGuiFeature_NetworkingInterface::Client_InformServerWhenActive() const
@@ -31,4 +35,14 @@ inline bool IKLDebugImGuiFeature_NetworkingInterface::Client_InformServerWhenAct
 inline uint8 IKLDebugImGuiFeature_NetworkingInterface::GetVersion() const
 {
     return 0;
+}
+
+inline bool IKLDebugImGuiFeature_NetworkingInterface::ShouldVerifyCRCBeforeSendData() const
+{
+    return true;
+}
+
+inline bool IKLDebugImGuiFeature_NetworkingInterface::ShouldCompressData() const
+{
+    return false;
 }

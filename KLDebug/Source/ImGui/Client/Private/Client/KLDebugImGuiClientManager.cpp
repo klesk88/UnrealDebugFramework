@@ -1,35 +1,30 @@
 #include "Client/KLDebugImGuiClientManager.h"
 
+#include "Client/KLDebugImGuiClientGameThreadContext.h"
+
 //modules
-#include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "ImGui/Framework/Public/Feature/Input/KLDebugImGuiGatherFeatureInput.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
-#include "ImGui/Networking/Public/Message/FeatureUpdate/KLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate.h"
+#include "ImGui/Networking/Public/Message/Feature/DataUpdate/KLDebugImGuiNetworkingMessage_FeatureDataUpdate.h"
+#include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
+#include "ImGui/Networking/Public/Message/Helpers/KLDebugImGuiNetworkingMessage_Helpers.h"
+#include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
+#include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingPendingMessage.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
-#include "Networking/Runtime/Public/Settings/KLDebugNetworkingSettings.h"
 #include "Utils/Public/KLDebugLog.h"
 
 //engine
-#include "Common/TcpSocketBuilder.h"
 #include "Containers/UnrealString.h"
 #include "Engine/Engine.h"
-#include "Engine/NetDriver.h"
-#include "GameFramework/Actor.h"
-#include "Interfaces/IPv4/IPv4Address.h"
-#include "Interfaces/IPv4/IPv4Endpoint.h"
-#include "IPAddress.h"
+#include "Engine/World.h"
 #include "Math/UnrealMathUtility.h"
-#include "Serialization/BitReader.h"
-#include "Serialization/BitWriter.h"
 #include "Serialization/MemoryReader.h"
-#include "Sockets.h"
-#include "SocketSubsystem.h"
+#include "Serialization/MemoryWriter.h"
 #include "Stats/Stats2.h"
-#include "Templates/SharedPointer.h"
 #include "UObject/CoreNet.h"
 #include "UObject/NameTypes.h"
 
@@ -38,380 +33,140 @@
 #include "Containers/UnrealString.h"
 #endif
 
-void FKLDebugImGuiClientManager::InitFromWorldChild(UWorld& _World)
+void FKLDebugImGuiClientManager::Init()
 {
-    const UNetDriver* ServerNetDriver = _World.GetNetDriver();
-    const UNetConnection* NetConnection = ServerNetDriver ? ServerNetDriver->ServerConnection : nullptr;
-    if (!NetConnection)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Server Connection Is Not Initialized"));
-        return;
-    }
-
-    const UKLDebugNetworkingSettings& NetworkingConfig = GetNetworkConfig();
-    mReconnectionTime = NetworkingConfig.GetClientReconnectionTime();
-
-    UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Trying to connecting to IP: [%s] Port: [%d]"),
-        *NetConnection->URL.Host,
-        NetworkingConfig.GetPort());
-
-    InitServerSocket(TEXT("ClientSocket"), NetConnection->URL.Host, NetworkingConfig.GetPort(), NetworkingConfig.GetReadBufferSize(), NetworkingConfig.GetWriteBufferSize());
-
-    if (!mServerSocket)
-    {
-        UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] failed"),
-            *NetConnection->URL.Host,
-            NetworkingConfig.GetPort());
-
-        return;
-    }
-
-    InitTick(_World);
-
-    UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> Connection to IP: [%s] Port: [%d] succeded"),
-        *NetConnection->URL.Host,
-        NetworkingConfig.GetPort());
+    const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
+    mTempWriteDataBuffer.Reserve(Settings.Client_GetConnectionTempDataSize());
+    mPendingFeaturesStatusUpdates.Reserve(30);
 }
 
-void FKLDebugImGuiClientManager::InitServerSocket(const FString& _SocketName, const FString& _IP, const int32 _Port, const int32 _ReceiveBufferSize, const int32 _SendBufferSize)
-{
-    //based on FSocketImitationTrainer::FSocketImitationTrainer line 518
+void FKLDebugImGuiClientManager::GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData)
+{   
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_TickReadData);
 
-    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-    if (!SocketSubsystem)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::InitServerSocket>>Could not get socket subsystem"));
-        return;
-    }
-
-    bool IsValid = false;
-    TSharedRef<FInternetAddr> Address = SocketSubsystem->CreateInternetAddr();
-    Address->SetIp(*_IP, IsValid);
-    if (!IsValid)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::InitServerSocket>> Invalid Ip Address [%s]"), *_IP);
-        return;
-    }
-
-    Address->SetPort(_Port);
-    mServerSocket = FTcpSocketBuilder(TEXT("KLDebugImguiClient"))
-        .AsNonBlocking()
-        .AsReusable()
-        .Build();
-
-    if (!mServerSocket)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::InitServerSocket>> Failed to create socket"));
-        return;
-    }
-
-    int32 ReceiveBufferSize = 0;
-    mServerSocket->SetReceiveBufferSize(_ReceiveBufferSize, ReceiveBufferSize);
-    mServerSocket->SetSendBufferSize(_SendBufferSize, mSendBufferSize);
-
-    mReceiverDataBuffer.SetNumUninitialized(ReceiveBufferSize);
-
-    mServerAddress = Address;
-    mServerSocket->Connect(*Address);
+    GameThread_CopyPendingMessages(_ClientData);
+    _ClientData.GetFeaturesStatusUpdateMutable().Reset();
+    GameThread_ReadMessages(_ClientData.GetWorld(), _NewData);
 }
 
-void FKLDebugImGuiClientManager::InitWorldDelegates()
+void FKLDebugImGuiClientManager::GameThread_CopyPendingMessages(FKLDebugImGuiClientData& _ClientData)
 {
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
-    if (!ImGuiWorldSubsystem)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingManager_Client::Init>> UKLDebugImGuiWorldSubsystem not found"));
-        return;
-    }
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_CopyPendingMessages);
 
-    FOnImGuiFeatureStateUpdated::FDelegate FeatureUpdateDelagate = FOnImGuiFeatureStateUpdated::FDelegate::CreateRaw(this, &FKLDebugImGuiClientManager::OnFeatureUpdate);
-    mOnFeaturesUpdatedDelegateHandle = ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
-}
-
-void FKLDebugImGuiClientManager::ClearWorldDelegates()
-{
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = GetWorld().GetSubsystem<UKLDebugImGuiWorldSubsystem>();
-    if (ImGuiWorldSubsystem && mOnFeaturesUpdatedDelegateHandle.IsValid())
-    {
-        ImGuiWorldSubsystem->UnbindOnImGuiFeatureStateUpdated(mOnFeaturesUpdatedDelegateHandle);
-    }
-}
-
-void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
-{
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_OnFeatureUpdate);
-
-    const AActor* ObjectAsActor = Cast<const AActor>(_FeatureUpdateData.TryGetObject());
-    if (ObjectAsActor && ObjectAsActor->GetLocalRole() == ROLE_Authority)
-    {
-        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingManager_Client::OnFeatureUpdate>> actor [%s] is locally controlled no message sent to server"), 
-            *ObjectAsActor->GetName());
-
-        return;
-    }
-
-    TArray<TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>> FeaturesIndexes;
-    FeaturesIndexes.Reserve(_FeatureUpdateData.GetFeatureIterator().GetFeaturesCount());
-
-    FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
-    for (; FeaturesIterator; ++FeaturesIterator)
-    {
-        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-        const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
-        if (!NetworkInterface || !NetworkInterface->Client_InformServerWhenActive())
-        {
-            continue;
-        }
-
-        FeaturesIndexes.Emplace(FeaturesIterator.GetFeatureDataIndex(), FeaturesIterator.GetFeatureNameID());
-        if (_FeatureUpdateData.IsFullyRemoved())
-        {
-            break;
-        }
-    }
-
-    if (FeaturesIndexes.IsEmpty())
+    TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate>& NewData = _ClientData.GetFeaturesStatusUpdateMutable();
+    if (NewData.IsEmpty())
     {
         return;
     }
 
-    FNetworkGUID NetworkID;
-    if (const FNetworkGUID* NetworkIDMap = mObjectToNetworkID.Find(_FeatureUpdateData.GetObjectKey()))
+    if (mPendingFeaturesStatusUpdates.IsEmpty())
     {
-        NetworkID = *NetworkIDMap;
-    }
-    else
-    {
-        if (!_FeatureUpdateData.TryGetObject())
-        {
-            ensureMsgf(false, TEXT("no valid object passed should not be possible"));
-            return;
-        }
-
-        NetworkID = KL::Debug::Networking::Helpers::TryGetNetworkGuid(*_FeatureUpdateData.TryGetObject());
-        if (!NetworkID.IsValid())
-        {
-            ensureMsgf(false, TEXT("no valid network ID"));
-            return;
-        }
-
-        mObjectToNetworkID.Emplace(_FeatureUpdateData.GetObjectKey(), NetworkID);
+        mPendingFeaturesStatusUpdates = NewData;
+        return;
     }
 
-    //i dont expect mPendingFeaturesStatusUpdates to have elements but just in case 
-    FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate* FeatureUpdate = nullptr;
-    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& Update : mPendingFeaturesStatusUpdates)
+    const int32 Offset = mPendingFeaturesStatusUpdates.Max() - mPendingFeaturesStatusUpdates.Num();
+    if (Offset < NewData.Num())
     {
-        if (Update.Client_IsEqual(_FeatureUpdateData.GetContainerType(), NetworkID))
-        {
-            FeatureUpdate = &Update;
-            break;
-        }
+        mPendingFeaturesStatusUpdates.Reserve(mPendingFeaturesStatusUpdates.Max() + (NewData.Num() - Offset));
     }
     
-    if (!FeatureUpdate)
+    for (const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& NewDataUpdate : NewData)
     {
-        FeatureUpdate = &mPendingFeaturesStatusUpdates.Emplace_GetRef(NetworkID, _FeatureUpdateData.GetContainerType());
-    }
-
-    if (_FeatureUpdateData.IsFullyRemoved())
-    {
-        FeatureUpdate->Client_SetFullyRemoved();
-    }
-    else
-    {
-        //clear the flag just in case we reenable before send this packet
-        FeatureUpdate->Client_ClearFullyRemoved();
-
-        for (const TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>& FeatureIndexPair : FeaturesIndexes)
-        {
-            FeatureUpdate->Client_AddFeatureUpdate(FeatureIndexPair.Key, FeatureIndexPair.Value, _FeatureUpdateData.IsFeatureAdded());
-        }
+        mPendingFeaturesStatusUpdates.Emplace(NewDataUpdate);
     }
 }
 
-void FKLDebugImGuiClientManager::ClearFromWorldChild(const UWorld& _World)
+void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData)
 {
-    if (mServerSocket)
-    {
-        mServerSocket->Close();
-        ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(mServerSocket);
-        mServerSocket = nullptr;
-    }
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_ReadMessages);
 
-    mServerAddress.Reset();
-
-    ClearWorldDelegates();
-}
-
-void FKLDebugImGuiClientManager::Tick(const float _DeltaTime)
-{
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_Tick);
-
-    if (!mServerSocket)
-    {
-        return;
-    }
-
-    const ESocketConnectionState ConnState = mServerSocket->GetConnectionState();
-    switch (ConnState)
-    {
-    case ESocketConnectionState::SCS_Connected:
-        if (!mHasInitializedAfterConnection)
-        {
-            InitWorldDelegates();
-            mHasInitializedAfterConnection = true;
-        }
-
-        TickReadData();
-        TickWriteData();
-        break;
-    case ESocketConnectionState::SCS_NotConnected:
-    case ESocketConnectionState::SCS_ConnectionError:
-        if (mHasInitializedAfterConnection)
-        {
-            ClearWorldDelegates();
-            mHasInitializedAfterConnection = false;
-        }
-
-        TryReconnect();
-        break;
-    default:
-        ensureMsgf(false, TEXT("not implemented"));
-    }
-}
-
-void FKLDebugImGuiClientManager::TickReadData()
-{   
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TickReadData);
-
-    const UWorld& World = GetWorld();
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
+    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = _World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
     const UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
     if (!ImGuiWorldSubsystem || !ImGuiEngineSubsystem)
     {
+        _NewData.Reset();
         ensureMsgf(false, TEXT("not expected"));
         return;
     }
 
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
 
-    uint32 Size = 0;
-    int32 BytesRead = 0;
-    while (mServerSocket->HasPendingData(Size) && Size > 0)
+    for (const FKLDebugImGuiNetworkingPendingMessage& PendingMessage : _NewData)
     {
-        const uint32 MaxReadSize = FMath::Min(Size, static_cast<uint32>(mReceiverDataBuffer.Num()));
-        mServerSocket->Recv(mReceiverDataBuffer.GetData(), MaxReadSize, BytesRead);
-        if (BytesRead == 0)
-        {
-            UE_LOG(LogKL_Debug, Log, TEXT("Socket had pending data but didnt read any bytes"));
-            continue;
-        }
-
-        UPackageMap* PackageMap = GetServerPackageMap();
-        FNetBitReader Reader(PackageMap, mReceiverDataBuffer.GetData(), BytesRead * 8);
-        ReadData(World, FeatureContainerManager, *ImGuiWorldSubsystem, Reader);
-    }
-}
-
-void FKLDebugImGuiClientManager::TickWriteData()
-{
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TickWriteData);
-
-    //for eplications of actors or actor guid look at UObject* FindReplicatedObjectOnPIEServer
-    UPackageMap* PackageMap = GetServerPackageMap();
-    if(!PackageMap)
-    {
-        return;
-    }
-
-    FNetBitWriter Writer(PackageMap, mSendBufferSize * 8);
-    WritePendingFeaturesStatusUpdate(Writer);
-
-    if (Writer.GetNumBits() != 0)
-    {
-        static_cast<void>(SendData(*mServerSocket, Writer));
-    }
-}
-
-void FKLDebugImGuiClientManager::TryReconnect()
-{
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingManager_Client_TryReconnect);
-
-    if (!mServerAddress.IsValid())
-    {
-        return;
-    }
-
-    const UWorld& World = GetWorld();
-    const float TimeSinceLastConnTry = World.TimeSince(mLastTimeTryToConnect);
-    if (TimeSinceLastConnTry > mReconnectionTime)
-    {
-        mLastTimeTryToConnect = World.GetTimeSeconds();
-        mServerSocket->Connect(*mServerAddress.Get());
-    }
-}
-
-void FKLDebugImGuiClientManager::WritePendingFeaturesStatusUpdate(FNetBitWriter& _BitWriter)
-{
-    if (mPendingFeaturesStatusUpdates.IsEmpty())
-    {
-        return;
-    }
-
-    const UWorld& World = GetWorld();
-    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& UpdateStatus : mPendingFeaturesStatusUpdates)
-    {
-        if (UpdateStatus.CanWrite(World))
-        {
-            UpdateStatus.Write(World, _BitWriter);
-        }
-    }
-
-    mPendingFeaturesStatusUpdates.Reset();
-}
-
-void FKLDebugImGuiClientManager::ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UKLDebugImGuiWorldSubsystem& _ImGuiWorldSubsystem, FBitReader& _Reader)
-{
-    while (!_Reader.AtEnd() && _Reader.GetBytesLeft() > 1)
-    {
-        EKLDebugNetworkMessageTypes MessageType = EKLDebugNetworkMessageTypes::Count;
-        _Reader << MessageType;
+        const EKLDebugNetworkMessageTypes MessageType = PendingMessage.GetMesageType();
+        FMemoryReader MessageDataReader{ PendingMessage.GetMessageData() };
         switch (MessageType)
         {
         case EKLDebugNetworkMessageTypes::Server_FeatureDataUpdate:
         {
-            FKLDebugImGuiNetworkingMessage_SelectableObjectFeatureDataUpdate RcvData;
-            RcvData.Read(_World, _Reader);
-            FKLDebugImGuiGatherFeatureInput Input{ RcvData.GetFeatureIndex(), EImGuiInterfaceType::SELECTABLE, RcvData.GetObject(_World), _FeatureContainerManager };
-            _ImGuiWorldSubsystem.TryGatherFeatureAndContext(Input);
+            const FKLDebugImGuiNetworkingMessage_FeatureDataUpdate FeatureDataUpdate{ MessageDataReader };
+            if (!FeatureDataUpdate.IsValid())
+            {
+                break;
+            }
+
+            const EImGuiInterfaceType ImGuiInterfaceType = FeatureDataUpdate.Client_GetImGuiInterfaceType();
+            const UObject* OwnerObject = FeatureDataUpdate.Client_GetObject(_World);
+            if (!OwnerObject)
+            {
+                break;
+            }
+
+            FKLDebugImGuiGatherFeatureInput Input{ FeatureDataUpdate.Client_GetFeatureIndex(), FeatureDataUpdate.Client_GetImGuiInterfaceType(), OwnerObject, FeatureContainerManager };
+            ImGuiWorldSubsystem->TryGatherFeatureAndContext(Input);
             IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
             IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;
-            if (NetworkInterface)
+            if (!NetworkInterface)
             {
-                FMemoryReader MemoryReader{ RcvData.GetDataArray() };
-                const FKLDebugImGuiFeature_NetworkingReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
-                NetworkInterface->ReceiveData(RcvDataInput);
+                ensureMsgf(false, TEXT("we should have a valid network interface"));
+                break;
             }
+
+            const TArray<uint8>& FeatureDataRcv = FeatureDataUpdate.Client_GetDataArray();
+            FMemoryReader MemoryReader{ FeatureDataRcv };
+            const FKLDebugImGuiFeature_NetworkingReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
+            NetworkInterface->ReceiveData(RcvDataInput);
+            break;
         }
-        break;
         default:
             ensureMsgf(false, TEXT("message not handle"));
             break;
         }
     }
 
-    _Reader.SetAtEnd();
+    _NewData.Reset();
 }
 
-UPackageMap* FKLDebugImGuiClientManager::GetServerPackageMap() const
+void FKLDebugImGuiClientManager::Parallel_TickWriteData(FArchive& _Writer)
 {
-    UNetDriver* ServerNetDriver = GetWorld().GetNetDriver();
-    UNetConnection* NetConnection = ServerNetDriver ? ServerNetDriver->ServerConnection : nullptr;
-    if (NetConnection)
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_Parallel_TickWriteData);
+
+    const int32 TempWriteBufferInitialSize = mTempWriteDataBuffer.Max();
+    Parallel_WritePendingFeaturesStatusUpdate(mTempWriteDataBuffer, _Writer);
+    mTempWriteDataBuffer.SetNum(TempWriteBufferInitialSize);
+}
+
+void FKLDebugImGuiClientManager::Parallel_WritePendingFeaturesStatusUpdate(TArray<uint8>& _TempData, FArchive& _Archive)
+{
+    if (mPendingFeaturesStatusUpdates.IsEmpty())
     {
-        return NetConnection->PackageMap;
+        return;
     }
 
-    return nullptr;
+    FMemoryWriter TempMemoryWriter{ _TempData };
+    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& UpdateStatus : mPendingFeaturesStatusUpdates)
+    {
+        UpdateStatus.Serialize(TempMemoryWriter);
+        if (_TempData.IsEmpty())
+        {
+            continue;
+        }
+
+        KL::Debug::ImGuiNetworking::Message::PrepareMessageToSend_Uncompressed(UpdateStatus, _TempData, _Archive);
+        _TempData.Reset();
+    }
+
+    mPendingFeaturesStatusUpdates.Reset();
 }
+

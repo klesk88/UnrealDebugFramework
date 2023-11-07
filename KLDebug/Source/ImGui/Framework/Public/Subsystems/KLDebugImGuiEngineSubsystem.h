@@ -34,6 +34,8 @@ public:
     UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager&       GetContainerManagerMutable();
 
     void              ToogleImGuiSystemState();
+    void              ToogleImGuiInput();
+
     UE_NODISCARD bool IsImGuiSystemEnabled() const;
 
     UE_NODISCARD UMaterialInterface* GetOverlayMaterial() const;
@@ -62,6 +64,11 @@ inline const UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
 inline void UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState()
 {
     mInputManager.ToogleImGuiSystem();
+}
+
+inline void UKLDebugImGuiEngineSubsystem::ToogleImGuiInput()
+{
+    mInputManager.ToogleImGuiInput();
 }
 
 inline bool UKLDebugImGuiEngineSubsystem::IsImGuiSystemEnabled() const

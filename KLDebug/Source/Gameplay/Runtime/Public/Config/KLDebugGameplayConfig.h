@@ -19,6 +19,7 @@ public:
 
     UE_NODISCARD static const UKLDebugGameplayConfig& Get();
 
+    void Load() const;
     UE_NODISCARD const FKLDebugGameplayInputConfig& GetInputConfig() const;
 
 private:

@@ -119,15 +119,25 @@ void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGather
     IKLDebugImGuiFeatureInterfaceBase& Interface = Container.GetFeatureMutable(_Input.GetFeatureIndex());
     FKLDebugImGuiFeatureContext_Base* FeatureContext = nullptr;
 
-    if (const UObject* Object = _Input.TryGetObject())
+    switch (_Input.GetContainerType())
     {
-        const FKLDebugImGuiFeatureVisualizer_Selectable* ObjectFeatures = mSelectedObjectsVisualizers.FindByKey(*Object);
-        const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = ObjectFeatures ? ObjectFeatures->TryGetSelectedFeature(_Input.GetFeatureIndex()) : nullptr;
+    case EImGuiInterfaceType::SELECTABLE:
+        if (const UObject* Object = _Input.TryGetObject())
+        {
+            const FKLDebugImGuiFeatureVisualizer_Selectable* ObjectFeatures = mSelectedObjectsVisualizers.FindByKey(*Object);
+            const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = ObjectFeatures ? ObjectFeatures->TryGetSelectedFeature(_Input.GetFeatureIndex()) : nullptr;
+            FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
+        }
+        break;
+    case EImGuiInterfaceType::UNIQUE:
+    {
+        const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = mUniqueFeaturesVisualizer.TryGetSelectedFeature(_Input.GetFeatureIndex());
         FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
     }
-    else
-    {
-
+        break;
+    case EImGuiInterfaceType::COUNT:
+        ensureMsgf(false, TEXT("should never enter here"));
+        break;
     }
 
     _Input.SetFeatureData(Interface, FeatureContext);
@@ -259,7 +269,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
             if (mOnFeaturesUpdatedDelegate.IsBound() && !ObjVisualizer.GetFeaturesIndexes().IsEmpty())
             {
                 FKLDebugImGuiSubsetFeaturesConstIterator Iterator = SelectableObjectsContainer.GetFeaturesSubsetConstIterator(ObjVisualizer.GetFeaturesIndexes());
-                FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, SelectableContainerType, ObjVisualizer.GetObjectKey(), Iterator };
+                FKLDebugImGuiFeatureStatusUpdateData DelegateData{ _World, false, SelectableContainerType, ObjVisualizer.GetObjectKey(), Iterator };
                 DelegateData.SetFullyRemoved();
                 mOnFeaturesUpdatedDelegate.Broadcast(DelegateData);
             }

@@ -22,6 +22,7 @@ public class KLDebugImGuiNetworking : ModuleRules
                 "KLDebugUtils",
 
                 //engine
+                "DeveloperSettings",
                 "Engine",
                 "Networking",
                 "Sockets"

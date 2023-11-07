@@ -1,25 +1,33 @@
 #pragma once
 
-//modules
-#include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
+#include "Features/KLDebugImGuiServerUniqueFeatureData.h"
 
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 
+class FKLDebugImGuiFeatureContextInput;
+class IKLDebugImGuiFeatureInterfaceBase;
+
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerUniqueFeatures final : public FNoncopyable
 {
 public:
-    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeatures() const;
-    void AddFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _Feature);
-    void RemoveFeature(KL::Debug::ImGui::Features::Types::FeatureIndex _Feature);
+    UE_NODISCARD const TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeatures() const;
+    UE_NODISCARD TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeaturesMutable();
+    void AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
+    void RemoveFeature(KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
     void Clear();
 
 private:
-    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeatures;
+    TArray<FKLDebugImGuiServerUniqueFeatureData> mFeatures;
 };
 
-inline const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& FKLDebugImGuiServerUniqueFeatures::GetFeatures() const
+inline const TArray<FKLDebugImGuiServerUniqueFeatureData>& FKLDebugImGuiServerUniqueFeatures::GetFeatures() const
+{
+    return mFeatures;
+}
+
+inline TArray<FKLDebugImGuiServerUniqueFeatureData>& FKLDebugImGuiServerUniqueFeatures::GetFeaturesMutable()
 {
     return mFeatures;
 }

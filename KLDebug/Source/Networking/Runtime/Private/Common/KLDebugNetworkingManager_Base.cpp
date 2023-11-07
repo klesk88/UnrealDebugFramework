@@ -3,17 +3,21 @@
 #include "Settings/KLDebugNetworkingSettings.h"
 
 //utils
+#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
 //engine
+#include "Async/Async.h"
 #include "Containers/UnrealString.h"
 #include "Engine/World.h"
+#include "Misc/ScopeLock.h"
 #include "Serialization/BitWriter.h"
 #include "Sockets.h"
 
 void FKLDebugNetworkingManager_Base::InitFromWorld(UWorld& _World)
 {
     mWorld = &_World;
+    mWorldNetworkID = KL::Debug::Networking::Helpers::TryGetNetworkGuid(_World);
     InitFromWorldChild(_World);
 }
 
@@ -35,8 +39,81 @@ const UKLDebugNetworkingSettings& FKLDebugNetworkingManager_Base::GetNetworkConf
     return Config;
 }
 
+void FKLDebugNetworkingManager_Base::StartTick()
+{
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugNetworkingManagerBase_StartTick);
+
+    FScopeLock Lock(&mTickLock);
+
+    if (mTickObject.IsTickFunctionEnabled())
+    {
+        return;
+    }
+
+    if (mIsPendingAsyncTick)
+    {
+        mShouldTick = true;
+        return;
+    }
+
+    if (IsInGameThread())
+    {
+        mTickObject.SetTickFunctionEnable(true);
+    }
+    else
+    {
+        mIsPendingAsyncTick = true;
+        AsyncTask(ENamedThreads::GameThread, [this] {
+            UpdateTickStatus();
+        });
+    }
+}
+
+void FKLDebugNetworkingManager_Base::StopTick()
+{
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugNetworkingManagerBase_StopTick);
+
+    FScopeLock Lock(&mTickLock);
+
+    if (!mTickObject.IsTickFunctionEnabled())
+    {
+        return;
+    }
+
+    if (mIsPendingAsyncTick)
+    {
+        mShouldTick = false;
+        return;
+    }
+
+    if (IsInGameThread())
+    {
+        mTickObject.SetTickFunctionEnable(false);
+    }
+    else
+    {
+        mIsPendingAsyncTick = true;
+        AsyncTask(ENamedThreads::GameThread, [this] {
+            UpdateTickStatus();
+        });
+    }
+}
+
+void FKLDebugNetworkingManager_Base::UpdateTickStatus()
+{
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugNetworkingManagerBase_UpdateTickStatus);
+
+    FScopeLock Lock(&mTickLock);
+    mTickObject.SetTickFunctionEnable(mShouldTick);
+    mIsPendingAsyncTick = false;
+}
+
 void FKLDebugNetworkingManager_Base::UnregisterTick()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugNetworkingManagerBase_UnregisterTick);
+    FScopeLock Lock(&mTickLock);
+
+    mTickUnregister = true;
     if (mTickObject.IsTickFunctionRegistered())
     {
         mTickObject.UnRegisterTickFunction();
@@ -45,24 +122,9 @@ void FKLDebugNetworkingManager_Base::UnregisterTick()
     mTickObject.ClearDelegate();
 }
 
-bool FKLDebugNetworkingManager_Base::SendData(FSocket& _Socket, FBitWriter& _Writer) const
-{
-    int32 BytesSent = 0;
-    _Socket.Send(_Writer.GetData(), _Writer.GetNumBytes(), BytesSent);
-
-    if (BytesSent <= 0)
-    {
-        UE_LOG(LogKL_Debug, Log, TEXT("SendData IP address valid but no data sent"));
-        return false;
-    }
-
-    return true;
-}
-
 void FKLDebugNetworkingManager_Base::InitTick(UWorld& _World)
 {
-    mTickObject.SetTickFunctionEnable(true);
-    mTickObject.bStartWithTickEnabled = true;
+    mTickObject.bStartWithTickEnabled = false;
     mTickObject.bCanEverTick = true;
     mTickObject.bTickEvenWhenPaused = true;
     mTickObject.bRunOnAnyThread = true;
@@ -71,7 +133,6 @@ void FKLDebugNetworkingManager_Base::InitTick(UWorld& _World)
     mTickObject.EndTickGroup = ETickingGroup::TG_LastDemotable;
 
     mTickObject.BindDelegate(FOnTick::CreateRaw(this, &FKLDebugNetworkingManager_Base::Tick));
-
     mTickObject.RegisterTickFunction(_World.PersistentLevel);
 }
 

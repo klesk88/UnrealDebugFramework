@@ -1,5 +1,7 @@
 #include "Subsystem/KLDebugImGuiServerSubsystem_Engine.h"
 
+#include "Server/KLDebugImGuiTCPServerGameThreadContext.h"
+
 //modules
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
@@ -10,8 +12,12 @@
 //engine
 #include "Engine/Engine.h"
 #include "Engine/World.h"
+#include "GameFramework/GameModeBase.h"
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
-UKLDebugImGuiServerSubsystem_Engine* UKLDebugImGuiServerSubsystem_Engine::GetMutable()
+UKLDebugImGuiServerSubsystem_Engine* UKLDebugImGuiServerSubsystem_Engine::TryGetMutable()
 {
     if (GEngine)
     {
@@ -21,32 +27,64 @@ UKLDebugImGuiServerSubsystem_Engine* UKLDebugImGuiServerSubsystem_Engine::GetMut
     return nullptr;
 }
 
-bool UKLDebugImGuiServerSubsystem_Engine::ShouldCreateSubsystem(UObject* _Outer) const
-{
-    return true;
-}
-
 void UKLDebugImGuiServerSubsystem_Engine::Initialize(FSubsystemCollectionBase& _Collection)
 {
     Super::Initialize(_Collection);
 
-    mServer.InitFromEngine();
+    mServerConnection.InitSocket(TEXT("KLDebugImguiServerThread"));
+
+    FGameModeEvents::OnGameModePostLoginEvent().AddUObject(this, &UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLoginEventHandler);
+    FGameModeEvents::OnGameModeLogoutEvent().AddUObject(this, &UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLogoutEventHandle);
+
+    mConnectedPlayer.Reserve(10);
+    mDisconnectedPlayers.Reserve(10);
+
+#if !WITH_EDITOR
+    CookedOnly_InitFeatureMapIfNeeded();
+#endif
 }
 
 void UKLDebugImGuiServerSubsystem_Engine::Deinitialize()
 {
     Super::Deinitialize();
 
-    mServer.ClearFromEngine();
+    mServerConnection.ClearConnection();
+    FGameModeEvents::OnGameModePostLoginEvent().RemoveAll(this);
+    FGameModeEvents::OnGameModeLogoutEvent().RemoveAll(this);
 }
 
-void UKLDebugImGuiServerSubsystem_Engine::InitServerFromWorld(UWorld& _World)
+bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
 {
-    mServer.InitFromWorld(_World);
+    if (!Super::IsValidWorld(_World))
+    {
+        return false;
+    }
 
-#if !WITH_EDITOR
-    CookedOnly_InitFeatureMapIfNeeded();
-#endif
+    const bool IsServer = UKismetSystemLibrary::IsServer(&_World);
+    return IsServer;
+}
+
+void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLoginEventHandler(AGameModeBase* _GameMode, APlayerController* _NewPlayer)
+{
+    mConnectedPlayer.Emplace(_NewPlayer);
+    SetShouldTick();
+}
+
+void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLogoutEventHandle(AGameModeBase* _GameMode, AController* _Exiting)
+{
+    mDisconnectedPlayers.Emplace(FObjectKey(_Exiting));
+    SetShouldTick();
+}
+
+void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
+{
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_Tick);
+
+    FKLDebugImGuiTCPServerGameThreadContext Context{ mConnectedPlayer, mDisconnectedPlayers };
+
+    UKLDebugImGuiServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
+    mServerConnection.GetConnectionMutable().TickGameThread(Context);
+    mShouldTick = Context.GetShouldKeepTicking();
 }
 
 #if !WITH_EDITOR
@@ -59,14 +97,7 @@ void UKLDebugImGuiServerSubsystem_Engine::CookedOnly_InitFeatureMapIfNeeded()
     //so make a pass here once so we store 
     //NOTE: we use the imgui path as key as we dont expect any collisions on those
 
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiNetworkingServerSubsystem_Engine_InitFeatureMapIfNeeded);
-
-    if (mCookOnly_MapInitialized)
-    {
-        return;
-    }
-
-    mCookOnly_MapInitialized = true;
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_CookedOnly_InitFeatureMapIfNeeded);
 
     UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
     check(ImGuiEngineSubsystem != nullptr);

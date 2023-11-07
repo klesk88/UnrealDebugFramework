@@ -23,13 +23,14 @@ IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeature
     return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureData.GetFeatureOffset()]);
 }
 
-void FKLDebugImGuiFeatureContainerBase::AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString)
+IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString)
 {
     IKLDebugImGuiFeatureInterfaceBase& DebugWindow    = _Entry.AllocateInPlace(static_cast<void*>(&mFeaturesPool[_OffsetIndex]));
     FKLDebugImGuiFeatureData&          NewFeatureData = mFeaturesData.Emplace_GetRef(_OffsetIndex);
     NewFeatureData.Init(DebugWindow, _PathString);
 
     DebugWindow.Initialize();
+    return DebugWindow;
 }
 
 bool FKLDebugImGuiFeatureContainerBase::IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const

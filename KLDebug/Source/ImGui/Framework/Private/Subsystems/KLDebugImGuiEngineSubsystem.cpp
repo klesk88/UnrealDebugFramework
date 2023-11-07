@@ -11,6 +11,7 @@
 
 // engine
 #include "Engine/Engine.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Materials/MaterialInstance.h"
 #include "Stats/Stats2.h"
 #include "UObject/Object.h"
@@ -83,6 +84,11 @@ void UKLDebugImGuiEngineSubsystem::UnreagisterCallbacks()
 void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiEngineSubsystem_Update);
+
+    if (UKismetSystemLibrary::IsDedicatedServer(&_World))
+    {
+        return;
+    }
 
     UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = _World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
     if (!ImGuiWorldSubsystem)

@@ -1,6 +1,21 @@
 #pragma once
 
-#include "Server/KLDebugImGuiServerManager.h"
+#include "Server/KLDebugImGuiNetworkingTCPServer.h"
+#include "Server/KLDebugImGuiServerConnectionDefinitions.h"
+
+//modules
+#include "ImGui/Networking/Public/Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"
+#include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingConnectionRunnableContainer.h"
+
+// engine
+#include "Containers/Array.h"
+#include "Engine/EngineTypes.h"
+#include "Subsystems/EngineSubsystem.h"
+#include "UObject/ObjectKey.h"
+#include "UObject/WeakObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
+
+#if !WITH_EDITOR
 
 //modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
@@ -8,33 +23,50 @@
 // engine
 #include "Containers/Map.h"
 #include "Misc/Optional.h"
-#include "Subsystems/EngineSubsystem.h"
 #include "UObject/NameTypes.h"
+
+#endif //!WITH_EDITOR
 
 #include "KLDebugImGuiServerSubsystem_Engine.generated.h"
 
+class AController;
+class AGameModeBase;
+class APlayerController;
 class UWorld;
 
 UCLASS(Transient)
-class KLDEBUGIMGUISERVER_API UKLDebugImGuiServerSubsystem_Engine final : public UEngineSubsystem
+class KLDEBUGIMGUISERVER_API UKLDebugImGuiServerSubsystem_Engine final : public UKLDebugImGuiNetworkingSubsystem_EngineBase
 {
     GENERATED_BODY()
 
 public:
     //UEngineSubsystem
-    bool ShouldCreateSubsystem(UObject* _Outer) const final;
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
     //UEngineSubsystem
 
-    UE_NODISCARD static UKLDebugImGuiServerSubsystem_Engine* GetMutable();
-    UE_NODISCARD static const UKLDebugImGuiServerSubsystem_Engine* Get();
-
-    void InitServerFromWorld(UWorld& _World);
-    void ClearServerFromWorld(const UWorld& _World);
+    UE_NODISCARD static UKLDebugImGuiServerSubsystem_Engine* TryGetMutable();
+    UE_NODISCARD static const UKLDebugImGuiServerSubsystem_Engine* TryGet();
 
 private:
-    FKLDebugImGuiServerManager mServer;
+    //UKLDebugImGuiNetworkingSubsystem_EngineBase
+    UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
+    UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
+    UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
+
+    TStatId GetStatId() const final;
+    void Tick(float _DeltaTime) final;
+    //UKLDebugImGuiNetworkingSubsystem_EngineBase
+
+    void OnGameModePostLoginEventHandler(AGameModeBase* _GameMode, APlayerController* _NewPlayer);
+    void OnGameModePostLogoutEventHandle(AGameModeBase* _GameMode, AController* _Exiting);
+
+private:
+    //NOTE: if we change the ownership of the connection, then we need to update also FKLDebugImGuiNetworkingTCPServer::TickCachedConnections
+    //where we request the tick to make sure is thread safe
+    TKLDebugImGuiNetworkingConnectionRunnableContainer<FKLDebugImGuiNetworkingTCPServer> mServerConnection;
+    TArray<TWeakObjectPtr<const APlayerController>> mConnectedPlayer;
+    TArray<FObjectKey> mDisconnectedPlayers;
 
 #if !WITH_EDITOR
 public:
@@ -45,16 +77,25 @@ private:
 
 private:
     TMap<FName, KL::Debug::ImGui::Features::Types::FeatureIndex> mCookOnly_FeatureToContainerIndex;
-    bool mCookOnly_MapInitialized = false;
 #endif
 };
 
-inline const UKLDebugImGuiServerSubsystem_Engine* UKLDebugImGuiServerSubsystem_Engine::Get()
+inline const UKLDebugImGuiServerSubsystem_Engine* UKLDebugImGuiServerSubsystem_Engine::TryGet()
 {
-    return GetMutable();
+    return TryGetMutable();
 }
 
-inline void UKLDebugImGuiServerSubsystem_Engine::ClearServerFromWorld(const UWorld& _World)
+inline FKLDebugImGuiNetworkingTCPBase* UKLDebugImGuiServerSubsystem_Engine::GetConnectionMutable()
 {
-    mServer.ClearFromWorld(_World);
+    return &mServerConnection.GetConnectionMutable();
+}
+
+inline const FKLDebugImGuiNetworkingTCPBase* UKLDebugImGuiServerSubsystem_Engine::GetConnection() const
+{
+    return &mServerConnection.GetConnection();
+}
+
+inline TStatId UKLDebugImGuiServerSubsystem_Engine::GetStatId() const
+{
+    RETURN_QUICK_DECLARE_CYCLE_STAT(UKLDebugImGuiServerSubsystem_Engine, STATGROUP_Tickables);
 }

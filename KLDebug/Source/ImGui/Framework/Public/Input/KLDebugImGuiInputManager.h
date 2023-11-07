@@ -12,6 +12,7 @@ public:
     void Shutdown();
 
     void ToogleImGuiSystem();
+    void ToogleImGuiInput();
 
     UE_NODISCARD bool IsEnable() const;
 

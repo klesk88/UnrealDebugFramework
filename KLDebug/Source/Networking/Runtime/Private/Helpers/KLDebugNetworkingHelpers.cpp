@@ -12,6 +12,8 @@ namespace KL::Debug::Networking::Helpers
 {
     FNetworkGUID TryGetNetworkGuid(const UObject& _Object)
     {
+        //look also in case at NetworkPredictionDebug::FindObjectNetGUID
+
         const UNetDriver* NetDriver = nullptr;
         if (const UWorld* World = Cast<const UWorld>(&_Object))
         {

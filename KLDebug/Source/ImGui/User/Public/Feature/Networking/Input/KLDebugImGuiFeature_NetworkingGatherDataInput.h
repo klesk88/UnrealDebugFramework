@@ -8,8 +8,11 @@
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/World.h"
 #include "Serialization/Archive.h"
+#include "Templates/EnableIf.h"
 #include "Templates/UnrealTemplate.h"
+#include "Templates/UnrealTypeTraits.h"
 
+class IKLDebugImGuiFeatureInterface_Selectable;
 class UWorld;
 
 /*
@@ -17,12 +20,18 @@ class UWorld;
 class KLDEBUGIMGUIUSER_API FKLDebugImGuiFeature_NetworkingGatherDataInput final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiFeature_NetworkingGatherDataInput(const UWorld& _World, const EKLDebugImGuiNetworkingEnviroment _Enviroment, UObject& _OwnerObject, FKLDebugImGuiFeatureContext_Base* _ContextData, FArchive& _Archive);
+    explicit FKLDebugImGuiFeature_NetworkingGatherDataInput(const UWorld& _World, const EKLDebugImGuiNetworkingEnviroment _Enviroment, UObject* _OwnerObject, FKLDebugImGuiFeatureContext_Base* _ContextData, FArchive& _Archive);
 
     UE_NODISCARD EKLDebugImGuiNetworkingEnviroment GetCurrentEnviroment() const;
     UE_NODISCARD const UWorld& GetWorld() const;
-    UE_NODISCARD const UObject& GetOwnerObject() const;
-    UE_NODISCARD UObject& GetOwnerObjectMutable() const;
+
+    //the owner is guaranteed to be valid only for IKLDebugImGuiFeatureInterface_Selectable
+    template<typename CallingClass>
+    UE_NODISCARD typename TEnableIf<TIsDerivedFrom<CallingClass, IKLDebugImGuiFeatureInterface_Selectable>::IsDerived, const UObject&>::Type  TryGetOwnerObject() const;
+    template<typename CallingClass>
+    UE_NODISCARD typename TEnableIf<TIsDerivedFrom<CallingClass, IKLDebugImGuiFeatureInterface_Selectable>::IsDerived, UObject&>::Type TryGetOwnerObjectMutable() const;
+    //the owner is guaranteed to be valid only for IKLDebugImGuiFeatureInterface_Selectable
+
     UE_NODISCARD FArchive& GetArchiveMutable() const;
 
     //the user is expected to know the type of the context the imgui spawns trough GetFeatureContext.
@@ -36,7 +45,7 @@ public:
     UE_NODISCARD const ContextType& GetContext() const;
 
 private:
-    UObject& mOwnerObject;
+    UObject* mOwnerObject;
     const UWorld& mWorld;
     FKLDebugImGuiFeatureContext_Base* mContextData = nullptr;
     FArchive& mArchive;
@@ -48,14 +57,17 @@ inline EKLDebugImGuiNetworkingEnviroment FKLDebugImGuiFeature_NetworkingGatherDa
     return mCurrentEnviroment;
 }
 
-inline UObject& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetOwnerObjectMutable() const
+template<typename CallingClass>
+inline typename TEnableIf<TIsDerivedFrom<CallingClass, IKLDebugImGuiFeatureInterface_Selectable>::IsDerived, UObject&>::Type FKLDebugImGuiFeature_NetworkingGatherDataInput::TryGetOwnerObjectMutable() const
 {
-    return mOwnerObject;
+    check(mOwnerObject != nullptr);
+    return *mOwnerObject;
 }
 
-inline const UObject& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetOwnerObject() const
+template<typename CallingClass>
+inline typename TEnableIf<TIsDerivedFrom<CallingClass, IKLDebugImGuiFeatureInterface_Selectable>::IsDerived, const UObject&>::Type  FKLDebugImGuiFeature_NetworkingGatherDataInput::TryGetOwnerObject() const
 {
-    return GetOwnerObjectMutable();
+    return TryGetOwnerObjectMutable<CallingClass>();
 }
 
 inline const UWorld& FKLDebugImGuiFeature_NetworkingGatherDataInput::GetWorld() const

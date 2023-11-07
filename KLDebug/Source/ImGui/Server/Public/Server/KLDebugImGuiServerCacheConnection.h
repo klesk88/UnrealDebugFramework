@@ -11,65 +11,56 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
 #include "Misc/Optional.h"
-#include "Templates/RefCounting.h"
 
 class FArchive;
+
 class FKLDebugImGuiFeatureContainerBase;
 class FKLDebugImGuiFeaturesTypesContainerManager;
+class FKLDebugImGuiNetworkingMessage_FeatureStatusData;
 class FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate;
-class FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData;
-class FKLDebugImGuiNetworkManager_Base;
+class FKLDebugImGuiNetworkingPendingMessage;
 class FNetworkGUID;
-class FSocket;
 class UWorld;
 
-//based on FEditorDomainSaveServer::FClientConnection
-class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection final : public FRefCountedObject
+class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection
 {
 public:
-    explicit FKLDebugImGuiServerCacheConnection(FSocket& _ClientSocket);
-    ~FKLDebugImGuiServerCacheConnection();
+    explicit FKLDebugImGuiServerCacheConnection();
+ 
+    void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, TArray<FKLDebugImGuiNetworkingPendingMessage>& _MessagesReceived);
+    void WriteData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
 
-    /** Release resources and indicate this connection should no longer be used. */
-    void Shutdown();
-
-    UE_NODISCARD bool IsValid() const;
-    UE_NODISCARD FSocket& GetSocket() const;
-
-    UE_NODISCARD bool Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FArchive& _Archive);
-    void Write_ConnectionFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive) const;
+    UE_NODISCARD bool NeedsTicking() const;
 
 private:
     UE_NODISCARD FKLDebugImGuiServerObjectFeatures& GetOrAddFeaturesPerObject(const UWorld& _World, const FNetworkGUID& _NetworkID);
     UE_NODISCARD FKLDebugImGuiServerObjectFeatures* TryGetFeaturesPerObjectMutable(const FNetworkGUID& _NetworkID);
     void RemoveObjectFeatures(const FNetworkGUID& _NetworkID);
-    
-    UE_NODISCARD bool Recv_SelectableUpdate(const UWorld& _World, const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update);
-    UE_NODISCARD bool Recv_UniqueUpdate(const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update);
-    UE_NODISCARD TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> GetFeatureIndex(const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdateData& _Data) const;
+    UE_NODISCARD TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> GetFeatureIndex(const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusData& _Data) const;
 
-    void Write_UniqueFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive, TArray<uint8>& _Data) const;
-    void Write_ObjectFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive, TArray<uint8>& _Data) const;
+    UE_NODISCARD bool Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FArchive& _Archive);
+    UE_NODISCARD bool Recv_SelectableUpdate(const UWorld& _World, const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update);
+    UE_NODISCARD bool Recv_UniqueUpdate(const UWorld& _World, const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update);
+
+    void Write_ConnectionFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
+    void Write_UniqueFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
+    void Write_ObjectFeatures(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
 
 private:
     FKLDebugImGuiServerUniqueFeatures mUniqueFeatures;
     TArray<FKLDebugImGuiServerObjectFeatures> mFeaturesPerObject;
-    /** The socket to the client process, returned from accept on the server's ListenSocket. */
-    FSocket* mClientSocket = nullptr;
+    TArray<uint8> mTempData;
+    TArray<uint8> mTempCompressedData;
+    TArray<uint8> mTempFeatureData;
 };
-
-inline bool FKLDebugImGuiServerCacheConnection::IsValid() const
-{
-    return mClientSocket != nullptr;
-}
-
-inline FSocket& FKLDebugImGuiServerCacheConnection::GetSocket() const
-{
-    return *mClientSocket;
-}
 
 inline FKLDebugImGuiServerObjectFeatures* FKLDebugImGuiServerCacheConnection::TryGetFeaturesPerObjectMutable(const FNetworkGUID& _NetworkID)
 {
     FKLDebugImGuiServerObjectFeatures* Feature = mFeaturesPerObject.FindByKey(_NetworkID);
     return Feature;
+}
+
+inline bool FKLDebugImGuiServerCacheConnection::NeedsTicking() const
+{
+    return !mUniqueFeatures.GetFeatures().IsEmpty() || !mFeaturesPerObject.IsEmpty();
 }

@@ -23,6 +23,7 @@ public:
     UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
     void GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
     void ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
+    bool ShouldCompressData() const { return true; }
     //IKLDebugImGuiNetworing_FeatureInterface
 
 private:

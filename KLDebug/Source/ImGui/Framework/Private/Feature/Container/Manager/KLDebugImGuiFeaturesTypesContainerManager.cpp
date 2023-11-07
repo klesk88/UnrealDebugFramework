@@ -13,6 +13,7 @@
 // engine
 #include "Containers/UnrealString.h"
 #include "Math/NumericLimits.h"
+#include "UObject/NameTypes.h"
 
 FKLDebugImGuiFeaturesTypesContainerManager::FKLDebugImGuiFeaturesTypesContainerManager()
 {
@@ -85,6 +86,10 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
     TArray<FString> ImGuiPathTokens;
     ImGuiPathTokens.Reserve(20);
 
+#if DO_ENSURE
+    TArray<FName, TInlineAllocator<100>> EnsureWindowNamesID;
+#endif
+
     while (Entry)
     {
         const EImGuiInterfaceType InterfaceType = Entry->GetInterfaceType();
@@ -98,7 +103,11 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
         FKLDebugImGuiFeatureContainerBase& Container = *mContainers[ContainerIndex].Get();
         const KL::Debug::ImGui::Features::Types::FeatureOffset OffsetIndex = ContainersOffset[ContainerIndex];
 
-        Container.AllocateNewEntry(*Entry, OffsetIndex, ImGuiPathTokens);
+        IKLDebugImGuiFeatureInterfaceBase& NewInterface = Container.AllocateNewEntry(*Entry, OffsetIndex, ImGuiPathTokens);
+#if DO_ENSURE
+        ensureMsgf(EnsureWindowNamesID.Find(NewInterface.GetFeatureNameID()) == INDEX_NONE, TEXT("we found a feature with the same imgui path. Please change the imgui path value"));
+        EnsureWindowNamesID.Emplace(NewInterface.GetFeatureNameID());
+#endif
         checkf(static_cast<uint64>(OffsetIndex) + static_cast<uint64>(Entry->GetSize()) < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureOffset>::Max(), TEXT("feature offset data type is not big enough"));
         ContainersOffset[ContainerIndex] += Entry->GetSize();
         Entry = Entry->GetNextEntry();

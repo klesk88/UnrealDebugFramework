@@ -38,7 +38,7 @@ public:
     UE_NODISCARD TOptional<FName> TryGetFeatureNameID(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
     void InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount);
-    void AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
+    IKLDebugImGuiFeatureInterfaceBase& AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
     void FinishGenerateFeatures();
 
     void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;

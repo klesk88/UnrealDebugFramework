@@ -2,6 +2,7 @@
 
 #include "Config/KLDebugGameplayConfig.h"
 #include "Input/Config/KLDebugGameplayInputConfig.h"
+#include "Subsystem/Engine/KLDebugGameplaySubsystem_Engine.h"
 
 // modules
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
@@ -30,15 +31,38 @@ namespace KL::Debug::Gameplay::Input::Helpers
         return ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(&_Player);
     }
 
-    void BindActions(const FKLDebugGameplayInputConfig& _InputConfig, UEnhancedInputComponent& _OutEnhancedComponent, UKLDebugImGuiEngineSubsystem& _ImGuiEngineSusystem)
+    void BindActions(const ULocalPlayer& _LocalPlayer, const FKLDebugGameplayInputConfig& _InputConfig, UEnhancedInputComponent& _OutEnhancedComponent, UKLDebugImGuiEngineSubsystem& _ImGuiEngineSusystem)
     {
+        UKLDebugGameplaySubsystem_Engine* EngineSubsystem = UKLDebugGameplaySubsystem_Engine::TryGetMutable();
+        checkf(EngineSubsystem != nullptr, TEXT("must be valid"));
+
         if (const UInputAction* InputAction = _InputConfig.TryGetToogleDebug())
         {
-            _OutEnhancedComponent.BindAction(InputAction, ETriggerEvent::Triggered, &_ImGuiEngineSusystem, &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
+            _OutEnhancedComponent.BindAction(InputAction, ETriggerEvent::Started, &_ImGuiEngineSusystem, &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
         }
         else
         {
             UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable the debug mode trough player controller"));
+            return;
+        }
+
+        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetToogleImGuiInput())
+        {
+            _OutEnhancedComponent.BindAction(ImGuiEnableInputAction, ETriggerEvent::Started, &_ImGuiEngineSusystem, &UKLDebugImGuiEngineSubsystem::ToogleImGuiInput);
+        }
+        else
+        {
+            UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable the input mode"));
+            return;
+        }
+
+        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetToogleDebugCamera())
+        {
+            _OutEnhancedComponent.BindAction(ImGuiEnableInputAction, ETriggerEvent::Started, EngineSubsystem, &UKLDebugGameplaySubsystem_Engine::ToogleDebugCamera, TWeakObjectPtr<const ULocalPlayer>(&_LocalPlayer));
+        }
+        else
+        {
+            UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable the input mode"));
             return;
         }
     }
@@ -51,7 +75,7 @@ namespace KL::Debug::Gameplay::Input::Helpers
         }
     }
 
-    void BindMainInputsToEnhancedComponent(IEnhancedInputSubsystemInterface& _InputSubsystem, UEnhancedInputComponent& _OutEnhancedComponent, UKLDebugImGuiEngineSubsystem& _ImGuiEngineSusystem)
+    void BindMainInputsToEnhancedComponent(const ULocalPlayer& _LocalPlayer, IEnhancedInputSubsystemInterface& _InputSubsystem, UEnhancedInputComponent& _OutEnhancedComponent, UKLDebugImGuiEngineSubsystem& _ImGuiEngineSusystem)
     {
         const UKLDebugGameplayConfig&      Config      = UKLDebugGameplayConfig::Get();
         const FKLDebugGameplayInputConfig& InputConfig = Config.GetInputConfig();
@@ -63,7 +87,7 @@ namespace KL::Debug::Gameplay::Input::Helpers
             return;
         }
 
-        BindActions(InputConfig, _OutEnhancedComponent, _ImGuiEngineSusystem);
+        BindActions(_LocalPlayer, InputConfig, _OutEnhancedComponent, _ImGuiEngineSusystem);
         BindMappingContext(*InputMappingContext, InputConfig.GetInputContextPriority(), _InputSubsystem);
     }
 
@@ -73,6 +97,13 @@ namespace KL::Debug::Gameplay::Input::Helpers
                                    EInputEvent::IE_Pressed,
                                    &_ImGuiEngineSusystem,
                                    &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
+
+        _OutInputComponent.BindKey(FInputChord(EKeys::A, EModifierKey::Alt),
+            EInputEvent::IE_Pressed,
+            &_ImGuiEngineSusystem,
+            &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
+
+        UE_LOG(LogKL_Debug, Display, TEXT("Using normal input. Toogle debug system by pressing ALT + D and toogle imui input by pressing ALT + A"));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -103,24 +134,12 @@ namespace KL::Debug::Gameplay::Input::Helpers
                 return;
             }
 
-            BindMainInputsToEnhancedComponent(*EnhancedInputSubsystemInterface, *EnhancedInput, *KLImGuiEngineSubsystem);
+            BindMainInputsToEnhancedComponent(*Player , *EnhancedInputSubsystemInterface, *EnhancedInput, *KLImGuiEngineSubsystem);
         }
         else
         {
             BindMainInputsToNormalComponent(_OutInputComponent, *KLImGuiEngineSubsystem);
         }
-    }
-
-    void BindMainInputsToComponent(IEnhancedInputSubsystemInterface& _InputSubsystem, UEnhancedInputComponent& _InputComponent)
-    {
-        UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
-        if (!KLImGuiEngineSubsystem)
-        {
-            ensureMsgf(false, TEXT("we expect to have a valid engine subsystem always"));
-            return;
-        }
-
-        BindMainInputsToEnhancedComponent(_InputSubsystem, _InputComponent, *KLImGuiEngineSubsystem);
     }
 
 }  // namespace KL::Debug::Gameplay::Input::Helpers

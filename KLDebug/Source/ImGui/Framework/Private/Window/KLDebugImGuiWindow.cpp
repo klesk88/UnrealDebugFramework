@@ -10,7 +10,10 @@
 
 //engine
 #include "Camera/PlayerCameraManager.h"
+#include "Engine/DebugCameraController.h"
 #include "Engine/World.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -95,11 +98,21 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
     ImGui::SameLine();
     ImGui::Text(" Time: [%.3f]", _World.GetTimeSeconds());
 
-    const APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(&_World, 0);
-    if (CameraManager)
+    const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(&_World, 0);
+    const ACharacter* PlayerCharacter = PlayerController ? PlayerController->GetCharacter() : nullptr;
+    if (!PlayerCharacter)
+    {
+        const ADebugCameraController* DebugCamera = Cast<const ADebugCameraController>(PlayerController);
+        if (DebugCamera && DebugCamera->OriginalControllerRef)
+        {
+            PlayerCharacter = DebugCamera->OriginalControllerRef->GetCharacter();
+        }
+    }
+
+    if (PlayerCharacter)
     {
         ImGui::SameLine();
-        ImGui::Text(" Player: [%ls]", *CameraManager->GetCameraLocation().ToString());
+        ImGui::Text(" Player: [%ls]", *PlayerCharacter->GetActorLocation().ToString());
     }
 
     ImGui::SameLine();

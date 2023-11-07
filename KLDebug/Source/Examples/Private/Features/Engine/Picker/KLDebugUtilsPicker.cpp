@@ -75,13 +75,7 @@ void FKLDebugUtilsPicker::SetInterfaceType(UClass& _Class)
 
 bool FKLDebugUtilsPicker::GetCenterLocationFromScreenCoord(const UWorld& _World, FVector& _OutLocation, FVector& _OutDirecton) const
 {
-    const APlayerController* PlayerController = _World.GetFirstPlayerController();
-    if (!PlayerController)
-    {
-        return false;
-    }
-
-    const APlayerCameraManager* PlayerCamera = PlayerController->PlayerCameraManager;
+    const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&_World, 0);
     if (!PlayerCamera)
     {
         return false;
@@ -235,12 +229,17 @@ void FKLDebugUtilsPicker::SortByDistance(TArray<FKLDebugUtilsPickerScoredObjects
 void FKLDebugUtilsPicker::ApplyScores(TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const
 {
     //TODO: actual make scoring based on user data
-    for (FKLDebugUtilsPickerScoredObjects& Object : _OutObjects)
+    if (!_OutObjects.IsEmpty())
     {
-        Object.SetScore(1.f);
+        _OutObjects[0].SetScore(1.f);
     }
 
-    _OutObjects.Sort([](const FKLDebugUtilsPickerScoredObjects& _Left, const FKLDebugUtilsPickerScoredObjects& _Right) -> bool {
-        return _Left.GetScore() < _Right.GetScore();
-    });
+    //for (FKLDebugUtilsPickerScoredObjects& Object : _OutObjects)
+    //{
+    //    Object.SetScore(1.f);
+    //}
+
+    //_OutObjects.Sort([](const FKLDebugUtilsPickerScoredObjects& _Left, const FKLDebugUtilsPickerScoredObjects& _Right) -> bool {
+    //    return _Left.GetScore() < _Right.GetScore();
+    //});
 }

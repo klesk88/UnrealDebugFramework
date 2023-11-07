@@ -65,8 +65,10 @@ inline bool FKLDebugImGuiFeatureVisualizerBase::IsValid() const
 template<typename CallbackType>
 void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const UObject& _OwnerObject, const CallbackType& _Callback)
 {
+    TArray<uint32> FeaturesToRemoveIdx;
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesToRemove;
-    FeaturesToRemove.Reserve(30);
+    FeaturesToRemove.Reserve(mSelectedFeaturesIndexes.Num());
+    FeaturesToRemoveIdx.Reserve(mSelectedFeaturesIndexes.Num());
 
     FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainerMutable(mInterfaceType);
     FKLDebugImGuiFeatureVisualizerIterator Iterator = FeatureContainer.GetFeatureVisualizerIterator(mSelectedFeaturesIndexes);
@@ -74,13 +76,14 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
     {
         if (!_Callback(Iterator, Iterator.GetEntryDataMutable()))
         {
+            FeaturesToRemoveIdx.Emplace(Iterator.GetIteratorIndex());
             FeaturesToRemove.Emplace(Iterator.GetFeatureDataIndex());
         }
     }
 
-    for (int32 i = FeaturesToRemove.Num() - 1; i >= 0; --i)
+    for (int32 i = FeaturesToRemoveIdx.Num() - 1; i >= 0; --i)
     {
-        const KL::Debug::ImGui::Features::Types::FeatureIndex Index = FeaturesToRemove[i];
+        const uint32 Index = FeaturesToRemoveIdx[i];
         const FKLDebugImGuiFeatureVisualizerEntry& Entry = mSelectedFeaturesIndexes[Index];
         mTreeVisualizer.ClearToogleNodeData(Entry.GetNodeDataID());
         mSelectedFeaturesIndexes.RemoveAtSwap(Index, 1, false);
@@ -89,7 +92,7 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
     if (_Context.GetFeatureUpdateDelegate().IsBound() && !FeaturesToRemove.IsEmpty())
     {
         FKLDebugImGuiSubsetFeaturesConstIterator RemovedIterator = FeatureContainer.GetFeaturesSubsetConstIterator(FeaturesToRemove);
-        FKLDebugImGuiFeatureStatusUpdateData DelegateData{ false, mInterfaceType, _OwnerObject, RemovedIterator };
+        FKLDebugImGuiFeatureStatusUpdateData DelegateData{ _Context.GetWorld(), false, mInterfaceType, _OwnerObject, RemovedIterator };
         if (mSelectedFeaturesIndexes.IsEmpty())
         {
             DelegateData.SetFullyRemoved();

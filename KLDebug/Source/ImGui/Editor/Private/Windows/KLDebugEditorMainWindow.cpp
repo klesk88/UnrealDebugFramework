@@ -10,8 +10,10 @@
 #include "ThirdParty/NetImGuiThirdParty/Public/NetImGuiThirdPartyModule.h"
 
 // engine
+#include "Camera/PlayerCameraManager.h"
 #include "Editor/EditorEngine.h"
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 #include "LevelEditorViewport.h"
 #include "Math/Rotator.h"
 #include "Math/Vector.h"
@@ -57,7 +59,20 @@ void FKLDebugEditorMainWindow::OnDrawTopBar(const UWorld& _World) const
 
 void FKLDebugEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
 {
-    UUnrealEditorSubsystem* UnrealEditorSubsystem = GEditor->GetEditorSubsystem<UUnrealEditorSubsystem>();
+    const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&_World, 0);
+    if (!PlayerCamera)
+    {
+        return;
+    }
+
+    FVector CameraLocation;
+    FRotator CamRot;
+    PlayerCamera->GetCameraViewPoint(CameraLocation, CamRot);
+
+    ImGui::SameLine();
+    ImGui::Text(" Camera: [%ls]", *CameraLocation.ToString());
+
+  /*  UUnrealEditorSubsystem* UnrealEditorSubsystem = GEditor->GetEditorSubsystem<UUnrealEditorSubsystem>();
     if (!UnrealEditorSubsystem)
     {
         return;
@@ -73,12 +88,13 @@ void FKLDebugEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
     UnrealEditorSubsystem->GetLevelViewportCameraInfo(Pos, Rotator);
 
     ImGui::SameLine();
-    ImGui::Text(" Camera: [%ls]", *Pos.ToString());
+    ImGui::Text(" Camera: [%ls]", *Pos.ToString());*/
 }
 
 bool FKLDebugEditorMainWindow::IsLevelEditorCurrentlySelected(const UWorld& _World) const
 {
-    for (const FLevelEditorViewportClient* LevelVC : GEditor->GetLevelViewportClients())
+    const TArray<FLevelEditorViewportClient*>& ViewportVlients = GEditor->GetLevelViewportClients();
+    for (const FLevelEditorViewportClient* LevelVC : ViewportVlients)
     {
         if (!LevelVC || LevelVC->GetWorld() != &_World)
         {

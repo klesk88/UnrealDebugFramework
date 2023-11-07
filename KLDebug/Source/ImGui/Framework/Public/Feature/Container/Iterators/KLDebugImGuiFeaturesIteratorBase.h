@@ -39,6 +39,7 @@ public:
     UE_NODISCARD int32                                           GetFeaturesCount() const;
     UE_NODISCARD const FKLDebugImGuiFeatureData&                 GetFeatureData() const;
     UE_NODISCARD const FName& GetFeatureNameID() const;
+    UE_NODISCARD uint32 GetIteratorIndex() const;
 
 protected:
     template<bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
@@ -128,4 +129,10 @@ inline const FName& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatur
 {
     const IKLDebugImGuiFeatureInterfaceBase& FeatureInterfaceBase = GetFeature();
     return FeatureInterfaceBase.GetFeatureNameID();
+}
+
+template<class Child, bool IsConst>
+inline uint32 FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetIteratorIndex() const
+{
+    return mIndex;
 }
