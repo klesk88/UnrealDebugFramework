@@ -178,7 +178,7 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_RemoveInvalidWorlds(const FKLD
         for (int32 i = mCachedConnections.Num() - 1; i >= 0; --i)
         {
             const FKLDebugImGuiTCPClientCachedConnection& ConnectionData = mCachedConnections[i];
-            if (ConnectionData.IsPartOfWorld(RemovedWorld))
+            if (ConnectionData == RemovedWorld)
             {
                 RemoveCachedConnection(i);
             }

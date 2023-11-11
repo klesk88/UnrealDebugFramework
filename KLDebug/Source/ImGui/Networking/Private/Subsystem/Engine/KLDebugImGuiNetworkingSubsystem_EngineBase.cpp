@@ -47,7 +47,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World,
 {
     check(IsInGameThread());
 
-    if (!_World || !IsValidWorld(*_World))
+    if (!_World)
     {
         return;
     }
@@ -67,7 +67,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World,
     }
     else
     {
-        ensureMsgf(false, TEXT("we must have it in the list"));
+        return;
     }
 
     ensureMsgf(mRemovedWorlds.FindByKey(_World) == nullptr, TEXT("world already in removal list should not be possible"));

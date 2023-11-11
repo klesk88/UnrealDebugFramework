@@ -36,9 +36,9 @@ private:
 public:
     explicit FKLDebugImGuiTCPClientCachedConnection(const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _Socket);
     UE_NODISCARD bool operator==(const FNetworkGUID& _ControllerGUID) const;
+    UE_NODISCARD bool operator==(const FObjectKey& _WorldID) const;
 
     UE_NODISCARD bool HasServerInitializedOwner() const;
-    UE_NODISCARD bool IsPartOfWorld(const FObjectKey& _WorldID) const;
 
     UE_NODISCARD bool TickOnGameThread(FKLDebugImGuiClientData& _ClientData);
 
@@ -67,7 +67,7 @@ inline bool FKLDebugImGuiTCPClientCachedConnection::operator==(const FNetworkGUI
     return _ControllerGUID == mControllerOwnerGUID;
 }
 
-inline bool FKLDebugImGuiTCPClientCachedConnection::IsPartOfWorld(const FObjectKey& _WorldID) const
+inline bool FKLDebugImGuiTCPClientCachedConnection::operator==(const FObjectKey& _WorldID) const
 {
     return mWorldKey == _WorldID;
 }

@@ -60,7 +60,7 @@ bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
         return false;
     }
 
-    const bool IsServer = UKismetSystemLibrary::IsServer(&_World);
+    const bool IsServer = UKismetSystemLibrary::IsDedicatedServer(&_World);
     return IsServer;
 }
 

@@ -30,6 +30,7 @@ public:
     UE_NODISCARD FNetworkGUID GetLocalPlayerNetworkID() const;
     UE_NODISCARD TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate>& GetFeaturesStatusUpdateMutable();
     UE_NODISCARD const UWorld& GetWorld() const;
+    UE_NODISCARD const FObjectKey& GetWorldID() const;
 
 private:
     TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate> mPendingFeaturesStatusUpdates;
@@ -53,4 +54,9 @@ inline const UWorld& FKLDebugImGuiClientData::GetWorld() const
     const UWorld* World = Cast<const UWorld>(mWorldKey.ResolveObjectPtr());
     check(World != nullptr);
     return *World;
+}
+
+inline const FObjectKey& FKLDebugImGuiClientData::GetWorldID() const
+{
+    return mWorldKey;
 }

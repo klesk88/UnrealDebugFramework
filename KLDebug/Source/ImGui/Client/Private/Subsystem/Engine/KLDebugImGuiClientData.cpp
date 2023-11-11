@@ -140,7 +140,7 @@ FNetworkGUID FKLDebugImGuiClientData::GetLocalPlayerNetworkID() const
     const APlayerController* PlayerController = LocalPlayer ? LocalPlayer->GetPlayerController(&World) : nullptr;
     if (!PlayerController)
     {
-        ensureMsgf(false, TEXT("no valid player controller"));
+        //it can happen that the player controller is not yet ready at this point
         return FNetworkGUID();
     }
 

@@ -102,6 +102,14 @@ bool FKLDebugImGuiTCPClientCachedConnection::TickOnGameThread(FKLDebugImGuiClien
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiTCPClientCachedConnection_TickOnGameThread);
 
     //when we reach here we have locked so any other method will be called
+    if (mWorldKey == FObjectKey())
+    {
+        mWorldKey = _ClientData.GetWorldID();
+    }
+    else
+    {
+        ensureMsgf(mWorldKey == _ClientData.GetWorldID(), TEXT("must be the same"));
+    }
 
     TArray<uint8>& WriteBuffer = GetWriteBuffer();
     FKLDebugImGuiNetworkingConnectionGetPendingBuffer PendingMessagesContainer(GetReadBuffer());
