@@ -22,7 +22,7 @@ public class UnrealImGui : ModuleRules
 
 		// Developer modules are automatically loaded only in editor builds but can be stripped out from other builds.
 		// Enable runtime loader, if you want this module to be automatically loaded in runtime builds (monolithic).
-		bool bEnableRuntimeLoader = true;
+		bool bEnableRuntimeLoader = false;
 		bool bUnrealImguiEnabled = true;
         //Begin @KLMod removed this not needed
         //bool bEnableImUnrealCommand = true;

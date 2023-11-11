@@ -52,6 +52,14 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World,
         return;
     }
 
+#if !WITH_EDITOR
+    //in a package build we can reach here after a first world has been already created.
+    if (mCurrentWorlds.IsEmpty())
+    {
+        return;
+    }
+#endif
+
     const int32 Index = mCurrentWorlds.IndexOfByKey(_World);
     if (Index != INDEX_NONE)
     {
