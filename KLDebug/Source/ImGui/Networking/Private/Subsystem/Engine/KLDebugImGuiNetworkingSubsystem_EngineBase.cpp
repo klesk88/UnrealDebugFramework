@@ -45,6 +45,10 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldInitialze(UWorld* _Worl
 
 void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World, bool _SessionEnded, bool _CleanupResources)
 {
+    //NOTE: here intentionally we dont check IsValidWorld
+    //if for example we travel from a dedicated server to a listen server, that check would fail on a the client subsystem (as now the client is a 
+    //listen server) so we would never remove the data of the world we are leaving
+
     check(IsInGameThread());
 
     if (!_World)
