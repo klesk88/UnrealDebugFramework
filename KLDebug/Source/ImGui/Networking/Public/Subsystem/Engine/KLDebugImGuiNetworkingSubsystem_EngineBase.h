@@ -33,12 +33,16 @@ public:
     bool IsTickable() const override;
 
     ETickableTickType GetTickableTickType() const final;
+    bool IsAllowedToTick() const final;
     bool IsTickableWhenPaused() const final;
+    bool IsTickableInEditor() const final;
     //UTickableWorldSubsystem
 
     void SetShouldTick();
 
 protected:
+    virtual ETickableTickType GetTickableTickTypeChild() const;
+
     UE_NODISCARD virtual FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnectionMutable, return nullptr;);
     UE_NODISCARD virtual const FKLDebugImGuiNetworkingTCPBase* GetConnection() const PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnection, return nullptr;);
     UE_NODISCARD virtual bool IsValidWorld(UWorld& _World) const;
@@ -65,7 +69,19 @@ private:
 
 inline ETickableTickType UKLDebugImGuiNetworkingSubsystem_EngineBase::GetTickableTickType() const
 {
-    return ETickableTickType::Conditional;
+    //avoid top add this class to the list of tickable objects as well as all CDOs
+    return IsTemplate() ? ETickableTickType::Never : GetTickableTickTypeChild();
+}
+
+inline ETickableTickType UKLDebugImGuiNetworkingSubsystem_EngineBase::GetTickableTickTypeChild() const
+{
+    //avoid top add this class to the list of tickable objects
+    return ETickableTickType::Never;
+}
+
+inline bool UKLDebugImGuiNetworkingSubsystem_EngineBase::IsAllowedToTick() const
+{
+    return !IsTemplate();
 }
 
 inline bool UKLDebugImGuiNetworkingSubsystem_EngineBase::IsTickable() const
@@ -74,6 +90,11 @@ inline bool UKLDebugImGuiNetworkingSubsystem_EngineBase::IsTickable() const
 }
 
 inline bool UKLDebugImGuiNetworkingSubsystem_EngineBase::IsTickableWhenPaused() const
+{
+    return true;
+}
+
+inline bool UKLDebugImGuiNetworkingSubsystem_EngineBase::IsTickableInEditor() const
 {
     return true;
 }

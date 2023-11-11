@@ -36,18 +36,27 @@ FKLDebugImGuiTCPServerCachedConnection::FKLDebugImGuiTCPServerCachedConnection(c
     mControllerNetworkKey = KL::Debug::Networking::Helpers::TryGetNetworkGuid(_OwnerController);
 }
 
-void FKLDebugImGuiTCPServerCachedConnection::OnClientConnected(ISocketSubsystem& _SocketSubsystem, FSocket& _ClientSocket)
-{
-    ensureMsgf(mConnectionState == EConnectionState::PendingClientConnection, TEXT("wrong state set"));
-
-    UpdateSocket(_SocketSubsystem, _ClientSocket);
-    
-    mConnectionState = EConnectionState::ClientConnected;
-}
-
 bool FKLDebugImGuiTCPServerCachedConnection::IsValidConnection() const
 {
-    return IsValid() && mIsValidConnection && GetSocketMutable().GetConnectionState() == SCS_Connected;
+    if (!IsValid() || !mIsValidConnection)
+    {
+        return false;
+    }
+
+    const ESocketConnectionState SocketState = GetSocketMutable().GetConnectionState();
+    switch (mConnectionState)
+    {
+    case EConnectionState::ToInitialize:
+    case EConnectionState::PendingInitializeSend:
+    case EConnectionState::PendingClientConnection:
+        return true;
+    case EConnectionState::ClientConnected:
+        return SocketState == SCS_Connected;
+    case EConnectionState::Failure:
+        return false;
+    }
+
+    return false;
 }
 
 bool FKLDebugImGuiTCPServerCachedConnection::TickChild()
@@ -78,6 +87,13 @@ void FKLDebugImGuiTCPServerCachedConnection::HandleToInitializeState()
 
 void FKLDebugImGuiTCPServerCachedConnection::HandlePendingClientConnectionState()
 {
+    const ESocketConnectionState SocketState = GetSocketMutable().GetConnectionState();
+    if (SocketState == SCS_Connected)
+    {
+        mConnectionState = EConnectionState::ClientConnected;
+        return;
+    }
+
     const FTimespan TimeSpan = mCheckTimer - FDateTime::Now();
     if (TimeSpan.GetTotalSeconds() > 10.f)
     {

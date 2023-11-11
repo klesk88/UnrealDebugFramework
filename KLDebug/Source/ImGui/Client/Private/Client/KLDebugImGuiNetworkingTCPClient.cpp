@@ -84,7 +84,7 @@ void FKLDebugImGuiNetworkingTCPClient::TickPendingConnections()
     bool Pending = false;
 
     // handle incoming connections
-    if (mListenerSocket && mListenerSocket->HasPendingConnection(Pending) && Pending)
+    if (mListenerSocket->HasPendingConnection(Pending) && Pending)
     {
         //New Connection receive!
         FSocket* ConnectionSocket = mListenerSocket->Accept(TEXT("Server Socket"));
@@ -102,9 +102,14 @@ void FKLDebugImGuiNetworkingTCPClient::TickPendingConnections()
 
         mCachedConnections.Emplace(ReadNewSize, WriteNewSize, *ConnectionSocket);
 
+#if !WITH_EDITOR
+        //ok so in a package build we have one of this class per instance. So in that case, as soon as we connect to the server we want to free the socket
+        //for other clients launched on the same machine that want to connect with it.
+        //However in editor we have one single instance for all clients we generate so we never want to close this socket
         mListenerSocket->Close();
         SocketSubsystem->DestroySocket(mListenerSocket);
         mListenerSocket = nullptr;
+#endif
     }
 }
 

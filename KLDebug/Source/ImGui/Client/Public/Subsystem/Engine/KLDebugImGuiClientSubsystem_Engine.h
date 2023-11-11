@@ -43,6 +43,7 @@ private:
     void OnWorldAdded(UWorld& _World) final;
     void OnWorldRemoved(UWorld& _World) final;
 
+    ETickableTickType GetTickableTickTypeChild() const;
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
     bool IsTickable() const final;
@@ -79,6 +80,11 @@ inline TStatId UKLDebugImGuiClientSubsystem_Engine::GetStatId() const
 inline bool UKLDebugImGuiClientSubsystem_Engine::IsTickable() const
 {
     return Super::IsTickable() && mHasServerInitializedOwner;
+}
+
+inline ETickableTickType UKLDebugImGuiClientSubsystem_Engine::GetTickableTickTypeChild() const
+{
+    return ETickableTickType::Conditional;
 }
 
 inline void UKLDebugImGuiClientSubsystem_Engine::SetHasServerInitializedOwner(const bool _HasServerInitializedOwner)

@@ -54,6 +54,7 @@ private:
     UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
     UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
 
+    ETickableTickType GetTickableTickTypeChild() const;
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
     //UKLDebugImGuiNetworkingSubsystem_EngineBase
@@ -98,4 +99,9 @@ inline const FKLDebugImGuiNetworkingTCPBase* UKLDebugImGuiServerSubsystem_Engine
 inline TStatId UKLDebugImGuiServerSubsystem_Engine::GetStatId() const
 {
     RETURN_QUICK_DECLARE_CYCLE_STAT(UKLDebugImGuiServerSubsystem_Engine, STATGROUP_Tickables);
+}
+
+inline ETickableTickType UKLDebugImGuiServerSubsystem_Engine::GetTickableTickTypeChild() const
+{
+    return ETickableTickType::Conditional;
 }

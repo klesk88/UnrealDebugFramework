@@ -72,12 +72,6 @@ void FKLDebugImGuiNetworkingTCPCachedConnectionBase::ClearSocket(ISocketSubsyste
     }
 }
 
-void FKLDebugImGuiNetworkingTCPCachedConnectionBase::UpdateSocket(ISocketSubsystem& _SocketSubsystem, FSocket& _Socket)
-{
-    ClearSocket(_SocketSubsystem);
-    mSocket = &_Socket;
-}
-
 void FKLDebugImGuiNetworkingTCPCachedConnectionBase::Tick()
 {
     /*

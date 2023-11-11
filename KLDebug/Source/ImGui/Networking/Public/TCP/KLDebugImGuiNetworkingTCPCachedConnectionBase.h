@@ -47,7 +47,6 @@ protected:
     virtual void OnSendDataResultChild(const bool _DataSent);
 
     void ClearSocket(ISocketSubsystem& _SocketSubsystem);
-    void UpdateSocket(ISocketSubsystem& _SocketSubsystem, FSocket& _Socket);
     UE_NODISCARD FSocket& GetSocketMutable() const;
 
     UE_NODISCARD bool TickReadWriteBuffers(const bool _HasReadBytes, FArchive& _Reader);

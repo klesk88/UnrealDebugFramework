@@ -47,7 +47,6 @@ public:
 
     void SetInvalidConnection();
     UE_NODISCARD bool IsValidConnection() const;
-    void OnClientConnected(ISocketSubsystem& _SocketSubsystem, FSocket& _ClientSocket);
 
     //this is called from the game thread.
     UE_NODISCARD bool TickOnGameThread();
