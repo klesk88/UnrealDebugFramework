@@ -134,6 +134,7 @@ private:
 //@Begin KLMod: added world
 public:
     void UpdateWorld(const UWorld& _World);
+    const UWorld* GetWorld() const;
 
 private:
     TWeakObjectPtr<const UWorld> mWorld;

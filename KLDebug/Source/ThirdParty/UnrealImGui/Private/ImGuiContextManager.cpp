@@ -235,6 +235,14 @@ FContextData& FImGuiContextManager::GetWorldContextData(const UWorld& World, int
     }
 #endif
 
+    // Begin KLMod: if we are in a network session, the world can be updated so check it here
+    if (Data->ContextProxy.IsValid() && Data->ContextProxy->GetWorld() != &World)
+    {
+        Data->ContextProxy->UpdateWorld(World);
+    }
+
+    //End KLMod
+
     if (OutIndex)
     {
         *OutIndex = Index;

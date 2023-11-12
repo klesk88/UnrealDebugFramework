@@ -412,4 +412,9 @@ void FImGuiContextProxy::UpdateWorld(const UWorld& _World)
     mWorld = &_World;
 }
 
+const UWorld* FImGuiContextProxy::GetWorld() const
+{
+    return mWorld.Get();
+}
+
 //End KLMod
