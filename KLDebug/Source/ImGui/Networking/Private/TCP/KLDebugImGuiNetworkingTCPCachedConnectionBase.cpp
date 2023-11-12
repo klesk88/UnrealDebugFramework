@@ -326,6 +326,14 @@ void FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData(TArray<uint8>& _Bu
     FSocket& Socket = GetSocketMutable();
     Socket.Send(_Buffer.GetData(), _Buffer.Num(), BytesSent);
     
+    if (BytesSent == -1)
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData>> Supposed to send [%d] but we didn't send anything"),
+            _Buffer.Num(),
+            BytesSent);
+        return;
+    }
+
     const bool DataSentFully = BytesSent == _Buffer.Num();
     OnSendDataResultChild(DataSentFully);
     if (DataSentFully)

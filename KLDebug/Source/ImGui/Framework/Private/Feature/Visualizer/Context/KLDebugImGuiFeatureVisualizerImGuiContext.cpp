@@ -9,11 +9,7 @@ FKLDebugImGuiFeatureVisualizerImGuiContext::FKLDebugImGuiFeatureVisualizerImGuiC
     : mWorld(_World)
     , mFeatureContainerManager(_FeatureContainerManager)
     , mOnFeatureStateUpdatedDelegate(_FeatureUpdateDelegate)
+    , mWorldNetMode(_World.GetNetMode())
     , mDrawTree(_DrawTree)
 {
-}
-
-ENetMode FKLDebugImGuiFeatureVisualizerImGuiContext::GetCurrentNetMode() const
-{
-    return mWorld.GetNetMode();
 }

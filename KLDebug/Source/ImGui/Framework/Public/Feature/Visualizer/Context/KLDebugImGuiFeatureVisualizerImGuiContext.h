@@ -25,6 +25,7 @@ private:
     const UWorld& mWorld;
     FKLDebugImGuiFeaturesTypesContainerManager& mFeatureContainerManager;
     const FOnImGuiFeatureStateUpdated& mOnFeatureStateUpdatedDelegate;
+    ENetMode mWorldNetMode = ENetMode::NM_MAX;
     bool mDrawTree = false;
 };
 
@@ -46,4 +47,10 @@ inline bool FKLDebugImGuiFeatureVisualizerImGuiContext::GetShouldDrawTree() cons
 inline const FOnImGuiFeatureStateUpdated& FKLDebugImGuiFeatureVisualizerImGuiContext::GetFeatureUpdateDelegate() const
 {
     return mOnFeatureStateUpdatedDelegate;
+}
+
+
+inline ENetMode FKLDebugImGuiFeatureVisualizerImGuiContext::GetCurrentNetMode() const
+{
+    return mWorld.GetNetMode();
 }

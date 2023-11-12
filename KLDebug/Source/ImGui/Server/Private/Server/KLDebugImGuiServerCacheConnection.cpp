@@ -107,7 +107,7 @@ namespace KL::Debug::Networking::ImGuiServer
         _TempFeatureData.Reset();
 
         FMemoryWriter FeatureWriter{ _TempFeatureData };
-        const FKLDebugImGuiFeature_NetworkingGatherDataInput GatherDataInput{ _World, EKLDebugImGuiNetworkingEnviroment::Server, _Owner, _Context, FeatureWriter };
+        const FKLDebugImGuiFeature_NetworkingGatherDataInput GatherDataInput{ _World, _Owner, _Context, FeatureWriter };
         if (!NetworkInterface->ShouldGatherData(GatherDataInput))
         {
             return;

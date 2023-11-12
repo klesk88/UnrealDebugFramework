@@ -21,8 +21,17 @@ TUniquePtr<FKLDebugImGuiFeatureContext_Base> FKLDebugFeatureAI_BehaviorTree::Get
     switch (_Input.GetCurrentNetMode())
     {
     case ENetMode::NM_DedicatedServer:
+        if (_Input.HasAuthorityOnObject())
+        {
+            return MakeUnique<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+        }
+        return nullptr;
     case ENetMode::NM_Client:
-        return MakeUnique<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+        if (!_Input.HasAuthorityOnObject())
+        {
+            return MakeUnique<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+        }
+        return nullptr;
     case ENetMode::NM_Standalone:
     case ENetMode::NM_ListenServer:
     case ENetMode::NM_MAX:
@@ -51,28 +60,18 @@ const FName& FKLDebugFeatureAI_BehaviorTree::GetImGuiPath() const
 
 void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
-    switch (_Input.GetWorld().GetNetMode())
-    {
-    case ENetMode::NM_Standalone:
-    case ENetMode::NM_ListenServer:
-    case ENetMode::NM_MAX:
+    if (_Input.HasAuthorityOnObject())
     {
         FKLDebugFeatureAI_BehaviorTreeNetworkContext Context;
         Context.UpdateData(_Input.GetObject());
         ImGuiDrawBrainInfo(Context);
         ImGuiDrawBTInfo(Context);
     }
-        break;
-    case ENetMode::NM_DedicatedServer:
-        checkNoEntry();
-        break;
-    case ENetMode::NM_Client:
+    else
     {
         const FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContext<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
         ImGuiDrawBrainInfo(Context);
         ImGuiDrawBTInfo(Context);
-    }
-        break;
     }
 }
 
@@ -143,19 +142,9 @@ bool FKLDebugFeatureAI_BehaviorTree::ShouldGatherData(const FKLDebugImGuiFeature
 
 void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
 {
-    switch (_GatherDataInput.GetCurrentEnviroment())
-    {
-    case EKLDebugImGuiNetworkingEnviroment::Server:
-    {
-        FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
-        Context.UpdateData(_GatherDataInput.TryGetOwnerObject<FKLDebugFeatureAI_BehaviorTree>());
-        Context.Network_GatherData(_GatherDataInput.GetArchiveMutable());
-    }
-
-        break;
-    case EKLDebugImGuiNetworkingEnviroment::Client:
-        break;
-    }
+    FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+    Context.UpdateData(_GatherDataInput.TryGetOwnerObject<FKLDebugFeatureAI_BehaviorTree>());
+    Context.Network_GatherData(_GatherDataInput.GetArchiveMutable());
 }
 
 void FKLDebugFeatureAI_BehaviorTree::ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)

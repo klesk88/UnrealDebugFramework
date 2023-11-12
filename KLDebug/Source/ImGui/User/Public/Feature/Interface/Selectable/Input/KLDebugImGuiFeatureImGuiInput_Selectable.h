@@ -13,6 +13,7 @@ public:
 
     UE_NODISCARD const UObject& GetObject() const;
     UE_NODISCARD UObject& GetObjectMutable() const;
+    UE_NODISCARD bool HasAuthorityOnObject() const;
 
     //the user is expected to know the type of the context the imgui spawns trough GetFeatureContext.
     //It is also responsible to know when is valid and when not (if spawn is guaranteed to be valid till the imgui feature is valid)
@@ -27,6 +28,7 @@ public:
 private:
     UObject& mObject;
     FKLDebugImGuiFeatureContext_Base* mContextData = nullptr;
+    bool mHasAuthorityOnObject = true;
 };
 
 inline const UObject& FKLDebugImGuiFeatureImGuiInput_Selectable::GetObject() const
@@ -51,4 +53,9 @@ template<typename ContextType>
 inline const ContextType& FKLDebugImGuiFeatureImGuiInput_Selectable::GetContext() const
 {
     return GetContextMutable<ContextType>();
+}
+
+inline bool FKLDebugImGuiFeatureImGuiInput_Selectable::HasAuthorityOnObject() const
+{
+    return mHasAuthorityOnObject;
 }

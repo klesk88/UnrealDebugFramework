@@ -15,6 +15,7 @@
 #include "Engine/DebugCameraController.h"
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetSystemLibrary.h"
 

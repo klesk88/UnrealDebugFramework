@@ -15,6 +15,8 @@ public:
     explicit FKLDebugImGuiFeatureContextInput(const ENetMode _CurrentNetMode, const UObject& _Object);
 
     UE_NODISCARD ENetMode GetCurrentNetMode() const;
+    UE_NODISCARD bool HasAuthorityOnObject() const;
+
     //for subsystems interfaces this is the current world
     //for selectable objects interfaces this is the actual object selected
     UE_NODISCARD const UObject& GetObject() const;
@@ -22,6 +24,7 @@ public:
 private:
     ENetMode mCurrentNetMode = ENetMode::NM_MAX;
     const UObject& mObject;
+    bool mHasAutorithyOnObject = true;
 };
 
 inline ENetMode FKLDebugImGuiFeatureContextInput::GetCurrentNetMode() const
@@ -32,4 +35,9 @@ inline ENetMode FKLDebugImGuiFeatureContextInput::GetCurrentNetMode() const
 inline const UObject& FKLDebugImGuiFeatureContextInput::GetObject() const
 {
     return mObject;
+}
+
+inline bool FKLDebugImGuiFeatureContextInput::HasAuthorityOnObject() const
+{
+    return mHasAutorithyOnObject;
 }
