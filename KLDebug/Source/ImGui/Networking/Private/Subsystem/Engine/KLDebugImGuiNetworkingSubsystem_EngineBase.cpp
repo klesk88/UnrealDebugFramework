@@ -3,6 +3,10 @@
 #include "Subsystem/Engine/KLDebugImGuiNetworkingGameThreadUpdateContextBase.h"
 #include "TCP/KLDebugImGuiNetworkingTCPBase.h"
 
+//modules
+#include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+
 void UKLDebugImGuiNetworkingSubsystem_EngineBase::Initialize(FSubsystemCollectionBase& _Collection)
 {
     Super::Initialize(_Collection);
@@ -10,49 +14,68 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::Initialize(FSubsystemCollectio
     mCurrentWorlds.Reserve(10);
     mRemovedWorlds.Reserve(10);
 
-    RegisterWorldDelegates();
+    RegisterDelegates();
 }
 
 void UKLDebugImGuiNetworkingSubsystem_EngineBase::Deinitialize()
 {
     Super::Deinitialize();
 
-    UnregisterWorldDelegates();
+    UnregisterDelegates();
 }
 
-void UKLDebugImGuiNetworkingSubsystem_EngineBase::RegisterWorldDelegates()
+void UKLDebugImGuiNetworkingSubsystem_EngineBase::RegisterDelegates()
 {
-    FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldInitialze);
-    FWorldDelegates::OnWorldCleanup.AddUObject(this, &UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved);
+    KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.AddUObject(this, &UKLDebugImGuiNetworkingSubsystem_EngineBase::OnImGuiWorldSubsystemStateChage);
 }
 
-void UKLDebugImGuiNetworkingSubsystem_EngineBase::UnregisterWorldDelegates()
+void UKLDebugImGuiNetworkingSubsystem_EngineBase::UnregisterDelegates()
 {
-    FWorldDelegates::OnPostWorldInitialization.RemoveAll(this);
-    FWorldDelegates::OnWorldCleanup.RemoveAll(this);
+    KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.RemoveAll(this);
 }
 
-void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldInitialze(UWorld* _World, const UWorld::InitializationValues _IVS)
+void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnImGuiWorldSubsystemStateChage(const bool _Added, UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem)
 {
-    check(IsInGameThread());
-
-    if (_World && IsValidWorld(*_World))
+    if (_Added)
     {
-        mCurrentWorlds.Emplace(_World);
-        OnWorldAdded(*_World);
+        OnAddImGuiSubsystem(_ImGuiSubsystem);
+    }
+    else
+    {
+        OnRemoveImGuiSubsystem(_ImGuiSubsystem);
     }
 }
 
-void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World, bool _SessionEnded, bool _CleanupResources)
+void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnAddImGuiSubsystem(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem)
+{
+    check(IsInGameThread());
+
+    UWorld* World = _ImGuiSubsystem.GetWorld();
+    if (!World)
+    {
+        ensureMsgf(false, TEXT("we should alwasy have a valid world"));
+        return;
+    }
+
+    if (IsValidWorld(*World))
+    {
+        mCurrentWorlds.Emplace(World);
+        OnImGuiSusbsytemAdded(_ImGuiSubsystem, *World);
+    }
+}
+
+void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnRemoveImGuiSubsystem(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem)
 {
     //NOTE: here intentionally we dont check IsValidWorld
-    //if for example we travel from a dedicated server to a listen server, that check would fail on a the client subsystem (as now the client is a 
-    //listen server) so we would never remove the data of the world we are leaving
+  //if for example we travel from a dedicated server to a listen server, that check would fail on a the client subsystem (as now the client is a 
+  //listen server) so we would never remove the data of the world we are leaving
 
     check(IsInGameThread());
 
-    if (!_World)
+    UWorld* World = _ImGuiSubsystem.GetWorld();
+    if (!World)
     {
+        ensureMsgf(false, TEXT("we should alwasy have a valid world"));
         return;
     }
 
@@ -64,7 +87,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World,
     }
 #endif
 
-    const int32 Index = mCurrentWorlds.IndexOfByKey(_World);
+    const int32 Index = mCurrentWorlds.IndexOfByKey(World);
     if (Index != INDEX_NONE)
     {
         mCurrentWorlds.RemoveAt(Index, 1, false);
@@ -74,9 +97,9 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld* _World,
         return;
     }
 
-    ensureMsgf(mRemovedWorlds.FindByKey(_World) == nullptr, TEXT("world already in removal list should not be possible"));
-    mRemovedWorlds.Emplace(_World);
-    OnWorldRemoved(*_World);
+    ensureMsgf(mRemovedWorlds.FindByKey(World) == nullptr, TEXT("world already in removal list should not be possible"));
+    mRemovedWorlds.Emplace(World);
+    OnImGuiSusbsytemRemoved(_ImGuiSubsystem, *World);
 
     SetShouldTick();
 }

@@ -49,17 +49,16 @@ bool UKLDebugImGuiClientSubsystem_Engine::IsValidWorld(UWorld& _World) const
     return IsClient;
 }
 
-void UKLDebugImGuiClientSubsystem_Engine::OnWorldAdded(UWorld& _World)
+void UKLDebugImGuiClientSubsystem_Engine::OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World)
 {
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = _World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
     FOnImGuiFeatureStateUpdated::FDelegate FeatureUpdateDelagate = FOnImGuiFeatureStateUpdated::FDelegate::CreateUObject(this, &UKLDebugImGuiClientSubsystem_Engine::OnFeatureUpdate);
-    const FDelegateHandle Handle = ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
+    const FDelegateHandle Handle = _ImGuiSubsystem.BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
 
     ensureMsgf(mClientsData.FindByKey(FObjectKey(&_World)) == nullptr, TEXT("we should not have already one"));
     mClientsData.Emplace(_World, Handle);
 }
 
-void UKLDebugImGuiClientSubsystem_Engine::OnWorldRemoved(UWorld& _World)
+void UKLDebugImGuiClientSubsystem_Engine::OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World)
 {
     const int32 Index = mClientsData.IndexOfByKey(FObjectKey(&_World));
     if (Index == INDEX_NONE)
@@ -68,12 +67,7 @@ void UKLDebugImGuiClientSubsystem_Engine::OnWorldRemoved(UWorld& _World)
         return;
     }
 
-    UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = _World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
-    if (ImGuiWorldSubsystem)
-    {
-        mClientsData[Index].Shutdown(*ImGuiWorldSubsystem);
-    }
-
+    mClientsData[Index].Shutdown(_ImGuiSubsystem);
     mClientsData.RemoveAtSwap(Index, 1, false);
 }
 

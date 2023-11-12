@@ -38,6 +38,10 @@ public:
     UE_NODISCARD bool operator==(const FNetworkGUID& _ControllerGUID) const;
     UE_NODISCARD bool operator==(const FObjectKey& _WorldID) const;
 
+    //FKLDebugImGuiNetworkingTCPCachedConnectionBase
+    UE_NODISCARD bool IsValid() const final;
+    //FKLDebugImGuiNetworkingTCPCachedConnectionBase
+
     UE_NODISCARD bool HasServerInitializedOwner() const;
 
     UE_NODISCARD bool TickOnGameThread(FKLDebugImGuiClientData& _ClientData);

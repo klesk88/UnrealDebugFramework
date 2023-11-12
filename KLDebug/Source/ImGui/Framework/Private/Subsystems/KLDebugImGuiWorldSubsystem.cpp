@@ -50,17 +50,16 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
 
     FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
     ImGuiWindow.Shutdown();
+
+    if (KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.IsBound())
+    {
+        KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.Broadcast(false, *this);
+    }
 }
 
 void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
 {
     const UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
-    if (!EngineSusbsytem)
-    {
-        ensureMsgf(false, TEXT("should not be possible. We check in ShouldCreateSubsystem that the engine subsystem exists"));
-        return;
-    }
-
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = EngineSusbsytem->GetFeatureContainerManager();
 
     mImGuiTreeName = FString::Format(TEXT("{0} {1}"), { *GetDebugStringForWorld(&_World), *_World.GetName() });
@@ -69,12 +68,15 @@ void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
     FeaturesContainer.GatherFeatures(*this, Features);
 
-    if (Features.IsEmpty())
+    if (!Features.IsEmpty())
     {
-        return;
+        mUniqueFeaturesVisualizer.Init(FeaturesContainer, TEXT("Systems"), MoveTemp(Features));
     }
 
-    mUniqueFeaturesVisualizer.Init(FeaturesContainer, TEXT("Systems"), MoveTemp(Features));
+    if (KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.IsBound())
+    {
+        KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.Broadcast(true, *this);
+    }
 }
 
 UKLDebugImGuiWorldSubsystem* UKLDebugImGuiWorldSubsystem::TryGetMutable(const UObject& _Object)

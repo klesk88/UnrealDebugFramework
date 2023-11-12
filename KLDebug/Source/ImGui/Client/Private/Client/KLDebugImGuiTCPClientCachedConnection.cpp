@@ -23,6 +23,27 @@ FKLDebugImGuiTCPClientCachedConnection::FKLDebugImGuiTCPClientCachedConnection(c
     mCheckTimer = FDateTime::Now();
 }
 
+bool FKLDebugImGuiTCPClientCachedConnection::IsValid() const
+{
+    if (!FKLDebugImGuiNetworkingTCPCachedConnectionBase::IsValid())
+    {
+        return false;
+    }
+
+    const ESocketConnectionState SocketConnectionState = GetSocketMutable().GetConnectionState();
+    switch (mState)
+    {
+    case EClientState::PendingServerData:
+        return true;
+    case EClientState::FullyInitialized:
+        return SocketConnectionState == SCS_Connected;
+    case EClientState::Failure:
+        return false;
+    }
+
+    return false;
+}
+
 bool FKLDebugImGuiTCPClientCachedConnection::ReadBufferChildHasHandleMessage(const FKLDebugImGuiNetworkingMessage_Header& _Header, FArchive& _Data)
 {
     switch (mState)

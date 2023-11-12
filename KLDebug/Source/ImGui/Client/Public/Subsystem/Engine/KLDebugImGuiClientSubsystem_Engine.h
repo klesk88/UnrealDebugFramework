@@ -13,11 +13,8 @@
 
 #include "KLDebugImGuiClientSubsystem_Engine.generated.h"
 
-class AController;
-class AGameModeBase;
-class APlayerController;
+class UKLDebugImGuiWorldSubsystem;
 class FKLDebugImGuiFeatureStatusUpdateData;
-class FString;
 
 UCLASS(Transient)
 class KLDEBUGIMGUICLIENT_API UKLDebugImGuiClientSubsystem_Engine final : public UKLDebugImGuiNetworkingSubsystem_EngineBase
@@ -40,8 +37,8 @@ private:
     UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
     UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
     UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
-    void OnWorldAdded(UWorld& _World) final;
-    void OnWorldRemoved(UWorld& _World) final;
+    void OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World) final;
+    void OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World) final;
 
     ETickableTickType GetTickableTickTypeChild() const;
     TStatId GetStatId() const final;

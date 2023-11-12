@@ -13,6 +13,7 @@
 class FKLDebugImGuiNetworkingGameThreadUpdateContextBase;
 class FKLDebugImGuiNetworkingTCPBase;
 class IKLDebugImGuiNetworkingWorldProviderInterface;
+class UKLDebugImGuiWorldSubsystem;
 class UWorld;
 
 //this is a vase class. Abstract will not make it instantiate
@@ -46,18 +47,20 @@ protected:
     UE_NODISCARD virtual FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnectionMutable, return nullptr;);
     UE_NODISCARD virtual const FKLDebugImGuiNetworkingTCPBase* GetConnection() const PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnection, return nullptr;);
     UE_NODISCARD virtual bool IsValidWorld(UWorld& _World) const;
-    virtual void OnWorldAdded(UWorld& _World);
-    virtual void OnWorldRemoved(UWorld& _World);
+    virtual void OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World);
+    virtual void OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World);
 
     void ClearShouldTick();
     void GatherUpdateData(FKLDebugImGuiNetworkingGameThreadUpdateContextBase& _Context);
 
 private:
-    void RegisterWorldDelegates();
-    void UnregisterWorldDelegates();
+    void RegisterDelegates();
+    void UnregisterDelegates();
 
-    void OnWorldInitialze(UWorld* _World, const UWorld::InitializationValues _IVS);
-    void OnWorldRemoved(UWorld* _World, bool _SessionEnded, bool _CleanupResources);
+    void OnImGuiWorldSubsystemStateChage(const bool _Added, UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem);
+
+    void OnAddImGuiSubsystem(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem);
+    void OnRemoveImGuiSubsystem(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem);
 
 protected:
     bool mShouldTick = false;
@@ -109,10 +112,10 @@ inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::ClearShouldTick()
     mShouldTick = false;
 }
 
-inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldAdded(UWorld& _World)
+inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World)
 {
 }
 
-inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnWorldRemoved(UWorld& _World)
+inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World)
 {
 }
