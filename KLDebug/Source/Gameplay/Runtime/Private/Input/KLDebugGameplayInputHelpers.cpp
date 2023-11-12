@@ -36,34 +36,40 @@ namespace KL::Debug::Gameplay::Input::Helpers
         UKLDebugGameplaySubsystem_Engine* EngineSubsystem = UKLDebugGameplaySubsystem_Engine::TryGetMutable();
         checkf(EngineSubsystem != nullptr, TEXT("must be valid"));
 
-        if (const UInputAction* InputAction = _InputConfig.TryGetToogleDebug())
+        if (const UInputAction* InputAction = _InputConfig.TryGetInputAction(EKLDebugGameplayInputType::ToogleDebug))
         {
             _OutEnhancedComponent.BindAction(InputAction, ETriggerEvent::Started, &_ImGuiEngineSusystem, &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
         }
         else
         {
             UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable the debug mode trough player controller"));
-            return;
         }
 
-        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetToogleImGuiInput())
+        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetInputAction(EKLDebugGameplayInputType::ToogleInput))
         {
             _OutEnhancedComponent.BindAction(ImGuiEnableInputAction, ETriggerEvent::Started, &_ImGuiEngineSusystem, &UKLDebugImGuiEngineSubsystem::ToogleImGuiInput);
         }
         else
         {
             UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable the input mode"));
-            return;
         }
 
-        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetToogleDebugCamera())
+        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetInputAction(EKLDebugGameplayInputType::ToogleCamera))
         {
             _OutEnhancedComponent.BindAction(ImGuiEnableInputAction, ETriggerEvent::Started, EngineSubsystem, &UKLDebugGameplaySubsystem_Engine::ToogleDebugCamera, TWeakObjectPtr<const ULocalPlayer>(&_LocalPlayer));
         }
         else
         {
             UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable the input mode"));
-            return;
+        }
+
+        if (const UInputAction* ImGuiEnableInputAction = _InputConfig.TryGetInputAction(EKLDebugGameplayInputType::TooglePause))
+        {
+            _OutEnhancedComponent.BindAction(ImGuiEnableInputAction, ETriggerEvent::Started, EngineSubsystem, &UKLDebugGameplaySubsystem_Engine::TooglePause, TWeakObjectPtr<const ULocalPlayer>(&_LocalPlayer));
+        }
+        else
+        {
+            UE_LOG(LogKL_Debug, Warning, TEXT("KLDebugGameplay no input action set to enable pause"));
         }
     }
 

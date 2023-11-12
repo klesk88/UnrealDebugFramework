@@ -3,7 +3,8 @@
 void FKLDebugGameplayInputConfig::Load() const
 {
     MappingContext.LoadSynchronous();
-    ToogleDebug.LoadSynchronous();
-    ToogleInput.LoadSynchronous();
-    ToogleDebugCamera.LoadSynchronous();
+    for (const TSoftObjectPtr<UInputAction>& Action : InputActions)
+    {
+        Action.LoadSynchronous();
+    }
 }

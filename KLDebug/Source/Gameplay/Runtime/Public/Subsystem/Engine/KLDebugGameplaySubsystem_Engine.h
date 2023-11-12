@@ -21,9 +21,11 @@ public:
     UE_NODISCARD static const UKLDebugGameplaySubsystem_Engine* TryGet();
 
     void ToogleDebugCamera(const TWeakObjectPtr<const ULocalPlayer> _LocalPlayer);
+    void TooglePause(const TWeakObjectPtr<const ULocalPlayer> _LocalPlayer);
 
 private:
     FKLDebugGameplayCameraManager mCameraManager;
+    bool mPauseState = false;
 };
 
 inline const UKLDebugGameplaySubsystem_Engine* UKLDebugGameplaySubsystem_Engine::TryGet()
