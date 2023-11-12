@@ -24,10 +24,13 @@ void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::SerializeChild(const FK
     Archive << mFullyRemoved;
     Archive << mContainerType;
 
-    if (!mFullyRemoved)
+    if (mFullyRemoved)
     {
-        Archive << mFeatureData;
+        ensureMsgf(mFeatureData.IsEmpty(), TEXT("we should not have elements when calling this"));
+        return;
     }
+
+    Archive << mFeatureData;
 
     ensureMsgf(!mFeatureData.IsEmpty(), TEXT("we should have elements when calling this"));
     ensureMsgf(mContainerType != EImGuiInterfaceType::COUNT, TEXT("invalid container type"));
