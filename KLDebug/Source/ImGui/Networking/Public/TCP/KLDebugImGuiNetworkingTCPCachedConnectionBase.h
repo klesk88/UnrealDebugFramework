@@ -54,9 +54,9 @@ protected:
 protected:
     UE_NODISCARD TArray<uint8>& GetWriteBuffer();
     UE_NODISCARD FKLDebugImGuiNetworkingConnectionGetPendingBuffer GetReadBuffer();
+    virtual UE_NODISCARD bool CheckConnectionStatus();
 
 private:
-    UE_NODISCARD bool CheckConnectionStatus();
     int32 TickReadConnectionData();
     UE_NODISCARD bool TickReadMessagesWithHeader(FArchive& _Reader);
     void TickWriteConnectionData();
@@ -65,8 +65,10 @@ private:
 
     void SendData(TArray<uint8>& _Buffer);
 
-private:
+protected:
     FDateTime mPendingConnectionTime;
+
+private:
     FNetworkGUID mOwnerNetGUID;
     TArray<uint8> mReceiveBuffer;
     TArray<uint8> mTempMessageBuffer;

@@ -110,7 +110,7 @@ bool FKLDebugImGuiTCPClientCachedConnection::TickChild()
 
 void FKLDebugImGuiTCPClientCachedConnection::HandlePendingServerDataState()
 {
-    const FTimespan TimeSpan = mCheckTimer - FDateTime::Now();
+    const FTimespan TimeSpan = FDateTime::Now() - mCheckTimer;
     if (TimeSpan.GetTotalSeconds() > 4.f)
     {
         UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiTCPClientCachedConnection::HandlePendingServerDataState>> Too much time waiting"));

@@ -56,6 +56,8 @@ void UKLDebugImGuiClientSubsystem_Engine::OnImGuiSusbsytemAdded(UKLDebugImGuiWor
 
     ensureMsgf(mClientsData.FindByKey(FObjectKey(&_World)) == nullptr, TEXT("we should not have already one"));
     mClientsData.Emplace(_World, Handle);
+
+    SetShouldTick();
 }
 
 void UKLDebugImGuiClientSubsystem_Engine::OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World)

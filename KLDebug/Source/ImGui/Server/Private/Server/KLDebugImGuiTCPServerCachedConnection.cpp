@@ -18,10 +18,11 @@
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 
-FKLDebugImGuiTCPServerCachedConnection::FKLDebugImGuiTCPServerCachedConnection(const AController& _OwnerController, const KL::Debug::ImGui::Networking::Server::CacheConnectionID _ID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _ClientSocket)
+FKLDebugImGuiTCPServerCachedConnection::FKLDebugImGuiTCPServerCachedConnection(const AController& _OwnerController, const KL::Debug::ImGui::Networking::Server::CacheConnectionID _ID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _ClientSocket, TSharedRef<FInternetAddr> _Address)
     : FKLDebugImGuiNetworkingTCPCachedConnectionBase(_ReadBufferSize, _WriteBufferSize, _ClientSocket)
     , mClientDataForConnection()
     , mControllerKey(&_OwnerController)
+    , mAddressToConnectTo(_Address)
 {
     check(IsInGameThread());
 
@@ -34,6 +35,7 @@ FKLDebugImGuiTCPServerCachedConnection::FKLDebugImGuiTCPServerCachedConnection(c
     }
 
     mControllerNetworkKey = KL::Debug::Networking::Helpers::TryGetNetworkGuid(_OwnerController);
+    mCheckTimer = FDateTime::Now();
 }
 
 bool FKLDebugImGuiTCPServerCachedConnection::IsValidConnection() const
@@ -59,6 +61,23 @@ bool FKLDebugImGuiTCPServerCachedConnection::IsValidConnection() const
     return false;
 }
 
+bool FKLDebugImGuiTCPServerCachedConnection::CheckConnectionStatus()
+{
+    switch (mConnectionState)
+    {
+    case EConnectionState::ToInitialize:
+    case EConnectionState::PendingInitializeSend:
+    case EConnectionState::PendingClientConnection:
+        return false;
+    case EConnectionState::ClientConnected:
+        return FKLDebugImGuiNetworkingTCPCachedConnectionBase::CheckConnectionStatus();
+    case EConnectionState::Failure:
+        return true;
+    }
+
+    return true;
+}
+
 bool FKLDebugImGuiTCPServerCachedConnection::TickChild()
 {
     switch (mConnectionState)
@@ -67,6 +86,7 @@ bool FKLDebugImGuiTCPServerCachedConnection::TickChild()
         HandleToInitializeState();
         break;
     case EConnectionState::PendingInitializeSend:
+        HandlePendingInitializeSend();
         break;
     case EConnectionState::PendingClientConnection:
         HandlePendingClientConnectionState();
@@ -81,24 +101,70 @@ bool FKLDebugImGuiTCPServerCachedConnection::TickChild()
     return mConnectionState == EConnectionState::Failure;
 }
 
+bool FKLDebugImGuiTCPServerCachedConnection::CheckAndUpdateConnectionStatusForState()
+{
+    FSocket& Socket = GetSocketMutable();
+    const ESocketConnectionState SocketState = Socket.GetConnectionState();
+    switch (SocketState)
+    {
+    case ESocketConnectionState::SCS_Connected:
+        mCheckTimer = FDateTime::Now();
+        return true;
+    case ESocketConnectionState::SCS_NotConnected:
+        break;
+    case ESocketConnectionState::SCS_ConnectionError:
+        if (mAddressToConnectTo.IsValid())
+        {
+            //try to connect again
+            Socket.Connect(*mAddressToConnectTo.Get());
+        }
+        else
+        {
+            return false;
+        }
+        break;
+    }
+
+    const FTimespan TimeSpan = FDateTime::Now() - mCheckTimer;
+    if (TimeSpan.GetTotalSeconds() > 10.f)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 void FKLDebugImGuiTCPServerCachedConnection::HandleToInitializeState()
 {
+    if (!CheckAndUpdateConnectionStatusForState())
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiTCPServerCachedConnection::HandleToInitializeState>> waited for 10 seconds but couldnt reach client"));
+        mConnectionState = EConnectionState::Failure;
+    }
+}
+
+void FKLDebugImGuiTCPServerCachedConnection::HandlePendingInitializeSend()
+{
+    if (!CheckAndUpdateConnectionStatusForState())
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiTCPServerCachedConnection::HandlePendingInitializeSend>> waited for 10 seconds but couldnt reach client"));
+        mConnectionState = EConnectionState::Failure;
+    }
 }
 
 void FKLDebugImGuiTCPServerCachedConnection::HandlePendingClientConnectionState()
 {
+    if (!CheckAndUpdateConnectionStatusForState())
+    {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiTCPServerCachedConnection::HandlePendingClientConnectionState>> waited for 10 seconds but client didnt connect"));
+        mConnectionState = EConnectionState::Failure;
+    }
+
     const ESocketConnectionState SocketState = GetSocketMutable().GetConnectionState();
     if (SocketState == SCS_Connected)
     {
         mConnectionState = EConnectionState::ClientConnected;
         return;
-    }
-
-    const FTimespan TimeSpan = mCheckTimer - FDateTime::Now();
-    if (TimeSpan.GetTotalSeconds() > 10.f)
-    {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiTCPServerCachedConnection::HandlePendingClientConnectionState>> waited for 10 seconds but client didnt connect"));
-        mConnectionState = EConnectionState::Failure;
     }
 }
 
@@ -154,7 +220,7 @@ void FKLDebugImGuiTCPServerCachedConnection::OnSendDataResultChild(const bool _D
         }
         else
         {
-            const FTimespan TimeSpan = mCheckTimer - FDateTime::Now();
+            const FTimespan TimeSpan = FDateTime::Now() - mCheckTimer;
             if (TimeSpan.GetTotalSeconds() > 5.f)
             {
                 UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiTCPServerCachedConnection::OnSendDataResultChild>> we could not send any bytes"));

@@ -13,6 +13,7 @@
 #include "Misc/DateTime.h"
 #include "Misc/NetworkGuid.h"
 #include "IPAddress.h"
+#include "Templates/SharedPointer.h"
 #include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
@@ -37,7 +38,7 @@ private:
     };
 
 public:
-    explicit FKLDebugImGuiTCPServerCachedConnection(const AController& _OwnerController, const KL::Debug::ImGui::Networking::Server::CacheConnectionID _ID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _ClientSocket);
+    explicit FKLDebugImGuiTCPServerCachedConnection(const AController& _OwnerController, const KL::Debug::ImGui::Networking::Server::CacheConnectionID _ID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _ClientSocket, TSharedRef<FInternetAddr> _Address);
     UE_NODISCARD bool operator==(const FSocket& _Socket) const;
     UE_NODISCARD bool operator==(const FObjectKey& _ControllerKey) const;
     UE_NODISCARD bool operator==(const KL::Debug::ImGui::Networking::Server::CacheConnectionID _ID) const;
@@ -53,16 +54,20 @@ public:
 
 private:
     //FKLDebugImGuiNetworkingTCPCachedConnectionBase
+    UE_NODISCARD bool CheckConnectionStatus() final;
     UE_NODISCARD bool TickChild() final;
     void TickChildWriteBuffer(FArchive& _Writer) final;
     void OnSendDataResultChild(const bool _DataSent) final;
     //FKLDebugImGuiNetworkingTCPCachedConnectionBase
 
     void HandleToInitializeState();
+    void HandlePendingInitializeSend();
     void HandlePendingClientConnectionState();
     void HandleClientConnectedState();
 
     void WriteInitializeState(FArchive& _Writer);
+
+    UE_NODISCARD bool CheckAndUpdateConnectionStatusForState();
 
 private:
     FKLDebugImGuiServerCacheConnection mClientDataForConnection;
@@ -74,6 +79,7 @@ private:
     FObjectKey mControllerKey;
     FObjectKey mWorldKey;
     TWeakObjectPtr<const UWorld> mWorld;
+    TSharedPtr<FInternetAddr> mAddressToConnectTo;
 
     bool mIsValidConnection = true;
     KL::Debug::ImGui::Networking::Server::CacheConnectionID mID = KL::Debug::ImGui::Networking::Server::InvalidCacheConnectionID;

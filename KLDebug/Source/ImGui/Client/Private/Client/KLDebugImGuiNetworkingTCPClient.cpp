@@ -67,6 +67,15 @@ void FKLDebugImGuiNetworkingTCPClient::RunChild()
     }
 
     TickConnections();
+
+#if !WITH_EDITOR
+    //in package builds, once we disconnect from the server to connect to a new one, recreate the socket
+    //so we are listening again for new connections
+    if (mCachedConnections.IsEmpty() && !mListenerSocket)
+    {
+        InitSocket();
+    }
+#endif
 }
 
 void FKLDebugImGuiNetworkingTCPClient::TickPendingConnections()

@@ -102,19 +102,22 @@ void FKLDebugImGuiNetworkingTCPCachedConnectionBase::Tick()
         mHasNewReadData = false;
     }
 
-    const int32 BytesRead = TickReadConnectionData();
-    const bool HasReadBytes = BytesRead > 0;
-    const uint32 TotalBufferUsage = mReadBufferStartIndex + static_cast<uint32>(BytesRead);
-    const TArrayView<uint8> ReadBufferView(mReceiveBuffer.GetData(), TotalBufferUsage);
-    FMemoryReaderView MemReaderView(ReadBufferView);
-
-    ensureMsgf(static_cast<uint32>(MemReaderView.TotalSize()) == TotalBufferUsage, TEXT("total size must match"));
-
-    ShouldShutdown = TickReadWriteBuffers(HasReadBytes, MemReaderView);
-    if (ShouldShutdown)
+    if (mSocket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
     {
-        Shutdown();
-        return;
+        const int32 BytesRead = TickReadConnectionData();
+        const bool HasReadBytes = BytesRead > 0;
+        const uint32 TotalBufferUsage = mReadBufferStartIndex + static_cast<uint32>(BytesRead);
+        const TArrayView<uint8> ReadBufferView(mReceiveBuffer.GetData(), TotalBufferUsage);
+        FMemoryReaderView MemReaderView(ReadBufferView);
+
+        ensureMsgf(static_cast<uint32>(MemReaderView.TotalSize()) == TotalBufferUsage, TEXT("total size must match"));
+
+        ShouldShutdown = TickReadWriteBuffers(HasReadBytes, MemReaderView);
+        if (ShouldShutdown)
+        {
+            Shutdown();
+            return;
+        }
     }
 
     ShouldShutdown = TickChild();

@@ -223,7 +223,7 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateNewPlayersConnections(FK
         NewClientSocket->Connect(*Address);
 
         const KL::Debug::ImGui::Networking::Server::CacheConnectionID NewID = (mCacheConnectionsID + 1) % TNumericLimits<KL::Debug::ImGui::Networking::Server::CacheConnectionID>::Max();
-        mClientsCachedConnection.Emplace(*NewPlayerController.Get(), NewID, ReceiveBufferSize, SenderBufferSize, *NewClientSocket);
+        mClientsCachedConnection.Emplace(*NewPlayerController.Get(), NewID, ReceiveBufferSize, SenderBufferSize, *NewClientSocket, Address);
     }
 
     NewPlayers.Reset();
