@@ -50,6 +50,7 @@ protected:
     virtual void OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World);
     virtual void OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World);
 
+    UE_NODISCARD bool IsWorldInValidList(const UWorld& _World) const;
     void ClearShouldTick();
     void GatherUpdateData(FKLDebugImGuiNetworkingGameThreadUpdateContextBase& _Context);
 
@@ -110,6 +111,11 @@ inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::SetShouldTick()
 inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::ClearShouldTick()
 {
     mShouldTick = false;
+}
+
+inline bool UKLDebugImGuiNetworkingSubsystem_EngineBase::IsWorldInValidList(const UWorld& _World) const
+{
+    return mCurrentWorlds.Find(&_World) != INDEX_NONE;
 }
 
 inline void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World)

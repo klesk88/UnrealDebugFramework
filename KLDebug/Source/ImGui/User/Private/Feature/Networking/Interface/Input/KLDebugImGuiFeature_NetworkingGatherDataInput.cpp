@@ -15,7 +15,7 @@ FKLDebugImGuiFeature_NetworkingGatherDataInput::FKLDebugImGuiFeature_NetworkingG
     }
 
     mHasAuthotityOnObject = true;
-    if (const AActor* Actor = Cast<const AActor>(&_OwnerObject))
+    if (const AActor* Actor = Cast<const AActor>(_OwnerObject))
     {
         mHasAuthotityOnObject = Actor->HasAuthority();
     }

@@ -66,12 +66,24 @@ bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
 
 void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLoginEventHandler(AGameModeBase* _GameMode, APlayerController* _NewPlayer)
 {
+    const UWorld* World = _NewPlayer ? _NewPlayer->GetWorld() : nullptr;
+    if (!World || !IsWorldInValidList(*World))
+    {
+        return;
+    }
+        
     mConnectedPlayer.Emplace(_NewPlayer);
     SetShouldTick();
 }
 
 void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLogoutEventHandle(AGameModeBase* _GameMode, AController* _Exiting)
 {
+    const UWorld* World = _Exiting ? _Exiting->GetWorld() : nullptr;
+    if (!World || !IsWorldInValidList(*World))
+    {
+        return;
+    }
+
     mDisconnectedPlayers.Emplace(FObjectKey(_Exiting));
     SetShouldTick();
 }
@@ -81,6 +93,7 @@ void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_Tick);
 
     FKLDebugImGuiTCPServerGameThreadContext Context{ mConnectedPlayer, mDisconnectedPlayers };
+    GatherUpdateData(Context);
 
     UKLDebugImGuiServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
     mServerConnection.GetConnectionMutable().TickGameThread(Context);

@@ -28,10 +28,6 @@
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 
-#if !WITH_EDITOR
-#include "Subsystem/KLDebugImGuiServerSubsystem_Engine.h"
-#endif
-
 #if !NO_LOGGING
 //engine
 #include "Containers/UnrealString.h"
