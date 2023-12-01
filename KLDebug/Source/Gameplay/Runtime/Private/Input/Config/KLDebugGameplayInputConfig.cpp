@@ -3,8 +3,9 @@
 void FKLDebugGameplayInputConfig::Load() const
 {
     MappingContext.LoadSynchronous();
-    for (const TSoftObjectPtr<UInputAction>& Action : InputActions)
+    for (int32 i = 0; i < static_cast<int32>(EKLDebugGameplayInputType::Count); ++i)
     {
+        const TSoftObjectPtr<UInputAction>& Action = InputActions[i];
         Action.LoadSynchronous();
     }
 }
