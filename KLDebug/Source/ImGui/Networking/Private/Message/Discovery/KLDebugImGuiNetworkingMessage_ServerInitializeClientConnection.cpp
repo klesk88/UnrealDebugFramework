@@ -1,10 +1,12 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/Discovery/KLDebugImGuiNetworkingMessage_ServerInitializeClientConnection.h"
 
 #include "Message/Header/KLDebugImGuiNetworkingMessageHeaderDefinitions.h"
-#include "Message/KLDebugNetworkingMessageSerializeInput.h"
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
+#include "Message/KLDebugNetworkingMessageSerializeInput.h"
 
-//engine
+// engine
 #include "Serialization/Archive.h"
 
 FKLDebugImGuiNetworkingMessage_ServerInitializeClientConnection::FKLDebugImGuiNetworkingMessage_ServerInitializeClientConnection(const FNetworkGUID& _ServerWorldNetworkGUID, const FNetworkGUID& _PlayerContollerNetworkGUID)

@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Commands/KLDebugEditorCommands.h"
 
 // #include "Config/KLDebugImGuiEditorConfig.h"

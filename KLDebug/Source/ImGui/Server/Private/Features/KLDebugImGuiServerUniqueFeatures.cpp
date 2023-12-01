@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/KLDebugImGuiServerUniqueFeatures.h"
 
 void FKLDebugImGuiServerUniqueFeatures::AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature)

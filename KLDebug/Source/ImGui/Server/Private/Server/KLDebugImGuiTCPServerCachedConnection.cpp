@@ -1,13 +1,15 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Server/KLDebugImGuiTCPServerCachedConnection.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Networking/Public/Message/Discovery/KLDebugImGuiNetworkingMessage_ServerInitializeClientConnection.h"
 #include "ImGui/Networking/Public/Message/Helpers/KLDebugImGuiNetworkingMessage_Helpers.h"
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/NetConnection.h"
 #include "Engine/World.h"
@@ -115,7 +117,7 @@ bool FKLDebugImGuiTCPServerCachedConnection::CheckAndUpdateConnectionStatusForSt
     case ESocketConnectionState::SCS_ConnectionError:
         if (mAddressToConnectTo.IsValid())
         {
-            //try to connect again
+            // try to connect again
             Socket.Connect(*mAddressToConnectTo.Get());
         }
         else
@@ -189,7 +191,7 @@ void FKLDebugImGuiTCPServerCachedConnection::TickChildWriteBuffer(FArchive& _Wri
 
 void FKLDebugImGuiTCPServerCachedConnection::WriteInitializeState(FArchive& _Writer)
 {
-    //here we are in parallel. Access the cached information from the game thread
+    // here we are in parallel. Access the cached information from the game thread
     if (!mWorldNetworkKey.IsValid() || !mControllerNetworkKey.IsValid())
     {
         ensureMsgf(false, TEXT("we should have valid network IDS at this point as well"));
@@ -240,8 +242,8 @@ bool FKLDebugImGuiTCPServerCachedConnection::TickOnGameThread()
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiTCPServerCachedConnection_TickOnGameThread);
 
-    //NOTE: when we are inside this call, we are sure that no other operation is performed in this connection as we are locking
-    //outside of it
+    // NOTE: when we are inside this call, we are sure that no other operation is performed in this connection as we are locking
+    // outside of it
     const UWorld* World = mWorld.Get();
     if (!World)
     {

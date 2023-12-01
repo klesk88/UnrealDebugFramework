@@ -1,15 +1,17 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystem/Engine/KLDebugImGuiClientSubsystem_Engine.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 
-//engine
-#include "Engine/EngineBaseTypes.h"
+// engine
 #include "Engine/Engine.h"
+#include "Engine/EngineBaseTypes.h"
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -18,7 +20,8 @@ void UKLDebugImGuiClientSubsystem_Engine::Initialize(FSubsystemCollectionBase& _
     Super::Initialize(_Collection);
 
     mClientConnection.InitSocket(TEXT("KLDebugImguiClientThread"));
-    mClientsData.Reserve(10);}
+    mClientsData.Reserve(10);
+}
 
 void UKLDebugImGuiClientSubsystem_Engine::Deinitialize()
 {

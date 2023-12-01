@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
@@ -17,68 +19,68 @@ class IKLDebugImGuiFilterInterface;
 class IKLDebugImGuiFeature_NetworkingInterface;
 class UWorld;
 
-#define DERIVED_KL_DEBUG_FEATURE_CLASS(ItemType, ParentItemType)                                      \
-public:                                                                                               \
-    UE_NODISCARD inline static const FName& StaticItemType()                                          \
-    {                                                                                                 \
-        static const FName Interface(TEXT(#ItemType));                                                \
-        return Interface;                                                                             \
-    }                                                                                                 \
-                                                                                                      \
-    UE_NODISCARD inline constexpr static bool IsDerivedFromParent()                                   \
-    {                                                                                                 \
-        return TIsDerivedFrom<ItemType, ParentItemType>::IsDerived;                                   \
-    }                                                                                                 \
-                                                                                                      \
-    template<typename InterfaceClass>                                                                 \
-    UE_NODISCARD constexpr InterfaceClass* TryCastToInterfaceMutable()                                \
-    {                                                                                                 \
-        if constexpr (TIsDerivedFrom<ItemType, InterfaceClass>::IsDerived)                            \
-        {                                                                                             \
-            return static_cast<InterfaceClass*>(this);                                                \
-        }                                                                                             \
-                                                                                                      \
-        return nullptr;                                                                               \
-    }                                                                                                 \
-                                                                                                      \
-    template<typename InterfaceClass>                                                                 \
-    UE_NODISCARD constexpr const InterfaceClass* TryCastToInterface() const                           \
-    {                                                                                                 \
-        if constexpr (TIsDerivedFrom<ItemType, InterfaceClass>::IsDerived)                            \
-        {                                                                                             \
-            return static_cast<const InterfaceClass*>(this);                                          \
-        }                                                                                             \
-                                                                                                      \
-        return nullptr;                                                                               \
-    }                                                                                                 \
-                                                                                                      \
-    UE_NODISCARD IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable() override   \
-    {                                                                                                 \
-        if(IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = TryCastToInterfaceMutable<IKLDebugImGuiFeature_NetworkingInterface>()) \
-        {                                                                                               \
-            return NetworkInterface;                                                                    \
-        }                                                                                               \
-                                                                                                        \
-        return ParentItemType::TryGetNetworkInterfaceMutable();                                         \
-    }                                                                                                   \
-                                                                                                        \
-    UE_NODISCARD const IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterface() const override \
-    {                                                                                                   \
-        if (const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = TryCastToInterface<IKLDebugImGuiFeature_NetworkingInterface>())\
-        {                                                                                             \
-            return NetworkInterface;                                                                  \
-        }                                                                                             \
-                                                                                                      \
-        return ParentItemType::TryGetNetworkInterface();                                              \
-    }                                                                                                 \
-                                                                                                      \
-protected:                                                                                            \
-    UE_NODISCARD inline bool IsDerivedInternal(const FName& _ItemTypeName) const override             \
-    {                                                                                                 \
-        return StaticItemType() == _ItemTypeName || ParentItemType::IsDerivedInternal(_ItemTypeName); \
-    }                                                                                                 \
-                                                                                                      \
-private:  // finish macro that allow us to have a basic RTTI system
+#define DERIVED_KL_DEBUG_FEATURE_CLASS(ItemType, ParentItemType)                                                                                \
+public:                                                                                                                                         \
+    UE_NODISCARD inline static const FName& StaticItemType()                                                                                    \
+    {                                                                                                                                           \
+        static const FName Interface(TEXT(#ItemType));                                                                                          \
+        return Interface;                                                                                                                       \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD inline constexpr static bool IsDerivedFromParent()                                                                             \
+    {                                                                                                                                           \
+        return TIsDerivedFrom<ItemType, ParentItemType>::IsDerived;                                                                             \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    template <typename InterfaceClass>                                                                                                          \
+    UE_NODISCARD constexpr InterfaceClass* TryCastToInterfaceMutable()                                                                          \
+    {                                                                                                                                           \
+        if constexpr (TIsDerivedFrom<ItemType, InterfaceClass>::IsDerived)                                                                      \
+        {                                                                                                                                       \
+            return static_cast<InterfaceClass*>(this);                                                                                          \
+        }                                                                                                                                       \
+                                                                                                                                                \
+        return nullptr;                                                                                                                         \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    template <typename InterfaceClass>                                                                                                          \
+    UE_NODISCARD constexpr const InterfaceClass* TryCastToInterface() const                                                                     \
+    {                                                                                                                                           \
+        if constexpr (TIsDerivedFrom<ItemType, InterfaceClass>::IsDerived)                                                                      \
+        {                                                                                                                                       \
+            return static_cast<const InterfaceClass*>(this);                                                                                    \
+        }                                                                                                                                       \
+                                                                                                                                                \
+        return nullptr;                                                                                                                         \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable() override                                             \
+    {                                                                                                                                           \
+        if (IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = TryCastToInterfaceMutable<IKLDebugImGuiFeature_NetworkingInterface>()) \
+        {                                                                                                                                       \
+            return NetworkInterface;                                                                                                            \
+        }                                                                                                                                       \
+                                                                                                                                                \
+        return ParentItemType::TryGetNetworkInterfaceMutable();                                                                                 \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD const IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterface() const override                                        \
+    {                                                                                                                                           \
+        if (const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = TryCastToInterface<IKLDebugImGuiFeature_NetworkingInterface>())  \
+        {                                                                                                                                       \
+            return NetworkInterface;                                                                                                            \
+        }                                                                                                                                       \
+                                                                                                                                                \
+        return ParentItemType::TryGetNetworkInterface();                                                                                        \
+    }                                                                                                                                           \
+                                                                                                                                                \
+protected:                                                                                                                                      \
+    UE_NODISCARD inline bool IsDerivedInternal(const FName& _ItemTypeName) const override                                                       \
+    {                                                                                                                                           \
+        return StaticItemType() == _ItemTypeName || ParentItemType::IsDerivedInternal(_ItemTypeName);                                           \
+    }                                                                                                                                           \
+                                                                                                                                                \
+private:    // finish macro that allow us to have a basic RTTI system
 
 /*
  * Base class for any debug window to extend.
@@ -104,17 +106,17 @@ public:
 
     // this is called once at game startup from the engine module to initialize the class
     virtual void Initialize();
-    //allow the feature to have a context per instance. This means that, for example, if we have 2 different Pawns
-    //using the same feature, each of them will have their own context class independent of each other
+    // allow the feature to have a context per instance. This means that, for example, if we have 2 different Pawns
+    // using the same feature, each of them will have their own context class independent of each other
     //(while the feature class itself is shared)
     UE_NODISCARD virtual TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const;
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable();
     UE_NODISCARD virtual const IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterface() const;
-    //DERIVED_KL_DEBUG_FEATURE_CLASS
+    // DERIVED_KL_DEBUG_FEATURE_CLASS
 
-    template<typename FeatureType>
+    template <typename FeatureType>
     UE_NODISCARD bool IsDerivedFrom() const;
 
     UE_NODISCARD const FName& GetFeatureNameID() const;
@@ -125,14 +127,14 @@ protected:
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual bool IsDerivedInternal(const FName& _ItemTypeName) const;
     UE_NODISCARD static const FName& StaticItemType();
-    //DERIVED_KL_DEBUG_FEATURE_CLASS
+    // DERIVED_KL_DEBUG_FEATURE_CLASS
 };
 
 inline void IKLDebugImGuiFeatureInterfaceBase::Initialize()
 {
 }
 
-template<typename FeatureType>
+template <typename FeatureType>
 inline bool IKLDebugImGuiFeatureInterfaceBase::IsDerivedFrom() const
 {
     return IsDerivedInternal(FeatureType::StaticItemType());

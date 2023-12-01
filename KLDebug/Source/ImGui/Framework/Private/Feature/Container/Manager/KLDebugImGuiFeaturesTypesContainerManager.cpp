@@ -1,10 +1,12 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Selectable/KLDebugImGuiFeatureContainer_Selectable.h"
 #include "Feature/Container/Unique/KLDebugImGuiFeatureContainer_Unique.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Manager/KLDebugImGuiFeatureManager.h"
 #include "ImGui/User/Internal/Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
@@ -45,7 +47,7 @@ FKLDebugImGuiFeatureContainerBase& FKLDebugImGuiFeaturesTypesContainerManager::G
 void FKLDebugImGuiFeaturesTypesContainerManager::GetContainerAndOffset(const EImGuiInterfaceType _ContainerType, TArray<uint32>& ContainersOffset, FKLDebugImGuiFeatureContainerBase*& _OutContainer, uint32*& _OutOffset)
 {
     _OutContainer = mContainers[static_cast<int32>(_ContainerType)].Get();
-    _OutOffset    = &ContainersOffset[static_cast<int32>(_ContainerType)];
+    _OutOffset = &ContainersOffset[static_cast<int32>(_ContainerType)];
 }
 
 void FKLDebugImGuiFeaturesTypesContainerManager::CreateContainers()
@@ -56,15 +58,15 @@ void FKLDebugImGuiFeaturesTypesContainerManager::CreateContainers()
     {
         switch (static_cast<EImGuiInterfaceType>(i))
         {
-            case EImGuiInterfaceType::SELECTABLE:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_Selectable>());
-                break;
-            case EImGuiInterfaceType::UNIQUE:
-                mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_Unique>());
-                break;
-            default:
-                checkNoEntry();
-                break;
+        case EImGuiInterfaceType::SELECTABLE:
+            mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_Selectable>());
+            break;
+        case EImGuiInterfaceType::UNIQUE:
+            mContainers.Emplace(MakeUnique<FKLDebugImGuiFeatureContainer_Unique>());
+            break;
+        default:
+            checkNoEntry();
+            break;
         }
     }
 }

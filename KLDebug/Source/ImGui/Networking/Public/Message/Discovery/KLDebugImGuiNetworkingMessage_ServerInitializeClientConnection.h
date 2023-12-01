@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/KLDebugImGuiNetworkingMessage_Base.h"
 
-//engine
+// engine
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
 #include "Math/NumericLimits.h"
@@ -24,9 +26,9 @@ public:
     UE_NODISCARD uint8 Client_GetServerHeaderVersion() const;
 
 private:
-    //IKLDebugNetworkingMessageInterface
+    // IKLDebugNetworkingMessageInterface
     void SerializeChild(const FKLDebugNetworkingMessageSerializeInput& _Input) final;
-    //IKLDebugNetworkingMessageInterface
+    // IKLDebugNetworkingMessageInterface
 
 private:
     FNetworkGUID mServerWorldGUID;
@@ -48,4 +50,3 @@ inline const FNetworkGUID& FKLDebugImGuiNetworkingMessage_ServerInitializeClient
 {
     return mPlayerContollerGUID;
 }
-

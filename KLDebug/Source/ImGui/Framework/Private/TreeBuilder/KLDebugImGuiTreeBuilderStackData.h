@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -13,11 +15,11 @@ public:
 
     UE_NODISCARD const FName& GetFullPath() const;
     UE_NODISCARD const FName& GetNodeName() const;
-    UE_NODISCARD uint16       GetTreeNodeIndex() const;
+    UE_NODISCARD uint16 GetTreeNodeIndex() const;
 
 private:
-    FName  mFullPath;
-    FName  mNodeName;
+    FName mFullPath;
+    FName mNodeName;
     uint16 mTreeNode;
 };
 

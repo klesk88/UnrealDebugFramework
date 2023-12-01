@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "ImGui/Visualizer/Tree/KLDebugTestSuiteImGuiVisualizerTreeTest.h"
 
 #include "ImGui/Features/Helpers/KLDebugTestSuiteCreateFeaturesHelpers.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 #include "ImGui/Framework/Public/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureData.h"
@@ -20,7 +22,7 @@
 bool FKLDebugTestSuiteImGuiVisualizerTreeTest::InstantTest()
 {
     TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> FeaturePool;
-    TArray<FKLDebugImGuiFeatureData>                            FeatureData;
+    TArray<FKLDebugImGuiFeatureData> FeatureData;
 
     KL::Debug::TestSuite::Feature::Helpers::GetFeatures(FeaturePool, FeatureData);
 
@@ -48,7 +50,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDe
      *   ai.perception
      */
 
-    const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TreeNodes     = _TreeVisualizer.TestGetTreeNodes();
+    const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TreeNodes = _TreeVisualizer.TestGetTreeNodes();
     const TArray<FKLDebugImGuiFeatureVisualizerNodeData>& TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
 
     static constexpr int32 TreeNodesCount = 11;
@@ -68,8 +70,8 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDe
     _ExpetectedElements.Emplace(TEXT("b"));
     _ExpetectedElements.Emplace(TEXT("perception"));
 
-    int32 Index   = 0;
-    bool  Success = true;
+    int32 Index = 0;
+    bool Success = true;
 
     auto KeepTraversingTreeLambda = [&Success](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
         return Success;
@@ -86,7 +88,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversal(const FKLDe
 
         const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[DataIndex.GetValue()];
 
-        const FName  NodeName(NodeData.GetImGuiNodeString());
+        const FName NodeName(NodeData.GetImGuiNodeString());
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
         if (NodeName != ExpectedTreeNodeName)
         {
@@ -111,7 +113,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
      *   ai.perception
      */
 
-    const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TreeNodes     = _TreeVisualizer.TestGetTreeNodes();
+    const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TreeNodes = _TreeVisualizer.TestGetTreeNodes();
     const TArray<FKLDebugImGuiFeatureVisualizerNodeData>& TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
 
     TArray<FName, TInlineAllocator<2>> ClosedNodes;
@@ -126,8 +128,8 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
     _ExpetectedElements.Emplace(TEXT("a"));
     _ExpetectedElements.Emplace(TEXT("b"));
 
-    int32 Index   = 0;
-    bool  Success = true;
+    int32 Index = 0;
+    bool Success = true;
 
     auto KeepTraversingTreeLambda = [&Success, &ClosedNodes, &TreeNodesData](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
         const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
@@ -139,7 +141,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
         }
 
         const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[NodeDataIndex.GetValue()];
-        const FName                                   NodeName(NodeData.GetImGuiNodeString());
+        const FName NodeName(NodeData.GetImGuiNodeString());
         return Success && ClosedNodes.Find(NodeName) == INDEX_NONE;
     };
 
@@ -154,7 +156,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestPreorderTraversalWithClosedNo
 
         const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[NodeDataIndex.GetValue()];
 
-        const FName  NodeName(NodeData.GetImGuiNodeString());
+        const FName NodeName(NodeData.GetImGuiNodeString());
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
         if (NodeName != ExpectedTreeNodeName)
         {
@@ -185,22 +187,22 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestImGuiPreorderTraversal(const 
     _ExpetectedElements.Emplace(TEXT("1"));
     _ExpetectedElements.Emplace(TEXT("a"));
     _ExpetectedElements.Emplace(TEXT("1"));
-    _ExpetectedElements.Emplace(TEXT("a"));  // closing a subtree
+    _ExpetectedElements.Emplace(TEXT("a"));    // closing a subtree
     _ExpetectedElements.Emplace(TEXT("b"));
-    _ExpetectedElements.Emplace(TEXT("1"));  // closing 1 subtree
+    _ExpetectedElements.Emplace(TEXT("1"));    // closing 1 subtree
     _ExpetectedElements.Emplace(TEXT("2"));
     _ExpetectedElements.Emplace(TEXT("3"));
     _ExpetectedElements.Emplace(TEXT("a"));
     _ExpetectedElements.Emplace(TEXT("b"));
-    _ExpetectedElements.Emplace(TEXT("3"));      // closing 3 subtree
-    _ExpetectedElements.Emplace(TEXT("cover"));  // closing cover subtree
+    _ExpetectedElements.Emplace(TEXT("3"));        // closing 3 subtree
+    _ExpetectedElements.Emplace(TEXT("cover"));    // closing cover subtree
     _ExpetectedElements.Emplace(TEXT("perception"));
-    _ExpetectedElements.Emplace(TEXT("ai"));  // closing ai subtree
+    _ExpetectedElements.Emplace(TEXT("ai"));    // closing ai subtree
 
-    const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TreeNodes     = _TreeVisualizer.TestGetTreeNodes();
+    const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TreeNodes = _TreeVisualizer.TestGetTreeNodes();
     const TArray<FKLDebugImGuiFeatureVisualizerNodeData>& TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
-    int32                                                 Index         = 0;
-    bool                                                  Success       = true;
+    int32 Index = 0;
+    bool Success = true;
 
     auto KeepTraversingTreeLambda = [&Success](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
         return Success;
@@ -217,7 +219,7 @@ bool FKLDebugTestSuiteImGuiVisualizerTreeTest::TestImGuiPreorderTraversal(const 
 
         const FKLDebugImGuiFeatureVisualizerNodeData& NodeData = TreeNodesData[NodeDataIndex.GetValue()];
 
-        const FName  NodeName(NodeData.GetImGuiNodeString());
+        const FName NodeName(NodeData.GetImGuiNodeString());
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
         if (NodeName != ExpectedTreeNodeName)
         {

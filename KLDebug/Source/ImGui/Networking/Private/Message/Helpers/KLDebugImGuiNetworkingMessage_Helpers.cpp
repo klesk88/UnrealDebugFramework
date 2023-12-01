@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/Helpers/KLDebugImGuiNetworkingMessage_Helpers.h"
 
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 #include "Message/KLDebugNetworkingMessageInterface.h"
 
-//engine
+// engine
 #include "Math/NumericLimits.h"
 #include "Math/UnrealMathUtility.h"
 #include "Misc/Compression.h"
@@ -16,7 +18,7 @@ namespace KL::Debug::ImGuiNetworking::Message
 
     void CompressBuffer(const TArray<uint8>& _DataToCompress, TArray<uint8>& _CompressedData)
     {
-        //based on FGameplayDebuggerDataPack::RequestReplication
+        // based on FGameplayDebuggerDataPack::RequestReplication
 
         uint32 CompressSize = 0;
         const uint32 UncompressSize = _DataToCompress.Num();
@@ -28,7 +30,7 @@ namespace KL::Debug::ImGuiNetworking::Message
 
     bool UncompressBuffer(const uint32 _UncompressSize, const TArrayView<const uint8>& _CompressedData, TArrayView<uint8>& _UncompressedData)
     {
-        //based on FGameplayDebuggerDataPack::OnReplicated
+        // based on FGameplayDebuggerDataPack::OnReplicated
         ensureMsgf(!_UncompressedData.IsEmpty(), TEXT("we expect this to be already initialize currently from the caller"));
         checkf(_UncompressSize < static_cast<uint32>(TNumericLimits<int32>::Max()), TEXT("too much data"));
 
@@ -45,4 +47,4 @@ namespace KL::Debug::ImGuiNetworking::Message
         Header.Serialize(_Archive);
         _Archive.Serialize(_DataToSend.GetData(), _DataToSend.Num());
     }
-}
+}    // namespace KL::Debug::ImGuiNetworking::Message

@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/Feature/DataUpdate/KLDebugImGuiNetworkingMessage_FeatureDataUpdate.h"
 
-//module
+// module
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Networking/Runtime/Public/Message/KLDebugNetworkingMessageSerializeInput.h"
 

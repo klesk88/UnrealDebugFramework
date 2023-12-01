@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Extender/KLDebugEditorMenuExtender.h"
@@ -20,7 +22,7 @@ public:
     UE_NODISCARD static FKLDebugImGuiEditorModule& Get();
 
 private:
-    FKLDebugEditorMainWindow   mMainImGuiWindow;
-    FKLDebugEditorPicker       mEditorPicker;
+    FKLDebugEditorMainWindow mMainImGuiWindow;
+    FKLDebugEditorPicker mEditorPicker;
     FKLDebugEditorMenuExtender mMenuExtender;
 };

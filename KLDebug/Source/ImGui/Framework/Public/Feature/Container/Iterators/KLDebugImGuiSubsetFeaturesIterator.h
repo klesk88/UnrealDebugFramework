@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
@@ -9,7 +11,7 @@ public:
 
 private:
     // FKLDebugImGuiFeaturesConstIterator
-    UE_NODISCARD bool                                     IsValid() const final;
+    UE_NODISCARD bool IsValid() const final;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesConstIterator
 
@@ -42,7 +44,7 @@ public:
 
 private:
     // FKLDebugImGuiFeaturesIterator
-    UE_NODISCARD bool                                     IsValid() const final;
+    UE_NODISCARD bool IsValid() const final;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesIterator
 

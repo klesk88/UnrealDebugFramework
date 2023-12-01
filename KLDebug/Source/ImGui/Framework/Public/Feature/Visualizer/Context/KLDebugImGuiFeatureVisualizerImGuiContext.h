@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
@@ -48,7 +50,6 @@ inline const FOnImGuiFeatureStateUpdated& FKLDebugImGuiFeatureVisualizerImGuiCon
 {
     return mOnFeatureStateUpdatedDelegate;
 }
-
 
 inline ENetMode FKLDebugImGuiFeatureVisualizerImGuiContext::GetCurrentNetMode() const
 {

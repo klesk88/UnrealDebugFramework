@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -8,7 +10,7 @@ class FKLDebugImGuiFeature_NetworkingGatherDataInput;
 class FKLDebugImGuiFeature_NetworkingReceiveDataInput;
 
 /*
-* interface that can be implemented on features to allow them to send/receive messages from client server
+ * interface that can be implemented on features to allow them to send/receive messages from client server
  */
 class KLDEBUGIMGUIUSER_API IKLDebugImGuiFeature_NetworkingInterface
 {
@@ -21,8 +23,8 @@ public:
 
     UE_NODISCARD virtual uint8 GetVersion() const;
     UE_NODISCARD virtual bool Client_InformServerWhenActive() const;
-    //if true we will check the crc of the data buffer gather trough GatherData before sending the message
-    //if is the same then we will skip the message
+    // if true we will check the crc of the data buffer gather trough GatherData before sending the message
+    // if is the same then we will skip the message
     UE_NODISCARD virtual bool ShouldVerifyCRCBeforeSendData() const;
     UE_NODISCARD virtual bool ShouldCompressData() const;
 };

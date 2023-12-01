@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Filter/Interface/KLDebugImGuiFilterInterface.h"
@@ -13,14 +15,14 @@
 class IKLDebugImGuiFeatureInterfaceBase;
 
 #define GENERATE_STATIC_FUNCTION_CHECK(_FunctionName, _Result, ...) \
-    template<typename T>                                            \
+    template <typename T>                                           \
     class THasStaticFunction_##_FunctionName                        \
     {                                                               \
-        template<typename U, _Result (*)(__VA_ARGS__)>              \
+        template <typename U, _Result (*)(__VA_ARGS__)>             \
         struct Check;                                               \
-        template<typename U>                                        \
+        template <typename U>                                       \
         static char StaticTest(Check<U, &T::_FunctionName>*);       \
-        template<typename U>                                        \
+        template <typename U>                                       \
         static int32 StaticTest(...);                               \
                                                                     \
     public:                                                         \
@@ -32,7 +34,7 @@ class IKLDebugImGuiFeatureInterfaceBase;
 
 GENERATE_STATIC_FUNCTION_CHECK(StaticGetFilterID, const FName&)
 
-template<typename FilterInterfaceType>
+template <typename FilterInterfaceType>
 class TKLDebugImGuiFilterManagerEntry final : public FKLDebugImGuiFilterManagerEntryBase
 {
 public:
@@ -40,11 +42,11 @@ public:
 
     // FKLDebugWindowManagerEntryBase
     UE_NODISCARD IKLDebugImGuiFilterInterface& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD size_t                        GetSize() const final;
+    UE_NODISCARD size_t GetSize() const final;
     // FKLDebugWindowManagerEntryBase
 };
 
-template<typename FilterInterfaceType>
+template <typename FilterInterfaceType>
 TKLDebugImGuiFilterManagerEntry<FilterInterfaceType>::TKLDebugImGuiFilterManagerEntry()
     : FKLDebugImGuiFilterManagerEntryBase(sizeof(FilterInterfaceType))
 {
@@ -52,13 +54,13 @@ TKLDebugImGuiFilterManagerEntry<FilterInterfaceType>::TKLDebugImGuiFilterManager
     static_assert(THasStaticFunction_StaticGetFilterID<FilterInterfaceType>::Value, "Class must use the macro KL_DEBUG_FILTER_GENERATE to generate both static and non static methods");
 }
 
-template<typename FilterInterfaceType>
+template <typename FilterInterfaceType>
 IKLDebugImGuiFilterInterface& TKLDebugImGuiFilterManagerEntry<FilterInterfaceType>::AllocateInPlace(void* _PoolStartAddress) const
 {
     return *reinterpret_cast<IKLDebugImGuiFilterInterface*>(new (_PoolStartAddress) FilterInterfaceType());
 }
 
-template<typename FilterInterfaceType>
+template <typename FilterInterfaceType>
 size_t TKLDebugImGuiFilterManagerEntry<FilterInterfaceType>::GetSize() const
 {
     return sizeof(FilterInterfaceType);

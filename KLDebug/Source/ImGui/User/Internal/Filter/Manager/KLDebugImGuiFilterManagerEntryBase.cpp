@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
 
 #include "Filter/Manager/KLDebugImGuiFilterManager.h"

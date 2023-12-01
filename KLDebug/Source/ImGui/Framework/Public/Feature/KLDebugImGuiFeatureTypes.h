@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -8,10 +10,10 @@ namespace KL::Debug::ImGui::Features::Types
 {
     typedef uint16 FeatureIndex;
     typedef uint16 FeatureOffset;
-    typedef uint8  FeaturePoolValue;
+    typedef uint8 FeaturePoolValue;
 
     typedef uint16 FilterIndex;
-    typedef uint8  FilterPoolValue;
+    typedef uint8 FilterPoolValue;
 
     static constexpr FeatureIndex InvalidFeatureIndex = TNumericLimits<FeatureIndex>::Max();
-}  // namespace KL::Debug::ImGui::Features::Types
+}    // namespace KL::Debug::ImGui::Features::Types

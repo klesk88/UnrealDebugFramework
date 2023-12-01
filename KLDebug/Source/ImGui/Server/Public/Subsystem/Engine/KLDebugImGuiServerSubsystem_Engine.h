@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Server/KLDebugImGuiNetworkingTCPServer.h"
 #include "Server/KLDebugImGuiServerConnectionDefinitions.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingConnectionRunnableContainer.h"
 
@@ -17,7 +19,7 @@
 
 #if !WITH_EDITOR
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
@@ -25,7 +27,7 @@
 #include "Misc/Optional.h"
 #include "UObject/NameTypes.h"
 
-#endif //!WITH_EDITOR
+#endif    //! WITH_EDITOR
 
 #include "KLDebugImGuiServerSubsystem_Engine.generated.h"
 
@@ -40,16 +42,16 @@ class KLDEBUGIMGUISERVER_API UKLDebugImGuiServerSubsystem_Engine final : public 
     GENERATED_BODY()
 
 public:
-    //UEngineSubsystem
+    // UEngineSubsystem
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
-    //UEngineSubsystem
+    // UEngineSubsystem
 
     UE_NODISCARD static UKLDebugImGuiServerSubsystem_Engine* TryGetMutable();
     UE_NODISCARD static const UKLDebugImGuiServerSubsystem_Engine* TryGet();
 
 private:
-    //UKLDebugImGuiNetworkingSubsystem_EngineBase
+    // UKLDebugImGuiNetworkingSubsystem_EngineBase
     UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
     UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
     UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
@@ -57,14 +59,14 @@ private:
     ETickableTickType GetTickableTickTypeChild() const;
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
-    //UKLDebugImGuiNetworkingSubsystem_EngineBase
+    // UKLDebugImGuiNetworkingSubsystem_EngineBase
 
     void OnGameModePostLoginEventHandler(AGameModeBase* _GameMode, APlayerController* _NewPlayer);
     void OnGameModePostLogoutEventHandle(AGameModeBase* _GameMode, AController* _Exiting);
 
 private:
-    //NOTE: if we change the ownership of the connection, then we need to update also FKLDebugImGuiNetworkingTCPServer::TickCachedConnections
-    //where we request the tick to make sure is thread safe
+    // NOTE: if we change the ownership of the connection, then we need to update also FKLDebugImGuiNetworkingTCPServer::TickCachedConnections
+    // where we request the tick to make sure is thread safe
     TKLDebugImGuiNetworkingConnectionRunnableContainer<FKLDebugImGuiNetworkingTCPServer> mServerConnection;
     TArray<TWeakObjectPtr<const APlayerController>> mConnectedPlayer;
     TArray<FObjectKey> mDisconnectedPlayers;

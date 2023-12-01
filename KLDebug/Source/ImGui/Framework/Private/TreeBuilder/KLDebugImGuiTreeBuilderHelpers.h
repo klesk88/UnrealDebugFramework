@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "TreeBuilder/KLDebugImGuiTreeBuilderData.h"
@@ -17,10 +19,10 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
 {
     namespace Private
     {
-        template<typename TreeNodeType>
+        template <typename TreeNodeType>
         using NodesStackPair = TPair<bool, const TreeNodeType*>;
 
-        template<typename TreeNodeType, typename KeepTraversingCallback, typename OperateOnNodeAlreadyVisisted, typename OperateOnNodeCallback, typename OperateBeforeAddingChildCallback>
+        template <typename TreeNodeType, typename KeepTraversingCallback, typename OperateOnNodeAlreadyVisisted, typename OperateOnNodeCallback, typename OperateBeforeAddingChildCallback>
         void PreoderTraversalInternal(const bool _CheckNodeAlreadyVisisted, const TArray<TreeNodeType>& _TreeNodes, const KeepTraversingCallback& _KeepTraversingCbk, const OperateOnNodeAlreadyVisisted& _NodeAlreadyVisistedCbk, const OperateOnNodeCallback& _OperateOnNodeCbk, const OperateBeforeAddingChildCallback& _OperateBeforeAddingChildCallback)
         {
             if (_TreeNodes.IsEmpty())
@@ -35,7 +37,7 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
             while (!NodesStack.IsEmpty())
             {
                 NodesStackPair<TreeNodeType> CurrentStackNode = NodesStack.Pop(false);
-                const TreeNodeType*          TreeNode         = CurrentStackNode.Value;
+                const TreeNodeType* TreeNode = CurrentStackNode.Value;
 
                 if (_CheckNodeAlreadyVisisted && CurrentStackNode.Key)
                 {
@@ -75,12 +77,12 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
             }
         }
 
-        template<typename TreeNodeType>
+        template <typename TreeNodeType>
         int32 FindMatchingParent(const TArray<FName>& _PathTokens, TArray<FKLDebugImGuiTreeBuilderStackData>& _TreeNodesStack, TArray<TreeNodeType>& _TreeNodes)
         {
             TreeNodeType* LastNodeInSameTreeLevel = nullptr;
-            const int32   Count                   = FMath::Min(_PathTokens.Num(), _TreeNodesStack.Num());
-            int32         StopIndex               = -1;
+            const int32 Count = FMath::Min(_PathTokens.Num(), _TreeNodesStack.Num());
+            int32 StopIndex = -1;
 
             if (Count == 0)
             {
@@ -90,10 +92,10 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
 
             for (int32 i = 0; i < Count; ++i)
             {
-                FKLDebugImGuiTreeBuilderStackData& StackData     = _TreeNodesStack[i];
-                const FName&                       TokenName     = _PathTokens[i];
-                const uint16                       TreeNodeIndex = StackData.GetTreeNodeIndex();
-                TreeNodeType&                      NodeInStack   = _TreeNodes[TreeNodeIndex];
+                FKLDebugImGuiTreeBuilderStackData& StackData = _TreeNodesStack[i];
+                const FName& TokenName = _PathTokens[i];
+                const uint16 TreeNodeIndex = StackData.GetTreeNodeIndex();
+                TreeNodeType& NodeInStack = _TreeNodes[TreeNodeIndex];
 
                 if (StackData.GetNodeName() == TokenName)
                 {
@@ -116,9 +118,9 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
 
             return StopIndex;
         }
-    }  // namespace Private
+    }    // namespace Private
 
-    template<typename TreeNodeType, typename KeepTraversingCallback, typename OperateOnNodeCallback>
+    template <typename TreeNodeType, typename KeepTraversingCallback, typename OperateOnNodeCallback>
     void PreoderTraversal(const TArray<TreeNodeType>& _TreeNodes, const KeepTraversingCallback& _KeepTraversingCbk, const OperateOnNodeCallback& _OperateOnNodeCbk)
     {
         auto OperateOnNodeAlreadyVisistedLambda = [](const TreeNodeType& _TreeNode) -> void {
@@ -131,7 +133,7 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
         Private::PreoderTraversalInternal(false, _TreeNodes, _KeepTraversingCbk, OperateOnNodeAlreadyVisistedLambda, _OperateOnNodeCbk, Lambda);
     }
 
-    template<typename TreeNodeType, typename KeepTraversingCallback, typename OperateOnNodeAlreadyVisisted, typename OperateOnNodeCallback>
+    template <typename TreeNodeType, typename KeepTraversingCallback, typename OperateOnNodeAlreadyVisisted, typename OperateOnNodeCallback>
     void PreoderTraversalImGui(const TArray<TreeNodeType>& _TreeNodes, const KeepTraversingCallback& _KeepTraversingCbk, const OperateOnNodeAlreadyVisisted& _NodeAlreadyVisitedCbk, const OperateOnNodeCallback& _OperateOnNodeCbk)
     {
         auto CloseParentLambda = [](const TreeNodeType& TreeNode, TArray<Private::NodesStackPair<TreeNodeType>>& _NodeStack) -> void {
@@ -160,7 +162,7 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
         return FName(_String);
     }
 
-    template<typename FeatureSortedType, typename TreeNodeType, typename CheckSameStackNodeDataCbk, typename OnGenerateNodeCbk, typename OnGenerateLeafCbk>
+    template <typename FeatureSortedType, typename TreeNodeType, typename CheckSameStackNodeDataCbk, typename OnGenerateNodeCbk, typename OnGenerateLeafCbk>
     void GenerateTree(const TArray<FeatureSortedType>& _FeaturesSorted, TArray<TreeNodeType>& _TreeNodes, const CheckSameStackNodeDataCbk& _CheckSameNodeDataCbk, const OnGenerateNodeCbk& _OnGenerateNodeCbk, const OnGenerateLeafCbk& _OnGenerateLeafCbk)
     {
         static constexpr uint8 MaxTreeDepth = 40;
@@ -183,8 +185,8 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
             }
 
             const TArray<FName>& PathTokens = Feature.GetPathTokens();
-            const int32          StopIndex  = Private::FindMatchingParent(PathTokens, NodesStack, _TreeNodes);
-            TreeNodeType*        ParentNode = nullptr;
+            const int32 StopIndex = Private::FindMatchingParent(PathTokens, NodesStack, _TreeNodes);
+            TreeNodeType* ParentNode = nullptr;
 
             for (int32 i = StopIndex + 1; i < PathTokens.Num() - 1; ++i)
             {
@@ -196,10 +198,10 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
                 }
 
                 TreeNodeType& NewTreeNode = _OnGenerateNodeCbk(PathToken);
-                ParentNode                = &NewTreeNode;
+                ParentNode = &NewTreeNode;
 
-                TArrayView<const FName> SubPath     = MakeArrayView<const FName>(&PathTokens[0], i + 1);
-                const FName             FullSubPath = GetFullPathName(SubPath, TempPath);
+                TArrayView<const FName> SubPath = MakeArrayView<const FName>(&PathTokens[0], i + 1);
+                const FName FullSubPath = GetFullPathName(SubPath, TempPath);
 
                 NodesStack.Emplace(FullSubPath, PathToken, _TreeNodes.Num() - 1);
             }
@@ -216,4 +218,4 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
 
         _TreeNodes.Shrink();
     }
-}  // namespace KL::Debug::ImGuiTreeBuilder::Helpers
+}    // namespace KL::Debug::ImGuiTreeBuilder::Helpers

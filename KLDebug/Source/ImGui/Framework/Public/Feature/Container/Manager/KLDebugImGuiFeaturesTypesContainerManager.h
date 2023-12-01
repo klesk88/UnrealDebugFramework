@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
@@ -23,7 +25,7 @@ public:
     void Shutdown();
 
     UE_NODISCARD const FKLDebugImGuiFeatureContainerBase& GetContainer(const EImGuiInterfaceType _Type) const;
-    UE_NODISCARD FKLDebugImGuiFeatureContainerBase&       GetContainerMutable(const EImGuiInterfaceType _Type) const;
+    UE_NODISCARD FKLDebugImGuiFeatureContainerBase& GetContainerMutable(const EImGuiInterfaceType _Type) const;
 
 private:
     void CreateContainers();

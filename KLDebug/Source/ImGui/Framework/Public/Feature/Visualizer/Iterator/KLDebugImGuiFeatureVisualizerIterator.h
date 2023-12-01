@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
@@ -10,7 +12,7 @@ public:
 
 private:
     // FKLDebugImGuiFeaturesConstIterator
-    UE_NODISCARD bool                                     IsValid() const final;
+    UE_NODISCARD bool IsValid() const final;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesConstIterator
 
@@ -30,7 +32,7 @@ inline bool FKLDebugImGuiFeatureVisualizerConstIterator::IsValid() const
 
 inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiFeatureVisualizerConstIterator::GetFeatureDataIndexChild() const
 {
-    const KL::Debug::ImGui::Features::Types::FeatureIndex  FeatureDataIndex = mFeaturesIndexes[mIndex].GetFeatureIndex();
+    const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureDataIndex = mFeaturesIndexes[mIndex].GetFeatureIndex();
     return FeatureDataIndex;
 }
 
@@ -45,7 +47,7 @@ public:
 
 private:
     // FKLDebugImGuiFeaturesIterator
-    UE_NODISCARD bool                                     IsValid() const final;
+    UE_NODISCARD bool IsValid() const final;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesIterator
 

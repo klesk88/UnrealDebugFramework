@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "TreeBuilder/KLDebugImGuiTreeBuilderData.h"
@@ -20,7 +22,7 @@ public:
 
 private:
     const IKLDebugImGuiFeatureInterface_Selectable* mFeature = nullptr;
-    TArray<FName>                                         mFilters;
+    TArray<FName> mFilters;
 };
 
 inline const TArray<FName>& FKLDebugImGuiTreeSortedFeatures::GetPathTokens() const

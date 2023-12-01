@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"

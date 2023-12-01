@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Container/Unique/KLDebugImGuiFeatureContainer_Unique.h"
 
-//modules
+// modules
 #include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 
 bool FKLDebugImGuiFeatureContainer_Unique::IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const

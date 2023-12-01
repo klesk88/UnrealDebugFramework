@@ -1,12 +1,14 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Client/KLDebugImGuiTCPClientCachedConnection.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingConnectionDelegates.h"
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingTCPBase.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Delegates/IDelegateInstance.h"
 #include "HAL/Platform.h"
@@ -17,10 +19,10 @@ class UWorld;
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiNetworkingTCPClient final : public FKLDebugImGuiNetworkingTCPBase
 {
 public:
-    //FKLDebugImGuiNetworkingTCPBase
+    // FKLDebugImGuiNetworkingTCPBase
     void CreateSocket() final;
     void RunChild() final;
-    //FKLDebugImGuiNetworkingTCPBase
+    // FKLDebugImGuiNetworkingTCPBase
 
     void TickGameThread(FKLDebugImGuiClientGameThreadContext& _Context);
 

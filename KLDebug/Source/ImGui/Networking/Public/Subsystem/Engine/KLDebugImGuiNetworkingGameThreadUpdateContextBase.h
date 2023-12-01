@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Engine/World.h"
 #include "Templates/UnrealTemplate.h"

@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFilters.h"
 
 #define KLDEBUG_TESTSUITE_IMPLEMENT_FILTER(_ClassType)           \

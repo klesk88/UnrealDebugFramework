@@ -1,12 +1,14 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
-//engine
-#include "Templates/UnrealTypeTraits.h" 
+// engine
+#include "Templates/UnrealTypeTraits.h"
 
-template<typename FeatureInterfaceType>
+template <typename FeatureInterfaceType>
 class TKLDebugImGuiFeatureManagerEntry final : public FKLDebugImGuiFeatureManagerEntryBase
 {
 public:
@@ -15,11 +17,11 @@ public:
     // FKLDebugWindowManagerEntryBase
     UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const final;
     UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD size_t                             GetSize() const final;
+    UE_NODISCARD size_t GetSize() const final;
     // FKLDebugWindowManagerEntryBase
 };
 
-template<typename FeatureInterfaceType>
+template <typename FeatureInterfaceType>
 TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureManagerEntry(const FName& _NameToCheck)
     : FKLDebugImGuiFeatureManagerEntryBase(sizeof(FeatureInterfaceType))
 {
@@ -28,19 +30,19 @@ TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureMana
     checkf(FeatureInterfaceType::StaticItemType() == _NameToCheck, TEXT("feature [%s] must define macro DERIVED_KL_DEBUG_FEATURE_CLASS in its .h file"), *_NameToCheck.ToString());
 }
 
-template<typename FeatureInterfaceType>
+template <typename FeatureInterfaceType>
 IKLDebugImGuiFeatureInterfaceBase& TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::AllocateInPlace(void* _PoolStartAddress) const
 {
     return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (_PoolStartAddress) FeatureInterfaceType());
 }
 
-template<typename FeatureInterfaceType>
+template <typename FeatureInterfaceType>
 size_t TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::GetSize() const
 {
     return sizeof(FeatureInterfaceType);
 }
 
-template<typename FeatureInterfaceType>
+template <typename FeatureInterfaceType>
 inline EImGuiInterfaceType TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::GetInterfaceType() const
 {
     return FeatureInterfaceType::GetInterfaceType();

@@ -1,10 +1,12 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "TCP/KLDebugImGuiNetworkingConnectionGetPendingBuffer.h"
 #include "TCP/KLDebugImGuiNetworkingPendingMessage.h"
 #include "TCP/KLDebugImGuiNetworkingPendingSplittedMessage.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "Delegates/IDelegateInstance.h"
@@ -20,7 +22,7 @@ class FKLDebugImGuiNetworkingMessage_Header;
 class FSocket;
 class ISocketSubsystem;
 
-//base class representing a socket connection established with someone
+// base class representing a socket connection established with someone
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingTCPCachedConnectionBase : public FNoncopyable
 {
 public:
@@ -35,14 +37,14 @@ public:
     UE_NODISCARD bool HasNewReadData() const;
 
 protected:
-    //this is tick to read the data from the network buffer.
-    //If no one else should read more the buffer after this is called, the _Reader should be set at the end
+    // this is tick to read the data from the network buffer.
+    // If no one else should read more the buffer after this is called, the _Reader should be set at the end
     //_BufferReadStopPosition represent the stop read position use to compute how much of the buffer we want to keep
     UE_NODISCARD virtual bool ReadBufferChildHasHandleMessage(const FKLDebugImGuiNetworkingMessage_Header& _Header, FArchive& _Data);
-    //this is use to tick the child and see if we are in an invalid state.
-    //NOTER: this is called after TickChildReadBufferGetCanReadMore
+    // this is use to tick the child and see if we are in an invalid state.
+    // NOTER: this is called after TickChildReadBufferGetCanReadMore
     UE_NODISCARD virtual bool TickChild() = 0;
-    //allow the child to directly write in the write buffer if needed
+    // allow the child to directly write in the write buffer if needed
     virtual void TickChildWriteBuffer(FArchive& _Writer);
     virtual void OnSendDataResultChild(const bool _DataSent);
 
@@ -74,7 +76,7 @@ private:
     TArray<uint8> mTempMessageBuffer;
     TArray<uint8> mWriteBuffers;
     TArray<FKLDebugImGuiNetworkingPendingMessage> mPendingMessages;
-    //these are messages that have been splitted server side and we are waiting to receive all packes for them
+    // these are messages that have been splitted server side and we are waiting to receive all packes for them
     TArray<FKLDebugImGuiNetworkingPendingSplittedMessage> mPendingSplittedMessages;
     FSocket* mSocket = nullptr;
     uint32 mReadBufferStartIndex = 0;

@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Helpers/KLDebugImGuiHelpers.h"
 
 // ImGuiThirdParty module
@@ -38,4 +40,4 @@ namespace KL::Debug::ImGuiHelpers
         ::ImGui::TextColored(ConvertUnrealColorToImGui(_Color), TCHAR_TO_ANSI(*_Text));
     }
 
-}  // namespace KL::Debug::ImGuiHelpers
+}    // namespace KL::Debug::ImGuiHelpers

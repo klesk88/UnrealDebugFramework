@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystems/KLDebugImGuiWorldSubsystem.h"
 
 #include "Config/KLDebugImGuiConfig.h"
@@ -12,7 +14,7 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "Window/KLDebugImGuiWindow.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 #include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
 #include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
@@ -107,8 +109,8 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
     }
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> Features;
-    const FKLDebugImGuiFeaturesTypesContainerManager&       FeatureContainerManager = EngineSusbsytem->GetFeatureContainerManager();
-    const FKLDebugImGuiFeatureContainerBase&                SelectedObjectFeatures  = FeatureContainerManager.GetContainer(EImGuiInterfaceType::SELECTABLE);
+    const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = EngineSusbsytem->GetFeatureContainerManager();
+    const FKLDebugImGuiFeatureContainerBase& SelectedObjectFeatures = FeatureContainerManager.GetContainer(EImGuiInterfaceType::SELECTABLE);
 
     SelectedObjectFeatures.GatherFeatures(_Object, Features);
     mSelectedObjectsVisualizers.Emplace(SelectedObjectFeatures, EngineSusbsytem->GetOverlayMaterial(), _Object, MoveTemp(Features));
@@ -136,7 +138,7 @@ void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGather
         const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = mUniqueFeaturesVisualizer.TryGetSelectedFeature(_Input.GetFeatureIndex());
         FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
     }
-        break;
+    break;
     case EImGuiInterfaceType::COUNT:
         ensureMsgf(false, TEXT("should never enter here"));
         break;
@@ -193,7 +195,7 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
     const FKLDebugImGuiFeatureVisualizerRenderContext Context{ _CurrentWorldUpdated, _ContainerManager };
-    
+
     if (mUniqueFeaturesVisualizer.IsValid())
     {
         mUniqueFeaturesVisualizer.Render(Context);

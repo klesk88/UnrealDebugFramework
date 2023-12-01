@@ -1,10 +1,12 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "HAL/Platform.h"
 #include "HAL/RunnableThread.h"
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 class TKLDebugImGuiNetworkingConnectionRunnableContainer final : public FNoncopyable
 {
 public:
@@ -22,13 +24,13 @@ private:
     FRunnableThread* mThread = nullptr;
 };
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::~TKLDebugImGuiNetworkingConnectionRunnableContainer()
 {
     ClearConnection();
 }
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 void TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::ClearConnection()
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingConnectionRunnableContainer_ClearConnection);
@@ -42,7 +44,7 @@ void TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::ClearCo
     }
 }
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 void TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::InitSocket(const TCHAR* _ThreadName)
 {
     mConnection.CreateSocket();
@@ -52,19 +54,19 @@ void TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::InitSoc
     }
 }
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 inline const ConnectionType& TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::GetConnection() const
 {
     return mConnection;
 }
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 inline ConnectionType& TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::GetConnectionMutable()
 {
     return mConnection;
 }
 
-template<typename ConnectionType>
+template <typename ConnectionType>
 inline bool TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::HasValidConnection() const
 {
     return mThread != nullptr;

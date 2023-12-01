@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 // #include "Filter/Tree/KLDebugImGuiFilterNodesStackData.h"
 //
 // FKLDebugImGuiFilterNodesStackData::FKLDebugImGuiFilterNodesStackData(const FName& _FilterTag, const FName& _FullFilter, const int32 _TreeNodeIndex)

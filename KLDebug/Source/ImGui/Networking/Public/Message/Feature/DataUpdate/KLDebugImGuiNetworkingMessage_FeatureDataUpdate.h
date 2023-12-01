@@ -1,12 +1,14 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/KLDebugImGuiNetworkingMessage_Base.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
-//engine
+// engine
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
 #include "Misc/NetworkGuid.h"
@@ -22,9 +24,9 @@ public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
     explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(FArchive& _Archive);
 
-    //TKLDebugNetworkingMessage_Base
+    // TKLDebugNetworkingMessage_Base
     UE_NODISCARD bool IsValid() const final;
-    //TKLDebugNetworkingMessage_Base
+    // TKLDebugNetworkingMessage_Base
 
     UE_NODISCARD const UObject* Client_GetObject(const UWorld& _World) const;
     UE_NODISCARD EImGuiInterfaceType Client_GetImGuiInterfaceType() const;
@@ -33,9 +35,9 @@ public:
     UE_NODISCARD const TArray<uint8>& Client_GetDataArray() const;
 
 private:
-    //TKLDebugNetworkingMessage_Base
+    // TKLDebugNetworkingMessage_Base
     void SerializeChild(const FKLDebugNetworkingMessageSerializeInput& _Input) final;
-    //TKLDebugNetworkingMessage_Base
+    // TKLDebugNetworkingMessage_Base
 
 private:
     TArray<uint8> mFeatureData;

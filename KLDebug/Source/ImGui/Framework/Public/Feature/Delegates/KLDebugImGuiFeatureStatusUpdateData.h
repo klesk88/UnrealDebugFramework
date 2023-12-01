@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Iterators/KLDebugImGuiSubsetFeaturesIterator.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine

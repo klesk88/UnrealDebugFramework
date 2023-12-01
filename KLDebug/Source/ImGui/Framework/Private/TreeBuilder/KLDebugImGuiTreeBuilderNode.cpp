@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "TreeBuilder/KLDebugImGuiTreeBuilderNode.h"
 
 FKLDebugImGuiTreeBuilderNode::FKLDebugImGuiTreeBuilderNode(const int32 _NodeDataIndex)

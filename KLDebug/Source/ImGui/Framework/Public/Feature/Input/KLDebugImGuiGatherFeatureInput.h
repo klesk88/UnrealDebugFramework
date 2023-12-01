@@ -1,14 +1,16 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
-//engine
+// engine
 #include "Templates/UnrealTemplate.h"
 #include "UObject/Object.h"
 
@@ -71,4 +73,3 @@ inline FKLDebugImGuiFeatureContext_Base* FKLDebugImGuiGatherFeatureInput::TryGet
 {
     return mFeatureContext;
 }
-

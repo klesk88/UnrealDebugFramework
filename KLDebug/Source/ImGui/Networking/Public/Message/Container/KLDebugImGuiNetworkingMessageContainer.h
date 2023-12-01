@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "HAL/Platform.h"

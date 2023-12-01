@@ -1,13 +1,15 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Client/KLDebugImGuiNetworkingTCPClient.h"
 #include "Subsystem/Engine/KLDebugImGuiClientData.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingConnectionRunnableContainer.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Subsystems/EngineSubsystem.h"
 
@@ -22,10 +24,10 @@ class KLDEBUGIMGUICLIENT_API UKLDebugImGuiClientSubsystem_Engine final : public 
     GENERATED_BODY()
 
 public:
-    //UEngineSubsystem
+    // UEngineSubsystem
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
-    //UEngineSubsystem
+    // UEngineSubsystem
 
     static const UKLDebugImGuiClientSubsystem_Engine* TryGet();
     static UKLDebugImGuiClientSubsystem_Engine* TryGetMutable();
@@ -33,7 +35,7 @@ public:
     void SetHasServerInitializedOwner(const bool _HasServerInitializedOwner);
 
 private:
-    //UKLDebugImGuiNetworkingSubsystem_EngineBase
+    // UKLDebugImGuiNetworkingSubsystem_EngineBase
     UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
     UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
     UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
@@ -44,7 +46,7 @@ private:
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
     bool IsTickable() const final;
-    //UKLDebugImGuiNetworkingSubsystem_EngineBase
+    // UKLDebugImGuiNetworkingSubsystem_EngineBase
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
 

@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "Math/NumericLimits.h"
@@ -13,4 +15,4 @@ namespace KL::Debug::ImGui::Networking::Server
 
     static uint32 FeatureMaxMessageDataSize = 100;
     static float FeatureMaxMessageDataSizeInv = 1.f / static_cast<float>(FeatureMaxMessageDataSize);
-} // KL::Debug::ImGui::Networking::Server
+}    // namespace KL::Debug::ImGui::Networking::Server

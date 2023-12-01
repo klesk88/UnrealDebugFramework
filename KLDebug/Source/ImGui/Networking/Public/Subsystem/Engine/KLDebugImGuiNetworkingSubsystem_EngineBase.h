@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -16,19 +18,19 @@ class IKLDebugImGuiNetworkingWorldProviderInterface;
 class UKLDebugImGuiWorldSubsystem;
 class UWorld;
 
-//this is a vase class. Abstract will not make it instantiate
+// this is a vase class. Abstract will not make it instantiate
 UCLASS(Abstract, Transient)
 class KLDEBUGIMGUINETWORKING_API UKLDebugImGuiNetworkingSubsystem_EngineBase : public UEngineSubsystem, public FTickableGameObject
 {
     GENERATED_BODY()
 
 public:
-    //UEngineSubsystem
+    // UEngineSubsystem
     void Initialize(FSubsystemCollectionBase& _Collection) override;
     void Deinitialize() override;
-    //UEngineSubsystem
+    // UEngineSubsystem
 
-    //UTickableWorldSubsystem
+    // UTickableWorldSubsystem
     TStatId GetStatId() const override PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetStatId, RETURN_QUICK_DECLARE_CYCLE_STAT(UKLDebugImGuiClientSubsystem_World, STATGROUP_Tickables););
     void Tick(float _DeltaTime) override PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::Tick, );
     bool IsTickable() const override;
@@ -37,7 +39,7 @@ public:
     bool IsAllowedToTick() const final;
     bool IsTickableWhenPaused() const final;
     bool IsTickableInEditor() const final;
-    //UTickableWorldSubsystem
+    // UTickableWorldSubsystem
 
     void SetShouldTick();
 
@@ -73,13 +75,13 @@ private:
 
 inline ETickableTickType UKLDebugImGuiNetworkingSubsystem_EngineBase::GetTickableTickType() const
 {
-    //avoid top add this class to the list of tickable objects as well as all CDOs
+    // avoid top add this class to the list of tickable objects as well as all CDOs
     return IsTemplate() ? ETickableTickType::Never : GetTickableTickTypeChild();
 }
 
 inline ETickableTickType UKLDebugImGuiNetworkingSubsystem_EngineBase::GetTickableTickTypeChild() const
 {
-    //avoid top add this class to the list of tickable objects
+    // avoid top add this class to the list of tickable objects
     return ETickableTickType::Never;
 }
 

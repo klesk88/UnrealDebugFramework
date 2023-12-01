@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 
-//engine
+// engine
 #include "Math/NumericLimits.h"
 
 namespace KL::Debug::ImGui::Features::VisualizerTreeData
@@ -12,7 +14,7 @@ namespace KL::Debug::ImGui::Features::VisualizerTreeData
         ID = static_cast<KL::Debug::ImGui::Features::VisualizerTree::NodeDataID>((static_cast<uint32>(ID) + 1) % TNumericLimits<KL::Debug::ImGui::Features::VisualizerTree::NodeDataID>::Max());
         return ID;
     }
-}
+}    // namespace KL::Debug::ImGui::Features::VisualizerTreeData
 
 /////////////////////////////////////////////////////////////////////////////
 

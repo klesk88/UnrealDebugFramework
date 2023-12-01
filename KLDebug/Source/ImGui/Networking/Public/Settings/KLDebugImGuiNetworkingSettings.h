@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -5,7 +7,7 @@
 
 #include "KLDebugImGuiNetworkingSettings.generated.h"
 
-UCLASS(config=Plugins, defaultconfig, DisplayName = "KLDebugNetworking")
+UCLASS(config = Plugins, defaultconfig, DisplayName = "KLDebugNetworking")
 class KLDEBUGIMGUINETWORKING_API UKLDebugImGuiNetworkingSettings final : public UDeveloperSettings
 {
     GENERATED_BODY()
@@ -29,9 +31,9 @@ public:
     UE_NODISCARD uint32 Server_GetConnectionTempCompressDataSize() const;
 
 private:
-    //Client
+    // Client
 
-    UPROPERTY(Config, Category="ImGuiClient", EditDefaultsOnly)
+    UPROPERTY(Config, Category = "ImGuiClient", EditDefaultsOnly)
     int32 ClientPort = 50000;
 
     UPROPERTY(Config, Category = "ImGuiClient", EditDefaultsOnly)
@@ -40,27 +42,27 @@ private:
     UPROPERTY(Config, Category = "ImGuiClient", EditDefaultsOnly)
     uint32 ClientWriteBufferSize = 2 * 1024 * 1024;
 
-    //The number of connections to queue before refusing them.
+    // The number of connections to queue before refusing them.
     UPROPERTY(Category = "ImGuiClient", config, EditDefaultsOnly)
     uint32 ClientMaxClientConnectionsBacklog = 3;
 
     UPROPERTY(Category = "ImGuiClient", config, EditDefaultsOnly)
     uint32 ClientTempDataSizePerConnection = 2 * 1024 * 1024;
 
-    //Server
+    // Server
 
     UPROPERTY(Category = "ImGuiServer", config, EditDefaultsOnly)
     uint32 MaxClientsConnectedExpected = 10;
 
-    //how many times we will try to discover a port for the client before give up
+    // how many times we will try to discover a port for the client before give up
     UPROPERTY(Category = "ImGuiServer", config, EditDefaultsOnly)
     uint32 ServerStartPortSearch = 50001;
 
-    //how many times we will try to discover a port for the client before give up
+    // how many times we will try to discover a port for the client before give up
     UPROPERTY(Category = "ImGuiServer", config, EditDefaultsOnly)
     uint32 ServerMaxPortDiscoveryRetries = 10;
 
-    //The number of connections to queue before refusing them.
+    // The number of connections to queue before refusing them.
     UPROPERTY(Category = "ImGuiServer", config, EditDefaultsOnly)
     int32 ServerMaxConnectionsBacklog = 10;
 

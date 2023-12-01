@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -17,8 +19,8 @@ public:
     UE_NODISCARD ENetMode GetCurrentNetMode() const;
     UE_NODISCARD bool HasAuthorityOnObject() const;
 
-    //for subsystems interfaces this is the current world
-    //for selectable objects interfaces this is the actual object selected
+    // for subsystems interfaces this is the current world
+    // for selectable objects interfaces this is the actual object selected
     UE_NODISCARD const UObject& GetObject() const;
 
 private:

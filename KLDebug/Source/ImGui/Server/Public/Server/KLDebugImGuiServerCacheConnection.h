@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Features/KLDebugImGuiServerObjectFeatures.h"
 #include "Features/KLDebugImGuiServerUniqueFeatures.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
@@ -26,7 +28,7 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection
 {
 public:
     explicit FKLDebugImGuiServerCacheConnection();
- 
+
     void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, TArray<FKLDebugImGuiNetworkingPendingMessage>& _MessagesReceived);
     void WriteData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
 

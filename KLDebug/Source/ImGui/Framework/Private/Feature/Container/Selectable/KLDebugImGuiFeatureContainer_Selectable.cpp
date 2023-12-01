@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Container/Selectable/KLDebugImGuiFeatureContainer_Selectable.h"
 
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"

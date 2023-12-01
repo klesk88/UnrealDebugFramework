@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
-//engine
+// engine
 #include "UObject/NameTypes.h"
 
 class FArchive;
@@ -14,9 +16,9 @@ public:
     friend FArchive& operator<<(FArchive& Ar, FKLDebugImGuiNetworkingMessage_FeatureStatusData& _FeatureStatusData);
 
 public:
-    //explicit FKLDebugImGuiNetworkingMessage_FeatureStatusData(FArchive& _Archive);
+    // explicit FKLDebugImGuiNetworkingMessage_FeatureStatusData(FArchive& _Archive);
     FKLDebugImGuiNetworkingMessage_FeatureStatusData() = default;
-    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusData(const FName& _FeatureNameID, const  KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _IsAdded);
+    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusData(const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _IsAdded);
 
     void Serialize(FArchive& _Archive);
 

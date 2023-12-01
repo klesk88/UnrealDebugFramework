@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Client/KLDebugImGuiClientManager.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/Input/KLDebugImGuiGatherFeatureInput.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
@@ -17,7 +19,7 @@
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Containers/UnrealString.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -29,7 +31,7 @@
 #include "UObject/NameTypes.h"
 
 #if !NO_LOGGING
-//engine
+// engine
 #include "Containers/UnrealString.h"
 #endif
 
@@ -41,7 +43,7 @@ void FKLDebugImGuiClientManager::Init()
 }
 
 void FKLDebugImGuiClientManager::GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData)
-{   
+{
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_TickReadData);
 
     GameThread_CopyPendingMessages(_ClientData);
@@ -70,7 +72,7 @@ void FKLDebugImGuiClientManager::GameThread_CopyPendingMessages(FKLDebugImGuiCli
     {
         mPendingFeaturesStatusUpdates.Reserve(mPendingFeaturesStatusUpdates.Max() + (NewData.Num() - Offset));
     }
-    
+
     for (const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& NewDataUpdate : NewData)
     {
         mPendingFeaturesStatusUpdates.Emplace(NewDataUpdate);
@@ -169,4 +171,3 @@ void FKLDebugImGuiClientManager::Parallel_WritePendingFeaturesStatusUpdate(TArra
 
     mPendingFeaturesStatusUpdates.Reset();
 }
-

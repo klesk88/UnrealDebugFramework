@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystem/Engine/KLDebugImGuiClientData.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
@@ -11,7 +13,7 @@
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Engine/DebugCameraController.h"
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/LocalPlayer.h"
@@ -27,7 +29,7 @@ FKLDebugImGuiClientData::FKLDebugImGuiClientData(const UWorld& _World, const FDe
 
 void FKLDebugImGuiClientData::Shutdown(UKLDebugImGuiWorldSubsystem& _ImGuiWorldSubsystem)
 {
-    if(mOnFeaturesUpdatedDelegateHandle.IsValid())
+    if (mOnFeaturesUpdatedDelegateHandle.IsValid())
     {
         _ImGuiWorldSubsystem.UnbindOnImGuiFeatureStateUpdated(mOnFeaturesUpdatedDelegateHandle);
     }
@@ -38,8 +40,7 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
     const AActor* ObjectAsActor = Cast<const AActor>(_FeatureUpdateData.TryGetObject());
     if (ObjectAsActor && ObjectAsActor->GetLocalRole() == ROLE_Authority)
     {
-        UE_LOG(LogKL_Debug, Display, TEXT("UKLDebugImGuiClientSubsystem_World::OnFeatureUpdate>> actor [%s] is locally controlled no message sent to server"),
-            *ObjectAsActor->GetName());
+        UE_LOG(LogKL_Debug, Display, TEXT("UKLDebugImGuiClientSubsystem_World::OnFeatureUpdate>> actor [%s] is locally controlled no message sent to server"), *ObjectAsActor->GetName());
 
         return false;
     }
@@ -78,8 +79,8 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
     {
         if (_FeatureUpdateData.IsFullyRemoved())
         {
-            //the feature has been removed but we yet didnt send any message to the server. This can happen if
-            //we select an actor and just press on the remove button, before opening any window which is networked
+            // the feature has been removed but we yet didnt send any message to the server. This can happen if
+            // we select an actor and just press on the remove button, before opening any window which is networked
             return false;
         }
 
@@ -99,7 +100,7 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
         mObjectToNetworkID.Emplace(_FeatureUpdateData.GetObjectKey(), NetworkID);
     }
 
-    //i dont expect mPendingFeaturesStatusUpdates to have elements but just in case 
+    // i dont expect mPendingFeaturesStatusUpdates to have elements but just in case
     FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate* FeatureUpdate = nullptr;
     for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& Update : mPendingFeaturesStatusUpdates)
     {
@@ -122,7 +123,7 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
     }
     else
     {
-        //clear the flag just in case we reenable before send this packet
+        // clear the flag just in case we reenable before send this packet
         FeatureUpdate->Client_ClearFullyRemoved();
 
         for (const TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>& FeatureIndexPair : FeaturesIndexes)
@@ -141,7 +142,7 @@ FNetworkGUID FKLDebugImGuiClientData::GetLocalPlayerNetworkID() const
     const APlayerController* PlayerController = LocalPlayer ? LocalPlayer->GetPlayerController(&World) : nullptr;
     if (!PlayerController)
     {
-        //it can happen that the player controller is not yet ready at this point
+        // it can happen that the player controller is not yet ready at this point
         return FNetworkGUID();
     }
 

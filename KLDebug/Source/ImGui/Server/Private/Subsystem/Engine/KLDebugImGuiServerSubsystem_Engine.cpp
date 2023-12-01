@@ -1,15 +1,17 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
 #include "Server/KLDebugImGuiTCPServerGameThreadContext.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
-//engine
+// engine
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
@@ -71,7 +73,7 @@ void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLoginEventHandler(AGameM
     {
         return;
     }
-        
+
     mConnectedPlayer.Emplace(_NewPlayer);
     SetShouldTick();
 }
@@ -104,11 +106,11 @@ void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
 
 void UKLDebugImGuiServerSubsystem_Engine::CookedOnly_InitFeatureMapIfNeeded()
 {
-    //this is needed only in package builds as the client and server in that case can be out of sync 
-    //in the sense that we can have a deployed server which was built with a
-    //different version then the one of the client. The Features indexes in this case could not match anymore.
-    //so make a pass here once so we store 
-    //NOTE: we use the imgui path as key as we dont expect any collisions on those
+    // this is needed only in package builds as the client and server in that case can be out of sync
+    // in the sense that we can have a deployed server which was built with a
+    // different version then the one of the client. The Features indexes in this case could not match anymore.
+    // so make a pass here once so we store
+    // NOTE: we use the imgui path as key as we dont expect any collisions on those
 
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_CookedOnly_InitFeatureMapIfNeeded);
 

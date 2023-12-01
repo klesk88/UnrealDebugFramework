@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 
 // engine
@@ -19,7 +21,7 @@
 class FKLDebugImGuiFeatureData;
 class IKLDebugImGuiFeatureInterfaceBase;
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 class FKLDebugImGuiFeaturesIteratorBase : public FNoncopyable
 {
 protected:
@@ -29,21 +31,21 @@ public:
     explicit FKLDebugImGuiFeaturesIteratorBase(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, PoolType& _FeaturesPool);
     void operator++();
 
-    template<typename FeatureInterfaceType>
+    template <typename FeatureInterfaceType>
     UE_NODISCARD const FeatureInterfaceType& GetFeatureInterfaceCasted() const;
 
-    template<typename FeatureInterfaceType, bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
+    template <typename FeatureInterfaceType, bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
     UE_NODISCARD FeatureInterfaceType& GetFeatureInterfaceCastedMutable() const;
 
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
-    UE_NODISCARD int32                                           GetFeaturesCount() const;
-    UE_NODISCARD const FKLDebugImGuiFeatureData&                 GetFeatureData() const;
+    UE_NODISCARD int32 GetFeaturesCount() const;
+    UE_NODISCARD const FKLDebugImGuiFeatureData& GetFeatureData() const;
     UE_NODISCARD const FName& GetFeatureNameID() const;
     UE_NODISCARD uint32 GetIteratorIndex() const;
 
 protected:
-    template<bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase&       GetFeatureMutable() const;
+    template <bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
+    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& GetFeatureMutable() const;
     UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature() const;
 
 protected:
@@ -58,37 +60,37 @@ protected:
     uint32 mIndex = 0;
 };
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::FKLDebugImGuiFeaturesIteratorBase(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, PoolType& _FeaturesPool)
     : mFeatureData(_FeatureData)
     , mFeaturesPool(_FeaturesPool)
 {
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline void FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::operator++()
 {
     ++mIndex;
 }
 
-template<class Child, bool IsConst>
-template<typename FeatureInterfaceType, bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
+template <class Child, bool IsConst>
+template <typename FeatureInterfaceType, bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
 inline FeatureInterfaceType& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureInterfaceCastedMutable() const
 {
     checkf(GetFeature().IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
     return reinterpret_cast<FeatureInterfaceType&>(GetFeatureMutable());
 }
 
-template<class Child, bool IsConst>
-template<typename FeatureInterfaceType>
+template <class Child, bool IsConst>
+template <typename FeatureInterfaceType>
 inline const FeatureInterfaceType& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureInterfaceCasted() const
 {
     checkf(GetFeature().IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
     return reinterpret_cast<const FeatureInterfaceType&>(GetFeature());
 }
 
-template<class Child, bool IsConst>
-template<bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
+template <class Child, bool IsConst>
+template <bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
 inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureMutable() const
 {
     const FKLDebugImGuiFeatureData& FeatureData = GetFeatureData();
@@ -96,7 +98,7 @@ inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Chil
     return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeature() const
 {
     const FKLDebugImGuiFeatureData& FeatureData = GetFeatureData();
@@ -104,19 +106,19 @@ inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBas
     return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline int32 FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeaturesCount() const
 {
     return mFeatureData.Num();
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureDataIndex() const
 {
     return static_cast<const Child*>(this)->GetFeatureDataIndexChild();
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline const FKLDebugImGuiFeatureData& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureData() const
 {
     const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureDataIndex = GetFeatureDataIndex();
@@ -124,14 +126,14 @@ inline const FKLDebugImGuiFeatureData& FKLDebugImGuiFeaturesIteratorBase<Child, 
     return FeatureData;
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline const FName& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureNameID() const
 {
     const IKLDebugImGuiFeatureInterfaceBase& FeatureInterfaceBase = GetFeature();
     return FeatureInterfaceBase.GetFeatureNameID();
 }
 
-template<class Child, bool IsConst>
+template <class Child, bool IsConst>
 inline uint32 FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetIteratorIndex() const
 {
     return mIndex;

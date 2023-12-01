@@ -1,13 +1,15 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Client/KLDebugImGuiTCPClientCachedConnection.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/Message/Discovery/KLDebugImGuiNetworkingMessage_ServerInitializeClientConnection.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/NetConnection.h"
 #include "Interfaces/IPv4/IPv4Address.h"
@@ -122,7 +124,7 @@ bool FKLDebugImGuiTCPClientCachedConnection::TickOnGameThread(FKLDebugImGuiClien
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiTCPClientCachedConnection_TickOnGameThread);
 
-    //when we reach here we have locked so any other method will be called
+    // when we reach here we have locked so any other method will be called
     if (mWorldKey == FObjectKey())
     {
         mWorldKey = _ClientData.GetWorldID();

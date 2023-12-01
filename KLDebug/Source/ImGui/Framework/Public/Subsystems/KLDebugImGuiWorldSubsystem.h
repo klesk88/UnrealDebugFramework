@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
@@ -5,7 +7,7 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Selectable.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Unique.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
@@ -57,11 +59,11 @@ private:
     void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
 private:
-    FKLDebugImGuiFeatureVisualizer_Unique                   mUniqueFeaturesVisualizer;
-    TArray<FKLDebugImGuiFeatureVisualizer_Selectable>       mSelectedObjectsVisualizers;
-    FString                                                 mImGuiTreeName;
-    FInstancedStruct                                        mImGuiWindow;
-    FOnImGuiFeatureStateUpdated                             mOnFeaturesUpdatedDelegate;
+    FKLDebugImGuiFeatureVisualizer_Unique mUniqueFeaturesVisualizer;
+    TArray<FKLDebugImGuiFeatureVisualizer_Selectable> mSelectedObjectsVisualizers;
+    FString mImGuiTreeName;
+    FInstancedStruct mImGuiWindow;
+    FOnImGuiFeatureStateUpdated mOnFeaturesUpdatedDelegate;
     bool mShouldStoreDelta = false;
 };
 

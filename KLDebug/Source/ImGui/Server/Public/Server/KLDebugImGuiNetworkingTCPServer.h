@@ -1,16 +1,18 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Server/KLDebugImGuiTCPServerCachedConnection.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingTCPBase.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Delegates/IDelegateInstance.h"
 #include "Engine/World.h"
-#include "Misc/NetworkGuid.h"
 #include "Math/NumericLimits.h"
+#include "Misc/NetworkGuid.h"
 #include "Misc/ScopeLock.h"
 #include "UObject/ObjectKey.h"
 
@@ -22,16 +24,16 @@ class FKLDebugImGuiServerGetConnectionsBuffersData;
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiNetworkingTCPServer final : public FKLDebugImGuiNetworkingTCPBase
 {
 public:
-    //FKLDebugImGuiNetworkingTCPBase
+    // FKLDebugImGuiNetworkingTCPBase
     void CreateSocket() final;
     void RunChild() final;
-    //FKLDebugImGuiNetworkingTCPBase
+    // FKLDebugImGuiNetworkingTCPBase
 
     void TickGameThread(FKLDebugImGuiTCPServerGameThreadContext& _Context);
 
 private:
     void InitSocket();
-    
+
     void RemoveCachedConnection(const int32 _Index);
 
     void TickRemovePlayerConnections();

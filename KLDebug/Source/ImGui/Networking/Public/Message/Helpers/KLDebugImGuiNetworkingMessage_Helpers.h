@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
 #include "CoreMinimal.h"
@@ -26,4 +28,4 @@ namespace KL::Debug::ImGuiNetworking::Message
     {
         PrepareMessageToSend_Uncompressed(_Message, 0, static_cast<uint32>(_DataToSend.Num()), 0, _DataToSend, _Archive);
     }
-}
+}    // namespace KL::Debug::ImGuiNetworking::Message

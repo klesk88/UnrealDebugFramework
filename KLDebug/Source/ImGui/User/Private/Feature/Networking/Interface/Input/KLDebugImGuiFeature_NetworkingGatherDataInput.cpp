@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 
-//engine
+// engine
 #include "GameFramework/Actor.h"
 
 FKLDebugImGuiFeature_NetworkingGatherDataInput::FKLDebugImGuiFeature_NetworkingGatherDataInput(const UWorld& _World, UObject* _OwnerObject, FKLDebugImGuiFeatureContext_Base* _ContextData, FArchive& _Archive)

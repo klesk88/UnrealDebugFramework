@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"
 
 #include "Subsystem/Engine/KLDebugImGuiNetworkingGameThreadUpdateContextBase.h"
 #include "TCP/KLDebugImGuiNetworkingTCPBase.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 
@@ -66,9 +68,9 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnAddImGuiSubsystem(UKLDebugIm
 
 void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnRemoveImGuiSubsystem(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem)
 {
-    //NOTE: here intentionally we dont check IsValidWorld
-  //if for example we travel from a dedicated server to a listen server, that check would fail on a the client subsystem (as now the client is a 
-  //listen server) so we would never remove the data of the world we are leaving
+    // NOTE: here intentionally we dont check IsValidWorld
+    // if for example we travel from a dedicated server to a listen server, that check would fail on a the client subsystem (as now the client is a
+    // listen server) so we would never remove the data of the world we are leaving
 
     check(IsInGameThread());
 
@@ -80,7 +82,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnRemoveImGuiSubsystem(UKLDebu
     }
 
 #if !WITH_EDITOR
-    //in a package build we can reach here after a first world has been already created.
+    // in a package build we can reach here after a first world has been already created.
     if (mCurrentWorlds.IsEmpty())
     {
         return;
@@ -131,7 +133,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::GatherUpdateData(FKLDebugImGui
 
     for (const TWeakObjectPtr<const UWorld>& World : mCurrentWorlds)
     {
-        //worlds should be always valid just check in case of bugs
+        // worlds should be always valid just check in case of bugs
         if (LIKELY(World.IsValid()))
         {
             Worlds.Emplace(World.Get());

@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/KLDebugImGuiFeatureTypes.h"
@@ -22,9 +24,9 @@ public:
 
     // the node is not guarantee to have a valid next tree level node
     UE_NODISCARD TOptional<uint16> GetNextTreeLevelNodeIndex() const;
-    UE_NODISCARD uint16            GetFirstChildIndex() const;
+    UE_NODISCARD uint16 GetFirstChildIndex() const;
     UE_NODISCARD TOptional<uint16> GetNodeDataIndex() const;
-    UE_NODISCARD bool              IsLeaf() const;
+    UE_NODISCARD bool IsLeaf() const;
 
 private:
     // this represents, in the tree, the next node location at the same level of this node

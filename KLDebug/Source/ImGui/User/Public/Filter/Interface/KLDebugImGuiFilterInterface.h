@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Filter/Interface/KLDebugImGuiFilterInterfaceMacros.h"
@@ -19,7 +21,7 @@ class UObject;
  * };
  *
  * FClassFilter.cpp
- * 
+ *
  * KL_DEBUG_CREATE_FILTER(FClassFilter)
  */
 class KLDEBUGIMGUIUSER_API IKLDebugImGuiFilterInterface
@@ -27,6 +29,6 @@ class KLDEBUGIMGUIUSER_API IKLDebugImGuiFilterInterface
 public:
     virtual ~IKLDebugImGuiFilterInterface();
 
-    UE_NODISCARD virtual bool         IsObjectValid(const UObject& _Object) const = 0;
-    UE_NODISCARD virtual const FName& GetFilterID() const                         = 0;
+    UE_NODISCARD virtual bool IsObjectValid(const UObject& _Object) const = 0;
+    UE_NODISCARD virtual const FName& GetFilterID() const = 0;
 };

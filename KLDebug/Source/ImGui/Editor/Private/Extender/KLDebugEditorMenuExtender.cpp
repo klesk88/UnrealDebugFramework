@@ -2,7 +2,7 @@
 
 #include "Extender/KLDebugEditorMenuExtender_Style.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ThirdParty/UnrealImGui/Public/ImGuiModuleProperties.h"
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
@@ -23,7 +23,7 @@ namespace KL::Debug::Editor::MenuExtender
     {
         return FModuleManager::Get().IsModuleLoaded("LevelEditor") && FKLUnrealImGuiModule::TryGet() != nullptr;
     }
-}  // namespace KL::Debug::Editor::MenuExtender
+}    // namespace KL::Debug::Editor::MenuExtender
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +45,7 @@ void FKLDebugEditorMenuExtender::Init()
 
 void FKLDebugEditorMenuExtender::Shutdown()
 {
-    FLevelEditorModule*    LevelEditorModule    = FModuleManager::GetModulePtr<FLevelEditorModule>("LevelEditor");
+    FLevelEditorModule* LevelEditorModule = FModuleManager::GetModulePtr<FLevelEditorModule>("LevelEditor");
     FExtensibilityManager* ExtensibilityManager = LevelEditorModule ? LevelEditorModule->GetToolBarExtensibilityManager().Get() : nullptr;
     if (ExtensibilityManager)
     {
@@ -71,7 +71,7 @@ void FKLDebugEditorMenuExtender::Register()
 {
     mCommandList = MakeShareable(new FUICommandList);
 
-    FLevelEditorModule&   LevelEditorModule  = FModuleManager::GetModuleChecked<FLevelEditorModule>("LevelEditor");
+    FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>("LevelEditor");
     TSharedPtr<FExtender> NewToolbarExtender = MakeShareable(new FExtender);
 
     NewToolbarExtender->AddToolBarExtension("Play", EExtensionHook::After, mCommandList, FToolBarExtensionDelegate::CreateRaw(this, &FKLDebugEditorMenuExtender::FillToolbar, mCommandList));
@@ -81,10 +81,10 @@ void FKLDebugEditorMenuExtender::Register()
 void FKLDebugEditorMenuExtender::FillToolbar(FToolBarBuilder& _Builder, TSharedPtr<FUICommandList> _CommandList)
 {
     _Builder.AddComboButton(FUIAction(),
-                            FOnGetContent::CreateStatic(FKLDebugEditorMenuExtender::ImGuiModuleSubMenu, _CommandList),
-                            LOCTEXT("KLDebug", "KLDebug"),
-                            LOCTEXT("KLDebug_Tooltip", "Tools for use with the KL Debug system"),
-                            FSlateIcon(FKLDebugEditorMenuExtender_Style::GetStyleSetName(), FKLDebugEditorMenuExtender_Style::GetIconName()));
+        FOnGetContent::CreateStatic(FKLDebugEditorMenuExtender::ImGuiModuleSubMenu, _CommandList),
+        LOCTEXT("KLDebug", "KLDebug"),
+        LOCTEXT("KLDebug_Tooltip", "Tools for use with the KL Debug system"),
+        FSlateIcon(FKLDebugEditorMenuExtender_Style::GetStyleSetName(), FKLDebugEditorMenuExtender_Style::GetIconName()));
 }
 
 TSharedRef<SWidget> FKLDebugEditorMenuExtender::ImGuiModuleSubMenu(TSharedPtr<FUICommandList> _CommandList)
@@ -96,18 +96,24 @@ TSharedRef<SWidget> FKLDebugEditorMenuExtender::ImGuiModuleSubMenu(TSharedPtr<FU
     const UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
     if (KLImGuiEngineSubsystem)
     {
-        MenuBuilder.AddMenuEntry(LOCTEXT("KLDebugEnable", "Enable KLDebug"), FText(), FSlateIcon(),
-                                 FUIAction(FExecuteAction::CreateLambda([]()
-                                                                        {
-                                                                            UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
-                                                                            KLImGuiEngineSubsystem->ToogleImGuiSystemState();
-                                                                        }),
-                                           FCanExecuteAction(), FIsActionChecked::CreateLambda([]() -> bool
-                                                                                               {
-                                                                                                   const UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
-                                                                                                   return KLImGuiEngineSubsystem->IsImGuiSystemEnabled();
-                                                                                               })),
-                                 NAME_None, EUserInterfaceActionType::ToggleButton);
+        const auto UIExecuteActionLambda = FExecuteAction::CreateLambda([]() {
+            UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
+            KLImGuiEngineSubsystem->ToogleImGuiSystemState();
+        });
+
+        const auto IaActionCheckedLambda = FIsActionChecked::CreateLambda([]() -> bool {
+            const UKLDebugImGuiEngineSubsystem* KLImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
+            return KLImGuiEngineSubsystem->IsImGuiSystemEnabled();
+        });
+
+        const FUIAction UIAction(UIExecuteActionLambda, FCanExecuteAction(), IaActionCheckedLambda);
+
+        MenuBuilder.AddMenuEntry(LOCTEXT("KLDebugEnable", "Enable KLDebug"),
+            FText(),
+            FSlateIcon(),
+            UIAction,
+            NAME_None,
+            EUserInterfaceActionType::ToggleButton);
     }
 
     MenuBuilder.EndSection();
@@ -123,75 +129,103 @@ void FKLDebugEditorMenuExtender::FillImGuiSection(FMenuBuilder& _MenuBuilder)
 {
     FKLUnrealImGuiModule* ImGuiModule = &FKLUnrealImGuiModule::Get();
 
-    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_InputEnabled", "Input Enabled"), FText(), FSlateIcon(),
-                              FUIAction(FExecuteAction::CreateLambda([ImGuiModule]()
-                                                                     {
-                                                                         ImGuiModule->GetProperties().ToggleInput();
-                                                                     }),
-                                        FCanExecuteAction(), FIsActionChecked::CreateLambda([ImGuiModule]() -> bool
-                                                                                            {
-                                                                                                return ImGuiModule->GetProperties().IsInputEnabled();
-                                                                                            })),
-                              NAME_None, EUserInterfaceActionType::ToggleButton);
+    // clang-format off
+
+    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_InputEnabled", "Input Enabled"), 
+        FText(), 
+        FSlateIcon(),
+        FUIAction(
+            FExecuteAction::CreateLambda([ImGuiModule]() {
+                ImGuiModule->GetProperties().ToggleInput();
+            }),
+            FCanExecuteAction(), 
+            FIsActionChecked::CreateLambda([ImGuiModule]() -> bool {
+                return ImGuiModule->GetProperties().IsInputEnabled();
+            })
+        ),
+        NAME_None, 
+        EUserInterfaceActionType::ToggleButton);
 
     _MenuBuilder.BeginSection(NAME_None, LOCTEXT("KeyboardMouse", "Keyboard & Mouse"));
-    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_KeyboardNav", "Keyboard Navigation"), FText(), FSlateIcon(),
-                              FUIAction(FExecuteAction::CreateLambda([ImGuiModule]()
-                                                                     {
-                                                                         ImGuiModule->GetProperties().ToggleKeyboardNavigation();
-                                                                     }),
-                                        FCanExecuteAction(), FIsActionChecked::CreateLambda([ImGuiModule]() -> bool
-                                                                                            {
-                                                                                                return ImGuiModule->GetProperties().IsKeyboardNavigationEnabled();
-                                                                                            })),
-                              NAME_None, EUserInterfaceActionType::ToggleButton);
+    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_KeyboardNav", "Keyboard Navigation"), 
+        FText(), 
+        FSlateIcon(),
+        FUIAction(
+            FExecuteAction::CreateLambda([ImGuiModule]() {
+                ImGuiModule->GetProperties().ToggleKeyboardNavigation();
+            }),
+            FCanExecuteAction(), 
+            FIsActionChecked::CreateLambda([ImGuiModule]() -> bool {
+                return ImGuiModule->GetProperties().IsKeyboardNavigationEnabled();
+            })
+        ),
+        NAME_None, 
+        EUserInterfaceActionType::ToggleButton);
 
-    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_KeyboardInputShared", "Keyboard Input Shared"), FText(), FSlateIcon(),
-                              FUIAction(FExecuteAction::CreateLambda([ImGuiModule]()
-                                                                     {
-                                                                         ImGuiModule->GetProperties().ToggleKeyboardInputSharing();
-                                                                     }),
-                                        FCanExecuteAction(), FIsActionChecked::CreateLambda([ImGuiModule]() -> bool
-                                                                                            {
-                                                                                                return ImGuiModule->GetProperties().IsKeyboardInputShared();
-                                                                                            })),
-                              NAME_None, EUserInterfaceActionType::ToggleButton);
+    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_KeyboardInputShared", "Keyboard Input Shared"), 
+        FText(), 
+        FSlateIcon(),
+        FUIAction(
+            FExecuteAction::CreateLambda([ImGuiModule]() {
+                ImGuiModule->GetProperties().ToggleKeyboardInputSharing();
+            }),
+            FCanExecuteAction(), 
+            FIsActionChecked::CreateLambda([ImGuiModule]() -> bool {
+                return ImGuiModule->GetProperties().IsKeyboardInputShared();
+            })
+        ),
+        NAME_None, 
+        EUserInterfaceActionType::ToggleButton);
 
-    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_MouseInputShared", "Mouse Input Shared"), FText(), FSlateIcon(),
-                              FUIAction(FExecuteAction::CreateLambda([ImGuiModule]()
-                                                                     {
-                                                                         ImGuiModule->GetProperties().ToggleMouseInputSharing();
-                                                                     }),
-                                        FCanExecuteAction(), FIsActionChecked::CreateLambda([ImGuiModule]() -> bool
-                                                                                            {
-                                                                                                return ImGuiModule->GetProperties().IsMouseInputShared();
-                                                                                            })),
-                              NAME_None, EUserInterfaceActionType::ToggleButton);
+    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_MouseInputShared", "Mouse Input Shared"), 
+        FText(), 
+        FSlateIcon(),
+        FUIAction(
+            FExecuteAction::CreateLambda([ImGuiModule]() {
+                ImGuiModule->GetProperties().ToggleMouseInputSharing();
+            }),
+            FCanExecuteAction(), 
+            FIsActionChecked::CreateLambda([ImGuiModule]() -> bool {
+                return ImGuiModule->GetProperties().IsMouseInputShared();
+            })
+        ),
+        NAME_None, 
+        EUserInterfaceActionType::ToggleButton);
+
     _MenuBuilder.EndSection();
 
     _MenuBuilder.BeginSection(NAME_None, LOCTEXT("Gamepad", "Gamepad"));
+    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_GamepadNav", "Gamepad Navigation"), 
+        FText(), 
+        FSlateIcon(),
+        FUIAction(
+            FExecuteAction::CreateLambda([ImGuiModule]() {
+                ImGuiModule->GetProperties().ToggleGamepadNavigation();
+            }),
+            FCanExecuteAction(), 
+            FIsActionChecked::CreateLambda([ImGuiModule]() -> bool {
+                return ImGuiModule->GetProperties().IsGamepadNavigationEnabled();
+            })
+        ),
+        NAME_None, 
+        EUserInterfaceActionType::ToggleButton);
 
-    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_GamepadNav", "Gamepad Navigation"), FText(), FSlateIcon(),
-                              FUIAction(FExecuteAction::CreateLambda([ImGuiModule]()
-                                                                     {
-                                                                         ImGuiModule->GetProperties().ToggleGamepadNavigation();
-                                                                     }),
-                                        FCanExecuteAction(), FIsActionChecked::CreateLambda([ImGuiModule]() -> bool
-                                                                                            {
-                                                                                                return ImGuiModule->GetProperties().IsGamepadNavigationEnabled();
-                                                                                            })),
-                              NAME_None, EUserInterfaceActionType::ToggleButton);
+    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_KeyboardInputShared", "Gamepad Input Shared"), 
+        FText(), 
+        FSlateIcon(),
+        FUIAction(
+            FExecuteAction::CreateLambda([ImGuiModule]() {
+                ImGuiModule->GetProperties().ToggleGamepadInputSharing();
+            }),
+            FCanExecuteAction(), 
+            FIsActionChecked::CreateLambda([ImGuiModule]() -> bool {
+                return ImGuiModule->GetProperties().IsGamepadInputShared();
+            })
+        ),
+        NAME_None, 
+        EUserInterfaceActionType::ToggleButton);
 
-    _MenuBuilder.AddMenuEntry(LOCTEXT("ImGui_KeyboardInputShared", "Gamepad Input Shared"), FText(), FSlateIcon(),
-                              FUIAction(FExecuteAction::CreateLambda([ImGuiModule]()
-                                                                     {
-                                                                         ImGuiModule->GetProperties().ToggleGamepadInputSharing();
-                                                                     }),
-                                        FCanExecuteAction(), FIsActionChecked::CreateLambda([ImGuiModule]() -> bool
-                                                                                            {
-                                                                                                return ImGuiModule->GetProperties().IsGamepadInputShared();
-                                                                                            })),
-                              NAME_None, EUserInterfaceActionType::ToggleButton);
+    // clang-format on
 
     _MenuBuilder.EndSection();
 }

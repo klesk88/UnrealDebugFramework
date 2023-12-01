@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 
-//module
+// module
 #include "Networking/Runtime/Public/Message/KLDebugNetworkingMessageSerializeInput.h"
 
-//engine
+// engine
 #include "Serialization/Archive.h"
 
 FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType)
@@ -55,5 +57,4 @@ void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::SerializeSelectable(FAr
 
 void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::SerializeUnique(FArchive& _Archive)
 {
-
 }

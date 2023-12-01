@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusData.h"
 
-//engine
+// engine
 #include "Serialization/Archive.h"
 
 FKLDebugImGuiNetworkingMessage_FeatureStatusData::FKLDebugImGuiNetworkingMessage_FeatureStatusData(const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const bool _IsAdded)

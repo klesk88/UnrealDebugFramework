@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 // engine
@@ -31,9 +33,9 @@ public:
 
 private:
     TUniquePtr<FKLDebugImGuiFeatureContext_Base> mContext;
-    //server and  client can be out of sync in terms of features indexes. So store both of the separately
+    // server and  client can be out of sync in terms of features indexes. So store both of the separately
     KL::Debug::ImGui::Features::Types::FeatureIndex mServerFeatureIndex = KL::Debug::ImGui::Features::Types::InvalidFeatureIndex;
-    //the client will be used for when we write back to it
+    // the client will be used for when we write back to it
     KL::Debug::ImGui::Features::Types::FeatureIndex mClientFeatureIndex = KL::Debug::ImGui::Features::Types::InvalidFeatureIndex;
     uint32 mLastSentCRC = 0;
 };

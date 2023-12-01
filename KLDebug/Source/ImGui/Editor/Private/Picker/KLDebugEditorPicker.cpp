@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Picker/KLDebugEditorPicker.h"
 
 // modules
@@ -11,7 +13,7 @@
 void FKLDebugEditorPicker::Init()
 {
     FKLUnrealImGuiModule& ImGuiModule = FKLUnrealImGuiModule::Get();
-    mOnImGuiStateChangeHandle         = ImGuiModule.BindToEnableStateChange(FOnNetImguiEnableStateChange::FDelegate::CreateRaw(this, &FKLDebugEditorPicker::OnImGuiEnable));
+    mOnImGuiStateChangeHandle = ImGuiModule.BindToEnableStateChange(FOnNetImguiEnableStateChange::FDelegate::CreateRaw(this, &FKLDebugEditorPicker::OnImGuiEnable));
 }
 
 void FKLDebugEditorPicker::Shutdown()

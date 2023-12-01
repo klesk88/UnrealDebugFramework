@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "TCP/KLDebugImGuiNetworkingPendingMessage.h"
 
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 #include "Message/Helpers/KLDebugImGuiNetworkingMessage_Helpers.h"
 
-//engine
+// engine
 #include "HAL/UnrealMemory.h"
 
 FKLDebugImGuiNetworkingPendingMessage::FKLDebugImGuiNetworkingPendingMessage(const FKLDebugImGuiNetworkingMessage_Header& _Header, const TArray<uint8>& _MessageData)

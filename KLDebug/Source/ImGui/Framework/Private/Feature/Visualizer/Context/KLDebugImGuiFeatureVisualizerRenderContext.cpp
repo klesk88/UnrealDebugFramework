@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 
-//engine
+// engine
 #include "Engine/World.h"
 
 FKLDebugImGuiFeatureVisualizerRenderContext::FKLDebugImGuiFeatureVisualizerRenderContext(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)

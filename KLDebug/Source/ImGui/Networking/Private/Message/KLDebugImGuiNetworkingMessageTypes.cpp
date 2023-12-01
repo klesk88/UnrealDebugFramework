@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
-//engine
+// engine
 #include "Math/NumericLimits.h"
 
 namespace KL::Debug::ImGui::Networking::Message
@@ -12,4 +14,4 @@ namespace KL::Debug::ImGui::Networking::Message
         CurrentMessageID = (static_cast<uint32>(CurrentMessageID) + 1) % TNumericLimits<MessageID>::Max();
         return CurrentMessageID;
     }
-}
+}    // namespace KL::Debug::ImGui::Networking::Message

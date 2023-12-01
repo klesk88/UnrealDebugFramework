@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeTypes.h"
@@ -24,7 +26,7 @@ public:
 
 private:
     FString mNameAsString;
-    bool    mIsSelected = false;
+    bool mIsSelected = false;
     KL::Debug::ImGui::Features::VisualizerTree::NodeDataID mID = 0;
 };
 

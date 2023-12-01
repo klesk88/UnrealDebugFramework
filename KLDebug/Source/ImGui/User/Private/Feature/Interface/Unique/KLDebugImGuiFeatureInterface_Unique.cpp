@@ -1,13 +1,15 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 
 #include "Helpers/KLDebugImGuiHelpers.h"
 
-//modules
+// modules
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
 void IKLDebugImGuiFeatureInterface_Unique::DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
 {
-    auto Callback = [this, &_Input]()->void {
+    auto Callback = [this, &_Input]() -> void {
         DrawImGuiChild(_Input);
     };
 

@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
@@ -6,7 +8,7 @@
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 #include "Feature/Visualizer/Iterator/KLDebugImGuiFeatureVisualizerIterator.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
@@ -43,13 +45,13 @@ public:
 
     void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
 
-    UE_NODISCARD FKLDebugImGuiFeaturesIterator      GetFeaturesIterator();
+    UE_NODISCARD FKLDebugImGuiFeaturesIterator GetFeaturesIterator();
     UE_NODISCARD FKLDebugImGuiFeaturesConstIterator GetFeaturesConstIterator() const;
-    
+
     UE_NODISCARD FKLDebugImGuiFeatureVisualizerIterator GetFeatureVisualizerIterator(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes);
     UE_NODISCARD FKLDebugImGuiFeatureVisualizerConstIterator GetFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes) const;
 
-    UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator      GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
+    UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const;
 
     UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;

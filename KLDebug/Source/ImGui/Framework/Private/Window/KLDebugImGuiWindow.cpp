@@ -1,14 +1,16 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Window/KLDebugImGuiWindow.h"
 
 #include "Commands/ImUnrealCommand.h"
 #include "Window/KLDebugImGuiWindowDelegates.h"
 
-//ImGuiThirdParty module
+// ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-//https://github.com/ocornut/imgui/issues/3518
+// https://github.com/ocornut/imgui/issues/3518
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui_internal.h"
 
-//engine
+// engine
 #include "Camera/PlayerCameraManager.h"
 #include "Engine/DebugCameraController.h"
 #include "Engine/World.h"
@@ -22,14 +24,14 @@ namespace KL::Debug::ImGuiEditor::MainWindow
 #if IMGUI_UNREAL_COMMAND_ENABLED
     static ImUnrealCommand::CommandContext* mUnrealCommandContext = nullptr;
 #endif
-}
+}    // namespace KL::Debug::ImGuiEditor::MainWindow
 
 void FKLDebugImGuiWindow::Init()
 {
 #if IMGUI_UNREAL_COMMAND_ENABLED
-    KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext = ImUnrealCommand::Create();  // Create a new Imgui Command Window
+    KL::Debug::ImGuiEditor::MainWindow::mUnrealCommandContext = ImUnrealCommand::Create();    // Create a new Imgui Command Window
 
-	// Commented code demonstrating how to add/modify Presets
+    // Commented code demonstrating how to add/modify Presets
     // Could also modify the list of 'Default Presets' directly (UECommandImgui::sDefaultPresets)
     // ImUnrealcommand::AddPresetFilters(mpImUnrealCommandContext, TEXT("ExamplePreset"), {"ai.Debug", "fx.Dump"});
     // ImUnrealcommand::AddPresetCommands(mpImUnrealCommandContext, TEXT("ExamplePreset"), {"Stat Unit", "Stat Fps"});
@@ -47,7 +49,7 @@ void FKLDebugImGuiWindow::Update(const UWorld& _World)
 {
     DrawImGuiTopBar(_World);
     DrawImGuiBottomBar(_World);
-    //DrawImGuiBar();
+    // DrawImGuiBar();
 
 #if IMGUI_UNREAL_COMMAND_ENABLED
     DrawCommands();
@@ -81,8 +83,8 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
     const float Height = ImGui::GetFrameHeight();
 
-    //FIXME: Need to fix when we resize the editor viewport after pressing f8. In that case it seems to don't
-    //scale for some reason
+    // FIXME: Need to fix when we resize the editor viewport after pressing f8. In that case it seems to don't
+    // scale for some reason
     if (!ImGui::BeginViewportSideBar("##SecondaryMenuBar", Viewport, ImGuiDir_Down, Height, WindowFlags))
     {
         return;
@@ -90,7 +92,7 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
 
     if (!ImGui::BeginMenuBar())
     {
-        ImGui::End();  
+        ImGui::End();
         return;
     }
 
@@ -127,7 +129,7 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
 void FKLDebugImGuiWindow::DrawImGuiBar() const
 {
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
-    if(!ImGui::Begin("MainWindow", nullptr, WindowFlags))
+    if (!ImGui::Begin("MainWindow", nullptr, WindowFlags))
     {
         return;
     }
@@ -144,10 +146,10 @@ void FKLDebugImGuiWindow::DrawImGuiBar() const
 
 void FKLDebugImGuiWindow::DrawImGuiEngine() const
 {
-    //if (ImGui::BeginTabItem("Engine"))
+    // if (ImGui::BeginTabItem("Engine"))
     //{
-    //    ImGui::EndTabItem();
-    //}
+    //     ImGui::EndTabItem();
+    // }
 }
 
 #if IMGUI_UNREAL_COMMAND_ENABLED

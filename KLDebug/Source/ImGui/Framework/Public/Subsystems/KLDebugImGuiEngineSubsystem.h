@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
@@ -28,13 +30,13 @@ public:
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
 
-    UE_NODISCARD static UKLDebugImGuiEngineSubsystem*              GetMutable();
-    UE_NODISCARD static const UKLDebugImGuiEngineSubsystem*        Get();
+    UE_NODISCARD static UKLDebugImGuiEngineSubsystem* GetMutable();
+    UE_NODISCARD static const UKLDebugImGuiEngineSubsystem* Get();
     UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetFeatureContainerManager() const;
-    UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager&       GetContainerManagerMutable();
+    UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable();
 
-    void              ToogleImGuiSystemState();
-    void              ToogleImGuiInput();
+    void ToogleImGuiSystemState();
+    void ToogleImGuiInput();
 
     UE_NODISCARD bool IsImGuiSystemEnabled() const;
 
@@ -53,7 +55,7 @@ private:
     TObjectPtr<UMaterialInterface> OverlayMaterial;
 
     FKLDebugImGuiFeaturesTypesContainerManager mFeatureContainersManger;
-    FKLDebugImGuiInputManager                  mInputManager;
+    FKLDebugImGuiInputManager mInputManager;
 };
 
 inline const UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()

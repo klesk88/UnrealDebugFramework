@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Filter/Tree/KLDebugImGuiFilterTreeNode.h"
 
 FKLDebugImGuiFilterTreeNode::FKLDebugImGuiFilterTreeNode(const KL::Debug::ImGui::Features::Types::FilterIndex _FilterIndex)

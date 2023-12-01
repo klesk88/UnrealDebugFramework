@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/KLDebugImGuiFeatureTypes.h"
@@ -20,7 +22,7 @@ public:
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
 
 private:
-    FName                                           mTreePath;
+    FName mTreePath;
     KL::Debug::ImGui::Features::Types::FeatureIndex mFeatureDataIndex = 0;
 };
 

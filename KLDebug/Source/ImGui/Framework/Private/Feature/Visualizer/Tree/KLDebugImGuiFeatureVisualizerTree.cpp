@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
@@ -10,7 +12,7 @@
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
@@ -36,7 +38,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
 {
     static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    
+
     const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _ImguiContext.GetFeaturesContainerManager().GetContainer(_ContainerType);
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> FeaturesUpdated;
@@ -54,7 +56,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
         }
 
         FKLDebugImGuiFeatureVisualizerNodeData& NodeData = mNodesData[NodeDataIndex.GetValue()];
-        ImGuiTreeNodeFlags                      NodeFlags;
+        ImGuiTreeNodeFlags NodeFlags;
         if (_TreeNode.IsLeaf())
         {
             NodeFlags = LeafFlags;
@@ -93,7 +95,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
                 {
                     ensureMsgf(_FeaturesIndexesSelected.IndexOfByKey(FeatureIndex) == INDEX_NONE, TEXT("adding same feature multiple times"));
                     const IKLDebugImGuiFeatureInterfaceBase& NewFeatureInterface = FeatureContainer.GetFeature(FeatureIndex);
-                    
+
                     {
                         TUniquePtr<FKLDebugImGuiFeatureContext_Base> Context = NewFeatureInterface.GetFeatureContext(_ContextInput);
                         _FeaturesIndexesSelected.Emplace(FeatureIndex, NodeData.GetID(), MoveTemp(Context));
@@ -194,8 +196,8 @@ void FKLDebugImGuiFeatureVisualizerTree::GenerateTree(const TArray<FKLDebugImGui
     auto IsSameDataLambda = [this](const FKLDebugImGuiTreeBuilderStackData& _LastNodeInStack, const FKLDebugImGuiVisualizerTreeSortedFeatures& _Feature) -> bool {
         if (_LastNodeInStack.GetFullPath() == _Feature.GetFullPath())
         {
-            const uint16                            TreeNodeIndex = _LastNodeInStack.GetTreeNodeIndex();
-            FKLDebugImGuiFeatureVisualizerTreeNode& TreeNode      = mTreeNodes[TreeNodeIndex];
+            const uint16 TreeNodeIndex = _LastNodeInStack.GetTreeNodeIndex();
+            FKLDebugImGuiFeatureVisualizerTreeNode& TreeNode = mTreeNodes[TreeNodeIndex];
             TreeNode.AddFeatureDataIndex(_Feature.GetFeatureDataIndex());
             return true;
         }

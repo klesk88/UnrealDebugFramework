@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 
 FKLDebugImGuiFeatureStatusUpdateData::FKLDebugImGuiFeatureStatusUpdateData(const UWorld& _World, const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator)

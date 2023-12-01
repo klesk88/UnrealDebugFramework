@@ -1,14 +1,16 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
-//modules
+// modules
 #include "Networking/Runtime/Public/Message/KLDebugNetworkingMessage_Base.h"
 
 class UObject;
 class UWorld;
 
-template<EKLDebugNetworkMessageTypes MessageType>
+template <EKLDebugNetworkMessageTypes MessageType>
 class TKLDebugImGuiNetworkingMessage_Base : public TKLDebugNetworkingMessage_Base<EKLDebugNetworkMessageTypes, MessageType>
 {
 };

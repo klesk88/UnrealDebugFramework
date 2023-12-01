@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -9,7 +11,7 @@
 
 class FKLDebugImGuiFilterManagerEntryBase;
 
-template<typename Child, typename EntryType>
+template <typename Child, typename EntryType>
 class TKLDebugImGuiStaticMemoryManager : public FNoncopyable
 {
 private:
@@ -19,22 +21,22 @@ private:
 public:
     static Child& Get();
 
-    void                    AddEntry(const size_t _ClassSize, EntryType& _NewEntry);
+    void AddEntry(const size_t _ClassSize, EntryType& _NewEntry);
     UE_NODISCARD EntryType* GetStartEntry() const;
-    UE_NODISCARD size_t     GetTotalSizeRequired() const;
-    UE_NODISCARD uint32     GetEntryCount() const;
+    UE_NODISCARD size_t GetTotalSizeRequired() const;
+    UE_NODISCARD uint32 GetEntryCount() const;
 
 protected:
     TKLDebugImGuiStaticMemoryManager() = default;
 
 private:
-    EntryType* mHead             = nullptr;
-    EntryType* mTail             = nullptr;
-    size_t     mTotalBytesCount  = 0;
-    uint32     mEntryCount       = 0;
+    EntryType* mHead = nullptr;
+    EntryType* mTail = nullptr;
+    size_t mTotalBytesCount = 0;
+    uint32 mEntryCount = 0;
 };
 
-template<typename Child, typename EntryType>
+template <typename Child, typename EntryType>
 FORCEINLINE Child& TKLDebugImGuiStaticMemoryManager<Child, EntryType>::Get()
 {
     // based on FModuleManager
@@ -42,25 +44,25 @@ FORCEINLINE Child& TKLDebugImGuiStaticMemoryManager<Child, EntryType>::Get()
     return Instance.GetValue();
 }
 
-template<typename Child, typename EntryType>
+template <typename Child, typename EntryType>
 inline EntryType* TKLDebugImGuiStaticMemoryManager<Child, EntryType>::GetStartEntry() const
 {
     return mHead;
 }
 
-template<typename Child, typename EntryType>
+template <typename Child, typename EntryType>
 inline size_t TKLDebugImGuiStaticMemoryManager<Child, EntryType>::GetTotalSizeRequired() const
 {
     return mTotalBytesCount;
 }
 
-template<typename Child, typename EntryType>
+template <typename Child, typename EntryType>
 inline uint32 TKLDebugImGuiStaticMemoryManager<Child, EntryType>::GetEntryCount() const
 {
     return mEntryCount;
 }
 
-template<typename Child, typename EntryType>
+template <typename Child, typename EntryType>
 void TKLDebugImGuiStaticMemoryManager<Child, EntryType>::AddEntry(const size_t _ClassSize, EntryType& _NewEntry)
 {
     mTotalBytesCount += _ClassSize;
@@ -76,4 +78,3 @@ void TKLDebugImGuiStaticMemoryManager<Child, EntryType>::AddEntry(const size_t _
     mTail->AddNextEntry(_NewEntry);
     mTail = &_NewEntry;
 }
-

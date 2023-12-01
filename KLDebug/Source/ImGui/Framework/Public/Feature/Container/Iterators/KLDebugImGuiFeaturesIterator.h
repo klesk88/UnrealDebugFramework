@@ -1,15 +1,17 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIteratorBase.h"
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeaturesConstIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>
 {
 private:
-    template<class Child, bool IsConst>
+    template <class Child, bool IsConst>
     friend class FKLDebugImGuiFeaturesIteratorBase;
 
 public:
@@ -19,7 +21,7 @@ public:
     explicit operator bool() const;
 
 protected:
-    UE_NODISCARD virtual bool                                     IsValid() const;
+    UE_NODISCARD virtual bool IsValid() const;
     UE_NODISCARD virtual KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const;
 };
 
@@ -48,7 +50,7 @@ inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiFeaturesCons
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeaturesIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>
 {
 private:
-    template<class Child, bool IsConst>
+    template <class Child, bool IsConst>
     friend class FKLDebugImGuiFeaturesIteratorBase;
 
 public:
@@ -58,7 +60,7 @@ public:
     explicit operator bool() const;
 
 protected:
-    UE_NODISCARD virtual bool                                     IsValid() const;
+    UE_NODISCARD virtual bool IsValid() const;
     UE_NODISCARD virtual KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const;
 };
 

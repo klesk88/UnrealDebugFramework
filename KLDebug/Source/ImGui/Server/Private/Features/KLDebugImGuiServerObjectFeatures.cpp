@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/KLDebugImGuiServerObjectFeatures.h"
 
-//networking runtime module
+// networking runtime module
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 
-//engine
+// engine
 #include "GameFramework/Actor.h"
 
 FKLDebugImGuiServerObjectFeatures::FKLDebugImGuiServerObjectFeatures(const UWorld& _World, const FNetworkGUID& _NetworkID)

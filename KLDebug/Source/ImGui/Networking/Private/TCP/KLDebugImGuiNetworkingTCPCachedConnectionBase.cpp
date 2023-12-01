@@ -1,11 +1,13 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "TCP/KLDebugImGuiNetworkingTCPCachedConnectionBase.h"
 
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 
-//modules
+// modules
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Containers/ArrayView.h"
 #include "Math/UnrealMathUtility.h"
 #include "Serialization/MemoryReader.h"
@@ -13,7 +15,7 @@
 #include "SocketSubsystem.h"
 
 #if DO_ENSURE
-//engine
+// engine
 #include "Math/NumericLimits.h"
 #endif
 
@@ -33,7 +35,7 @@ namespace KL::Debug::ImGui::Networking
             HeaderSize = TempArray.Num();
         }
     }
-}
+}    // namespace KL::Debug::ImGui::Networking
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,15 +77,15 @@ void FKLDebugImGuiNetworkingTCPCachedConnectionBase::ClearSocket(ISocketSubsyste
 void FKLDebugImGuiNetworkingTCPCachedConnectionBase::Tick()
 {
     /*
-    * First check the status of the socket connection(if we are still connected or the server closed the connection)
-    * Then read the data from the socket and place it in out array of bytes. Note that the array can contain data from a previous
-    * iteration as we are waiting for a message to receive all data that it expects
-    * After that we tick the child class first to see if it needs to read messages from the socket. If so the class will move
-    * forward the read buffer index or let us know that the data currently in the buffer is not yet enough for the message is waiting
-    * so no need to read more
-    * Finally we perform the step in which we need to lock the buffers. First, if the socket buffer has data available, we read from it
-    * After we try to send data if any
-    */
+     * First check the status of the socket connection(if we are still connected or the server closed the connection)
+     * Then read the data from the socket and place it in out array of bytes. Note that the array can contain data from a previous
+     * iteration as we are waiting for a message to receive all data that it expects
+     * After that we tick the child class first to see if it needs to read messages from the socket. If so the class will move
+     * forward the read buffer index or let us know that the data currently in the buffer is not yet enough for the message is waiting
+     * so no need to read more
+     * Finally we perform the step in which we need to lock the buffers. First, if the socket buffer has data available, we read from it
+     * After we try to send data if any
+     */
 
     if (!mSocket)
     {
@@ -164,7 +166,7 @@ int32 FKLDebugImGuiNetworkingTCPCachedConnectionBase::TickReadConnectionData()
 
     if (mReadBufferStartIndex == 0 && mReceiveBuffer.Num() > static_cast<int32>(mInitialReadBufferSize))
     {
-        //resize the array to its original size so we dont waste too much space
+        // resize the array to its original size so we dont waste too much space
         mReceiveBuffer.SetNum(mInitialReadBufferSize, true);
     }
 
@@ -224,7 +226,7 @@ bool FKLDebugImGuiNetworkingTCPCachedConnectionBase::TickReadMessagesWithHeader(
     {
         if (TotalSize < KL::Debug::ImGui::Networking::HeaderSize)
         {
-            //not enough data for the header
+            // not enough data for the header
             break;
         }
 
@@ -232,7 +234,7 @@ bool FKLDebugImGuiNetworkingTCPCachedConnectionBase::TickReadMessagesWithHeader(
         const FKLDebugImGuiNetworkingMessage_Header HeaderMessage{ _Reader };
         if (!HeaderMessage.IsValid())
         {
-            //garbage in the stream skip one byte
+            // garbage in the stream skip one byte
             _Reader.Seek(HeaderCurrentPosition + 1);
             CurrentPosition++;
             continue;
@@ -251,7 +253,7 @@ bool FKLDebugImGuiNetworkingTCPCachedConnectionBase::TickReadMessagesWithHeader(
         FMemoryReader ChildClassMemoryReader(mTempMessageBuffer);
         if (ReadBufferChildHasHandleMessage(HeaderMessage, ChildClassMemoryReader))
         {
-            //this message was intended for the child class
+            // this message was intended for the child class
             continue;
         }
 
@@ -288,7 +290,7 @@ bool FKLDebugImGuiNetworkingTCPCachedConnectionBase::TickReadMessagesWithHeader(
                 ReadBuffer.RemoveAtSwap(ReadBuffer.Num() - 1, 1, false);
             }
         }
-        
+
         mPendingSplittedMessages.RemoveAtSwap(Index, 1, false);
     }
 
@@ -328,12 +330,10 @@ void FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData(TArray<uint8>& _Bu
     int32 BytesSent = 0;
     FSocket& Socket = GetSocketMutable();
     Socket.Send(_Buffer.GetData(), _Buffer.Num(), BytesSent);
-    
+
     if (BytesSent == -1)
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData>> Supposed to send [%d] but we didn't send anything"),
-            _Buffer.Num(),
-            BytesSent);
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData>> Supposed to send [%d] but we didn't send anything"), _Buffer.Num(), BytesSent);
         return;
     }
 
@@ -345,31 +345,28 @@ void FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData(TArray<uint8>& _Bu
         return;
     }
 
-    UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData>> Supposed to send [%d] but we sent just [%d]"),
-        _Buffer.Num(),
-        BytesSent);
+    UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingTCPCachedConnectionBase::SendData>> Supposed to send [%d] but we sent just [%d]"), _Buffer.Num(), BytesSent);
 
-    //remove the byts we managed to send
+    // remove the byts we managed to send
     _Buffer.RemoveAt(0, BytesSent, false);
 }
-
 
 void FKLDebugImGuiNetworkingTCPCachedConnectionBase::UpdateBufferStartIndex(const uint32 _BufferStopPosition, const uint32 _TotalBufferSize)
 {
     if (_BufferStopPosition == 0)
     {
-        //nothing read so all the buffer needs to be kept
+        // nothing read so all the buffer needs to be kept
         mReadBufferStartIndex = _TotalBufferSize;
     }
     else if (_BufferStopPosition >= _TotalBufferSize)
     {
-        //we read all the buffer so we can read from position 0 next time and fill it all up again
+        // we read all the buffer so we can read from position 0 next time and fill it all up again
         mReadBufferStartIndex = 0;
     }
     else
     {
-        //we read part of the buffer and we stopped at Curren_BufferStopPositiontPosition. So free up all previous bytes but keep
-        //the ones we still need to process
+        // we read part of the buffer and we stopped at Curren_BufferStopPositiontPosition. So free up all previous bytes but keep
+        // the ones we still need to process
         mReceiveBuffer.RemoveAt(0, _BufferStopPosition, false);
         mReadBufferStartIndex = _TotalBufferSize - _BufferStopPosition;
     }

@@ -1,12 +1,14 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 #include "Config/KLDebugImGuiConfig.h"
 #include "Subsystems/KLDebugImGuiWorldSubsystem.h"
 
-//modules
+// modules
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "ThirdParty/UnrealImGui/Public/ImGuiDelegates.h"
 #include "ThirdParty/UnrealImGui/Public/UnrealImGuiModule.h"
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"
 
 // engine
@@ -58,7 +60,7 @@ void UKLDebugImGuiEngineSubsystem::InitFromConfig()
 
 void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
 {
-    FKLUnrealImGuiModule& KLUnrealImgui               = FKLUnrealImGuiModule::Get();
+    FKLUnrealImGuiModule& KLUnrealImgui = FKLUnrealImGuiModule::Get();
     KL::Debug::ImGui::EngineSubsystem::mImGuiDelegate = KLUnrealImgui.AddMultiContextImGuiDelegate(FImGuiDelegate::CreateUObject(this, &UKLDebugImGuiEngineSubsystem::Update));
 }
 

@@ -1,18 +1,20 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Server/KLDebugImGuiServerCacheConnection.h"
 #include "Server/KLDebugImGuiServerConnectionDefinitions.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingTCPCachedConnectionBase.h"
 
-//engine
+// engine
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
+#include "IPAddress.h"
 #include "Misc/DateTime.h"
 #include "Misc/NetworkGuid.h"
-#include "IPAddress.h"
 #include "Templates/SharedPointer.h"
 #include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtr.h"
@@ -49,16 +51,16 @@ public:
     void SetInvalidConnection();
     UE_NODISCARD bool IsValidConnection() const;
 
-    //this is called from the game thread.
+    // this is called from the game thread.
     UE_NODISCARD bool TickOnGameThread();
 
 private:
-    //FKLDebugImGuiNetworkingTCPCachedConnectionBase
+    // FKLDebugImGuiNetworkingTCPCachedConnectionBase
     UE_NODISCARD bool CheckConnectionStatus() final;
     UE_NODISCARD bool TickChild() final;
     void TickChildWriteBuffer(FArchive& _Writer) final;
     void OnSendDataResultChild(const bool _DataSent) final;
-    //FKLDebugImGuiNetworkingTCPCachedConnectionBase
+    // FKLDebugImGuiNetworkingTCPCachedConnectionBase
 
     void HandleToInitializeState();
     void HandlePendingInitializeSend();
@@ -72,8 +74,8 @@ private:
 private:
     FKLDebugImGuiServerCacheConnection mClientDataForConnection;
     FDateTime mCheckTimer;
-    //store the network IDS so we can access them while sending message
-    //in parallel without having issues of safe access
+    // store the network IDS so we can access them while sending message
+    // in parallel without having issues of safe access
     FNetworkGUID mWorldNetworkKey;
     FNetworkGUID mControllerNetworkKey;
     FObjectKey mControllerKey;

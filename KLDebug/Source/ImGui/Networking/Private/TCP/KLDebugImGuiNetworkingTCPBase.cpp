@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "TCP/KLDebugImGuiNetworkingTCPBase.h"
 
-//engine
+// engine
 #include "HAL/PlatformProcess.h"
 #include "Misc/ScopeTryLock.h"
 #include "Sockets.h"

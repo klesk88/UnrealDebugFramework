@@ -22,11 +22,11 @@ public:
     static void Shutdown();
 
     UE_NODISCARD static const ISlateStyle& Get();
-    UE_NODISCARD static const FName&       GetStyleSetName();
-    UE_NODISCARD static const FName&       GetIconName();
+    UE_NODISCARD static const FName& GetStyleSetName();
+    UE_NODISCARD static const FName& GetIconName();
 
 private:
-    static void                                    ReloadTextures();
+    static void ReloadTextures();
     UE_NODISCARD static TSharedRef<FSlateStyleSet> Create();
 
 private:

@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 
 #include "Feature/Manager/KLDebugImGuiFeatureManager.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Utils/Public/KLDebugLog.h"
 
@@ -25,8 +27,8 @@ IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeature
 
 IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString)
 {
-    IKLDebugImGuiFeatureInterfaceBase& DebugWindow    = _Entry.AllocateInPlace(static_cast<void*>(&mFeaturesPool[_OffsetIndex]));
-    FKLDebugImGuiFeatureData&          NewFeatureData = mFeaturesData.Emplace_GetRef(_OffsetIndex);
+    IKLDebugImGuiFeatureInterfaceBase& DebugWindow = _Entry.AllocateInPlace(static_cast<void*>(&mFeaturesPool[_OffsetIndex]));
+    FKLDebugImGuiFeatureData& NewFeatureData = mFeaturesData.Emplace_GetRef(_OffsetIndex);
     NewFeatureData.Init(DebugWindow, _PathString);
 
     DebugWindow.Initialize();

@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 
-//engine
+// engine
 #include "GameFramework/Actor.h"
 
 FKLDebugImGuiFeatureContextInput::FKLDebugImGuiFeatureContextInput(const ENetMode _CurrentNetMode, const UObject& _Object)

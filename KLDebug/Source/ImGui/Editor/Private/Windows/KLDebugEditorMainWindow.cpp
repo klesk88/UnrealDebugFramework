@@ -1,7 +1,9 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Windows/KLDebugEditorMainWindow.h"
 
-#include "Examples/NetImguiExample.h"
 #include "Examples/NetImguiDemoNodeExample.h"
+#include "Examples/NetImguiExample.h"
 
 // modules
 #include "ImGui/Framework/Public/Window/KLDebugImGuiWindowDelegates.h"
@@ -21,18 +23,18 @@
 
 namespace KL::Debug::ImGuiEditor::MainWindow
 {
-    static bool ShowImGuiExample    = false;
+    static bool ShowImGuiExample = false;
     static bool ShowNetImGuiExample = false;
-    static bool ShowImPlotExample   = false;
+    static bool ShowImPlotExample = false;
     static bool ShowImNodeGraphExample = false;
-}  // namespace KL::Debug::ImGuiEditor::MainWindow
+}    // namespace KL::Debug::ImGuiEditor::MainWindow
 
 /////////////////////////////////////////////////////////////////////////////////
 
 void FKLDebugEditorMainWindow::Init()
 {
     mDrawBottomBarHandle = KL::Debug::ImGui::MainWindow::Delegate::OnDrawBottomBarDelegate.AddRaw(this, &FKLDebugEditorMainWindow::OnDrawBottomBar);
-    mDrawTopBarHandle    = KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.AddRaw(this, &FKLDebugEditorMainWindow::OnDrawTopBar);
+    mDrawTopBarHandle = KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.AddRaw(this, &FKLDebugEditorMainWindow::OnDrawTopBar);
 }
 
 void FKLDebugEditorMainWindow::Shutdown()
@@ -72,23 +74,23 @@ void FKLDebugEditorMainWindow::OnDrawBottomBar(const UWorld& _World) const
     ImGui::SameLine();
     ImGui::Text(" Camera: [%ls]", *CameraLocation.ToString());
 
-  /*  UUnrealEditorSubsystem* UnrealEditorSubsystem = GEditor->GetEditorSubsystem<UUnrealEditorSubsystem>();
-    if (!UnrealEditorSubsystem)
-    {
-        return;
-    }
+    /*  UUnrealEditorSubsystem* UnrealEditorSubsystem = GEditor->GetEditorSubsystem<UUnrealEditorSubsystem>();
+      if (!UnrealEditorSubsystem)
+      {
+          return;
+      }
 
-    if (!IsLevelEditorCurrentlySelected(_World))
-    {
-        return;
-    }
+      if (!IsLevelEditorCurrentlySelected(_World))
+      {
+          return;
+      }
 
-    FVector  Pos;
-    FRotator Rotator;
-    UnrealEditorSubsystem->GetLevelViewportCameraInfo(Pos, Rotator);
+      FVector  Pos;
+      FRotator Rotator;
+      UnrealEditorSubsystem->GetLevelViewportCameraInfo(Pos, Rotator);
 
-    ImGui::SameLine();
-    ImGui::Text(" Camera: [%ls]", *Pos.ToString());*/
+      ImGui::SameLine();
+      ImGui::Text(" Camera: [%ls]", *Pos.ToString());*/
 }
 
 bool FKLDebugEditorMainWindow::IsLevelEditorCurrentlySelected(const UWorld& _World) const

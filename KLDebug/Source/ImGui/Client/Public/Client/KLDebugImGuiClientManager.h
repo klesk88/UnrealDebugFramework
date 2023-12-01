@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//modules
+// modules
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "HAL/Platform.h"
 #include "UObject/WeakObjectPtr.h"

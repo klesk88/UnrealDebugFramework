@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
@@ -9,7 +11,7 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
@@ -47,14 +49,14 @@ protected:
     virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
     virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
 
-    template<typename CallbackType>
+    template <typename CallbackType>
     void DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const UObject& _OwnerObject, const CallbackType& _Callback);
 
 protected:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;
-    TArray<FKLDebugImGuiFeatureVisualizerEntry>             mSelectedFeaturesIndexes;
-    FKLDebugImGuiFeatureVisualizerTree                      mTreeVisualizer;
-    EImGuiInterfaceType                                     mInterfaceType = EImGuiInterfaceType::COUNT;
+    TArray<FKLDebugImGuiFeatureVisualizerEntry> mSelectedFeaturesIndexes;
+    FKLDebugImGuiFeatureVisualizerTree mTreeVisualizer;
+    EImGuiInterfaceType mInterfaceType = EImGuiInterfaceType::COUNT;
 };
 
 inline bool FKLDebugImGuiFeatureVisualizerBase::IsValid() const
@@ -62,7 +64,7 @@ inline bool FKLDebugImGuiFeatureVisualizerBase::IsValid() const
     return mInterfaceType != EImGuiInterfaceType::COUNT;
 }
 
-template<typename CallbackType>
+template <typename CallbackType>
 void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const UObject& _OwnerObject, const CallbackType& _Callback)
 {
     TArray<uint32> FeaturesToRemoveIdx;

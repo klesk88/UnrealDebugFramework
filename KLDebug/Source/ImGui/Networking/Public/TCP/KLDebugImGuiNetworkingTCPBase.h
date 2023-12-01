@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "HAL/CriticalSection.h"
@@ -16,12 +18,12 @@ class UWorld;
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingTCPBase : public FRunnable
 {
 public:
-    //FRunnable
+    // FRunnable
     bool Init() override;
     void Stop() final;
     uint32 Run() final;
     void Exit() override;
-    //FRunnable
+    // FRunnable
 
     virtual void CreateSocket() = 0;
     UE_NODISCARD bool IsValid() const;

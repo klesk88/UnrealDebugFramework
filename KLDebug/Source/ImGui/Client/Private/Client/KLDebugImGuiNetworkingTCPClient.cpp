@@ -1,14 +1,16 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Client/KLDebugImGuiNetworkingTCPClient.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
 #include "Subsystem/Engine/KLDebugImGuiClientSubsystem_Engine.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/Message/Discovery/KLDebugImGuiNetworkingMessage_ServerInitializeClientConnection.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Common/TcpSocketBuilder.h"
 #include "Containers/UnrealString.h"
 #include "Engine/EngineBaseTypes.h"
@@ -34,11 +36,11 @@ void FKLDebugImGuiNetworkingTCPClient::InitSocket()
     const FIPv4Endpoint Endpoint(IPAddr, Settings.Client_GetPort());
 
     mListenerSocket = FTcpSocketBuilder(TEXT("ClientListenerSocket"))
-        .AsReusable()
-        .AsNonBlocking()
-        .BoundToEndpoint(Endpoint)
-        .Listening(static_cast<int32>(Settings.Client_GetMaxConnectionBacklog()))
-        .Build();
+                          .AsReusable()
+                          .AsNonBlocking()
+                          .BoundToEndpoint(Endpoint)
+                          .Listening(static_cast<int32>(Settings.Client_GetMaxConnectionBacklog()))
+                          .Build();
 
     if (!mListenerSocket)
     {
@@ -69,8 +71,8 @@ void FKLDebugImGuiNetworkingTCPClient::RunChild()
     TickConnections();
 
 #if !WITH_EDITOR
-    //in package builds, once we disconnect from the server to connect to a new one, recreate the socket
-    //so we are listening again for new connections
+    // in package builds, once we disconnect from the server to connect to a new one, recreate the socket
+    // so we are listening again for new connections
     if (mCachedConnections.IsEmpty() && !mListenerSocket)
     {
         InitSocket();
@@ -80,7 +82,7 @@ void FKLDebugImGuiNetworkingTCPClient::RunChild()
 
 void FKLDebugImGuiNetworkingTCPClient::TickPendingConnections()
 {
-    //should be safe to do this in parallel as FTcpMessageTransportConnection::Run does the same
+    // should be safe to do this in parallel as FTcpMessageTransportConnection::Run does the same
     ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     if (!SocketSubsystem)
     {
@@ -95,7 +97,7 @@ void FKLDebugImGuiNetworkingTCPClient::TickPendingConnections()
     // handle incoming connections
     if (mListenerSocket->HasPendingConnection(Pending) && Pending)
     {
-        //New Connection receive!
+        // New Connection receive!
         FSocket* ConnectionSocket = mListenerSocket->Accept(TEXT("Server Socket"));
         if (!ConnectionSocket)
         {
@@ -112,9 +114,9 @@ void FKLDebugImGuiNetworkingTCPClient::TickPendingConnections()
         mCachedConnections.Emplace(ReadNewSize, WriteNewSize, *ConnectionSocket);
 
 #if !WITH_EDITOR
-        //ok so in a package build we have one of this class per instance. So in that case, as soon as we connect to the server we want to free the socket
-        //for other clients launched on the same machine that want to connect with it.
-        //However in editor we have one single instance for all clients we generate so we never want to close this socket
+        // ok so in a package build we have one of this class per instance. So in that case, as soon as we connect to the server we want to free the socket
+        // for other clients launched on the same machine that want to connect with it.
+        // However in editor we have one single instance for all clients we generate so we never want to close this socket
         mListenerSocket->Close();
         SocketSubsystem->DestroySocket(mListenerSocket);
         mListenerSocket = nullptr;
@@ -141,7 +143,7 @@ void FKLDebugImGuiNetworkingTCPClient::TickConnections()
         RequiresGameThreadTick |= CachedConnection.HasNewReadData();
     }
 
-    //this works without locks because we are sure the subsystem exists because it is owning us
+    // this works without locks because we are sure the subsystem exists because it is owning us
     if (RequiresGameThreadTick || HasServerInitializedOwner)
     {
         UKLDebugImGuiClientSubsystem_Engine* EngineSubsystem = UKLDebugImGuiClientSubsystem_Engine::TryGetMutable();
@@ -160,8 +162,8 @@ void FKLDebugImGuiNetworkingTCPClient::TickGameThread(FKLDebugImGuiClientGameThr
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPClient_TickGameThread);
 
-    //perform the update from the game thread. Here we are sure we can access actors and other systems without possibly causing
-    //crashes due to lock or other things
+    // perform the update from the game thread. Here we are sure we can access actors and other systems without possibly causing
+    // crashes due to lock or other things
 
     FScopeTryLock TryLock(&mGameThreadUpdateLock);
     if (!TryLock.IsLocked())
@@ -221,4 +223,3 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_TickImGuiData(FKLDebugImGuiCli
 
     _Context.SetShouldKeepTicking(KeepTicking);
 }
-

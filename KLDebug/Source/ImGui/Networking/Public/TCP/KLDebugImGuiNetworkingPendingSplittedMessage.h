@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
 #include "CoreMinimal.h"
@@ -11,7 +13,7 @@
 #include "HAL/UnrealMemory.h"
 #include "Templates/UnrealTemplate.h"
 
-//these are messages that have been splitted server side and we are waiting to receive all packets for them
+// these are messages that have been splitted server side and we are waiting to receive all packets for them
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingPendingSplittedMessage final : public FNoncopyable
 {
 public:

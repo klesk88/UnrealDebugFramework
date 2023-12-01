@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Filter/Tree/KLDebugImGuiFilterTree.h"
 
 #include "Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
@@ -6,7 +8,7 @@
 #include "Filter/Tree/KLDebugImGuiTreeSortedFeatures.h"
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Filter/Manager/KLDebugImGuiFilterManager.h"
 #include "ImGui/User/Internal/Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
 #include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
@@ -50,7 +52,7 @@ void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Deb
         const uint16 FilterIndex = _TreeNode.GetFilterIndex();
         checkf(mFiltersPool.IsValidIndex(FilterIndex), TEXT("index must be valid"));
         const IKLDebugImGuiFilterInterface& FilterInterface = *reinterpret_cast<const IKLDebugImGuiFilterInterface*>(&mFiltersPool[FilterIndex]);
-        const bool                          IsValid         = FilterInterface.IsObjectValid(_Obj);
+        const bool IsValid = FilterInterface.IsObjectValid(_Obj);
         return IsValid;
     };
 
@@ -61,9 +63,9 @@ void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Deb
             return;
         }
 
-        const FKLDebugImGuiFilterTreeNodeData&                NodeData        = mTreeNodesData[NodeDataIndex.GetValue()];
+        const FKLDebugImGuiFilterTreeNodeData& NodeData = mTreeNodesData[NodeDataIndex.GetValue()];
         const KL::Debug::ImGui::Features::Types::FeatureIndex StartFeatureIdx = NodeData.GetStartDataOffset();
-        const KL::Debug::ImGui::Features::Types::FeatureIndex EndFeatureIdx   = NodeData.GetEndDataOffset();
+        const KL::Debug::ImGui::Features::Types::FeatureIndex EndFeatureIdx = NodeData.GetEndDataOffset();
 
         check(StartFeatureIdx != TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max() && EndFeatureIdx != TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureIndex>::Max());
 
@@ -84,8 +86,8 @@ void FKLDebugImGuiFilterTree::GenerateFilters()
     mFiltersOffset.Reserve(FilterManager.GetEntryCount());
     mFiltersPool.AddZeroed(FilterManager.GetTotalSizeRequired());
 
-    FKLDebugImGuiFilterManagerEntryBase* Entry       = FilterManager.GetStartEntry();
-    uint32                               OffsetIndex = 0;
+    FKLDebugImGuiFilterManagerEntryBase* Entry = FilterManager.GetStartEntry();
+    uint32 OffsetIndex = 0;
 
     TArray<FName> NamesSet;
     NamesSet.Reserve(FilterManager.GetEntryCount());
@@ -162,9 +164,9 @@ void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedF
             IsSameFilter = true;
         }
 
-        const uint16                  TreeNodeIndex = _LastNodeInStack.GetTreeNodeIndex();
-        FKLDebugImGuiTreeBuilderNode& TreeNode      = mTreeNodes[TreeNodeIndex];
-        const TOptional<uint16>       NodeDataIndex = TreeNode.GetNodeDataIndex();
+        const uint16 TreeNodeIndex = _LastNodeInStack.GetTreeNodeIndex();
+        FKLDebugImGuiTreeBuilderNode& TreeNode = mTreeNodes[TreeNodeIndex];
+        const TOptional<uint16> NodeDataIndex = TreeNode.GetNodeDataIndex();
 
         if (NodeDataIndex.IsSet())
         {
@@ -181,8 +183,8 @@ void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedF
     };
 
     auto AllocateTreeNodeLeaf = [this](const FName& _FilterToken, const FKLDebugImGuiTreeSortedFeatures& _SortedFeature) -> FKLDebugImGuiFilterTreeNode& {
-        const IKLDebugImGuiFeatureInterface_Selectable& Feature   = _SortedFeature.GetFeature();
-        const uint16                                          FilterIdx = GetFilterIndexFromID(_FilterToken, Feature.StaticItemType());
+        const IKLDebugImGuiFeatureInterface_Selectable& Feature = _SortedFeature.GetFeature();
+        const uint16 FilterIdx = GetFilterIndexFromID(_FilterToken, Feature.StaticItemType());
 
         mTreeNodesData.Emplace(mFilterFeaturesIndexes.Num());
         mFilterFeaturesIndexes.Emplace(_SortedFeature.GetFeatureDataIndex());

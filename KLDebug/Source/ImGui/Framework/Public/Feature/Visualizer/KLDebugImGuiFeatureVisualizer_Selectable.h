@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerBase.h"
@@ -23,7 +25,7 @@ public:
 
     // FKLDebugImGuiFeatureVisualizerBase
     UE_NODISCARD bool IsValid() const final;
-    void              Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const final;
+    void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD bool ShouldKeepAlive() const;

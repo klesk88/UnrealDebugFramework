@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Config/KLDebugImGuiConfig_Networking.h"
@@ -12,7 +14,7 @@
 
 class UMaterialInterface;
 
-UCLASS(config=Plugins, defaultconfig, DisplayName = "KLImGui")
+UCLASS(config = Plugins, defaultconfig, DisplayName = "KLImGui")
 class KLDEBUGIMGUIFRAMEWORK_API UKLDebugImGuiConfig final : public UDeveloperSettings
 {
     GENERATED_BODY()

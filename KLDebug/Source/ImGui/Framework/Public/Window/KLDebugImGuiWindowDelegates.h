@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -10,9 +12,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnDrawMainImGuiWindow, const UWorld& /*_Wor
 
 namespace KL::Debug::ImGui::MainWindow::Delegate
 {
-    //this is called when drawing the top bar of the Viewport ImGui window
+    // this is called when drawing the top bar of the Viewport ImGui window
     KLDEBUGIMGUIFRAMEWORK_API extern FOnDrawMainImGuiWindow OnDrawTopBarDelegate;
     // this is called when drawing the top bar of the Viewport ImGui window
     KLDEBUGIMGUIFRAMEWORK_API extern FOnDrawMainImGuiWindow OnDrawBottomBarDelegate;
-}
-
+}    // namespace KL::Debug::ImGui::MainWindow::Delegate

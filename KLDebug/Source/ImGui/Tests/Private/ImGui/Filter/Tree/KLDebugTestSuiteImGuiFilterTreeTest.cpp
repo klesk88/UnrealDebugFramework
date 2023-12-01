@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "ImGui/Filter/Tree/KLDebugTestSuiteImGuiFilterTreeTest.h"
 
 #include "ImGui/Features/Helpers/KLDebugTestSuiteCreateFeaturesHelpers.h"
@@ -5,7 +7,7 @@
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFilters.h"
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFiltersHelpers.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Private/Filter/Tree/KLDebugImGuiFilterTree.h"
 #include "ImGui/Framework/Private/Filter/Tree/KLDebugImGuiFilterTreeNode.h"
 #include "ImGui/Framework/Private/TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
@@ -24,12 +26,12 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::InstantTest()
     AITEST_TRUE("Fitlers are not in the correct order when querying for them", TestFilterOrder());
 
     TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue> FeaturePool;
-    TArray<FKLDebugImGuiFeatureData>                            FeatureData;
+    TArray<FKLDebugImGuiFeatureData> FeatureData;
 
     KL::Debug::TestSuite::Feature::Helpers::GetFeatures(FeaturePool, FeatureData);
 
     FKLDebugImGuiFeaturesIterator Iterator(FeatureData, FeaturePool);
-    FKLDebugImGuiFilterTree       FilterTree;
+    FKLDebugImGuiFilterTree FilterTree;
 
     GenerateTreeData(FilterTree);
     FilterTree.TestGenerateTree(FeatureData.Num(), Iterator);
@@ -47,7 +49,7 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::InstantTest()
 void FKLDebugTestSuiteImGuiFilterTreeTest::GenerateTreeData(FKLDebugImGuiFilterTree& _FilterTree) const
 {
     TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue> FilterPool;
-    TArray<KL::Debug::ImGui::Features::Types::FilterIndex>     FilterOffsets;
+    TArray<KL::Debug::ImGui::Features::Types::FilterIndex> FilterOffsets;
 
     KL::Debug::TestSuite::Filter::Helpers::GetFilters(FilterPool, FilterOffsets);
 
@@ -59,7 +61,7 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFilterOrder() const
     static constexpr int32 Count = 4;
 
     FKLDebugTestCoverChildFeature TestFeature;
-    TArray<FName>                 Filters;
+    TArray<FName> Filters;
     Filters.Reserve(Count);
     TestFeature.GetFilterPath(Filters);
     bool Success = true;
@@ -68,18 +70,18 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFilterOrder() const
     {
         switch (i)
         {
-            case 0:
-                Success &= Filters[i] == KLDebugImGuiTestFilterOne::StaticGetFilterID();
-                break;
-            case 1:
-                Success &= Filters[i] == KLDebugImGuiTestFilterTwo::StaticGetFilterID();
-                break;
-            case 2:
-                Success &= Filters[i] == KLDebugImGuiTestFilterThree::StaticGetFilterID();
-                break;
-            case 3:
-                Success &= Filters[i] == KLDebugImGuiTestFilterFour::StaticGetFilterID();
-                break;
+        case 0:
+            Success &= Filters[i] == KLDebugImGuiTestFilterOne::StaticGetFilterID();
+            break;
+        case 1:
+            Success &= Filters[i] == KLDebugImGuiTestFilterTwo::StaticGetFilterID();
+            break;
+        case 2:
+            Success &= Filters[i] == KLDebugImGuiTestFilterThree::StaticGetFilterID();
+            break;
+        case 3:
+            Success &= Filters[i] == KLDebugImGuiTestFilterFour::StaticGetFilterID();
+            break;
         }
     }
 
@@ -88,14 +90,14 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFilterOrder() const
 
 bool FKLDebugTestSuiteImGuiFilterTreeTest::TestPreorderTraversal(const FKLDebugImGuiFilterTree& _TreeVisualizer, TreeOrderArray& _ExpetectedElements) const
 {
-    const TArray<FKLDebugImGuiFilterTreeNode>&                        TreeNodes     = _TreeVisualizer.TestGetTreeNodes();
-    const TArray<FKLDebugImGuiFilterTreeNodeData>&                    TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
-    const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& FilterPool    = _TreeVisualizer.TestGetFilterPool();
+    const TArray<FKLDebugImGuiFilterTreeNode>& TreeNodes = _TreeVisualizer.TestGetTreeNodes();
+    const TArray<FKLDebugImGuiFilterTreeNodeData>& TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
+    const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& FilterPool = _TreeVisualizer.TestGetFilterPool();
 
     GatherTreeNodesInOrder(_ExpetectedElements);
 
-    int32 Index   = 0;
-    bool  Success = true;
+    int32 Index = 0;
+    bool Success = true;
 
     auto KeepTraversingTreeLambda = [&Success](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> bool {
         return Success;
@@ -126,9 +128,9 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFeaturesIndexesSet(const FKLDebug
      * TestSeven.TestHeight
      */
 
-    const TArray<FKLDebugImGuiFilterTreeNode>&                        TreeNodes     = _TreeVisualizer.TestGetTreeNodes();
-    const TArray<FKLDebugImGuiFilterTreeNodeData>&                    TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
-    const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& FilterPool    = _TreeVisualizer.TestGetFilterPool();
+    const TArray<FKLDebugImGuiFilterTreeNode>& TreeNodes = _TreeVisualizer.TestGetTreeNodes();
+    const TArray<FKLDebugImGuiFilterTreeNodeData>& TreeNodesData = _TreeVisualizer.TestGetTreeNodesData();
+    const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& FilterPool = _TreeVisualizer.TestGetFilterPool();
 
     _ExpetectedElements.Reset();
     _ExpetectedElements.Emplace(TEXT("TestNine"));
@@ -138,8 +140,8 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFeaturesIndexesSet(const FKLDebug
     _ExpetectedElements.Emplace(TEXT("TestFour"));
     _ExpetectedElements.Emplace(TEXT("TestHeight"));
 
-    int32 Index   = 0;
-    bool  Success = true;
+    int32 Index = 0;
+    bool Success = true;
 
     auto KeepTraversingTreeLambda = [&Success](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> bool {
         return Success;
@@ -147,7 +149,7 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFeaturesIndexesSet(const FKLDebug
 
     auto EvaluateNodeLambda = [&TreeNodesData, &Index, &_ExpetectedElements, &FilterPool, &Success](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> void {
         const IKLDebugImGuiFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugImGuiFilterInterface*>(&FilterPool[_TreeNode.GetFilterIndex()]);
-        const TOptional<uint16>             NodeDataIndex   = _TreeNode.GetNodeDataIndex();
+        const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
         if (!NodeDataIndex.IsSet())
         {
             return;

@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerBase.h"
 
-//engine
+// engine
 #include "Containers/UnrealString.h"
 
 class FKLDebugImGuiFeatureContainerBase;

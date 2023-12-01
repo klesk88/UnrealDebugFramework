@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
@@ -11,16 +13,16 @@ class UObject;
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureContainer_Selectable final : public FKLDebugImGuiFeatureContainerBase
 {
 public:
-    //FKLDebugImGuiFeatureContainerBase
+    // FKLDebugImGuiFeatureContainerBase
     UE_NODISCARD bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const final;
     UE_NODISCARD EImGuiInterfaceType GetContainerType() const final;
-    void              GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const final;
-    //FKLDebugImGuiFeatureContainerBase
+    void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const final;
+    // FKLDebugImGuiFeatureContainerBase
 
 private:
-    //FKLDebugImGuiFeatureContainerBase
+    // FKLDebugImGuiFeatureContainerBase
     void FinishGenerateFeatureChild() final;
-    //FKLDebugImGuiFeatureContainerBase
+    // FKLDebugImGuiFeatureContainerBase
 
 private:
     FKLDebugImGuiFilterTree mFilterTree;

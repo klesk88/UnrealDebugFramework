@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "KLDebugImGuiEditorModule.h"
 
 // engine
@@ -10,7 +12,7 @@ namespace KL::Debug::ImGuiEditor::Module
 {
     static const FName Module(TEXT("KLDebugImGuiEditor"));
 
-}  // namespace  KL::Debug::GameplayEditor::Module
+}    // namespace KL::Debug::ImGuiEditor::Module
 
 ////////////////////////////////////////////////////////////////////////////
 

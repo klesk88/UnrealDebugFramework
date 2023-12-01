@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
 
 #include "Message/Header/KLDebugImGuiNetworkingMessageHeaderDefinitions.h"

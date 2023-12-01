@@ -1,14 +1,16 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Server/KLDebugImGuiNetworkingTCPServer.h"
 
 #include "Server/KLDebugImGuiTCPServerGameThreadContext.h"
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
-//modules
+// modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Common/TcpSocketBuilder.h"
 #include "Containers/UnrealString.h"
 #include "Engine/EngineBaseTypes.h"
@@ -30,22 +32,22 @@ void FKLDebugImGuiNetworkingTCPServer::CreateSocket()
 void FKLDebugImGuiNetworkingTCPServer::InitSocket()
 {
     const FIPv4Address IPAddr(127, 0, 0, 1);
-    
+
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
     uint32 ServerPort = Settings.Server_GetStartPortSearch();
     const uint32 MaxClientPortDiscoveryTries = Settings.Server_GetMaxPortDiscoveryRetries();
     uint32 CurrentRetry = 0;
-    
+
     while (!mListenerSocket && CurrentRetry < MaxClientPortDiscoveryTries)
     {
         const FIPv4Endpoint Endpoint(IPAddr, ServerPort++);
 
         mListenerSocket = FTcpSocketBuilder(TEXT("ServerSocket"))
-            .AsReusable()
-            .AsNonBlocking()
-            .BoundToEndpoint(Endpoint)
-            .Listening(Settings.Server_GetMaxConnectionBacklog())
-            .Build();
+                              .AsReusable()
+                              .AsNonBlocking()
+                              .BoundToEndpoint(Endpoint)
+                              .Listening(Settings.Server_GetMaxConnectionBacklog())
+                              .Build();
     }
 
     if (!mListenerSocket)
@@ -107,8 +109,8 @@ void FKLDebugImGuiNetworkingTCPServer::TickCachedConnections()
         RequiresGameThreadTick |= CachedConnection.HasNewReadData();
     }
 
-    //this works without locks because we are owned by the KLDebugImGuiServerSubsystem_Engine
-    //so we are sure the object is valid
+    // this works without locks because we are owned by the KLDebugImGuiServerSubsystem_Engine
+    // so we are sure the object is valid
     if (RequiresGameThreadTick)
     {
         UKLDebugImGuiServerSubsystem_Engine* EngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
@@ -120,13 +122,13 @@ void FKLDebugImGuiNetworkingTCPServer::TickGameThread(FKLDebugImGuiTCPServerGame
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPServer_TickGameThread);
 
-    //perform the update from the game thread. Here we are sure we can access actors and other systems without possibly causing
-    //crashes due to lock or other things
+    // perform the update from the game thread. Here we are sure we can access actors and other systems without possibly causing
+    // crashes due to lock or other things
 
     FScopeTryLock TryLock(&mGameThreadUpdateLock);
     if (!TryLock.IsLocked())
     {
-        //retry next frame
+        // retry next frame
         _Context.SetShouldKeepTicking(true);
         return;
     }
@@ -158,7 +160,7 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateNewPlayersConnections(FK
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPServer_UpdateNewPlayersConnections);
 
     static const FString SocketDescription(TEXT("KLDebugImGuiServer_NewClientSocket"));
-    //should be safe to do this in parallel as FTcpMessageTransportConnection::Run does the same
+    // should be safe to do this in parallel as FTcpMessageTransportConnection::Run does the same
     ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     if (!SocketSubsystem)
     {
@@ -205,9 +207,9 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateNewPlayersConnections(FK
 
         Address->SetPort(ClientPort);
         FSocket* NewClientSocket = FTcpSocketBuilder(SocketDescription)
-            .AsNonBlocking()
-            .AsReusable()
-            .Build();
+                                       .AsNonBlocking()
+                                       .AsReusable()
+                                       .Build();
 
         if (!NewClientSocket)
         {
@@ -257,14 +259,13 @@ bool FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateConnections(const FKLDeb
     {
         if (!ClientConnection.IsValidConnection())
         {
-            //pending to be removed
+            // pending to be removed
             continue;
         }
 
-        //if any of the connection want to keep ticking then keep ticking next frame
+        // if any of the connection want to keep ticking then keep ticking next frame
         KeepTicking |= ClientConnection.TickOnGameThread();
     }
 
     return KeepTicking;
 }
-

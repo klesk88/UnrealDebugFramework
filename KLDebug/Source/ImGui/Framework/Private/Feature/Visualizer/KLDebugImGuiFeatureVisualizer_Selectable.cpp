@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Selectable.h"
 
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
@@ -91,7 +93,7 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const F
 
     UObject& Object = *mObject.Get();
 
-    auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool{
+    auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Selectable& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Selectable>();
         const FKLDebugImGuiFeatureImGuiInput_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable(), Object };
         Interface.DrawImGui(FeatureContext);
@@ -113,7 +115,7 @@ UMeshComponent* FKLDebugImGuiFeatureVisualizer_Selectable::TryGetMeshComponent()
     {
         MeshCmp = Character->GetMesh();
     }
-    else if(const AActor* Actor = Cast<const AActor>(mObject.Get()))
+    else if (const AActor* Actor = Cast<const AActor>(mObject.Get()))
     {
         MeshCmp = Actor->FindComponentByClass<UMeshComponent>();
     }
@@ -140,7 +142,7 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::Render(const FKLDebugImGuiFeatur
     }
 #endif
 
-    const UObject&                           Object   = *mObject.Get();
+    const UObject& Object = *mObject.Get();
     const FKLDebugImGuiFeatureRenderInput_Selectable FeatureContext{ _Context.GetWorld(), Object };
     const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainer(GetInterfaceType());
     FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);

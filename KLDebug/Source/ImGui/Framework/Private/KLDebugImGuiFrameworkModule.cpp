@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "KLDebugImGuiFrameworkModule.h"
 
 // engine
@@ -9,7 +11,7 @@
 namespace KL::Debug::ImGui::Module
 {
     static const FName Module(TEXT("KLDebugImGuiFramework"));
-}  // namespace  KL::Debug::ImGui::Module
+}    // namespace  KL::Debug::ImGui::Module
 
 ////////////////////////////////////////////////////////////////////////////
 

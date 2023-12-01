@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/KLDebugImGuiNetworkingMessageTypes.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
@@ -23,8 +25,8 @@ public:
     UE_NODISCARD bool HasReceivedAllData() const;
 
     UE_NODISCARD bool IsSplittedMessage() const;
-    //it will check if we received all the data from the network in case of splitted messages.
-    //It will also take already into account if the data has been compressed or no
+    // it will check if we received all the data from the network in case of splitted messages.
+    // It will also take already into account if the data has been compressed or no
     UE_NODISCARD bool IsFullyReceived(const uint32 _TotalDataReceived) const;
     UE_NODISCARD uint32 GetTotalMessageDataExpected() const;
 

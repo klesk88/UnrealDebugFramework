@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "TCP/KLDebugImGuiNetworkingConnectionGetPendingBuffer.h"
 
 FKLDebugImGuiNetworkingConnectionGetPendingBuffer::FKLDebugImGuiNetworkingConnectionGetPendingBuffer(TArray<FKLDebugImGuiNetworkingPendingMessage>& _PendingMessages, bool& _HasReadData)

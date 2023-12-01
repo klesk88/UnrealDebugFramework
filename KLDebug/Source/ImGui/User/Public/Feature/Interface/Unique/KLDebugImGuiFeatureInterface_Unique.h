@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
@@ -7,21 +9,21 @@ class FKLDebugImGuiFeatureRenderInput_Unique;
 class UWorld;
 
 /*
-* This class can be used for data which has a unique representation, meaning there is only one instance of it, during the lifetime of the UWorld.
-* For example this could be Unreal Subsystems, singletons, etc.
-* 
-* IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() in the .cpp so that the class
-* can auto subscribe to the system. For example:
-*
-* class FClassDebug final : public IKLDebugImGuiFeatureInterface_Unique
-* {
-*   ...
-* };
-*
-* FClassDebug.cpp
-*
-* KL_DEBUG_CREATE_WINDOW(FClassDebug)
-*/
+ * This class can be used for data which has a unique representation, meaning there is only one instance of it, during the lifetime of the UWorld.
+ * For example this could be Unreal Subsystems, singletons, etc.
+ *
+ * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() in the .cpp so that the class
+ * can auto subscribe to the system. For example:
+ *
+ * class FClassDebug final : public IKLDebugImGuiFeatureInterface_Unique
+ * {
+ *   ...
+ * };
+ *
+ * FClassDebug.cpp
+ *
+ * KL_DEBUG_CREATE_WINDOW(FClassDebug)
+ */
 class KLDEBUGIMGUIUSER_API IKLDebugImGuiFeatureInterface_Unique : public IKLDebugImGuiFeatureInterfaceBase
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(IKLDebugImGuiFeatureInterface_Unique, IKLDebugImGuiFeatureInterfaceBase)

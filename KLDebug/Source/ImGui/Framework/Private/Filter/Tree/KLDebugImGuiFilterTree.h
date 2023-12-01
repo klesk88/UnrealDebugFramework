@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/KLDebugImGuiFeatureTypes.h"
@@ -33,10 +35,10 @@ public:
     UE_NODISCARD bool HasFilters() const;
 
 private:
-    void         GenerateFilters();
-    void         GenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
-    void         SortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiTreeSortedFeatures>& _OutSortedFeature);
-    void         GenerateTree(const TArray<FKLDebugImGuiTreeSortedFeatures>& _SortedFeatures);
+    void GenerateFilters();
+    void GenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
+    void SortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiTreeSortedFeatures>& _OutSortedFeature);
+    void GenerateTree(const TArray<FKLDebugImGuiTreeSortedFeatures>& _SortedFeatures);
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FilterIndex GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureType) const;
 
 private:
@@ -47,9 +49,9 @@ private:
     // pool of features. This is a byte array and all features are allocated inside of it
     // in this way they are all packed in memory close together
     TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue> mFiltersPool;
-    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>    mFilterFeaturesIndexes;
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFilterFeaturesIndexes;
 
-    TArray<FKLDebugImGuiFilterTreeNode>     mTreeNodes;
+    TArray<FKLDebugImGuiFilterTreeNode> mTreeNodes;
     TArray<FKLDebugImGuiFilterTreeNodeData> mTreeNodesData;
 
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesWithoutFilters;
@@ -58,8 +60,8 @@ private:
 
 #if WITH_AUTOMATION_TESTS
 public:
-    void               TestInitWithExternalData(TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>&& _FilterPool, TArray<KL::Debug::ImGui::Features::Types::FilterIndex>&& _FilterOffsets);
-    void               TestGenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
+    void TestInitWithExternalData(TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>&& _FilterPool, TArray<KL::Debug::ImGui::Features::Types::FilterIndex>&& _FilterOffsets);
+    void TestGenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
     UE_NODISCARD const TArray<FKLDebugImGuiFilterTreeNode>& TestGetTreeNodes() const;
     UE_NODISCARD const TArray<FKLDebugImGuiFilterTreeNodeData>& TestGetTreeNodesData() const;
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& TestGetFilterPool() const;
@@ -76,7 +78,7 @@ inline bool FKLDebugImGuiFilterTree::HasFilters() const
 inline void FKLDebugImGuiFilterTree::TestInitWithExternalData(TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>&& _FilterPool, TArray<KL::Debug::ImGui::Features::Types::FilterIndex>&& _FilterOffsets)
 {
     mFiltersOffset = MoveTemp(_FilterOffsets);
-    mFiltersPool   = MoveTemp(_FilterPool);
+    mFiltersPool = MoveTemp(_FilterPool);
 }
 
 inline void FKLDebugImGuiFilterTree::TestGenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator)

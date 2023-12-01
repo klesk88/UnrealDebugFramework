@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "CoreMinimal.h"
 #include "Templates/UnrealTemplate.h"
 

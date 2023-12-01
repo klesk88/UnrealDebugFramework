@@ -1,12 +1,14 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusData.h"
 #include "Message/KLDebugImGuiNetworkingMessage_Base.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Misc/NetworkGuid.h"
 
@@ -19,24 +21,24 @@ public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType);
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(FArchive& _Archive);
 
-    //client
+    // client
     UE_NODISCARD bool Client_IsEqual(const EImGuiInterfaceType _ContainerType, const FNetworkGUID& _NetworkID) const;
     void Client_AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID, const bool _Status);
     void Client_SetFullyRemoved();
     void Client_ClearFullyRemoved();
-    //client
+    // client
 
-    //server
+    // server
     UE_NODISCARD bool Server_IsFullyRemoved() const;
     UE_NODISCARD const FNetworkGUID& Server_GetNetworkID() const;
     UE_NODISCARD EImGuiInterfaceType Server_GetContainerType() const;
     UE_NODISCARD const TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusData>& Server_GetFeaturesData() const;
-    //server
+    // server
 
 private:
-    //TKLDebugNetworkingMessage_Base
+    // TKLDebugNetworkingMessage_Base
     void SerializeChild(const FKLDebugNetworkingMessageSerializeInput& _Input) final;
-    //TKLDebugNetworkingMessage_Base
+    // TKLDebugNetworkingMessage_Base
 
     void SerializeSelectable(FArchive& _Archive);
     void SerializeUnique(FArchive& _Archive);
@@ -87,4 +89,3 @@ inline const TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusData>& FKLDebugI
 {
     return mFeatureData;
 }
-

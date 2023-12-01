@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "TCP/KLDebugImGuiNetworkingPendingSplittedMessage.h"
 
 FKLDebugImGuiNetworkingPendingSplittedMessage::FKLDebugImGuiNetworkingPendingSplittedMessage(const FKLDebugImGuiNetworkingMessage_Header& _Header, const TArrayView<uint8>& _MessageData)

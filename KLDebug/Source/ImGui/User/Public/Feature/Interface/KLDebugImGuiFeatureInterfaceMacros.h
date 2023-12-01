@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntry.h"
@@ -12,8 +14,8 @@
  * will output an error for multiple class definitions)
  */
 
-#define KL_DEBUG_CREATE_WINDOW(_Class)                                                     \
-    namespace KL::Debug::Windows                                                           \
-    {                                                                                      \
-        static inline const TKLDebugImGuiFeatureManagerEntry<_Class> Instanced_##_Class{#_Class}; \
+#define KL_DEBUG_CREATE_WINDOW(_Class)                                                              \
+    namespace KL::Debug::Windows                                                                    \
+    {                                                                                               \
+        static inline const TKLDebugImGuiFeatureManagerEntry<_Class> Instanced_##_Class{ #_Class }; \
     }

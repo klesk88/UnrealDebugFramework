@@ -1,4 +1,5 @@
 // Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -31,10 +32,10 @@ private:
     void FillToolbar(FToolBarBuilder& _Builder, TSharedPtr<FUICommandList> _CommandList);
 
     static TSharedRef<SWidget> ImGuiModuleSubMenu(TSharedPtr<FUICommandList> _CommandList);
-    static void                FillImGuiSection(FMenuBuilder& MenuBuilder);
+    static void FillImGuiSection(FMenuBuilder& MenuBuilder);
 
 private:
     TSharedPtr<FUICommandList> mCommandList;
-    FDelegateHandle            mOnModulesChangedHandler;
-    TSharedPtr<FExtender>      mToolbarExtension;
+    FDelegateHandle mOnModulesChangedHandler;
+    TSharedPtr<FExtender> mToolbarExtension;
 };

@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
 
-//modules
+// modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine

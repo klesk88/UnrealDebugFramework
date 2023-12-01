@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Feature/KLDebugImGuiFeatureTypes.h"
@@ -17,8 +19,8 @@ public:
     FKLDebugImGuiFeatureVisualizerTreeNode() = default;
     explicit FKLDebugImGuiFeatureVisualizerTreeNode(const int32 _NodeDataIndex);
 
-    void               AddFeatureDataIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex);
-    UE_NODISCARD bool  HasFeatures() const;
+    void AddFeatureDataIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex);
+    UE_NODISCARD bool HasFeatures() const;
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeatureIndexes() const;
 
 private:

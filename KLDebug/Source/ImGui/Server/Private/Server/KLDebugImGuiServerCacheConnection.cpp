@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Server/KLDebugImGuiServerCacheConnection.h"
 
 #include "Server/KLDebugImGuiServerConnectionDefinitions.h"
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
-//modules
+// modules
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Networking/Public/Message/Feature/DataUpdate/KLDebugImGuiNetworkingMessage_FeatureDataUpdate.h"
@@ -18,7 +20,7 @@
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Containers/ArrayView.h"
 #include "Engine/World.h"
 #include "Math/UnrealMathUtility.h"
@@ -29,7 +31,7 @@
 #include "SocketSubsystem.h"
 
 #if !NO_LOGGING
-//engine
+// engine
 #include "Containers/UnrealString.h"
 #include "UObject/NameTypes.h"
 #endif
@@ -117,7 +119,7 @@ namespace KL::Debug::Networking::ImGuiServer
 
         if (NetworkInterface->ShouldVerifyCRCBeforeSendData())
         {
-            //based on GameplayDebuggerDataPack::CheckDirtyAndUpdate
+            // based on GameplayDebuggerDataPack::CheckDirtyAndUpdate
             const uint32 NewDataCRC = FCrc::MemCrc32(_TempFeatureData.GetData(), _TempFeatureData.Num());
             if (_DataCRC == NewDataCRC)
             {
@@ -136,31 +138,27 @@ namespace KL::Debug::Networking::ImGuiServer
             KL::Debug::ImGuiNetworking::Message::CompressBuffer(_TempFeatureData, _CompressFeatureData);
             if (_CompressFeatureData.IsEmpty())
             {
-                UE_LOG(LogKL_Debug, Error, TEXT("Write_FeatureUpdateCommon>> Compressing data for feature [%s] failed, returned an empty data buffer"),
-                    *_FeatureInterface.GetFeatureNameID().ToString());
+                UE_LOG(LogKL_Debug, Error, TEXT("Write_FeatureUpdateCommon>> Compressing data for feature [%s] failed, returned an empty data buffer"), *_FeatureInterface.GetFeatureNameID().ToString());
                 return;
             }
 
             FeatureBufferToUse = &_CompressFeatureData;
-            UE_LOG(LogKL_Debug, Display, TEXT("Write_FeatureUpdateCommon>> Compressing feature data [%s]. Original size [%d] compress size [%d]"),
-                *_FeatureInterface.GetFeatureNameID().ToString(),
-                UncompressSize,
-                _CompressFeatureData.Num());
+            UE_LOG(LogKL_Debug, Display, TEXT("Write_FeatureUpdateCommon>> Compressing feature data [%s]. Original size [%d] compress size [%d]"), *_FeatureInterface.GetFeatureNameID().ToString(), UncompressSize, _CompressFeatureData.Num());
         }
 
         const uint32 CompressSize = static_cast<uint32>(_CompressFeatureData.Num());
-        Write_FeatureUpdatePrivate(_FeatureInterface, 
-            _NetworkID, 
-            _InterfaceType, 
-            _ClientFeatureIndex, 
-            ShouldCompressData, 
-            CompressSize, 
-            UncompressSize, 
-            *FeatureBufferToUse, 
-            _Data, 
+        Write_FeatureUpdatePrivate(_FeatureInterface,
+            _NetworkID,
+            _InterfaceType,
+            _ClientFeatureIndex,
+            ShouldCompressData,
+            CompressSize,
+            UncompressSize,
+            *FeatureBufferToUse,
+            _Data,
             _Archive);
     }
-}
+}    // namespace KL::Debug::Networking::ImGuiServer
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -202,12 +200,12 @@ TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> FKLDebugImGuiServerCa
     {
         return _Data.Server_GetFeatureIndex();
     }
-    
-    //client and server can be out of sync in a deployed environment (different version). So try to see if the server has the correct index
-    //for this feature
+
+    // client and server can be out of sync in a deployed environment (different version). So try to see if the server has the correct index
+    // for this feature
 
 #if WITH_EDITOR
-    //in editor mode we cant be possibly out of sync. There is a bug somewhere
+    // in editor mode we cant be possibly out of sync. There is a bug somewhere
     ensureMsgf(false, TEXT("we could not find the feature client and server are out of sync not possible on editor builds. Dropping connection to client"));
     return TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex>();
 #else
@@ -275,7 +273,6 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureStatusUpdate(con
 
     return false;
 }
-
 
 bool FKLDebugImGuiServerCacheConnection::Recv_SelectableUpdate(const UWorld& _World, const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update)
 {
@@ -452,4 +449,3 @@ void FKLDebugImGuiServerCacheConnection::Write_ObjectFeatures(const UWorld& _Wor
         }
     }
 }
-

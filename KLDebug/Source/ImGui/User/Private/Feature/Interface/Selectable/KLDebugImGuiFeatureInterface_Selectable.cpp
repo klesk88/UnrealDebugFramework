@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
 
 #include "Helpers/KLDebugImGuiHelpers.h"
@@ -7,7 +9,7 @@
 
 void IKLDebugImGuiFeatureInterface_Selectable::DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
-    auto Callback = [this, &_Input]()->void {
+    auto Callback = [this, &_Input]() -> void {
         DrawImGuiChild(_Input);
     };
 

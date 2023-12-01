@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -14,11 +16,11 @@ struct KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiTickObject final : public FTickFun
     GENERATED_BODY()
 
 public:
-    //FTickFunction
+    // FTickFunction
     void ExecuteTick(float _DeltaTime, ELevelTick _TickType, ENamedThreads::Type _CurrentThread, const FGraphEventRef& _CompletionGraphEvent) final;
     virtual FString DiagnosticMessage() final;
     virtual FName DiagnosticContext(bool _Detailed) final;
-    //FTickFunction
+    // FTickFunction
 
     void BindDelegate(const FOnTick& _Delegate);
     void ClearDelegate();
@@ -48,7 +50,7 @@ inline FName FKLDebugImGuiTickObject::DiagnosticContext(bool _Detailed)
     return FName(TEXT("KLDebugImGuiNetwork"));
 }
 
-template<>
+template <>
 struct TStructOpsTypeTraits<FKLDebugImGuiTickObject> final : public TStructOpsTypeTraitsBase2<FKLDebugImGuiTickObject>
 {
     enum
