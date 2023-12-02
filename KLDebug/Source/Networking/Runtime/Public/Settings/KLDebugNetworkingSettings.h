@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -8,7 +10,7 @@
 
 #include "KLDebugNetworkingSettings.generated.h"
 
-UCLASS(config=Plugins, defaultconfig, DisplayName = "KLDebugNetworking")
+UCLASS(config = Plugins, defaultconfig, DisplayName = "KLDebugNetworking")
 class KLDEBUGNETWORKINGRUNTIME_API UKLDebugNetworkingSettings final : public UDeveloperSettings
 {
     GENERATED_BODY()
@@ -31,7 +33,7 @@ private:
     UPROPERTY(EditDefaultsOnly, config)
     uint32 WriteBufferSize = 2 * 1024 * 1024;
 
-    //how often the client will try to reconnect to the server if the connection is lost (in seconds)
+    // how often the client will try to reconnect to the server if the connection is lost (in seconds)
     UPROPERTY(EditDefaultsOnly, config, meta = (Units = "s"))
     float ClientReconnectionTime = 1.f;
 };

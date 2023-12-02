@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Helpers/KLDebugNetworkingHelpers.h"
 
-//engine
+// engine
 #include "Engine/NetConnection.h"
 #include "Engine/NetDriver.h"
 #include "Engine/PackageMapClient.h"
@@ -12,7 +14,7 @@ namespace KL::Debug::Networking::Helpers
 {
     FNetworkGUID TryGetNetworkGuid(const UObject& _Object)
     {
-        //look also in case at NetworkPredictionDebug::FindObjectNetGUID
+        // look also in case at NetworkPredictionDebug::FindObjectNetGUID
 
         const UNetDriver* NetDriver = nullptr;
         if (const UWorld* World = Cast<const UWorld>(&_Object))
@@ -35,7 +37,7 @@ namespace KL::Debug::Networking::Helpers
             return FNetworkGUID();
         }
 
-        //based on FReplayHelper::SetExternalDataForObject
+        // based on FReplayHelper::SetExternalDataForObject
         const FNetworkGUID NetworkGUID = GuidCache->NetGUIDLookup.FindRef(&_Object);
         return NetworkGUID;
     }
@@ -57,4 +59,4 @@ namespace KL::Debug::Networking::Helpers
     {
         return TryGetObjectFromNetworkGUIDMutable(_World, _NetworkGUID);
     }
-} // KL::Debug::Networking::Helpers
+}    // namespace KL::Debug::Networking::Helpers

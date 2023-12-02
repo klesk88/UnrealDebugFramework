@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//utils module
+// utils module
 #include "Utils/Public/Tick/KLDebugUtilsTickObject.h"
 
 // engine

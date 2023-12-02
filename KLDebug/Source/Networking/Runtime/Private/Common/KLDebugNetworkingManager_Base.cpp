@@ -1,12 +1,14 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Common/KLDebugNetworkingManager_Base.h"
 
 #include "Settings/KLDebugNetworkingSettings.h"
 
-//utils
+// utils
 #include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
-//engine
+// engine
 #include "Async/Async.h"
 #include "Containers/UnrealString.h"
 #include "Engine/World.h"

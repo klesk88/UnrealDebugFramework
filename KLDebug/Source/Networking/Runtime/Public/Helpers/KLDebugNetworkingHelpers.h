@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "Misc/NetworkGuid.h"
 
 class UObject;
@@ -12,4 +14,4 @@ namespace KL::Debug::Networking::Helpers
 
     KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD const UObject* TryGetObjectFromNetworkGUID(const UWorld& _World, const FNetworkGUID& _NetworkGUID);
     KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD UObject* TryGetObjectFromNetworkGUIDMutable(const UWorld& _World, const FNetworkGUID& _NetworkGUID);
-} // KL::Debug::Networking::Helpers
+}    // namespace KL::Debug::Networking::Helpers

@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "CoreMinimal.h"
 #include "HAL/Runnable.h"
 #include "HAL/ThreadSafeCounter.h"
@@ -12,9 +14,9 @@ class FSocket;
 class KLDEBUGNETWORKINGRUNTIME_API FKLDebugNetworkingServer_Base : public FRunnable
 {
 public:
-    //FRunnable
+    // FRunnable
     void Stop() final;
-    //FRunnable
+    // FRunnable
 
 protected:
     UE_NODISCARD bool ShouldStop() const;

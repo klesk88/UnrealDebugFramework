@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Message/KLDebugNetworkingMessageInterface.h"
 
 #include "Message/KLDebugNetworkingMessageSerializeInput.h"
 
-//engine
+// engine
 #include "Serialization/Archive.h"
 
 void IKLDebugNetworkingMessageInterface::Serialize(FArchive& _Archive)
