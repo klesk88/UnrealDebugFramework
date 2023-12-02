@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Camera/KLDebugGameplayCameraController.h"
 
 #include "Input/KLDebugGameplayInputHelpers.h"
@@ -17,6 +19,6 @@ void AKLDebugGameplayCameraController::SetupInputComponent()
 
     KL::Debug::Gameplay::Input::Helpers::BindMainInputsToComponent(*this, *InputComponent);
 
-    //disable blur as when teh game is pause n editor it is unusable the camera otherwise
+    // disable blur as when teh game is pause n editor it is unusable the camera otherwise
     ConsoleCommand(TEXT("r.DefaultFeature.MotionBlur 0"));
 }

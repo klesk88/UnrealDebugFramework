@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -30,7 +32,7 @@ public:
     void Load() const;
 
     UE_NODISCARD const UInputMappingContext* TryGetMappingContext() const;
-    UE_NODISCARD int32                       GetInputContextPriority() const;
+    UE_NODISCARD int32 GetInputContextPriority() const;
 
     UE_NODISCARD const UInputAction* TryGetInputAction(const EKLDebugGameplayInputType& _Action) const;
 

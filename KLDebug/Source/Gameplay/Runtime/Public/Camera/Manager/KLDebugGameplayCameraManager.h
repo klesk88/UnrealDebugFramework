@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "Templates/SubclassOf.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/WeakObjectPtr.h"

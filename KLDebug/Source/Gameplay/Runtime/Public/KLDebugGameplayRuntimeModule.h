@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -20,4 +22,3 @@ inline const FKLDebugGameplayRuntimeModule& FKLDebugGameplayRuntimeModule::Get()
 {
     return GetMutable();
 }
-

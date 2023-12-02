@@ -1,11 +1,13 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Camera/Manager/KLDebugGameplayCameraManager.h"
 
 #include "Camera/KLDebugGameplayCameraController.h"
 
-//engine
-#include "Engine/RendererSettings.h"
+// engine
 #include "Engine/DebugCameraController.h"
 #include "Engine/LocalPlayer.h"
+#include "Engine/RendererSettings.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 
@@ -45,7 +47,6 @@ void FKLDebugGameplayCameraManager::EnableDebugCamera(const TWeakObjectPtr<const
     if (RenderSettings)
     {
         RenderSettings->bDefaultFeatureMotionBlur = false;
-
     }
 
     UWorld* World = _LocalPlayer->GetWorld();
@@ -63,7 +64,7 @@ void FKLDebugGameplayCameraManager::EnableDebugCamera(const TWeakObjectPtr<const
 
         // then switch to it
         PlayerController->Player->SwitchController(DebugCameraController);
-        //DebugCameraController->SetPawn(PlayerController->GetPawn());
+        // DebugCameraController->SetPawn(PlayerController->GetPawn());
     }
 }
 

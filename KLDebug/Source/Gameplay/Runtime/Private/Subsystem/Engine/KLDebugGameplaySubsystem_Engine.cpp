@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Subsystem/Engine/KLDebugGameplaySubsystem_Engine.h"
 
-//engine
+// engine
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"

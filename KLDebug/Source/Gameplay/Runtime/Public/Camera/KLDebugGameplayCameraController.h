@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
-//engine
+// engine
 #include "CoreMinimal.h"
 #include "Engine/DebugCameraController.h"
 
@@ -12,8 +14,8 @@ class KLDEBUGGAMEPLAYRUNTIME_API AKLDebugGameplayCameraController : public ADebu
     GENERATED_BODY()
 
 protected:
-    //ADebugCameraController
+    // ADebugCameraController
     void BeginPlay() override;
     void SetupInputComponent() override;
-    //ADebugCameraController
+    // ADebugCameraController
 };

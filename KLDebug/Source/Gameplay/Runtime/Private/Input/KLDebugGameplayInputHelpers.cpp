@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Input/KLDebugGameplayInputHelpers.h"
 
 #include "Config/KLDebugGameplayConfig.h"
@@ -83,7 +85,7 @@ namespace KL::Debug::Gameplay::Input::Helpers
 
     void BindMainInputsToEnhancedComponent(const ULocalPlayer& _LocalPlayer, IEnhancedInputSubsystemInterface& _InputSubsystem, UEnhancedInputComponent& _OutEnhancedComponent, UKLDebugImGuiEngineSubsystem& _ImGuiEngineSusystem)
     {
-        const UKLDebugGameplayConfig&      Config      = UKLDebugGameplayConfig::Get();
+        const UKLDebugGameplayConfig& Config = UKLDebugGameplayConfig::Get();
         const FKLDebugGameplayInputConfig& InputConfig = Config.GetInputConfig();
 
         const UInputMappingContext* InputMappingContext = InputConfig.TryGetMappingContext();
@@ -100,14 +102,14 @@ namespace KL::Debug::Gameplay::Input::Helpers
     void BindMainInputsToNormalComponent(UInputComponent& _OutInputComponent, UKLDebugImGuiEngineSubsystem& _ImGuiEngineSusystem)
     {
         _OutInputComponent.BindKey(FInputChord(EKeys::D, EModifierKey::Alt),
-                                   EInputEvent::IE_Pressed,
-                                   &_ImGuiEngineSusystem,
-                                   &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
+        EInputEvent::IE_Pressed,
+        &_ImGuiEngineSusystem,
+        &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
 
         _OutInputComponent.BindKey(FInputChord(EKeys::A, EModifierKey::Alt),
-            EInputEvent::IE_Pressed,
-            &_ImGuiEngineSusystem,
-            &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
+        EInputEvent::IE_Pressed,
+        &_ImGuiEngineSusystem,
+        &UKLDebugImGuiEngineSubsystem::ToogleImGuiSystemState);
 
         UE_LOG(LogKL_Debug, Display, TEXT("Using normal input. Toogle debug system by pressing ALT + D and toogle imui input by pressing ALT + A"));
     }
@@ -140,7 +142,7 @@ namespace KL::Debug::Gameplay::Input::Helpers
                 return;
             }
 
-            BindMainInputsToEnhancedComponent(*Player , *EnhancedInputSubsystemInterface, *EnhancedInput, *KLImGuiEngineSubsystem);
+            BindMainInputsToEnhancedComponent(*Player, *EnhancedInputSubsystemInterface, *EnhancedInput, *KLImGuiEngineSubsystem);
         }
         else
         {
@@ -148,4 +150,4 @@ namespace KL::Debug::Gameplay::Input::Helpers
         }
     }
 
-}  // namespace KL::Debug::Gameplay::Input::Helpers
+}    // namespace KL::Debug::Gameplay::Input::Helpers

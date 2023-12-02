@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Input/Config/KLDebugGameplayInputConfig.h"
 
 void FKLDebugGameplayInputConfig::Load() const

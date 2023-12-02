@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "KLDebugGameplayRuntimeModule.h"
 
 #include "Config/KLDebugGameplayConfig.h"
@@ -12,7 +14,7 @@ namespace KL::Debug::Gameplay::Module
 {
     static const FName Module(TEXT("KLDebugGameplayRuntimeModule"));
 
-}  // namespace  KL::Debug::GameplayEditor::Module
+}    // namespace KL::Debug::Gameplay::Module
 
 ////////////////////////////////////////////////////////////////////////////
 
