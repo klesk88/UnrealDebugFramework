@@ -1,31 +1,33 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/Engine/Picker/KLDebugUtilsPicker.h"
 
 #include "Features/Engine/Picker/KLDebugUtilsPickerScoredObjects.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"
-#include "CollisionQueryParams.h"//trace picker
-#include "EngineUtils.h"
-#include "Engine/EngineTypes.h" //trace picker
-#include "Engine/LocalPlayer.h" //trace picker
-#include "Engine/GameViewportClient.h" //trace picker
+#include "CollisionQueryParams.h"         //trace picker
+#include "Engine/EngineTypes.h"           //trace picker
+#include "Engine/GameViewportClient.h"    //trace picker
+#include "Engine/LocalPlayer.h"           //trace picker
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Box.h"
-#include "Math/Matrix.h" //trace picker
+#include "Math/Matrix.h"    //trace picker
 #include "Math/Rotator.h"
 #include "Math/UnrealMathUtility.h"
-#include "Math/Vector2D.h" //trace picker
-#include "SceneView.h"//trace picker
-#include "UnrealClient.h" //trace picker
+#include "Math/Vector2D.h"    //trace picker
+#include "SceneView.h"        //trace picker
+#include "UnrealClient.h"     //trace picker
 #include "UObject/Object.h"
 
 namespace KL::Debug::Utils::Picker
 {
-    template<typename Callback>
+    template <typename Callback>
     void GatherAllObjects(const UWorld& _World, const TSubclassOf<AActor>& _ActorType, TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects, const Callback& _Callback)
     {
         float Distance = 0.f;
@@ -40,7 +42,7 @@ namespace KL::Debug::Utils::Picker
             _OutObjects.Emplace(Distance, *Actor);
         }
     }
-}
+}    // namespace KL::Debug::Utils::Picker
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -101,7 +103,7 @@ UObject* FKLDebugUtilsPicker::GetActorFromTrace(const UWorld& _World) const
         return nullptr;
     }
 
-    //TODO
+    // TODO
     const FVector2D ScreenPos;
     const FMatrix InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
 
@@ -111,20 +113,16 @@ UObject* FKLDebugUtilsPicker::GetActorFromTrace(const UWorld& _World) const
     FCollisionQueryParams Params("GetActorFromTrace", SCENE_QUERY_STAT_ONLY(KLDebugUtilsPicker), true);
 
     FCollisionObjectQueryParams ObjectParams(
-        ECC_TO_BITFIELD(ECC_WorldStatic)
-        | ECC_TO_BITFIELD(ECC_WorldDynamic)
-        | ECC_TO_BITFIELD(ECC_Pawn)
-        | ECC_TO_BITFIELD(ECC_PhysicsBody)
-    );
+    ECC_TO_BITFIELD(ECC_WorldStatic) | ECC_TO_BITFIELD(ECC_WorldDynamic) | ECC_TO_BITFIELD(ECC_Pawn) | ECC_TO_BITFIELD(ECC_PhysicsBody));
 
     UObject* PickedActor = nullptr;
     FHitResult OutHit;
     const bool Result = _World.LineTraceSingleByObjectType(
-        OutHit,
-        WorldPosition + WorldDirection * 100.0,
-        WorldPosition + WorldDirection * 10000.0,
-        ObjectParams,
-        Params);
+    OutHit,
+    WorldPosition + WorldDirection * 100.0,
+    WorldPosition + WorldDirection * 10000.0,
+    ObjectParams,
+    Params);
 
     if (Result)
     {
@@ -155,18 +153,15 @@ void FKLDebugUtilsPicker::GatherAllObjects(const UWorld& _World, TArray<FKLDebug
     }
     else if (!mActorTag.IsNone() && mActorInterface.Get() != nullptr)
     {
-        auto Lambda = [this, &Location, &Directon](const AActor& _Actor, float& _OutDistance) -> bool
-        {
-            return _Actor.ActorHasTag(mActorTag) && _Actor.GetClass()->ImplementsInterface(mActorInterface.Get())
-                && IsRightDistance(_Actor, Location, Directon, _OutDistance);
+        auto Lambda = [this, &Location, &Directon](const AActor& _Actor, float& _OutDistance) -> bool {
+            return _Actor.ActorHasTag(mActorTag) && _Actor.GetClass()->ImplementsInterface(mActorInterface.Get()) && IsRightDistance(_Actor, Location, Directon, _OutDistance);
         };
 
         KL::Debug::Utils::Picker::GatherAllObjects(_World, mActorType, _OutObjects, Lambda);
     }
     else if (!mActorTag.IsNone())
     {
-        auto Lambda = [this, &Location, &Directon](const AActor& _Actor, float& _OutDistance) -> bool
-        {
+        auto Lambda = [this, &Location, &Directon](const AActor& _Actor, float& _OutDistance) -> bool {
             return _Actor.ActorHasTag(mActorTag) && IsRightDistance(_Actor, Location, Directon, _OutDistance);
         };
 
@@ -174,8 +169,7 @@ void FKLDebugUtilsPicker::GatherAllObjects(const UWorld& _World, TArray<FKLDebug
     }
     else
     {
-        auto Lambda = [this, &Location, &Directon](const AActor& _Actor, float& _OutDistance) -> bool
-        {
+        auto Lambda = [this, &Location, &Directon](const AActor& _Actor, float& _OutDistance) -> bool {
             return _Actor.GetClass()->ImplementsInterface(mActorInterface.Get()) && IsRightDistance(_Actor, Location, Directon, _OutDistance);
         };
 
@@ -190,13 +184,13 @@ bool FKLDebugUtilsPicker::IsRightDistance(const AActor& _Actor, const FVector& _
     FVector Pos;
     FVector Extents;
     _Actor.GetActorBounds(true, Pos, Extents);
-    //const FBox Box{Pos - Extents, Pos + Extents};
+    // const FBox Box{Pos - Extents, Pos + Extents};
 
-    //FMath::LineBoxIntersection(InBox, RootPos, TipPos, TipPos - RootPos)
-    //Box.ComputeSquaredDistanceToPoint()
-    
-    //NOTE THIS IS WRONG: need to transform the obejcts in screen space.
-    //also need to take into account the bounding box of the actor (is any)
+    // FMath::LineBoxIntersection(InBox, RootPos, TipPos, TipPos - RootPos)
+    // Box.ComputeSquaredDistanceToPoint()
+
+    // NOTE THIS IS WRONG: need to transform the obejcts in screen space.
+    // also need to take into account the bounding box of the actor (is any)
     /*
     * APlayerController * PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     FVector2D FinalLocation;
@@ -215,7 +209,7 @@ bool FKLDebugUtilsPicker::IsRightDistance(const AActor& _Actor, const FVector& _
     ResultVector = (viewportDimensions/2) - FinalLocation;
     ResultLength = ResultVector.Size();
     */
-            _OutDistance = FMath::PointDistToLine(Pos, _Direction, _Position);
+    _OutDistance = FMath::PointDistToLine(Pos, _Direction, _Position);
     return _OutDistance < mMaxDistance;
 }
 
@@ -228,16 +222,16 @@ void FKLDebugUtilsPicker::SortByDistance(TArray<FKLDebugUtilsPickerScoredObjects
 
 void FKLDebugUtilsPicker::ApplyScores(TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const
 {
-    //TODO: actual make scoring based on user data
+    // TODO: actual make scoring based on user data
     if (!_OutObjects.IsEmpty())
     {
         _OutObjects[0].SetScore(1.f);
     }
 
-    //for (FKLDebugUtilsPickerScoredObjects& Object : _OutObjects)
+    // for (FKLDebugUtilsPickerScoredObjects& Object : _OutObjects)
     //{
-    //    Object.SetScore(1.f);
-    //}
+    //     Object.SetScore(1.f);
+    // }
 
     //_OutObjects.Sort([](const FKLDebugUtilsPickerScoredObjects& _Left, const FKLDebugUtilsPickerScoredObjects& _Right) -> bool {
     //    return _Left.GetScore() < _Right.GetScore();

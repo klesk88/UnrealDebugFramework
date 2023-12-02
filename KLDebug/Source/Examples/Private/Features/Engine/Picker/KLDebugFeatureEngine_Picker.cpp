@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/Engine/Picker/KLDebugFeatureEngine_Picker.h"
 
 // modules
@@ -7,7 +9,7 @@
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-//engine
+// engine
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 

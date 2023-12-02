@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // engine
@@ -11,15 +13,15 @@ public:
     explicit FKLDebugUtilsPickerScoredObjects(const float _Distance, UObject& _Object);
 
     UE_NODISCARD UObject* GetObject() const;
-    UE_NODISCARD float   GetDistance() const;
+    UE_NODISCARD float GetDistance() const;
 
     UE_NODISCARD float GetScore() const;
-    void               SetScore(const float _Score);
+    void SetScore(const float _Score);
 
 private:
     UObject* mObject = nullptr;
-    float    mDistance = 0.f;
-    float    mScore = 0.f;
+    float mDistance = 0.f;
+    float mScore = 0.f;
 };
 
 inline UObject* FKLDebugUtilsPickerScoredObjects::GetObject() const

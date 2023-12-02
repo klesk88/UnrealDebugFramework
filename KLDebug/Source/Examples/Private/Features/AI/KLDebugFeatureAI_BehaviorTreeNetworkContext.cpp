@@ -1,6 +1,8 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/AI/KLDebugFeatureAI_BehaviorTreeNetworkContext.h"
 
-//modules
+// modules
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 
 // engine
@@ -80,7 +82,18 @@ void FKLDebugFeatureAI_BehaviorTreeNetworkContext::UpateBTInfo(const UObject& _O
     }
 
     mRepCurrentAITask = BTComponent->DescribeActiveTasks();
-    mRepCurrentAIState = BTComponent->IsRunning() ? TEXT("Running") : BTComponent->IsPaused() ? TEXT("Paused") : TEXT("Inactive");
+    if (BTComponent->IsRunning())
+    {
+        mRepCurrentAIState = TEXT("Running");
+    }
+    else if (BTComponent->IsPaused())
+    {
+        mRepCurrentAIState = TEXT("Paused");
+    }
+    else
+    {
+        mRepCurrentAIState = TEXT("Inactive");
+    }
+
     mRepCurrentAIAssets = BTComponent->DescribeActiveTrees();
 }
-

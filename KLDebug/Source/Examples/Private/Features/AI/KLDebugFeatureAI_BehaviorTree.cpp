@@ -1,10 +1,12 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/AI/KLDebugFeatureAI_BehaviorTree.h"
 
-#include "Features/AI/KLDebugFeatureAI_BehaviorTreeNetworkContext.h"
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
+#include "Features/AI/KLDebugFeatureAI_BehaviorTreeNetworkContext.h"
 #include "Filters/KLDebugImGuiFilterAI.h"
 
-//modules
+// modules
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
@@ -12,7 +14,6 @@
 
 // engine
 #include "Containers/UnrealString.h"
-
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_BehaviorTree)
 

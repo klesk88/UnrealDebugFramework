@@ -1,9 +1,11 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 // modules
 #include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
 
-//engine
+// engine
 #include "Containers/Array.h"
 #include "Containers/UnrealString.h"
 #include "Engine/World.h"
@@ -42,13 +44,13 @@ private:
     void UpateBTInfo(const UObject& _Object);
 
 private:
-    //replicated
+    // replicated
     TArray<FString> mRepBlackboardLines;
     FString mRepBrainComponentDebugInfo;
     FString mRepCurrentAITask;
     FString mRepCurrentAIState;
     FString mRepCurrentAIAssets;
-    //replicated
+    // replicated
 
     float mLastTimeReplicated = -1.f;
 };

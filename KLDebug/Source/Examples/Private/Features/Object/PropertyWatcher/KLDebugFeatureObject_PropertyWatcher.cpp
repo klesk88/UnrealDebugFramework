@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Features/Object/PropertyWatcher/KLDebugFeatureObject_PropertyWatcher.h"
 
 // imgui user module
@@ -6,7 +8,7 @@
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-//engine
+// engine
 #include "Engine/World.h"
 #include "UObject/SoftObjectPtr.h"
 #include "UObject/UnrealType.h"
@@ -31,8 +33,8 @@ const FName& FKLDebugFeatureObject_PropertyWatcher::GetImGuiPath() const
 
 void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
-    //Based on PropertyWatcher project
-    //https://github.com/guitarfreak/PropertyWatcher/blob/main/PropertyWatcher.cpp#L2179
+    // Based on PropertyWatcher project
+    // https://github.com/guitarfreak/PropertyWatcher/blob/main/PropertyWatcher.cpp#L2179
 
     if (!ImGui::BeginTable("Actors List", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable))
     {
@@ -77,11 +79,11 @@ void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFe
 
 void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Property, TArray<char>& _StringBuffer, UObject& _Object) const
 {
-    //based also on IteratePropertiesRecursive
+    // based also on IteratePropertiesRecursive
 
     void* ContainerData = _Property.ContainerPtrToValuePtr<void*>(&_Object);
 
-    if (const FClassProperty* ClassProp = CastField<const FClassProperty>(&_Property)) 
+    if (const FClassProperty* ClassProp = CastField<const FClassProperty>(&_Property))
     {
         const UObject* Object = ClassProp->GetObjectPropertyValue(ContainerData);
         const UClass* Class = Object ? Cast<const UClass>(Object) : nullptr;
@@ -93,7 +95,6 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         {
             ImGui::Text("<Null>");
         }
-
     }
     else if (const FObjectProperty* ObjectProperty = CastField<const FObjectProperty>(&_Property))
     {
@@ -107,7 +108,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
             ImGui::Text("<Null>");
         }
     }
-    else if (const FClassPtrProperty* ClassPtrProp = CastField<const FClassPtrProperty>(&_Property)) 
+    else if (const FClassPtrProperty* ClassPtrProp = CastField<const FClassPtrProperty>(&_Property))
     {
         ImGui::Text("PtrProperty not implemented");
     }
@@ -126,14 +127,13 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         {
             ImGui::Text("<Null>");
         }
-        else 
+        else
         {
             const FString Path = SoftClass->ToSoftObjectPath().ToString();
             ImGui::Text(TCHAR_TO_ANSI(*Path));
         }
-
     }
-    else if (const FWeakObjectProperty* WeakObjProp = CastField<const FWeakObjectProperty>(&_Property)) 
+    else if (const FWeakObjectProperty* WeakObjProp = CastField<const FWeakObjectProperty>(&_Property))
     {
         const TWeakObjectPtr<UObject>* WeakPtr = static_cast<const TWeakObjectPtr<UObject>*>(ContainerData);
         if (WeakPtr->IsStale())
@@ -144,12 +144,12 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         {
             ImGui::Text("<Null>");
         }
-        else 
+        else
         {
             ImGui::Text(TCHAR_TO_ANSI(*((*WeakPtr)->GetName())));
         }
     }
-    else if (const FLazyObjectProperty* LayzObjProp = CastField<const FLazyObjectProperty>(&_Property)) 
+    else if (const FLazyObjectProperty* LayzObjProp = CastField<const FLazyObjectProperty>(&_Property))
     {
         const TLazyObjectPtr<UObject>* LazyPtr = static_cast<const TLazyObjectPtr<UObject>*>(ContainerData);
         if (LazyPtr->IsStale())
@@ -160,11 +160,10 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         {
             ImGui::Text("<Null>");
         }
-        else 
+        else
         {
             ImGui::Text(TCHAR_TO_ANSI(*((*LazyPtr)->GetName())));
         }
-
     }
     else if (const FSoftObjectProperty* SoftObjProp = CastField<const FSoftObjectProperty>(&_Property))
     {
@@ -215,68 +214,58 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         bool TempBool = *static_cast<bool*>(ContainerData);
         ImGui::Checkbox("", &TempBool);
         BoolProp->SetPropertyValue(ContainerData, TempBool);
-
     }
     else if (_Property.IsA(FInt8Property::StaticClass()))
     {
         ImGui::InputScalar("##FInt8Property", ImGuiDataType_S8, ContainerData);
-
     }
     else if (_Property.IsA(FByteProperty::StaticClass()))
     {
         ImGui::InputScalar("##FByteProperty", ImGuiDataType_U8, ContainerData);
-
     }
-    else if (_Property.IsA(FInt16Property::StaticClass())) 
+    else if (_Property.IsA(FInt16Property::StaticClass()))
     {
         ImGui::InputScalar("##FInt16Property", ImGuiDataType_S16, ContainerData);
-
     }
-    else if (_Property.IsA(FUInt16Property::StaticClass())) 
+    else if (_Property.IsA(FUInt16Property::StaticClass()))
     {
         ImGui::InputScalar("##FUInt16Property", ImGuiDataType_U16, ContainerData);
-
     }
-    else if (_Property.IsA(FIntProperty::StaticClass())) 
+    else if (_Property.IsA(FIntProperty::StaticClass()))
     {
         ImGui::InputScalar("##FIntProperty", ImGuiDataType_S32, ContainerData);
-
     }
-    else if (_Property.IsA(FUInt32Property::StaticClass())) 
+    else if (_Property.IsA(FUInt32Property::StaticClass()))
     {
         ImGui::InputScalar("##FUInt32Property", ImGuiDataType_U32, ContainerData);
-
     }
-    else if (_Property.IsA(FInt64Property::StaticClass())) 
+    else if (_Property.IsA(FInt64Property::StaticClass()))
     {
         ImGui::InputScalar("##FInt64Property", ImGuiDataType_S64, ContainerData);
-
     }
-    else if (_Property.IsA(FUInt64Property::StaticClass())) 
+    else if (_Property.IsA(FUInt64Property::StaticClass()))
     {
         ImGui::InputScalar("##FUInt64Property", ImGuiDataType_U64, ContainerData);
-
     }
-    else if (_Property.IsA(FFloatProperty::StaticClass())) 
+    else if (_Property.IsA(FFloatProperty::StaticClass()))
     {
         ImGui::InputFloat("##FFloatProperty", static_cast<float*>(ContainerData));
-
     }
-    else if (_Property.IsA(FDoubleProperty::StaticClass())) {
+    else if (_Property.IsA(FDoubleProperty::StaticClass()))
+    {
         ImGui::InputDouble("##FDoubleProperty", static_cast<double*>(ContainerData));
-
     }
-    else if (_Property.IsA(FStrProperty::StaticClass())) 
+    else if (_Property.IsA(FStrProperty::StaticClass()))
     {
         const FString Value = *static_cast<const FString*>(ContainerData);
         ImGui::Text(TCHAR_TO_ANSI(*Value));
     }
-    else if (_Property.IsA(FNameProperty::StaticClass())) 
+    else if (_Property.IsA(FNameProperty::StaticClass()))
     {
         const FString Value = (static_cast<const FName*>(ContainerData))->ToString();
         ImGui::Text(TCHAR_TO_ANSI(*Value));
     }
-    else if (_Property.IsA(FTextProperty::StaticClass())) 
+    else if (_Property.IsA(FTextProperty::StaticClass()))
     {
         const FString Value = (static_cast<const FText*>(ContainerData))->ToString();
         ImGui::Text(TCHAR_TO_ANSI(*Value));
@@ -328,7 +317,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
     }
     else if (const FMulticastInlineDelegateProperty* MultiInlineDelegateProp = CastField<const FMulticastInlineDelegateProperty>(&_Property))
     {
-       // @Todo
+        // @Todo
     }
     else if (const FMulticastSparseDelegateProperty* MultiSparseDelegateProp = CastField<const FMulticastSparseDelegateProperty>(&_Property))
     {
@@ -339,7 +328,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         FString Extended;
         FString StructType = StructProp->GetCPPType(&Extended, 0);
 
-        if (StructType == "FVector") 
+        if (StructType == "FVector")
         {
             ImGui::InputScalarN("##FVector", ImGuiDataType_Double, &(static_cast<FVector*>(ContainerData))->X, 3);
         }
@@ -365,46 +354,44 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
                 Transform->SetRotation(Rotation.Quaternion());
             }
         }
-        else if (StructType == "FRotator") 
+        else if (StructType == "FRotator")
         {
             ImGui::InputScalarN("##FRotator", ImGuiDataType_Double, &(static_cast<FRotator*>(ContainerData))->Pitch, 3);
         }
-        else if (StructType == "FVector2D") 
+        else if (StructType == "FVector2D")
         {
             ImGui::InputScalarN("##FVector2D", ImGuiDataType_Double, &(static_cast<FVector2D*>(ContainerData))->X, 2);
-
         }
-        else if (StructType == "FIntVector") 
+        else if (StructType == "FIntVector")
         {
             ImGui::InputInt3("##FIntVector", &(static_cast<FIntVector*>(ContainerData))->X);
-
         }
-        else if (StructType == "FIntPoint") 
+        else if (StructType == "FIntPoint")
         {
             ImGui::InputInt2("##FIntPoint", &(static_cast<FIntPoint*>(ContainerData))->X);
         }
-        else if (StructType == "FTimespan") 
+        else if (StructType == "FTimespan")
         {
             const FString Value = static_cast<const FTimespan*>(ContainerData)->ToString();
             ImGui::Text(TCHAR_TO_ANSI(*Value));
         }
-        else if (StructType == "FDateTime") 
+        else if (StructType == "FDateTime")
         {
             const FString Value = static_cast<const FTimespan*>(ContainerData)->ToString();
             ImGui::Text(TCHAR_TO_ANSI(*Value));
         }
-        else if (StructType == "FLinearColor") 
+        else if (StructType == "FLinearColor")
         {
             FLinearColor* LinearColor = static_cast<FLinearColor*>(ContainerData);
             FColor Color = LinearColor->ToFColor(true);
             float ColorArray[4] = { Color.R / 255.0f, Color.G / 255.0f, Color.B / 255.0f, Color.A / 255.0f };
-            if (ImGui::ColorEdit4("##FLinearColor", ColorArray, ImGuiColorEditFlags_AlphaPreview)) 
+            if (ImGui::ColorEdit4("##FLinearColor", ColorArray, ImGuiColorEditFlags_AlphaPreview))
             {
                 Color = FColor(ColorArray[0] * 255.f, ColorArray[1] * 255.f, ColorArray[2] * 255.f, ColorArray[3] * 255.f);
                 *LinearColor = FLinearColor::FromSRGBColor(Color);
             }
         }
-        else if (StructType == "FColor") 
+        else if (StructType == "FColor")
         {
             FColor* Color = static_cast<FColor*>(ContainerData);
             float ColorArray[4] = { Color->R / 255.0f, Color->G / 255.0f, Color->B / 255.0f, Color->A / 255.0f };
@@ -413,12 +400,12 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
                 *Color = FColor(ColorArray[0] * 255.f, ColorArray[1] * 255.f, ColorArray[2] * 255.f, ColorArray[3] * 255.f);
             }
         }
-        else 
+        else
         {
             ImGui::Text("Struct type [%ls]", *StructType);
         }
     }
-    else 
+    else
     {
         ImGui::Text("<UnknownType>");
     }
