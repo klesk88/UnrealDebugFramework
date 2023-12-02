@@ -1,8 +1,10 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #pragma once
 
 #include "Font/KLUnrealImGuiFontManager.h"
 
-//UnrealImGui module
+// UnrealImGui module
 #include "ThirdParty/UnrealImGui/Public/UnrealImGuiModule.h"
 
 // engine
@@ -37,11 +39,11 @@ private:
     void OnContextProxyCreated(int32 _Index, FImGuiContextProxy& _Proxy) const;
     void OnNetImGuiContextCreated() const;
     void OnContextCreated() const;
-    
+
 private:
     FKLUnrealImGuiFontManager mImGuiFontManager;
-    FDelegateHandle           mOnContextProxyCreated;
-    FDelegateHandle           mOnNetImGuiContextCreated;
+    FDelegateHandle mOnContextProxyCreated;
+    FDelegateHandle mOnNetImGuiContextCreated;
 
     FOnNetImguiEnableStateChange mOnEnableStateChangeDelegate;
 };

@@ -1,13 +1,15 @@
-﻿#include "Font/KLUnrealImGuiFontManager.h"
+﻿// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
 
-//ImPlotThirdParty module
+#include "Font/KLUnrealImGuiFontManager.h"
+
+// ImPlotThirdParty module
 #include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
-//NetImGuiThirdParty module
+// NetImGuiThirdParty module
 #include "ThirdParty/NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
 // UnrealImGui module
 #include "ThirdParty/UnrealImGui/Public/ImGuiContextManager.h"
 
-//engine
+// engine
 #include "Math/UnrealMathUtility.h"
 
 //=================================================================================================
@@ -69,7 +71,7 @@ void FKLUnrealImGuiFontManager::SetDefaultFont(const KL::UnrealImGui::Fonts::eFo
     check(_Font < KL::UnrealImGui::Fonts::eFont::_Count);
     if (ImGui::GetIO().Fonts->Fonts[static_cast<int32>(_Font)])
     {
-        ImFont* pFont              = _Font < KL::UnrealImGui::Fonts::eFont::_Count ? ImGui::GetIO().Fonts->Fonts[static_cast<int>(_Font)] : nullptr;
+        ImFont* pFont = _Font < KL::UnrealImGui::Fonts::eFont::_Count ? ImGui::GetIO().Fonts->Fonts[static_cast<int>(_Font)] : nullptr;
         ImGui::GetIO().FontDefault = pFont ? pFont : ImGui::GetIO().FontDefault;
     }
 }
@@ -89,7 +91,7 @@ void FKLUnrealImGuiFontManager::BuildFontAtlas(const float _DPIScale, ImFontAtla
     ImFontConfig Config;
     Config.SizePixels = FMath::RoundFromZero(13.f * _DPIScale);
 #if NETIMGUI_FREETYPE_ENABLED
-    Config.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_LightHinting;  // Without this, kanji character looks wrong in smaller font size
+    Config.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_LightHinting;    // Without this, kanji character looks wrong in smaller font size
 #endif
 
     _OutFontAtlas.AddFontDefault(&Config);
@@ -121,7 +123,7 @@ void FKLUnrealImGuiFontManager::AddFontGroup(ImFontAtlas& _OutFontAtlas, ImFontC
 #if NETIMGUI_FONT_JAPANESE
     if (AppendJapanese)
     {
-        _FontConfig.RasterizerMultiply = 1.5f;  // Boost kanji color intensity slightly, making them more readable
+        _FontConfig.RasterizerMultiply = 1.5f;    // Boost kanji color intensity slightly, making them more readable
         _OutFontAtlas.AddFontFromMemoryCompressedTTF(IPAexMincho_compressed_data, IPAexMincho_compressed_size, _PxSize, &_FontConfig, pFontAtlas->GetGlyphRangesJapanese());
         _FontConfig.RasterizerMultiply = 1.f;
     }
@@ -129,21 +131,21 @@ void FKLUnrealImGuiFontManager::AddFontGroup(ImFontAtlas& _OutFontAtlas, ImFontC
 
     if (_ExtraIconGlyphs)
     {
-        _FontConfig.GlyphOffset.y = _PxSize * 0.2f;  // Try aligning the icons a little more with the text, preventing icon to overlap previous text line
+        _FontConfig.GlyphOffset.y = _PxSize * 0.2f;    // Try aligning the icons a little more with the text, preventing icon to overlap previous text line
 
 #if NETIMGUI_FONT_ICON_GAMEKENNEY
-        static const ImWchar iconKenney_ranges[] = {ICON_MIN_KI, ICON_MAX_KI, 0};
+        static const ImWchar iconKenney_ranges[] = { ICON_MIN_KI, ICON_MAX_KI, 0 };
         _OutFontAtlas.AddFontFromMemoryCompressedTTF(KenneyIcon_compressed_data, KenneyIcon_compressed_size, _PxSize, &_FontConfig, iconKenney_ranges);
 #endif
 #if NETIMGUI_FONT_ICON_AWESOME
-        static const ImWchar iconFontAwesome_ranges[]       = {ICON_MIN_FA, ICON_MAX_FA, 0};
-        static const ImWchar iconFontAwesomeBrands_ranges[] = {ICON_MIN_FAB, ICON_MAX_FAB, 0};
+        static const ImWchar iconFontAwesome_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+        static const ImWchar iconFontAwesomeBrands_ranges[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
         _OutFontAtlas.AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data, fa_solid_900_compressed_size, _PxSize, &_FontConfig, iconFontAwesome_ranges);
         _OutFontAtlas.AddFontFromMemoryCompressedTTF(fa_regular_400_compressed_data, fa_regular_400_compressed_size, _PxSize, &_FontConfig, iconFontAwesome_ranges);
         _OutFontAtlas.AddFontFromMemoryCompressedTTF(fa_brands_400_compressed_data, fa_brands_400_compressed_size, _PxSize, &_FontConfig, iconFontAwesomeBrands_ranges);
 #endif
 #if NETIMGUI_FONT_ICON_MATERIALDESIGN
-        static const ImWchar iconMaterialDesign_ranges[] = {ICON_MIN_MD, ICON_MAX_MD, 0};
+        static const ImWchar iconMaterialDesign_ranges[] = { ICON_MIN_MD, ICON_MAX_MD, 0 };
         _OutFontAtlas.AddFontFromMemoryCompressedTTF(MaterialIcons_Regular_compressed_data, MaterialIcons_Regular_compressed_size, _PxSize, &_FontConfig, iconMaterialDesign_ranges);
 #endif
     }

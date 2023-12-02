@@ -1,5 +1,6 @@
-#include "KLUnrealImGuiModule.h"
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
 
+#include "KLUnrealImGuiModule.h"
 
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
@@ -21,7 +22,7 @@
 namespace KL::UnrealImGui::Module
 {
     static const FName Module(TEXT("KLUnrealImGui"));
-}  // namespace  KL::UnrealImGui::Module
+}    // namespace  KL::UnrealImGui::Module
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -31,17 +32,17 @@ void FKLUnrealImGuiModule::StartupModule()
 
     FImGuiModuleManager& ModuleManager = GetImguiModuleManager();
     FImGuiContextManager& ContextManager = ModuleManager.GetContextManager();
-    
+
     mOnContextProxyCreated = ContextManager.OnContextProxyCreated.AddRaw(this, &FKLUnrealImGuiModule::OnContextProxyCreated);
     mOnNetImGuiContextCreated = ThirdParty::UnrealImGui::NetImGui::OnNetImGuiCreatedContext.AddRaw(this, &FKLUnrealImGuiModule::OnNetImGuiContextCreated);
-    
+
     mImGuiFontManager.Init(ContextManager);
     ContextManager.Init();
 }
 
 void FKLUnrealImGuiModule::ShutdownModule()
 {
-    FImGuiModuleManager&  ModuleManager  = GetImguiModuleManager();
+    FImGuiModuleManager& ModuleManager = GetImguiModuleManager();
     FImGuiContextManager& ContextManager = ModuleManager.GetContextManager();
 
     if (mOnContextProxyCreated.IsValid())
