@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Extender/KLDebugEditorMenuExtender.h"
 
 #include "Extender/KLDebugEditorMenuExtender_Style.h"
@@ -81,10 +83,10 @@ void FKLDebugEditorMenuExtender::Register()
 void FKLDebugEditorMenuExtender::FillToolbar(FToolBarBuilder& _Builder, TSharedPtr<FUICommandList> _CommandList)
 {
     _Builder.AddComboButton(FUIAction(),
-        FOnGetContent::CreateStatic(FKLDebugEditorMenuExtender::ImGuiModuleSubMenu, _CommandList),
-        LOCTEXT("KLDebug", "KLDebug"),
-        LOCTEXT("KLDebug_Tooltip", "Tools for use with the KL Debug system"),
-        FSlateIcon(FKLDebugEditorMenuExtender_Style::GetStyleSetName(), FKLDebugEditorMenuExtender_Style::GetIconName()));
+    FOnGetContent::CreateStatic(FKLDebugEditorMenuExtender::ImGuiModuleSubMenu, _CommandList),
+    LOCTEXT("KLDebug", "KLDebug"),
+    LOCTEXT("KLDebug_Tooltip", "Tools for use with the KL Debug system"),
+    FSlateIcon(FKLDebugEditorMenuExtender_Style::GetStyleSetName(), FKLDebugEditorMenuExtender_Style::GetIconName()));
 }
 
 TSharedRef<SWidget> FKLDebugEditorMenuExtender::ImGuiModuleSubMenu(TSharedPtr<FUICommandList> _CommandList)
@@ -109,11 +111,11 @@ TSharedRef<SWidget> FKLDebugEditorMenuExtender::ImGuiModuleSubMenu(TSharedPtr<FU
         const FUIAction UIAction(UIExecuteActionLambda, FCanExecuteAction(), IaActionCheckedLambda);
 
         MenuBuilder.AddMenuEntry(LOCTEXT("KLDebugEnable", "Enable KLDebug"),
-            FText(),
-            FSlateIcon(),
-            UIAction,
-            NAME_None,
-            EUserInterfaceActionType::ToggleButton);
+        FText(),
+        FSlateIcon(),
+        UIAction,
+        NAME_None,
+        EUserInterfaceActionType::ToggleButton);
     }
 
     MenuBuilder.EndSection();
