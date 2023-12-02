@@ -14,12 +14,10 @@ UKLDebugGameplaySubsystem_Engine* UKLDebugGameplaySubsystem_Engine::TryGetMutabl
 
 void UKLDebugGameplaySubsystem_Engine::TooglePause(const TWeakObjectPtr<const ULocalPlayer> _LocalPlayer)
 {
-#if !WITH_EDITOR
     const UWorld* World = _LocalPlayer.IsValid() ? _LocalPlayer->GetWorld() : nullptr;
     if (World)
     {
         mPauseState = !mPauseState;
         UGameplayStatics::SetGamePaused(World, mPauseState);
     }
-#endif
 }
