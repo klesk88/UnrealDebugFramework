@@ -40,4 +40,13 @@ namespace KL::Debug::ImGuiHelpers
         ::ImGui::TextColored(ConvertUnrealColorToImGui(_Color), TCHAR_TO_ANSI(*_Text));
     }
 
+    void DrawConditionalColoredText(const FString& _Text, const bool _ConditionResult)
+    {
+        const FColor Color = _ConditionResult ? FColor::Green : FColor::Red;
+
+        ::ImGui::Text("%s: ", TCHAR_TO_ANSI(*_Text));
+        ::ImGui::SameLine();
+        ::ImGui::TextColored(ConvertUnrealColorToImGui(Color), "%s", _ConditionResult ? "TRUE" : "FALSE");
+    }
+
 }    // namespace KL::Debug::ImGuiHelpers

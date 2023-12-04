@@ -19,6 +19,7 @@ namespace KL::Debug::ImGuiHelpers
     KLDEBUGIMGUIUSER_API UE_NODISCARD ImVec4 ConvertUnrealColorToImGui(const FColor& _Color);
     KLDEBUGIMGUIUSER_API UE_NODISCARD ImVec4 ConvertUnrealColorToImGui(const FLinearColor& _Color);
     KLDEBUGIMGUIUSER_API void DrawColoredText(const FColor _Color, const FString& _Text);
+    KLDEBUGIMGUIUSER_API void DrawConditionalColoredText(const FString& _Text, const bool _ConditionResult);
 
     template <typename CallbackType>
     void CreateWindowCallCbk(const ANSICHAR* _WindowName, bool& _IsOpen, const CallbackType& _Callback)
