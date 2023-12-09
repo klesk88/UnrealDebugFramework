@@ -2,8 +2,8 @@
 
 #include "Features/KLDebugImGuiServerObjectFeatures.h"
 
-// networking runtime module
-#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
+// modules
+#include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 
 // engine
 #include "GameFramework/Actor.h"
@@ -13,7 +13,7 @@ FKLDebugImGuiServerObjectFeatures::FKLDebugImGuiServerObjectFeatures(const UWorl
 {
     ensureMsgf(mNetworkID.IsValid(), TEXT("netowrk id must be valid"));
 
-    mCachedObject = KL::Debug::Networking::Helpers::TryGetObjectFromNetworkGUIDMutable(_World, _NetworkID);
+    mCachedObject = KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUIDMutable(_World, _NetworkID);
     ensureMsgf(mCachedObject.IsValid(), TEXT("object pointed should be valid"));
 
     mFeaturesEnable.Reserve(20);

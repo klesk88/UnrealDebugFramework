@@ -18,7 +18,7 @@ class FArchive;
 class FKLDebugNetworkingMessageSerializeInput;
 class UWorld;
 
-class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureDataUpdate final : public TKLDebugImGuiNetworkingMessage_Base<EKLDebugNetworkMessageTypes::Server_FeatureDataUpdate>
+class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureDataUpdate final : public TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate>
 {
 public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
@@ -49,7 +49,7 @@ private:
 
 inline bool FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::IsValid() const
 {
-    return TKLDebugImGuiNetworkingMessage_Base<EKLDebugNetworkMessageTypes::Server_FeatureDataUpdate>::IsValid() && mOwnerObjectNetworkID.IsValid();
+    return TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate>::IsValid() && mOwnerObjectNetworkID.IsValid();
 }
 
 inline EImGuiInterfaceType FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetImGuiInterfaceType() const

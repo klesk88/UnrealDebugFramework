@@ -26,7 +26,7 @@ public:
     // FRunnable
 
     virtual void CreateSocket() = 0;
-    UE_NODISCARD bool IsValid() const;
+    UE_NODISCARD virtual bool IsValid() const;
 
 protected:
     virtual void RunChild() = 0;

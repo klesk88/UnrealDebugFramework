@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Client/KLDebugImGuiTCPClientCachedConnection.h"
+#include "Client/KLDebugImGuiClientWorldCacheConnection.h"
 
 // modules
 #include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingConnectionDelegates.h"
@@ -10,33 +10,52 @@
 
 // engine
 #include "Containers/Array.h"
-#include "Delegates/IDelegateInstance.h"
-#include "HAL/Platform.h"
+#include "GenericPlatform/GenericPlatform.h"
+#include "IPAddress.h"
+#include "Templates/SharedPointer.h"
 
+class FArchive;
 class FKLDebugImGuiClientGameThreadContext;
-class UWorld;
+class UKLDebugNetworkingArbitrerSettings;
 
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiNetworkingTCPClient final : public FKLDebugImGuiNetworkingTCPBase
 {
 public:
     // FKLDebugImGuiNetworkingTCPBase
-    void CreateSocket() final;
+    bool Init() final;
     void RunChild() final;
+    void CreateSocket() final;
+    void Exit() final;
     // FKLDebugImGuiNetworkingTCPBase
 
     void TickGameThread(FKLDebugImGuiClientGameThreadContext& _Context);
 
 private:
-    void InitSocket();
+    void CreateArbitrerReplySocket(const UKLDebugNetworkingArbitrerSettings& _ArbitrerSettings);
 
     void RemoveCachedConnection(const int32 _Index);
-    void TickPendingConnections();
+    void TickReadArbitrerData();
     void TickConnections();
 
+    void OnReadArbitrerData(FArchive& _Reader);
+
     void GameThread_RemoveInvalidWorlds(const FKLDebugImGuiClientGameThreadContext& _Context);
+    void GameThread_NewWorlds(const FKLDebugImGuiClientGameThreadContext& _Context);
     void GameThread_TickImGuiData(FKLDebugImGuiClientGameThreadContext& _Context);
 
 private:
-    TArray<FKLDebugImGuiTCPClientCachedConnection> mCachedConnections;
-    bool mHasPendingWorlds = false;
+    TArray<FKLDebugImGuiClientWorldCacheConnection> mCachedConnections;
+    TSharedPtr<FInternetAddr> mArbitrerAddress;
+    TSharedPtr<FInternetAddr> mTempAddress;
+    TArray<uint8> mArbitrerTempWriteBuffer;
+    TArray<uint8> mArbitrerWriteBuffer;
+    TArray<uint8> mArbitrerReplyReadData;
+    TArray<uint8> mArbitrerReplyTempData;
+    FSocket* mArbitrerReplySocket = nullptr;
+    uint32 mArbitrerReplyPort = 0;
 };
+
+inline bool FKLDebugImGuiNetworkingTCPClient::Init()
+{
+    return FKLDebugImGuiNetworkingTCPBase::Init() && mArbitrerReplySocket != nullptr;
+}

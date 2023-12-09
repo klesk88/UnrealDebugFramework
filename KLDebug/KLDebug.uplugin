@@ -45,6 +45,11 @@
       "LoadingPhase": "Default"
     },
     {
+      "Name": "KLDebugNetworkingArbitrer",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
       "Name": "KLDebugNetworkingRuntime",
       "Type": "Runtime",
       "LoadingPhase": "Default"

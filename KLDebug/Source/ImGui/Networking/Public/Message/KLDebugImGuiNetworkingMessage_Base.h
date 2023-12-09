@@ -10,7 +10,7 @@
 class UObject;
 class UWorld;
 
-template <EKLDebugNetworkMessageTypes MessageType>
-class TKLDebugImGuiNetworkingMessage_Base : public TKLDebugNetworkingMessage_Base<EKLDebugNetworkMessageTypes, MessageType>
+template <EKLDebugImGuiNetworkMessage MessageType>
+class TKLDebugImGuiNetworkingMessage_Base : public TKLDebugNetworkingMessage_Base<EKLDebugImGuiNetworkMessage, MessageType, static_cast<uint16>(EKLDebugImGuiNetworkMessageTypes::ImGuiMessage)>
 {
 };

@@ -10,14 +10,18 @@
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 
 // engine
 #include "Engine/Engine.h"
 #include "Engine/World.h"
-#include "GameFramework/GameModeBase.h"
-#include "GameFramework/PlayerController.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+#if PLATFORM_WINDOWS
+#include "Windows/AllowWindowsPlatformTypes.h"
+#include "Windows/HideWindowsPlatformTypes.h"
+#include <Windows.h>
+#endif
 
 UKLDebugImGuiServerSubsystem_Engine* UKLDebugImGuiServerSubsystem_Engine::TryGetMutable()
 {
@@ -33,13 +37,11 @@ void UKLDebugImGuiServerSubsystem_Engine::Initialize(FSubsystemCollectionBase& _
 {
     Super::Initialize(_Collection);
 
+    KL::Debug::Networking::Message::InitHeaderSize();
+
     mServerConnection.InitSocket(TEXT("KLDebugImguiServerThread"));
 
-    FGameModeEvents::OnGameModePostLoginEvent().AddUObject(this, &UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLoginEventHandler);
-    FGameModeEvents::OnGameModeLogoutEvent().AddUObject(this, &UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLogoutEventHandle);
-
-    mConnectedPlayer.Reserve(10);
-    mDisconnectedPlayers.Reserve(10);
+    TryLunchArbitrer();
 
 #if !WITH_EDITOR
     CookedOnly_InitFeatureMapIfNeeded();
@@ -51,8 +53,6 @@ void UKLDebugImGuiServerSubsystem_Engine::Deinitialize()
     Super::Deinitialize();
 
     mServerConnection.ClearConnection();
-    FGameModeEvents::OnGameModePostLoginEvent().RemoveAll(this);
-    FGameModeEvents::OnGameModeLogoutEvent().RemoveAll(this);
 }
 
 bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
@@ -66,41 +66,61 @@ bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
     return IsServer;
 }
 
-void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLoginEventHandler(AGameModeBase* _GameMode, APlayerController* _NewPlayer)
-{
-    const UWorld* World = _NewPlayer ? _NewPlayer->GetWorld() : nullptr;
-    if (!World || !IsWorldInValidList(*World))
-    {
-        return;
-    }
-
-    mConnectedPlayer.Emplace(_NewPlayer);
-    SetShouldTick();
-}
-
-void UKLDebugImGuiServerSubsystem_Engine::OnGameModePostLogoutEventHandle(AGameModeBase* _GameMode, AController* _Exiting)
-{
-    const UWorld* World = _Exiting ? _Exiting->GetWorld() : nullptr;
-    if (!World || !IsWorldInValidList(*World))
-    {
-        return;
-    }
-
-    mDisconnectedPlayers.Emplace(FObjectKey(_Exiting));
-    SetShouldTick();
-}
-
 void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_Tick);
 
-    FKLDebugImGuiTCPServerGameThreadContext Context{ mConnectedPlayer, mDisconnectedPlayers };
+    FKLDebugImGuiTCPServerGameThreadContext Context;
     GatherUpdateData(Context);
 
     UKLDebugImGuiServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
     mServerConnection.GetConnectionMutable().TickGameThread(Context);
     mShouldTick = Context.GetShouldKeepTicking();
 }
+
+void UKLDebugImGuiServerSubsystem_Engine::TryLunchArbitrer()
+{
+#if PLATFORM_WINDOWS
+    // based on TryAutoConnect in TraceAucilary.cpp
+
+    // If we can detect a named event it means the arbitrer is running.
+    HANDLE KnownEvent = ::OpenEvent(EVENT_ALL_ACCESS, false, *KL::Debug::Networking::Message::ArbitrerSessionEvent);
+    if (KnownEvent == nullptr)
+    {
+        LunchArbitrer();
+    }
+#elif PLATFORM_UNIX
+    LunchArbitrer();
+#endif
+}
+
+#if PLATFORM_WINDOWS
+void UKLDebugImGuiServerSubsystem_Engine::LunchArbitrer()
+{
+    TWideStringBuilder<MAX_PATH + 32> CreateProcArgs;
+    // CreateProcArgs << "\"";
+    CreateProcArgs << FPaths::ProjectDir();
+    CreateProcArgs << TEXT("Binaries/Win64/KLDebugArbitrer-Win64-Debug.exe");
+
+    uint32 CreateProcFlags = CREATE_BREAKAWAY_FROM_JOB | CREATE_NEW_CONSOLE;
+    STARTUPINFOW StartupInfo = { sizeof(STARTUPINFOW) };
+    PROCESS_INFORMATION ProcessInfo = {};
+    BOOL bOk = CreateProcessW(LPWSTR(*CreateProcArgs), nullptr, nullptr, nullptr, false, CreateProcFlags, nullptr, nullptr, &StartupInfo, &ProcessInfo);
+
+    if (!bOk)
+    {
+        UE_LOG(LogCore, Display, TEXT("UnrealTraceServer: Unable to launch the trace store with '%s' (%08x)"), *CreateProcArgs, GetLastError());
+        return;
+    }
+
+    CloseHandle(ProcessInfo.hProcess);
+    CloseHandle(ProcessInfo.hThread);
+}
+#elif PLATFORM_UNIX
+void UKLDebugImGuiServerSubsystem_Engine::LunchArbitrer()
+{
+}
+#endif
 
 #if !WITH_EDITOR
 

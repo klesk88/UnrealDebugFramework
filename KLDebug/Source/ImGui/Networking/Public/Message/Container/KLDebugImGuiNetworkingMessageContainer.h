@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "Message/Header/KLDebugImGuiNetworkingMessage_Header.h"
+// modules
+#include "Networking/Runtime/Public/Message/Header/KLDebugNetworkingMessage_Header.h"
 
 // engine
 #include "Containers/Array.h"
@@ -15,6 +16,6 @@ public:
     void Serialize(FArchive& _Archive);
 
 private:
-    FKLDebugImGuiNetworkingMessage_Header mMessageHeader;
+    FKLDebugNetworkingMessage_Header mMessageHeader;
     TArray<uint8> mMessageSerializedData;
 };

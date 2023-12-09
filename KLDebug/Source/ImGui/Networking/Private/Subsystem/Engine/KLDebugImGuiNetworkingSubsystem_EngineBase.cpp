@@ -14,6 +14,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::Initialize(FSubsystemCollectio
     Super::Initialize(_Collection);
 
     mCurrentWorlds.Reserve(10);
+    mNewWorlds.Reserve(10);
     mRemovedWorlds.Reserve(10);
 
     RegisterDelegates();
@@ -62,7 +63,9 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnAddImGuiSubsystem(UKLDebugIm
     if (IsValidWorld(*World))
     {
         mCurrentWorlds.Emplace(World);
+        mNewWorlds.Emplace(World);
         OnImGuiSusbsytemAdded(_ImGuiSubsystem, *World);
+        SetShouldTick();
     }
 }
 
@@ -130,6 +133,8 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::GatherUpdateData(FKLDebugImGui
 {
     TArray<const UWorld*>& Worlds = _Context.GetWorldsMutable();
     Worlds.Reserve(mCurrentWorlds.Num());
+    _Context.SetNewWorlds(mNewWorlds);
+    mNewWorlds.Reset();
 
     for (const TWeakObjectPtr<const UWorld>& World : mCurrentWorlds)
     {

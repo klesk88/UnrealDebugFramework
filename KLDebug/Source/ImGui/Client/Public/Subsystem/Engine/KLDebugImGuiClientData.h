@@ -12,12 +12,9 @@
 #include "Misc/NetworkGuid.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/ObjectKey.h"
-#include "UObject/WeakObjectPtr.h"
-#include "UObject/WeakObjectPtrTemplates.h"
 
 class FKLDebugImGuiFeatureStatusUpdateData;
 class UKLDebugImGuiWorldSubsystem;
-class UWorld;
 
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientData final : public FNoncopyable
 {
@@ -29,7 +26,6 @@ public:
 
     UE_NODISCARD bool OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
 
-    UE_NODISCARD FNetworkGUID GetLocalPlayerNetworkID() const;
     UE_NODISCARD TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate>& GetFeaturesStatusUpdateMutable();
     UE_NODISCARD const UWorld& GetWorld() const;
     UE_NODISCARD const FObjectKey& GetWorldID() const;

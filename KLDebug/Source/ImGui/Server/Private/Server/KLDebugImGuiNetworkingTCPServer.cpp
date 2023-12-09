@@ -6,107 +6,64 @@
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
 // modules
+#include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
+#include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
+#include "Networking/Arbitrer/Public/Settings/KLDebugNetworkingArbitrerSettings.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine
 #include "Common/TcpSocketBuilder.h"
+#include "Common/UdpSocketBuilder.h"
 #include "Containers/UnrealString.h"
 #include "Engine/EngineBaseTypes.h"
 #include "Engine/NetConnection.h"
-#include "GameFramework/Controller.h"
-#include "GameFramework/GameModeBase.h"
-#include "GameFramework/PlayerController.h"
-#include "Interfaces/IPv4/IPv4Address.h"
-#include "Interfaces/IPv4/IPv4Endpoint.h"
-#include "IPAddress.h"
+#include "Engine/NetDriver.h"
+#include "Engine/World.h"
 #include "Misc/ScopeTryLock.h"
+#include "Sockets.h"
 #include "SocketSubsystem.h"
 
 void FKLDebugImGuiNetworkingTCPServer::CreateSocket()
 {
-    InitSocket();
-}
+    mListenerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
+                      .AsNonBlocking()
+                      .AsReusable()
+                      .Build();
 
-void FKLDebugImGuiNetworkingTCPServer::InitSocket()
-{
-    const FIPv4Address IPAddr(127, 0, 0, 1);
+    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+    check(SocketSubsystem);
+    const UKLDebugNetworkingArbitrerSettings& ArbitrerSettings = UKLDebugNetworkingArbitrerSettings::Get();
+    mArbitrerAddress = SocketSubsystem->CreateInternetAddr();
+    bool IsValid = false;
+    mArbitrerAddress->SetIp(TEXT("127.0.0.1"), IsValid);
+    checkf(IsValid, TEXT("must be valid"));
+    mArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
 
-    const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
-    uint32 ServerPort = Settings.Server_GetStartPortSearch();
-    const uint32 MaxClientPortDiscoveryTries = Settings.Server_GetMaxPortDiscoveryRetries();
-    uint32 CurrentRetry = 0;
-
-    while (!mListenerSocket && CurrentRetry < MaxClientPortDiscoveryTries)
-    {
-        const FIPv4Endpoint Endpoint(IPAddr, ServerPort++);
-
-        mListenerSocket = FTcpSocketBuilder(TEXT("ServerSocket"))
-                              .AsReusable()
-                              .AsNonBlocking()
-                              .BoundToEndpoint(Endpoint)
-                              .Listening(Settings.Server_GetMaxConnectionBacklog())
-                              .Build();
-    }
-
-    if (!mListenerSocket)
-    {
-        UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPServer::InitSocket>> Failed in creating listener socket"));
-        return;
-    }
-
-    int32 NewSize = 0;
-    mListenerSocket->SetReceiveBufferSize(Settings.Server_GetReadBufferSize(), NewSize);
-    mListenerSocket->SetSendBufferSize(Settings.Server_GetWriteBufferSize(), NewSize);
+    mArbitrerTempMessageBuffer.Reserve(500);
+    mArbitrerTempBuffer.Reserve(500);
 }
 
 void FKLDebugImGuiNetworkingTCPServer::RemoveCachedConnection(const int32 _Index)
 {
-    FKLDebugImGuiTCPServerCachedConnection& RemoveConnection = mClientsCachedConnection[_Index];
-    RemoveConnection.Shutdown();
-    mClientsCachedConnection.RemoveAtSwap(_Index, 1, false);
+    FKLDebugImGuiServerWorldCachedConnection& RemoveConnection = mWorldCachedConnections[_Index];
+    RemoveConnection.OnRemove(*mArbitrerAddress.Get(), *mListenerSocket, mArbitrerTempMessageBuffer, mArbitrerTempBuffer);
+    mWorldCachedConnections.RemoveAtSwap(_Index, 1, false);
 }
 
 void FKLDebugImGuiNetworkingTCPServer::RunChild()
 {
-    if (!mListenerSocket)
-    {
-        UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPServer::RunChild>> Socket has not been created. Stop server"));
-        Stop();
-        return;
-    }
-
-    TickRemovePlayerConnections();
-    TickCachedConnections();
+    Parallel_TickCachedConnections();
 }
 
-void FKLDebugImGuiNetworkingTCPServer::TickRemovePlayerConnections()
+void FKLDebugImGuiNetworkingTCPServer::Parallel_TickCachedConnections()
 {
-    for (int32 i = mClientsCachedConnection.Num() - 1; i >= 0; --i)
-    {
-        const FKLDebugImGuiTCPServerCachedConnection& ConnectionData = mClientsCachedConnection[i];
-        if (!ConnectionData.IsValidConnection())
-        {
-            RemoveCachedConnection(i);
-        }
-    }
-}
+    checkf(mArbitrerAddress.IsValid(), TEXT("Internet address must be valid"));
 
-void FKLDebugImGuiNetworkingTCPServer::TickCachedConnections()
-{
     bool RequiresGameThreadTick = false;
-    for (int32 i = mClientsCachedConnection.Num() - 1; i >= 0; --i)
+    for (FKLDebugImGuiServerWorldCachedConnection& WorldConnection : mWorldCachedConnections)
     {
-        FKLDebugImGuiTCPServerCachedConnection& CachedConnection = mClientsCachedConnection[i];
-        if (!CachedConnection.IsValid())
-        {
-            RemoveCachedConnection(i);
-            continue;
-        }
-
-        CachedConnection.Tick();
-        RequiresGameThreadTick |= CachedConnection.HasNewReadData();
+        RequiresGameThreadTick |= WorldConnection.Parallel_Tick(*mArbitrerAddress.Get(), *mListenerSocket, mArbitrerTempMessageBuffer, mArbitrerTempBuffer);
     }
 
     // this works without locks because we are owned by the KLDebugImGuiServerSubsystem_Engine
@@ -133,9 +90,8 @@ void FKLDebugImGuiNetworkingTCPServer::TickGameThread(FKLDebugImGuiTCPServerGame
         return;
     }
 
+    GameThread_AddNewWorlds(_Context);
     GameThread_RemoveOldWorlds(_Context);
-    GameThread_UpdateNewPlayersConnections(_Context);
-    GameThread_RemovePlayersConnection(_Context);
     const bool KeepTicking = GameThread_UpdateConnections(_Context);
     _Context.SetShouldKeepTicking(KeepTicking);
 }
@@ -144,110 +100,63 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_RemoveOldWorlds(const FKLDebug
 {
     for (const FObjectKey& RemovedWorld : _Context.GetRemovedWorlds())
     {
-        for (int32 i = mClientsCachedConnection.Num() - 1; i >= 0; --i)
+        const int32 Index = mWorldCachedConnections.IndexOfByKey(RemovedWorld);
+        if (Index == INDEX_NONE)
         {
-            const FKLDebugImGuiTCPServerCachedConnection& ConnectionData = mClientsCachedConnection[i];
-            if (ConnectionData.IsPartOfWorld(RemovedWorld))
-            {
-                RemoveCachedConnection(i);
-            }
+            ensureMsgf(false, TEXT("should not happen"));
+            continue;
         }
+
+        RemoveCachedConnection(Index);
     }
 }
 
-void FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateNewPlayersConnections(FKLDebugImGuiTCPServerGameThreadContext& _Context)
+void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context)
 {
-    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPServer_UpdateNewPlayersConnections);
-
-    static const FString SocketDescription(TEXT("KLDebugImGuiServer_NewClientSocket"));
-    // should be safe to do this in parallel as FTcpMessageTransportConnection::Run does the same
-    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-    if (!SocketSubsystem)
+    if (_Context.GetNewWorlds().IsEmpty())
     {
-        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::TickNewPlayerConnections>> Could not get socket subsystem"));
         return;
     }
 
-    TArray<TWeakObjectPtr<const APlayerController>>& NewPlayers = _Context.GetNewConnectedPlayers();
-    if (NewPlayers.IsEmpty())
+    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+    if (!SocketSubsystem)
     {
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> Could not get socket subsystem"));
         return;
     }
 
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
-    const uint32 ClientPort = Settings.Client_GetPort();
+    const FString LocalHost(TEXT("127.0.0.1"));
+    int32 DebugPort = 0;
 
-    for (const TWeakObjectPtr<const APlayerController>& NewPlayerController : NewPlayers)
+    for (const TWeakObjectPtr<const UWorld>& AddeddWorld : _Context.GetNewWorlds())
     {
-        if (!NewPlayerController.IsValid())
+        if (!AddeddWorld.IsValid())
         {
             continue;
         }
 
-        const FObjectKey ControllerKey(NewPlayerController.Get());
-        ensureMsgf(mClientsCachedConnection.FindByKey(ControllerKey) == nullptr, TEXT("controller is already in connected list not expected"));
-
-        const UNetConnection* NetConnection = NewPlayerController->GetNetConnection();
-        if (!NetConnection)
+        const UNetDriver* WorldNetDriver = AddeddWorld->GetNetDriver();
+        const TSharedPtr<FInternetAddr> WorldLocalAddress = WorldNetDriver ? WorldNetDriver->LocalAddr : nullptr;
+        if (!WorldLocalAddress.IsValid())
         {
-            ensureMsgf(false, TEXT("No valid net connection for new player. Not expected"));
+            ensureMsgf(false, TEXT("No valid net connection for world. Not expected"));
             continue;
         }
 
-        const FString& HostString = NetConnection->URL.Host;
-
-        bool IsValid = false;
-        TSharedRef<FInternetAddr> Address = SocketSubsystem->CreateInternetAddr();
-        Address->SetIp(*HostString, IsValid);
-        if (!IsValid)
+        FSocket* WorldArbitrerSocket = GetNewWorldSocket(Settings, DebugPort);
+        if (!WorldArbitrerSocket)
         {
-            UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::TickNewPlayerConnections>> Invalid Ip Address [%s]"), *HostString);
-            continue;
-        }
-
-        Address->SetPort(ClientPort);
-        FSocket* NewClientSocket = FTcpSocketBuilder(SocketDescription)
-                                       .AsNonBlocking()
-                                       .AsReusable()
-                                       .Build();
-
-        if (!NewClientSocket)
-        {
-            UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::TickNewPlayerConnections>> Failed to create socket"));
+            UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> Failed in creating arbitrer socket for world [%s]"), *AddeddWorld->GetName());
             continue;
         }
 
         int32 ReceiveBufferSize = 0;
         int32 SenderBufferSize = 0;
-        NewClientSocket->SetReceiveBufferSize(Settings.Client_GetReadBufferSize(), ReceiveBufferSize);
-        NewClientSocket->SetSendBufferSize(Settings.Client_GetWriteBufferSize(), SenderBufferSize);
-
-        NewClientSocket->Connect(*Address);
-
-        const KL::Debug::ImGui::Networking::Server::CacheConnectionID NewID = (mCacheConnectionsID + 1) % TNumericLimits<KL::Debug::ImGui::Networking::Server::CacheConnectionID>::Max();
-        mClientsCachedConnection.Emplace(*NewPlayerController.Get(), NewID, ReceiveBufferSize, SenderBufferSize, *NewClientSocket, Address);
+        WorldArbitrerSocket->SetReceiveBufferSize(static_cast<int32>(Settings.Server_GetReadBufferSize()), ReceiveBufferSize);
+        WorldArbitrerSocket->SetSendBufferSize(static_cast<int32>(Settings.Server_GetWriteBufferSize()), SenderBufferSize);
+        mWorldCachedConnections.Emplace(*AddeddWorld.Get(), WorldLocalAddress->GetPort(), DebugPort, *WorldArbitrerSocket);
     }
-
-    NewPlayers.Reset();
-}
-
-void FKLDebugImGuiNetworkingTCPServer::GameThread_RemovePlayersConnection(FKLDebugImGuiTCPServerGameThreadContext& _Context)
-{
-    TArray<FObjectKey>& NewPlayers = _Context.GetDisconnectedPlayers();
-    if (NewPlayers.IsEmpty())
-    {
-        return;
-    }
-
-    for (const FObjectKey& RemovedPlayer : NewPlayers)
-    {
-        if (FKLDebugImGuiTCPServerCachedConnection* Connection = mClientsCachedConnection.FindByKey(RemovedPlayer))
-        {
-            Connection->SetInvalidConnection();
-        }
-    }
-
-    NewPlayers.Reset();
 }
 
 bool FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateConnections(const FKLDebugImGuiTCPServerGameThreadContext& _Context)
@@ -255,17 +164,36 @@ bool FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateConnections(const FKLDeb
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPServer_GTUpdateConnections);
 
     bool KeepTicking = false;
-    for (FKLDebugImGuiTCPServerCachedConnection& ClientConnection : mClientsCachedConnection)
+    for (FKLDebugImGuiServerWorldCachedConnection& ClientConnection : mWorldCachedConnections)
     {
-        if (!ClientConnection.IsValidConnection())
-        {
-            // pending to be removed
-            continue;
-        }
-
         // if any of the connection want to keep ticking then keep ticking next frame
         KeepTicking |= ClientConnection.TickOnGameThread();
     }
 
     return KeepTicking;
+}
+
+FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const
+{
+    const FIPv4Address IPAddr(127, 0, 0, 1);
+    uint32 CurrentPort = _Settings.Server_GetStartPortRange();
+    FSocket* NewSocket = nullptr;
+    while (!NewSocket && CurrentPort < static_cast<int32>(_Settings.Server_GetEndPortRange()))
+    {
+        _DebugPort = CurrentPort++;
+        const FIPv4Endpoint Endpoint(IPAddr, static_cast<int32>(_DebugPort));
+        NewSocket = FTcpSocketBuilder(TEXT("ClientListenerSocket"))
+                    .AsNonBlocking()
+                    .BoundToEndpoint(Endpoint)
+                    .Listening(static_cast<int32>(_Settings.Server_GetMaxConnectionBacklog()))
+                    .Build();
+    }
+
+    if (!NewSocket)
+    {
+        UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket>> Failed in creating socket"));
+        return nullptr;
+    }
+
+    return NewSocket;
 }

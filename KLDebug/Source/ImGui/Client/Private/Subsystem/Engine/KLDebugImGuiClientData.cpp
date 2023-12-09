@@ -7,18 +7,14 @@
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+#include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
-#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine
-#include "Engine/DebugCameraController.h"
 #include "Engine/EngineBaseTypes.h"
-#include "Engine/LocalPlayer.h"
-#include "GameFramework/Actor.h"
-#include "GameFramework/PlayerController.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 FKLDebugImGuiClientData::FKLDebugImGuiClientData(const UWorld& _World, const FDelegateHandle& _DelegateHandle)
@@ -90,7 +86,7 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
             return false;
         }
 
-        NetworkID = KL::Debug::Networking::Helpers::TryGetNetworkGuid(*_FeatureUpdateData.TryGetObject());
+        NetworkID = KL::Debug::ImGuiNetworking::Helpers::TryGetNetworkGuid(*_FeatureUpdateData.TryGetObject());
         if (!NetworkID.IsValid())
         {
             ensureMsgf(false, TEXT("no valid network ID"));
@@ -133,25 +129,4 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
     }
 
     return true;
-}
-
-FNetworkGUID FKLDebugImGuiClientData::GetLocalPlayerNetworkID() const
-{
-    const UWorld& World = GetWorld();
-    const ULocalPlayer* LocalPlayer = World.GetFirstLocalPlayerFromController();
-    const APlayerController* PlayerController = LocalPlayer ? LocalPlayer->GetPlayerController(&World) : nullptr;
-    if (!PlayerController)
-    {
-        // it can happen that the player controller is not yet ready at this point
-        return FNetworkGUID();
-    }
-
-    if (PlayerController->GetClass()->IsChildOf(ADebugCameraController::StaticClass()))
-    {
-        const ADebugCameraController* DebugCamera = Cast<const ADebugCameraController>(PlayerController);
-        PlayerController = DebugCamera->OriginalControllerRef.Get();
-    }
-
-    const FNetworkGUID ControllerNetworkID = KL::Debug::Networking::Helpers::TryGetNetworkGuid(*PlayerController);
-    return ControllerNetworkID;
 }

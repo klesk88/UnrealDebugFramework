@@ -70,6 +70,7 @@ protected:
 
 private:
     TArray<TWeakObjectPtr<const UWorld>> mCurrentWorlds;
+    TArray<TWeakObjectPtr<const UWorld>> mNewWorlds;
     TArray<FObjectKey> mRemovedWorlds;
 };
 

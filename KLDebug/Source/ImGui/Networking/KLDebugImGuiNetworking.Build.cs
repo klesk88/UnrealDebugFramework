@@ -34,8 +34,15 @@ public class KLDebugImGuiNetworking : ModuleRules
             new string[]
             {
                 "Core",
-                "CoreUObject",
+                "CoreUObject"
             }
         );
+
+        if (Target.bBuildWithEditorOnlyData)
+        {
+            PublicDependencyModuleNames.AddRange(new string[] {
+                "KLDebugNetworkingArbitrer" ///to check in the settings for the port
+            });
+        }
     }
 }

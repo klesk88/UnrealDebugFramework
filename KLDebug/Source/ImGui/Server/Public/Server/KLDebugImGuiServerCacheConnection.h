@@ -21,6 +21,7 @@ class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiNetworkingMessage_FeatureStatusData;
 class FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate;
 class FKLDebugImGuiNetworkingPendingMessage;
+class FKLDebugNetworkingPendingMessage;
 class FNetworkGUID;
 class UWorld;
 
@@ -29,7 +30,7 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection
 public:
     explicit FKLDebugImGuiServerCacheConnection();
 
-    void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, TArray<FKLDebugImGuiNetworkingPendingMessage>& _MessagesReceived);
+    void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, TArray<FKLDebugNetworkingPendingMessage>& _MessagesReceived);
     void WriteData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
 
     UE_NODISCARD bool NeedsTicking() const;

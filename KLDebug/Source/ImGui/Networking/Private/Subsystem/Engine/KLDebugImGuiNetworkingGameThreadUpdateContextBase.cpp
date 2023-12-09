@@ -5,3 +5,8 @@
 FKLDebugImGuiNetworkingGameThreadUpdateContextBase::~FKLDebugImGuiNetworkingGameThreadUpdateContextBase()
 {
 }
+
+void FKLDebugImGuiNetworkingGameThreadUpdateContextBase::SetNewWorlds(const TArray<TWeakObjectPtr<const UWorld>>& _NewWorlds)
+{
+    mNewWorlds = _NewWorlds;
+}

@@ -3,7 +3,7 @@
 #include "Message/Feature/DataUpdate/KLDebugImGuiNetworkingMessage_FeatureDataUpdate.h"
 
 // module
-#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
+#include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "Networking/Runtime/Public/Message/KLDebugNetworkingMessageSerializeInput.h"
 
 FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
@@ -56,5 +56,5 @@ void FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::SerializeChild(const FKLD
 
 const UObject* FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetObject(const UWorld& _World) const
 {
-    return KL::Debug::Networking::Helpers::TryGetObjectFromNetworkGUID(_World, mOwnerObjectNetworkID);
+    return KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUID(_World, mOwnerObjectNetworkID);
 }

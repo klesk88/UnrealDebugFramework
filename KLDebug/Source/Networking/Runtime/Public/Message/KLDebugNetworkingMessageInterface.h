@@ -16,8 +16,10 @@ public:
     virtual ~IKLDebugNetworkingMessageInterface() = default;
 
     UE_NODISCARD virtual uint16 GetMessageType() const = 0;
-    virtual UE_NODISCARD bool IsValid() const;
+    UE_NODISCARD virtual uint16 GetMessageEnumType() const = 0;
+    UE_NODISCARD virtual bool IsValid() const;
 
+    UE_NODISCARD virtual bool SupportsEmptyData() const;
     UE_NODISCARD virtual uint8 GetMessageVersion() const;
 
     void Serialize(FArchive& _Archive);
@@ -34,4 +36,9 @@ inline uint8 IKLDebugNetworkingMessageInterface::GetMessageVersion() const
 inline bool IKLDebugNetworkingMessageInterface::IsValid() const
 {
     return true;
+}
+
+inline bool IKLDebugNetworkingMessageInterface::SupportsEmptyData() const
+{
+    return false;
 }

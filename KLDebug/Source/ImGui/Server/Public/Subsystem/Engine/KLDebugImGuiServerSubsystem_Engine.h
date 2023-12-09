@@ -31,9 +31,6 @@
 
 #include "KLDebugImGuiServerSubsystem_Engine.generated.h"
 
-class AController;
-class AGameModeBase;
-class APlayerController;
 class UWorld;
 
 UCLASS(Transient)
@@ -56,20 +53,22 @@ private:
     UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
     UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
 
-    ETickableTickType GetTickableTickTypeChild() const;
+    ETickableTickType GetTickableTickTypeChild() const final;
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
 
-    void OnGameModePostLoginEventHandler(AGameModeBase* _GameMode, APlayerController* _NewPlayer);
-    void OnGameModePostLogoutEventHandle(AGameModeBase* _GameMode, AController* _Exiting);
+    void TryLunchArbitrer();
+#if PLATFORM_WINDOWS
+    void LunchArbitrer();
+#elif PLATFORM_UNIX
+    void LunchArbitrer();
+#endif
 
 private:
     // NOTE: if we change the ownership of the connection, then we need to update also FKLDebugImGuiNetworkingTCPServer::TickCachedConnections
     // where we request the tick to make sure is thread safe
     TKLDebugImGuiNetworkingConnectionRunnableContainer<FKLDebugImGuiNetworkingTCPServer> mServerConnection;
-    TArray<TWeakObjectPtr<const APlayerController>> mConnectedPlayer;
-    TArray<FObjectKey> mDisconnectedPlayers;
 
 #if !WITH_EDITOR
 public:

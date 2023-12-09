@@ -32,8 +32,6 @@ public:
     static const UKLDebugImGuiClientSubsystem_Engine* TryGet();
     static UKLDebugImGuiClientSubsystem_Engine* TryGetMutable();
 
-    void SetHasServerInitializedOwner(const bool _HasServerInitializedOwner);
-
 private:
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
     UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
@@ -45,7 +43,6 @@ private:
     ETickableTickType GetTickableTickTypeChild() const;
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
-    bool IsTickable() const final;
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
@@ -53,7 +50,6 @@ private:
 private:
     TKLDebugImGuiNetworkingConnectionRunnableContainer<FKLDebugImGuiNetworkingTCPClient> mClientConnection;
     TArray<FKLDebugImGuiClientData> mClientsData;
-    bool mHasServerInitializedOwner = false;
 };
 
 inline const UKLDebugImGuiClientSubsystem_Engine* UKLDebugImGuiClientSubsystem_Engine::TryGet()
@@ -76,17 +72,7 @@ inline TStatId UKLDebugImGuiClientSubsystem_Engine::GetStatId() const
     RETURN_QUICK_DECLARE_CYCLE_STAT(UKLDebugImGuiClientSubsystem_Engine, STATGROUP_Tickables);
 }
 
-inline bool UKLDebugImGuiClientSubsystem_Engine::IsTickable() const
-{
-    return Super::IsTickable() && mHasServerInitializedOwner;
-}
-
 inline ETickableTickType UKLDebugImGuiClientSubsystem_Engine::GetTickableTickTypeChild() const
 {
     return ETickableTickType::Conditional;
-}
-
-inline void UKLDebugImGuiClientSubsystem_Engine::SetHasServerInitializedOwner(const bool _HasServerInitializedOwner)
-{
-    mHasServerInitializedOwner = _HasServerInitializedOwner;
 }

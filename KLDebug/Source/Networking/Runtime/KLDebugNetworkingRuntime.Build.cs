@@ -17,22 +17,16 @@ public class KLDebugNetworkingRuntime : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "KLDebugUtils",
-
                 //engine
-                "DeveloperSettings",
-                "Engine",
                 "Networking",
-                "Sockets",
-                "StructUtils"
+                "Sockets"
             }
         );
 
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "Core",
-                "CoreUObject",
+                "Core"
             }
         );
     }

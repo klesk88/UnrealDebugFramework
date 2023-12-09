@@ -13,16 +13,19 @@ class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingGameThreadUpdateContextB
 public:
     virtual ~FKLDebugImGuiNetworkingGameThreadUpdateContextBase();
 
+    void SetNewWorlds(const TArray<TWeakObjectPtr<const UWorld>>& _NewWorlds);
     void SetRemovedWorlds(const TArray<FObjectKey>& _RemovedWorlds);
     UE_NODISCARD const TArray<FObjectKey>& GetRemovedWorlds() const;
     UE_NODISCARD TArray<const UWorld*>& GetWorldsMutable();
     UE_NODISCARD const TArray<const UWorld*>& GetWorlds() const;
+    UE_NODISCARD const TArray<TWeakObjectPtr<const UWorld>>& GetNewWorlds() const;
 
     void SetShouldKeepTicking(const bool _ShouldTick);
     UE_NODISCARD bool GetShouldKeepTicking() const;
 
 private:
     TArray<const UWorld*> mWorlds;
+    TArray<TWeakObjectPtr<const UWorld>> mNewWorlds;
     TArray<FObjectKey> mRemovedWorlds;
     bool mShouldTick = false;
 };
@@ -55,4 +58,9 @@ inline void FKLDebugImGuiNetworkingGameThreadUpdateContextBase::SetRemovedWorlds
 inline const TArray<FObjectKey>& FKLDebugImGuiNetworkingGameThreadUpdateContextBase::GetRemovedWorlds() const
 {
     return mRemovedWorlds;
+}
+
+inline const TArray<TWeakObjectPtr<const UWorld>>& FKLDebugImGuiNetworkingGameThreadUpdateContextBase::GetNewWorlds() const
+{
+    return mNewWorlds;
 }

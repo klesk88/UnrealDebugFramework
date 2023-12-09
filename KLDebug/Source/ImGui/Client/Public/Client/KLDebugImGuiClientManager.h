@@ -13,7 +13,7 @@
 
 class FArchive;
 class FKLDebugImGuiClientData;
-class FKLDebugImGuiNetworkingPendingMessage;
+class FKLDebugNetworkingPendingMessage;
 class UWorld;
 
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientManager
@@ -21,13 +21,13 @@ class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientManager
 public:
     void Init();
 
-    void GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData);
+    void GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugNetworkingPendingMessage>& _NewData);
 
     void Parallel_TickWriteData(FArchive& _Writer);
 
 private:
     void GameThread_CopyPendingMessages(FKLDebugImGuiClientData& _ClientData);
-    void GameThread_ReadMessages(const UWorld& _World, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData);
+    void GameThread_ReadMessages(const UWorld& _World, TArray<FKLDebugNetworkingPendingMessage>& _NewData);
 
     void Parallel_WritePendingFeaturesStatusUpdate(TArray<uint8>& _TempData, FArchive& _Archive);
 

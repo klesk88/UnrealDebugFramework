@@ -10,13 +10,12 @@
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "ImGui/Networking/Public/Message/Feature/DataUpdate/KLDebugImGuiNetworkingMessage_FeatureDataUpdate.h"
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
-#include "ImGui/Networking/Public/Message/Helpers/KLDebugImGuiNetworkingMessage_Helpers.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "ImGui/Networking/Public/TCP/KLDebugImGuiNetworkingPendingMessage.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
-#include "Networking/Runtime/Public/Helpers/KLDebugNetworkingHelpers.h"
+#include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
+#include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingSplittedMessage.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine
@@ -42,7 +41,7 @@ void FKLDebugImGuiClientManager::Init()
     mPendingFeaturesStatusUpdates.Reserve(30);
 }
 
-void FKLDebugImGuiClientManager::GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData)
+void FKLDebugImGuiClientManager::GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugNetworkingPendingMessage>& _NewData)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_TickReadData);
 
@@ -79,7 +78,7 @@ void FKLDebugImGuiClientManager::GameThread_CopyPendingMessages(FKLDebugImGuiCli
     }
 }
 
-void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, TArray<FKLDebugImGuiNetworkingPendingMessage>& _NewData)
+void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, TArray<FKLDebugNetworkingPendingMessage>& _NewData)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_ReadMessages);
 
@@ -94,13 +93,19 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, T
 
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
 
-    for (const FKLDebugImGuiNetworkingPendingMessage& PendingMessage : _NewData)
+    for (const FKLDebugNetworkingPendingMessage& PendingMessage : _NewData)
     {
-        const EKLDebugNetworkMessageTypes MessageType = PendingMessage.GetMesageType();
+        if (PendingMessage.GetMessageEnumType() != static_cast<uint16>(EKLDebugImGuiNetworkMessageTypes::ImGuiMessage))
+        {
+            UE_LOG(LogKL_Debug, Error, TEXT("received message of wrong type [%d]"), static_cast<int32>(PendingMessage.GetMessageEnumType()));
+            continue;
+        }
+
+        const EKLDebugImGuiNetworkMessage MessageType = static_cast<EKLDebugImGuiNetworkMessage>(PendingMessage.GetMessageType());
         FMemoryReader MessageDataReader{ PendingMessage.GetMessageData() };
         switch (MessageType)
         {
-        case EKLDebugNetworkMessageTypes::Server_FeatureDataUpdate:
+        case EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate:
         {
             const FKLDebugImGuiNetworkingMessage_FeatureDataUpdate FeatureDataUpdate{ MessageDataReader };
             if (!FeatureDataUpdate.IsValid())
@@ -165,7 +170,7 @@ void FKLDebugImGuiClientManager::Parallel_WritePendingFeaturesStatusUpdate(TArra
             continue;
         }
 
-        KL::Debug::ImGuiNetworking::Message::PrepareMessageToSend_Uncompressed(UpdateStatus, _TempData, _Archive);
+        KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(UpdateStatus, _TempData, _Archive);
         _TempData.Reset();
     }
 
