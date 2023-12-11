@@ -19,6 +19,7 @@ For example, if the user defines a Filter that returns true only if the object s
 To create a new Filter the user needs to extend the IKLDebugImGuiFilterInterface (found in KLDebugImGuiUser module) and use the appropriate setup detailed in the .h file. 
 Here an example:
 
+```
 .h
 
 class FClassFilter final : public IKLDebugImGuiFilterInterface
@@ -29,7 +30,8 @@ class FClassFilter final : public IKLDebugImGuiFilterInterface
 .cpp
 
 KL_DEBUG_CREATE_FILTER(FClassFilter)
- 
+
+```
 A FEATURE is a statically allocated CPP class which represent a mechanic we want to display in the ImGui Debug Window.
 Features have a path (which needs to respect this format Root.Branch.Branch.Leaf) and are represented in the ImGui Debug Window as a selectable tree.
 Here is where the user can define what to display on the ImGui Window that will be created when the Feature is selected.
@@ -40,6 +42,7 @@ There are 2 types of Interfaces classes that can be extended by the user current
   - 
 To create a new Feature the user needs to extend, for example, the IKLDebugImGuiFeatureInterface_Selectable (found in KLDebugImGuiUser module) and use the appropriate setup detailed in the .h file. Here an example:
 
+```
 .h
 
    class FClassDebug final : public IKLDebugImGuiFeatureInterface_Selectable
@@ -51,7 +54,7 @@ To create a new Feature the user needs to extend, for example, the IKLDebugImGui
 .cpp
 
 KL_DEBUG_CREATE_WINDOW(FClassDebug)
-
+```
 
 ## Missing features: 
 - Finish to implement missing parts of code (such as the Picker)
