@@ -17,7 +17,8 @@ class UWorld;
  *
  * class FClassDebug final : public IKLDebugImGuiFeatureInterface_Unique
  * {
- *   ...
+ *     DERIVED_KL_DEBUG_FEATURE_CLASS(FClassDebug, IKLDebugImGuiFeatureInterface_Unique)
+ *     ...
  * };
  *
  * FClassDebug.cpp

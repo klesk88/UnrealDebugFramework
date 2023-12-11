@@ -18,7 +18,8 @@
  *
  * class FClassDebug final : public IKLDebugImGuiFeatureInterface_Selectable
  * {
- *   ...
+ *      DERIVED_KL_DEBUG_FEATURE_CLASS(FClassDebug, IKLDebugImGuiFeatureInterface_Selectable)
+ *      ...
  * };
  *
  * FClassDebug.cpp
