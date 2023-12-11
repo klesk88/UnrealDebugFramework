@@ -47,6 +47,7 @@ void FKLDebugImGuiNetworkingTCPClient::CreateSocket()
 
     mArbitrerTempWriteBuffer.Reserve(500);
     mArbitrerWriteBuffer.Reserve(500);
+    mArbitrerReplyReadData.Init(0, 500);
 
     CreateArbitrerReplySocket(ArbitrerSettings);
 }
@@ -141,8 +142,7 @@ void FKLDebugImGuiNetworkingTCPClient::TickReadArbitrerData()
 
     while (mArbitrerReplySocket->HasPendingData(Size) && Size > 0)
     {
-        mArbitrerReplyReadData.Reset();
-        mArbitrerReplyReadData.AddUninitialized(Size);
+        mArbitrerReplyReadData.SetNumUninitialized(Size, false);
         Size = 0;
         mArbitrerReplySocket->Recv(mArbitrerReplyReadData.GetData(), mArbitrerReplyReadData.Num(), BytesRead);
         if (BytesRead == 0)
@@ -151,7 +151,8 @@ void FKLDebugImGuiNetworkingTCPClient::TickReadArbitrerData()
             continue;
         }
 
-        FMemoryReader Reader{ mArbitrerReplyReadData };
+        TArrayView<uint8> ReceiverView{ mArbitrerReplyReadData.GetData(), BytesRead };
+        FMemoryReaderView Reader{ ReceiverView };
         OnReadArbitrerData(Reader);
     }
 }
@@ -164,53 +165,43 @@ void FKLDebugImGuiNetworkingTCPClient::OnReadArbitrerData(FArchive& _Reader)
     }
 
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
-    const int64 TotalSize = _Reader.TotalSize();
-    while (!_Reader.AtEnd())
-    {
-        const int64 HeaderCurrentPosition = _Reader.Tell();
-        if (TotalSize - HeaderCurrentPosition < KL::Debug::Networking::Message::GetHeaderSize())
+
+    auto ReadMessagesLambda = [this, &Settings](const FKLDebugNetworkingMessage_Header& _MessageHeader, FArchive& _MessageData) -> void {
+        if (_MessageHeader.GetMessageEnumType() != static_cast<uint16>(EKLDebugNetworkingMessagesTypes::Arbitrer))
         {
-            // not enough data for the header
+            ensureMsgf(false, TEXT("received a message which was not expected"));
+            return;
+        }
+
+        switch (static_cast<EKLDebugArbitrerMessage>(_MessageHeader.GetMessageType()))
+        {
+        case EKLDebugArbitrerMessage::Client_GetServerData:
+        {
+            const FKLDebugNetworkingArbitrerMessage_ClientServerData ServerData{ _MessageData };
+            const int32 Index = mCachedConnections.IndexOfByKey(ServerData.Client_GetClientID());
+            if (Index == INDEX_NONE)
+            {
+                return;
+            }
+
+            if (!ServerData.Client_GetCanConnect())
+            {
+                UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingTCPClient::OnReadArbitrerData>> Client has header version different then the server. Cant connect to it removing"));
+                mCachedConnections.RemoveAtSwap(Index, 1, false);
+                return;
+            }
+
+            FKLDebugImGuiClientWorldCacheConnection& CacheData = mCachedConnections[Index];
+            CacheData.OnArbitrerMessageRecv(Settings, ServerData, *mTempAddress.Get());
             break;
         }
-
-        const FKLDebugNetworkingMessage_Header HeaderMessage{ _Reader };
-        if (!HeaderMessage.IsValid())
-        {
-            // garbage in the stream skip one byte
-            _Reader.Seek(HeaderCurrentPosition + 1);
-            continue;
-        }
-
-        const int64 CurrentReadBufferPosition = _Reader.Tell();
-        const int64 RemainingSpace = TotalSize - CurrentReadBufferPosition;
-        if (RemainingSpace < HeaderMessage.GetMessageDataSize())
-        {
-            ensureMsgf(false, TEXT("we dont expect this here"));
+        default:
+            ensureMsgf(false, TEXT("not handled"));
             break;
         }
+    };
 
-        mArbitrerReplyTempData.SetNum(static_cast<int32>(HeaderMessage.GetMessageDataSize()), false);
-        _Reader.Serialize(mArbitrerReplyTempData.GetData(), HeaderMessage.GetMessageDataSize());
-        FMemoryReader MessageMemory(mArbitrerReplyTempData);
-
-        const FKLDebugNetworkingArbitrerMessage_ClientServerData ServerData{ MessageMemory };
-        const int32 Index = mCachedConnections.IndexOfByKey(ServerData.Client_GetClientID());
-        if (Index == INDEX_NONE)
-        {
-            continue;
-        }
-
-        if (!ServerData.Client_GetCanConnect())
-        {
-            UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingTCPClient::OnReadArbitrerData>> Client has header version different then the server. Cant connect to it removing"));
-            mCachedConnections.RemoveAtSwap(Index, 1, false);
-            continue;
-        }
-
-        FKLDebugImGuiClientWorldCacheConnection& CacheData = mCachedConnections[Index];
-        CacheData.OnArbitrerMessageRecv(Settings, ServerData, *mTempAddress.Get());
-    }
+    KL::Debug::Networking::Message::ReadBufferGetStopReadLocation(ReadMessagesLambda, mArbitrerReplyTempData, _Reader);
 }
 
 void FKLDebugImGuiNetworkingTCPClient::TickGameThread(FKLDebugImGuiClientGameThreadContext& _Context)

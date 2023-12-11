@@ -11,6 +11,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Misc/Compression.h"
 #include "Serialization/Archive.h"
+#include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
 
 namespace KL::Debug::Networking::Message
@@ -29,7 +30,7 @@ namespace KL::Debug::Networking::Message
         if (HeaderSize == 0)
         {
             TArray<uint8> TempArray;
-            TempArray.Reserve(30);
+            TempArray.Reserve(34);
             FMemoryWriter Writer(TempArray);
             FKLDebugNetworkingMessage_Header DummyHeaderMessage{ 0, 0, 0, 0, false, 0, 0, 0, 0 };
             DummyHeaderMessage.Serialize(Writer);
@@ -78,6 +79,48 @@ namespace KL::Debug::Networking::Message
     {
         CurrentMessageID = static_cast<uint16>((static_cast<uint32>(CurrentMessageID) + 1) % TNumericLimits<MessageID>::Max());
         return CurrentMessageID;
+    }
+
+    uint32 ReadBufferGetStopReadLocation(const ReadBufferCallback& _Callback, TArray<uint8>& _MessageBufferData, FArchive& _Reader)
+    {
+        const int64 TotalSize = _Reader.TotalSize();
+        int64 CurrentPosition = _Reader.Tell();
+
+        while (!_Reader.AtEnd())
+        {
+            if (TotalSize - CurrentPosition < GetHeaderSize())
+            {
+                // not enough data for the header
+                break;
+            }
+
+            const FKLDebugNetworkingMessage_Header HeaderMessage{ _Reader };
+            if (!HeaderMessage.IsValid())
+            {
+                // garbage in the stream skip one byte
+                _Reader.Seek(++CurrentPosition);
+                // clear the error in the archive otherwise the archvie stops to read data so we just bypass bytes
+                _Reader.ClearError();
+                continue;
+            }
+
+            const int64 CurrentReadBufferPosition = _Reader.Tell();
+            const int64 RemainingSpace = TotalSize - CurrentReadBufferPosition;
+            if (RemainingSpace < HeaderMessage.GetMessageDataSize())
+            {
+                break;
+            }
+
+            _MessageBufferData.SetNum(static_cast<int32>(HeaderMessage.GetMessageDataSize()), false);
+            _Reader.Serialize(_MessageBufferData.GetData(), HeaderMessage.GetMessageDataSize());
+            CurrentPosition = _Reader.Tell();
+
+            FMemoryReader MessageData(_MessageBufferData);
+            _Callback(HeaderMessage, MessageData);
+        }
+
+        checkf(CurrentPosition < TNumericLimits<uint32>::Max(), TEXT("current position too high not expected"));
+        return static_cast<uint32>(CurrentPosition);
     }
 
 }    // namespace KL::Debug::Networking::Message

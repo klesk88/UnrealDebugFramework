@@ -9,6 +9,7 @@
 
 // engine
 #include "Containers/ArrayView.h"
+#include "HAL/UnrealMemory.h"
 #include "Math/UnrealMathUtility.h"
 #include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
@@ -150,6 +151,8 @@ int32 FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData()
     FSocket& Socket = GetSocketMutable();
     uint32 Size = 0;
     int32 BytesRead = 0;
+    int32 TotalBytesRead = 0;
+    uint32 StartBufferIndex = mReadBufferStartIndex;
 
     if (mReadBufferStartIndex == 0 && mReceiveBuffer.Num() > static_cast<int32>(mInitialReadBufferSize))
     {
@@ -159,8 +162,8 @@ int32 FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData()
 
     while (Socket.HasPendingData(Size) && Size > 0)
     {
-        checkf(mReceiveBuffer.IsValidIndex(mReadBufferStartIndex), TEXT("must be valid"));
-        const int32 SpaceLeftInBuffer = mReceiveBuffer.Max() - mReadBufferStartIndex;
+        checkf(mReceiveBuffer.IsValidIndex(StartBufferIndex), TEXT("must be valid"));
+        const int32 SpaceLeftInBuffer = mReceiveBuffer.Max() - StartBufferIndex;
         if (Size > static_cast<uint32>(SpaceLeftInBuffer))
         {
             ensureMsgf(false, TEXT("resizing array should not happen"));
@@ -168,19 +171,26 @@ int32 FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData()
             mReceiveBuffer.SetNum(NewSize, false);
         }
 
-        const uint32 MaxReadSize = FMath::Min(Size, static_cast<uint32>(mReceiveBuffer.Num() - mReadBufferStartIndex));
-        Socket.Recv(&mReceiveBuffer[mReadBufferStartIndex], MaxReadSize, BytesRead);
+        const uint32 MaxReadSize = FMath::Min(Size, static_cast<uint32>(mReceiveBuffer.Num() - StartBufferIndex));
+        Socket.Recv(&mReceiveBuffer[StartBufferIndex], MaxReadSize, BytesRead);
+        Size = 0;
         if (BytesRead == 0)
         {
             UE_LOG(LogKLDebug_Networking, Warning, TEXT("FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData>> Socket had pending data but didnt read any bytes"));
             continue;
         }
 
+        StartBufferIndex += BytesRead;
+        TotalBytesRead += BytesRead;
+        ensureMsgf(StartBufferIndex < static_cast<uint32>(mReceiveBuffer.Num()), TEXT("StartBufferIndex must always be les then the buffer size"));
+    }
+
+    if (TotalBytesRead != 0)
+    {
         mLastTimeConnectionUsed = FPlatformTime::Seconds();
     }
 
-    ensureMsgf(mReceiveBuffer.Max() == mReceiveBuffer.Num(), TEXT("num must point to the maximum value"));
-    return BytesRead;
+    return TotalBytesRead;
 }
 
 bool FKLDebugNetworkingCachedConnectionBase::TickReadWriteBuffers(const bool _HasReadBytes, FArchive& _Reader)
@@ -212,97 +222,62 @@ bool FKLDebugNetworkingCachedConnectionBase::TickReadMessagesWithHeader(FArchive
         return false;
     }
 
-    TArray<FKLDebugNetworkingPendingMessage>& ReadBuffer = mPendingMessages;
-
-    const int64 TotalSize = _Reader.TotalSize();
-    int64 CurrentPosition = _Reader.Tell();
-
-    while (!_Reader.AtEnd())
-    {
-        const int64 HeaderCurrentPosition = _Reader.Tell();
-        if (TotalSize - HeaderCurrentPosition < KL::Debug::Networking::Message::GetHeaderSize())
+    auto ReadMessagesLambda = [this](const FKLDebugNetworkingMessage_Header& _MessageHeader, FArchive& _MessageData) -> void {
+        if (HandleInternalMessages(_MessageHeader, _MessageData))
         {
-            // not enough data for the header
-            break;
+            return;
         }
 
-        const FKLDebugNetworkingMessage_Header HeaderMessage{ _Reader };
-        if (!HeaderMessage.IsValid())
-        {
-            // garbage in the stream skip one byte
-            _Reader.Seek(HeaderCurrentPosition + 1);
-            CurrentPosition++;
-            continue;
-        }
-
-        const int64 CurrentReadBufferPosition = _Reader.Tell();
-        const int64 RemainingSpace = TotalSize - CurrentReadBufferPosition;
-        if (RemainingSpace < HeaderMessage.GetMessageDataSize())
-        {
-            break;
-        }
-
-        mTempMessageBuffer.SetNum(static_cast<int32>(HeaderMessage.GetMessageDataSize()), false);
-        if (HeaderMessage.GetMessageDataSize() != 0)
-        {
-            _Reader.Serialize(mTempMessageBuffer.GetData(), HeaderMessage.GetMessageDataSize());
-            CurrentPosition = _Reader.Tell();
-        }
-
-        FMemoryReader ChildClassMemoryReader(mTempMessageBuffer);
-        if (HandleInternalMessages(HeaderMessage, ChildClassMemoryReader))
-        {
-            continue;
-        }
-
-        if (ReadBufferChildHasHandleMessage(HeaderMessage, ChildClassMemoryReader))
+        if (ReadBufferChildHasHandleMessage(_MessageHeader, _MessageData))
         {
             // this message was intended for the child class
-            continue;
+            return;
         }
 
-        if (!HeaderMessage.IsSplittedMessage())
+        if (!_MessageHeader.IsSplittedMessage())
         {
-            FKLDebugNetworkingPendingMessage& LastMessage = ReadBuffer.Emplace_GetRef(HeaderMessage, mTempMessageBuffer);
+            FKLDebugNetworkingPendingMessage& LastMessage = mPendingMessages.Emplace_GetRef(_MessageHeader, mTempMessageBuffer);
             if (!LastMessage.HasData())
             {
-                ReadBuffer.RemoveAtSwap(ReadBuffer.Num() - 1, 1, false);
+                mPendingMessages.RemoveAtSwap(mPendingMessages.Num() - 1, 1, false);
             }
 
-            continue;
+            return;
         }
 
-        const int32 Index = mPendingSplittedMessages.IndexOfByKey(HeaderMessage.GetMessageID());
+        const int32 Index = mPendingSplittedMessages.IndexOfByKey(_MessageHeader.GetMessageID());
         if (Index == INDEX_NONE)
         {
-            mPendingSplittedMessages.Emplace(HeaderMessage, mTempMessageBuffer);
-            continue;
+            mPendingSplittedMessages.Emplace(_MessageHeader, mTempMessageBuffer);
+            return;
         }
 
         FKLDebugNetworkingPendingSplittedMessage& PendingMessage = mPendingSplittedMessages[Index];
-        PendingMessage.AddData(mTempMessageBuffer, HeaderMessage.GetMessageDataOffset());
+        PendingMessage.AddData(mTempMessageBuffer, _MessageHeader.GetMessageDataOffset());
         if (!PendingMessage.IsFullyReceived())
         {
-            continue;
+            return;
         }
 
         if (!PendingMessage.HasFailedToReadData())
         {
-            FKLDebugNetworkingPendingMessage& LastMessage = ReadBuffer.Emplace_GetRef(PendingMessage.GetHeaderMessage(), MoveTemp(PendingMessage.GetDataMutable()));
+            FKLDebugNetworkingPendingMessage& LastMessage = mPendingMessages.Emplace_GetRef(PendingMessage.GetHeaderMessage(), MoveTemp(PendingMessage.GetDataMutable()));
             if (!LastMessage.HasData())
             {
-                ReadBuffer.RemoveAtSwap(ReadBuffer.Num() - 1, 1, false);
+                mPendingMessages.RemoveAtSwap(mPendingMessages.Num() - 1, 1, false);
             }
         }
 
         mPendingSplittedMessages.RemoveAtSwap(Index, 1, false);
-    }
+    };
 
-    checkf(CurrentPosition < TNumericLimits<uint32>::Max(), TEXT("current position too high not expected"));
+    const uint32 StopReadLocation = KL::Debug::Networking::Message::ReadBufferGetStopReadLocation(ReadMessagesLambda, mTempMessageBuffer, _Reader);
+
+    const int64 TotalSize = _Reader.TotalSize();
     checkf(TotalSize < TNumericLimits<uint32>::Max(), TEXT("total size too high not expected"));
-    UpdateBufferStartIndex(CurrentPosition, TotalSize);
+    UpdateBufferStartIndex(StopReadLocation, TotalSize);
 
-    if (!ReadBuffer.IsEmpty())
+    if (!mPendingMessages.IsEmpty())
     {
         mHasNewReadData = true;
     }
@@ -345,7 +320,16 @@ bool FKLDebugNetworkingCachedConnectionBase::HandleInternalMessages(const FKLDeb
         return false;
     }
 
-    return _Header.GetMessageType() == static_cast<uint16>(EKLDebugNetworkingMessage::IsConnectionAlive);
+    switch (static_cast<EKLDebugNetworkingMessage>(_Header.GetMessageType()))
+    {
+    case EKLDebugNetworkingMessage::IsConnectionAlive:
+    {
+        return true;
+    }
+    default:
+        ensureMsgf(false, TEXT("not handled"));
+        return false;
+    }
 }
 
 void FKLDebugNetworkingCachedConnectionBase::SendData(TArray<uint8>& _Buffer)
@@ -393,9 +377,11 @@ void FKLDebugNetworkingCachedConnectionBase::UpdateBufferStartIndex(const uint32
     }
     else
     {
-        // we read part of the buffer and we stopped at Curren_BufferStopPositiontPosition. So free up all previous bytes but keep
+        // we read part of the buffer and we stopped at _BufferStopPosition. So free up all previous bytes but keep
         // the ones we still need to process
-        mReceiveBuffer.RemoveAt(0, _BufferStopPosition, false);
+        mReadBufferStartIndex = _TotalBufferSize - _BufferStopPosition;
+        checkf(static_cast<uint32>(mReceiveBuffer.Num()) > mReadBufferStartIndex, TEXT("out of bounds"));
+        FMemory::Memcpy(mReceiveBuffer.GetData(), &mReceiveBuffer[_BufferStopPosition], static_cast<SIZE_T>(mReadBufferStartIndex));
         mReadBufferStartIndex = _TotalBufferSize - _BufferStopPosition;
     }
 }

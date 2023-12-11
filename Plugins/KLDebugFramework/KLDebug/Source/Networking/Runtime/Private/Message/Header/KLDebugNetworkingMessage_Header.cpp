@@ -29,6 +29,13 @@ bool FKLDebugNetworkingMessage_Header::IsValid() const
 void FKLDebugNetworkingMessage_Header::Serialize(FArchive& _Archive)
 {
     _Archive << mMessageMark;
+
+    if (!IsValid())
+    {
+        // no need to read more. We know the stream is not valid and we are reading garbage currently
+        return;
+    }
+
     _Archive << mMessageDataSize;
     _Archive << mTotalUncompressDataSize;
     _Archive << mTotalCompressedDataSize;

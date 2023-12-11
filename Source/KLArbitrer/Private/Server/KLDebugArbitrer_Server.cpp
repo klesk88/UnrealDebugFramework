@@ -16,6 +16,7 @@
 
 // engine
 #include "Common/UdpSocketBuilder.h"
+#include "Containers/ArrayView.h"
 #include "Containers/UnrealString.h"
 #include "Interfaces/IPv4/IPv4Address.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
@@ -33,7 +34,7 @@ bool FKLDebugNetworkArbitrer_Server::Init()
     CreateClientSocket();
 
     const UKLDebugNetworkingArbitrerSettings& Settings = UKLDebugNetworkingArbitrerSettings::Get();
-    mReceiveBuffer.Reserve(Settings.GetReceiveBufferSize());
+    mReceiveBuffer.Init(0, Settings.GetReceiveBufferSize());
     mTempMessageBuffer.Reserve(Settings.GetWriteBufferSize());
     mPendingMessages.Reserve(10);
     mTempSendMessageBuffer.Reserve(500);
@@ -134,7 +135,8 @@ void FKLDebugNetworkArbitrer_Server::TickReadData()
             continue;
         }
 
-        FMemoryReader Reader(mReceiveBuffer);
+        TArrayView<uint8> ReceiverView{ mReceiveBuffer.GetData(), BytesRead };
+        FMemoryReaderView Reader(ReceiverView);
         TickReadData(Reader);
     }
 }
@@ -146,39 +148,11 @@ void FKLDebugNetworkArbitrer_Server::TickReadData(FArchive& _Reader)
         return;
     }
 
-    const int64 TotalSize = _Reader.TotalSize();
+    auto ReadMessagesLambda = [this](const FKLDebugNetworkingMessage_Header& _MessageHeader, FArchive& _MessageData) -> void {
+        ReadData(_MessageHeader, _MessageData);
+    };
 
-    while (!_Reader.AtEnd())
-    {
-        const int64 HeaderCurrentPosition = _Reader.Tell();
-        if (TotalSize - HeaderCurrentPosition < KL::Debug::Networking::Message::GetHeaderSize())
-        {
-            // not enough data for the header
-            break;
-        }
-
-        const FKLDebugNetworkingMessage_Header HeaderMessage{ _Reader };
-        if (!HeaderMessage.IsValid())
-        {
-            // garbage in the stream skip one byte
-            _Reader.Seek(HeaderCurrentPosition + 1);
-            continue;
-        }
-
-        const int64 CurrentReadBufferPosition = _Reader.Tell();
-        const int64 RemainingSpace = TotalSize - CurrentReadBufferPosition;
-        if (RemainingSpace < HeaderMessage.GetMessageDataSize())
-        {
-            ensureMsgf(false, TEXT("not expected here"));
-            break;
-        }
-
-        mTempMessageBuffer.SetNum(static_cast<int32>(HeaderMessage.GetMessageDataSize()));
-        _Reader.Serialize(mTempMessageBuffer.GetData(), HeaderMessage.GetMessageDataSize());
-        FMemoryReader DataReader(mTempMessageBuffer);
-
-        ReadData(HeaderMessage, DataReader);
-    }
+    KL::Debug::Networking::Message::ReadBufferGetStopReadLocation(ReadMessagesLambda, mTempMessageBuffer, _Reader);
 }
 
 void FKLDebugNetworkArbitrer_Server::ReadData(const FKLDebugNetworkingMessage_Header& _Header, FArchive& _Reader)
