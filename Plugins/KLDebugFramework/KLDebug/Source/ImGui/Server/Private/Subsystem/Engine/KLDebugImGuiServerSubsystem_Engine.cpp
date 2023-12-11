@@ -10,11 +10,14 @@
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "Networking/Arbitrer/Public/Definitions/KLDebugNetworkingArbitrerDefinitions.h"
+#include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 
 // engine
 #include "Engine/Engine.h"
 #include "Engine/World.h"
+#include "Interfaces/IPluginManager.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 #if PLATFORM_WINDOWS
@@ -84,7 +87,7 @@ void UKLDebugImGuiServerSubsystem_Engine::TryLunchArbitrer()
     // based on TryAutoConnect in TraceAucilary.cpp
 
     // If we can detect a named event it means the arbitrer is running.
-    HANDLE KnownEvent = ::OpenEvent(EVENT_ALL_ACCESS, false, *KL::Debug::Networking::Message::ArbitrerSessionEvent);
+    HANDLE KnownEvent = ::OpenEvent(EVENT_ALL_ACCESS, false, *KL::Debug::Networking::Arbitrer::ArbitrerSessionEvent);
     if (KnownEvent == nullptr)
     {
         LunchArbitrer();
@@ -98,9 +101,8 @@ void UKLDebugImGuiServerSubsystem_Engine::TryLunchArbitrer()
 void UKLDebugImGuiServerSubsystem_Engine::LunchArbitrer()
 {
     TWideStringBuilder<MAX_PATH + 32> CreateProcArgs;
-    // CreateProcArgs << "\"";
-    CreateProcArgs << FPaths::ProjectDir();
-    CreateProcArgs << TEXT("Binaries/Win64/KLDebugArbitrer-Win64-Debug.exe");
+    CreateProcArgs << IPluginManager::Get().FindPlugin("KLDebug")->GetBaseDir();
+    CreateProcArgs << TEXT("/Resources/Arbitrer/KLDebugArbitrer.exe");
 
     uint32 CreateProcFlags = CREATE_BREAKAWAY_FROM_JOB | CREATE_NEW_CONSOLE;
     STARTUPINFOW StartupInfo = { sizeof(STARTUPINFOW) };
@@ -109,7 +111,7 @@ void UKLDebugImGuiServerSubsystem_Engine::LunchArbitrer()
 
     if (!bOk)
     {
-        UE_LOG(LogCore, Display, TEXT("UnrealTraceServer: Unable to launch the trace store with '%s' (%08x)"), *CreateProcArgs, GetLastError());
+        UE_LOG(LogKLDebug_Networking, Warning, TEXT("UKLDebugImGuiServerSubsystem_Engine::LunchArbitrer>> unable to launch arbitrer with '%s' (%08x)"), *CreateProcArgs, GetLastError());
         return;
     }
 

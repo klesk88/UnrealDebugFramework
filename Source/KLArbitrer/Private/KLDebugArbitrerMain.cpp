@@ -3,6 +3,7 @@
 #include "Server/KLDebugArbitrer_Server.h"
 
 // modules
+#include "Networking/Arbitrer/Public/Definitions/KLDebugNetworkingArbitrerDefinitions.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 
 // engine
@@ -21,7 +22,7 @@ UE_NODISCARD bool CheckSessionBrowserSingleInstance()
     // It allows only a single instance of Unreal Insights (Browser Mode).
     // The event is also used by runtime to choose when to try to auto-connect.
     // See FTraceAuxiliary::TryAutoConnect() in \Runtime\Core\Private\ProfilingDebugging\TraceAuxiliary.cpp
-    HANDLE SessionBrowserEvent = CreateEvent(NULL, true, false, *KL::Debug::Networking::Message::ArbitrerSessionEvent);
+    HANDLE SessionBrowserEvent = CreateEvent(NULL, true, false, *KL::Debug::Networking::Arbitrer::ArbitrerSessionEvent);
     if (SessionBrowserEvent == NULL || GetLastError() == ERROR_ALREADY_EXISTS)
     {
         // Another Session Browser process is already running.
