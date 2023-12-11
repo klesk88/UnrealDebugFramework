@@ -65,7 +65,7 @@ KL_DEBUG_CREATE_WINDOW(FClassDebug)
 - Detachable ImGui windows from the game window
 - Rewrite of the UnrealNetImgui
 - Support for remote input (this can be helpfull, for example, when running the game on console)
-- Eplore if we can parallelize the code more
+- Explore if we can parallelize the code more
 
 ## List of Libraries currently been used:
 
