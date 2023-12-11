@@ -8,6 +8,7 @@
 
 Plugins/*/*/Intermediate/*
 Plugins/*/*/Binaries/*
+Plugins/*/*/Saved/*
 Plugins/*/KLDebugExamples/*
 Plugins/*/KLTest/*
 Binaries/*
