@@ -6,7 +6,7 @@ A debug framework developed for Unreal which should help streamline how to gener
 It uses external libraries (such as DearImGui) to allow for a more confortable debug experience.
 It also allows to generate from code debug classes in an easy way, keeping at a minimun their footprint (no UCLASS or USTRUCTS) and supports multiplayer games as well.
 
-OVERVIEW:
+##OVERVIEW:
 To be able to display the debug enviroment in game the default keybindings are:
 - NumPad + -> Switch between debug camera and control of the player
 - NumPad . -> Display the Debug Window
@@ -53,7 +53,7 @@ To create a new Feature the user needs to extend, for example, the IKLDebugImGui
 KL_DEBUG_CREATE_WINDOW(FClassDebug)
 
 
-Missing features: 
+##Missing features: 
 - Finish to implement missing parts of code (such as the Picker)
 - Commands that the user can be send to the server to control its behavior (for example pause the game)
 - Feature be able to send server update requests from the client only if certain conditions are met (for example, if we are displaying the navmesh around the player, request new navmesh polygons only after the camera has moved a certain amount)
@@ -63,7 +63,7 @@ Missing features:
 - Rewrite of the UnrealNetImgui
 - Support for remote input (this can be helpfull, for example, when running the game on console)
 
-List of Libraries currently been used:
+##List of Libraries currently been used:
 
 DearImguI: https://github.com/ocornut/imgui
 
