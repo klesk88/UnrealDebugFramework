@@ -58,8 +58,8 @@ KL_DEBUG_CREATE_WINDOW(FClassDebug)
 
 ## Missing features: 
 - Finish to implement missing parts of code (such as the Picker)
-- Commands that the user can be send to the server to control its behavior (for example pause the game)
-- Feature be able to send server update requests from the client only if certain conditions are met (for example, if we are displaying the navmesh around the player, request new navmesh polygons only after the camera has moved a certain amount)
+- Commands that the user can send to the server to control its behavior (for example pause the game)
+- Feature able to send server update requests from the client only if certain conditions are met (for example, if we are displaying the navmesh around the player, request new navmesh polygons only after the camera has moved a certain amount)
 - Finish to implement the Debug camera system. Users should be able to implement their own camera and switch between the different camera modes.
 - Add to the Debug Camera HUD a UI that allows to filter and display debug text from BP 
 - Detachable ImGui windows from the game window
