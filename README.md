@@ -10,8 +10,13 @@ A more detail explanation will be added when the product is readyu.
 List of Libraries currently been used:
 
 DearImgUI: https://github.com/ocornut/imgui
+
 ImGuiNodeEditor: https://github.com/thedmd/imgui-node-editor
+
 ImPlot: https://github.com/epezent/implot
+
 NetImgui: https://github.com/sammyfreg/netImgui
+
 UnrealNetImGui: https://github.com/sammyfreg/UnrealNetImgui
+
 PropertyWatcher: https://github.com/guitarfreak/PropertyWatcher
