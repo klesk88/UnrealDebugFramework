@@ -19,10 +19,24 @@ namespace KL::Debug::Networking::Arbitrer
 {
     /////////////////////////////////////////////////////
     /// private
+    FOnArbitrerShouldLunch OnArbitrerShouldLunch;
+
     static bool HasStartArbitrer = false;
 
     /////////////////////////////////////////////////////
     /// public
+
+    void BindOnArbitrerShouldLunch(const FOnArbitrerShouldLunch& _Delegate)
+    {
+        ensureMsgf(!OnArbitrerShouldLunch.IsBound(), TEXT("delegate is already bound"));
+
+        OnArbitrerShouldLunch = _Delegate;
+    }
+
+    void UnbindOnArbitrerShouldLunch()
+    {
+        OnArbitrerShouldLunch.Unbind();
+    }
 
     void TryLunchArbitrer()
     {
@@ -32,11 +46,16 @@ namespace KL::Debug::Networking::Arbitrer
             return;
         }
 
+        HasStartArbitrer = true;
+        if (OnArbitrerShouldLunch.IsBound() && !OnArbitrerShouldLunch.Execute())
+        {
+            return;
+        }
+
         const FString CmdLine = FCommandLine::Get();
         const bool CreateConsole = FParse::Param(*CmdLine, TEXT("showarbitrerlog"));
 
         KL::Debug::Networking::Arbitrer::LunchArbitrer(ExecutablePath, CreateConsole);
-        HasStartArbitrer = true;
     }
 
     void TryCloseArbitrer()
@@ -44,5 +63,4 @@ namespace KL::Debug::Networking::Arbitrer
         KL::Debug::Networking::Arbitrer::CloseArbitrer();
         HasStartArbitrer = false;
     }
-
 }    // namespace KL::Debug::Networking::Arbitrer

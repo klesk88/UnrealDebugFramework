@@ -36,6 +36,7 @@ void UKLDebugImGuiServerSubsystem_Engine::Initialize(FSubsystemCollectionBase& _
     KL::Debug::Networking::Message::InitHeaderSize();
 
     mServerConnection.InitSocket(TEXT("KLDebugImguiServerThread"));
+    KL::Debug::Networking::Arbitrer::TryLunchArbitrer();
 
 #if !WITH_EDITOR
     CookedOnly_InitFeatureMapIfNeeded();
@@ -46,6 +47,7 @@ void UKLDebugImGuiServerSubsystem_Engine::Deinitialize()
 {
     Super::Deinitialize();
 
+    KL::Debug::Networking::Arbitrer::TryCloseArbitrer();
     mServerConnection.ClearConnection();
 }
 
@@ -63,15 +65,6 @@ bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
 void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_Tick);
-
-    if (HasValidWorlds())
-    {
-        KL::Debug::Networking::Arbitrer::TryLunchArbitrer();
-    }
-    else
-    {
-        KL::Debug::Networking::Arbitrer::TryCloseArbitrer();
-    }
 
     FKLDebugImGuiTCPServerGameThreadContext Context;
     GatherUpdateData(Context);
