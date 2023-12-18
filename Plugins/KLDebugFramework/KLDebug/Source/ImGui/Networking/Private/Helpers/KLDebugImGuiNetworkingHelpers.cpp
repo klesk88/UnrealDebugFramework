@@ -12,7 +12,7 @@
 
 namespace KL::Debug::ImGuiNetworking::Helpers
 {
-    FNetworkGUID TryGetNetworkGuid(const UObject& _Object)
+    FNetworkGUID TryGetNetworkGuid(UObject& _Object)
     {
         // look also in case at NetworkPredictionDebug::FindObjectNetGUID
 

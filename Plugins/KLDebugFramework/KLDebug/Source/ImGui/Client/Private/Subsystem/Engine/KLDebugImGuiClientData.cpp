@@ -86,7 +86,8 @@ bool FKLDebugImGuiClientData::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUp
             return false;
         }
 
-        NetworkID = KL::Debug::ImGuiNetworking::Helpers::TryGetNetworkGuid(*_FeatureUpdateData.TryGetObject());
+        checkf(_FeatureUpdateData.GetObjectKey().ResolveObjectPtr() != nullptr, TEXT("must be valid"));
+        NetworkID = KL::Debug::ImGuiNetworking::Helpers::TryGetNetworkGuid(*_FeatureUpdateData.GetObjectKey().ResolveObjectPtr());
         if (!NetworkID.IsValid())
         {
             ensureMsgf(false, TEXT("no valid network ID"));

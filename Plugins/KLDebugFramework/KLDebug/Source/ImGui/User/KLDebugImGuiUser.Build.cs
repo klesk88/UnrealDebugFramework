@@ -19,10 +19,9 @@ public class KLDebugImGuiUser : ModuleRules
             new string[]
             {
                 "ImGuiThirdParty",
-                "KLDebugImGuiUser",
 
                 //engine
-                "Engine",
+                "Engine"
             }
         );
 

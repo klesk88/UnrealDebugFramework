@@ -14,6 +14,8 @@ public class KLDebugImGuiServer : ModuleRules
           }
         );
 
+        RuntimeDependencies.Add(Path.Combine(PluginDirectory, "Resources/Arbitrer/KLDebugArbitrer.exe"));
+
         PublicDependencyModuleNames.AddRange(
             new string[]
             {

@@ -34,6 +34,7 @@ public class KLDebugArbitrer : ModuleRules
             new string[]
             {
                 "Core",
+                "CoreUObject",
                 "Projects"
             }
         );
