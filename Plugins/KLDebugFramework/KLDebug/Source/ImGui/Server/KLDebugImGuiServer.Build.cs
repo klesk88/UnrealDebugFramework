@@ -29,7 +29,6 @@ public class KLDebugImGuiServer : ModuleRules
                 //engine
                 "Engine",
                 "Networking",
-                "Projects",
                 "Sockets"
             }
         );

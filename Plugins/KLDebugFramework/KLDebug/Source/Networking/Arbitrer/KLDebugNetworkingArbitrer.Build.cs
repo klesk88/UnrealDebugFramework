@@ -22,6 +22,7 @@ public class KLDebugNetworkingArbitrer : ModuleRules
                 //engine
                 "DeveloperSettings",
                 "Networking",
+                "Projects",
                 "Sockets"
             }
         );
