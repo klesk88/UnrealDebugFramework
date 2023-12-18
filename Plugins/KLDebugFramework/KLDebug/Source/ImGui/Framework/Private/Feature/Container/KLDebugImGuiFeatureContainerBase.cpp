@@ -6,7 +6,7 @@
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Utils/Public/KLDebugLog.h"
 
 const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const

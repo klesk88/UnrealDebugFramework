@@ -6,7 +6,7 @@
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 
 // engine
 #include "Containers/Array.h"

@@ -6,7 +6,7 @@
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "CoreMinimal.h"

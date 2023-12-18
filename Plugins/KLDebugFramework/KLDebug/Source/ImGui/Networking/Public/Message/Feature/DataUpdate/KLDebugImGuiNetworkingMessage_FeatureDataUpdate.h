@@ -6,7 +6,7 @@
 
 // modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
