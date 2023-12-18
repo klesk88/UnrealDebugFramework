@@ -7,10 +7,10 @@
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 // modules
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
+#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-#include "User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
-#include "User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
-#include "User/Public/Helpers/KLDebugImGuiHelpers.h"
 
 // engine
 #include "Containers/UnrealString.h"

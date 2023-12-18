@@ -9,8 +9,8 @@
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
-#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine

@@ -13,10 +13,10 @@
 #include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
 
 // modules
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
+#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
-#include "User/Public/Helpers/KLDebugImGuiHelpers.h"
 
 // engine
 #include "Containers/UnrealString.h"

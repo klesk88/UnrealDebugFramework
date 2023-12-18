@@ -3,7 +3,7 @@
 #include "Features/Object/PropertyWatcher/KLDebugFeatureObject_PropertyWatcher.h"
 
 // imgui user module
-#include "User/Public/Helpers/KLDebugImGuiHelpers.h"
+#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"

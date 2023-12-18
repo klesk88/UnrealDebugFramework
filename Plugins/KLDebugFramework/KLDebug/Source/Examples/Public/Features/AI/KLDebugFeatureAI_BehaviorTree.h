@@ -3,8 +3,8 @@
 #pragma once
 
 // imgui user module
-#include "User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
+#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
+#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 
 class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
 class FKLDebugImGuiFeature_NetworkingGatherDataInput;

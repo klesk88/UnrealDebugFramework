@@ -12,7 +12,7 @@
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 
 // modules
-#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"

@@ -3,7 +3,7 @@
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 
 // modules
-#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 
 // engine
 #include "Containers/UnrealString.h"

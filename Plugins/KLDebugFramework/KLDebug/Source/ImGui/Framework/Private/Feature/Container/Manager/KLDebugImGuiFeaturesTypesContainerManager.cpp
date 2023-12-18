@@ -7,9 +7,9 @@
 #include "Feature/Container/Unique/KLDebugImGuiFeatureContainer_Unique.h"
 
 // modules
-#include "User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "User/Internal/Feature/Manager/KLDebugImGuiFeatureManager.h"
-#include "User/Internal/Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
+#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Internal/Feature/Manager/KLDebugImGuiFeatureManager.h"
+#include "ImGui/User/Internal/Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine
