@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Server/KLDebugImGuiNetworkingTCPServer.h"
-#include "Server/KLDebugImGuiServerConnectionDefinitions.h"
 
 // modules
 #include "ImGui/Networking/Public/Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"

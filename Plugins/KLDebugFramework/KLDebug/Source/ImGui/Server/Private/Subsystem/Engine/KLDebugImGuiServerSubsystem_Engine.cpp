@@ -2,12 +2,14 @@
 
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
+#include "Server/KLDebugImGuiServerCacheConnection.h"
 #include "Server/KLDebugImGuiTCPServerGameThreadContext.h"
 
 // modules
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
+#include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 #include "Networking/Arbitrer/Public/Luncher/KLDebugNetworkingArbitrerLuncher.h"
@@ -36,6 +38,9 @@ void UKLDebugImGuiServerSubsystem_Engine::Initialize(FSubsystemCollectionBase& _
     KL::Debug::Networking::Message::InitHeaderSize();
 
     mServerConnection.InitSocket(TEXT("KLDebugImguiServerThread"));
+
+    const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
+    KL::Debug::Networking::ImGuiServer::InitFromSettings(Settings);
 
 #if !WITH_EDITOR
     CookedOnly_InitFeatureMapIfNeeded();

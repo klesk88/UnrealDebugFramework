@@ -23,7 +23,13 @@ class FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate;
 class FKLDebugImGuiNetworkingPendingMessage;
 class FKLDebugNetworkingPendingMessage;
 class FNetworkGUID;
+class UKLDebugImGuiNetworkingSettings;
 class UWorld;
+
+namespace KL::Debug::Networking::ImGuiServer
+{
+    void InitFromSettings(const UKLDebugImGuiNetworkingSettings& _Settings);
+}
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection
 {

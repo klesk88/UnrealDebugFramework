@@ -2,7 +2,6 @@
 
 #include "Server/KLDebugImGuiServerCacheConnection.h"
 
-#include "Server/KLDebugImGuiServerConnectionDefinitions.h"
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
 // modules
@@ -38,9 +37,15 @@
 
 namespace KL::Debug::Networking::ImGuiServer
 {
+    /////////////////////////////////////////////////////////////////////////
+    /// private
+
+    static uint32 FeatureMessageMaxDataSize = 500;
+    static float FeatureMessageMaxDataSizeInv = 1.f / 500.f;
+
     void Write_FeatureUpdatePrivate(const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const bool _IsCompressed, const uint32 _CompressTotalSize, const uint32 _UncompressTotalSize, TArray<uint8>& _FeatureData, TArray<uint8>& _Data, FArchive& _Archive)
     {
-        int32 MessagesCount = FMath::CeilToInt(static_cast<float>(_FeatureData.Num()) * KL::Debug::ImGui::Networking::Server::FeatureMaxMessageDataSizeInv);
+        int32 MessagesCount = FMath::CeilToInt(static_cast<float>(_FeatureData.Num()) * FeatureMessageMaxDataSizeInv);
         MessagesCount = FMath::Clamp(MessagesCount, 1, MessagesCount);
         const KL::Debug::Networking::Message::MessageID MessageID = MessagesCount > 1 ? KL::Debug::Networking::Message::GetNewMessageID() : 0;
 
@@ -62,8 +67,8 @@ namespace KL::Debug::Networking::ImGuiServer
 
         for (int32 i = 0; i < MessagesCount; ++i)
         {
-            const int32 StartIndex = i * KL::Debug::ImGui::Networking::Server::FeatureMaxMessageDataSize;
-            const int32 EndIndex = FMath::Min((i + 1) * static_cast<int32>(KL::Debug::ImGui::Networking::Server::FeatureMaxMessageDataSize), _FeatureData.Num());
+            const int32 StartIndex = i * FeatureMessageMaxDataSize;
+            const int32 EndIndex = FMath::Min((i + 1) * static_cast<int32>(FeatureMessageMaxDataSize), _FeatureData.Num());
             checkf(EndIndex - StartIndex <= _FeatureData.Num(), TEXT("going out of bounds"));
             const TArrayView<uint8> MessageDataView(&_FeatureData[StartIndex], EndIndex - StartIndex);
 
@@ -158,6 +163,16 @@ namespace KL::Debug::Networking::ImGuiServer
         _Data,
         _Archive);
     }
+
+    /////////////////////////////////////////////////////////////////////////
+    /// public
+
+    void InitFromSettings(const UKLDebugImGuiNetworkingSettings& _Settings)
+    {
+        FeatureMessageMaxDataSize = _Settings.Server_GetFeatureMaxMessageDataSize();
+        FeatureMessageMaxDataSizeInv = 1.f / static_cast<float>(FeatureMessageMaxDataSize);
+    }
+
 }    // namespace KL::Debug::Networking::ImGuiServer
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,7 @@ public:
     UE_NODISCARD uint32 Server_GetWriteBufferSize() const;
     UE_NODISCARD uint32 Server_GetConnectionTempDataSize() const;
     UE_NODISCARD uint32 Server_GetConnectionTempCompressDataSize() const;
+    UE_NODISCARD uint32 Server_GetFeatureMaxMessageDataSize() const;
 
 private:
     // Client
@@ -70,6 +71,11 @@ private:
 
     UPROPERTY(Config, Category = "ImGuiServer", EditDefaultsOnly)
     uint32 ServerTempCompressedDataSizePerConnection = 2 * 1024 * 1024;
+
+    // determine the max size of the data to send in a single message. If the message is higher then this size
+    // it will be splitted in multiple ones.
+    UPROPERTY(Config, Category = "ImGuiServer", EditDefaultsOnly)
+    uint32 ServerFeatureMaxMessageDataSize = 500;
 
 #if WITH_EDITOR
 private:
@@ -142,4 +148,9 @@ inline uint32 UKLDebugImGuiNetworkingSettings::Server_GetConnectionTempDataSize(
 inline uint32 UKLDebugImGuiNetworkingSettings::Server_GetConnectionTempCompressDataSize() const
 {
     return ServerTempCompressedDataSizePerConnection;
+}
+
+inline uint32 UKLDebugImGuiNetworkingSettings::Server_GetFeatureMaxMessageDataSize() const
+{
+    return ServerFeatureMaxMessageDataSize;
 }
