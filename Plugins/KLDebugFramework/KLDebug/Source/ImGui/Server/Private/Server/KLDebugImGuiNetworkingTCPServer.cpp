@@ -220,6 +220,8 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
     const TOptional<KL::Debug::Server::Delegates::FServerSocketPortRangeDelegateData> OverridePortsData = KL::Debug::Server::Delegates::BroadcastOnGetDebugServerSocketPortRange();
     if (OverridePortsData.IsSet())
     {
+        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> Overriding debug ports range new start [%u] new end [%u]"), StartWorldPort, EndWorldPort);
+
         StartWorldPort = OverridePortsData.GetValue().GetStartRange();
         EndWorldPort = OverridePortsData.GetValue().GetEndRange();
     }
@@ -251,6 +253,8 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
         WorldArbitrerSocket->SetReceiveBufferSize(static_cast<int32>(Settings.Server_GetReadBufferSize()), ReceiveBufferSize);
         WorldArbitrerSocket->SetSendBufferSize(static_cast<int32>(Settings.Server_GetWriteBufferSize()), SenderBufferSize);
         mWorldCachedConnections.Emplace(*AddeddWorld.Get(), WorldServerPort, DebugPort, *WorldArbitrerSocket);
+
+        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> New World [%s] connection added with server port [%d] and debug port [%d]"), *AddeddWorld->GetName(), WorldServerPort, DebugPort);
 
         if (_Context.GetIsArbitrerRunning())
         {
