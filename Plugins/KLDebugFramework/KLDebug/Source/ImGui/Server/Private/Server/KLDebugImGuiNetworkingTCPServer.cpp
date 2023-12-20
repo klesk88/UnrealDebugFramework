@@ -2,6 +2,7 @@
 
 #include "Server/KLDebugImGuiNetworkingTCPServer.h"
 
+#include "Delegates/KLDebugImGuiServerDelegates.h"
 #include "Server/KLDebugImGuiTCPServerGameThreadContext.h"
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
@@ -214,6 +215,15 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
 
     FMemoryWriter ArbitrerWriter{ mArbitrerTempBuffer };
 
+    uint32 StartWorldPort = Settings.Server_GetStartPortRange();
+    uint32 EndWorldPort = Settings.Server_GetEndPortRange();
+    const TOptional<KL::Debug::Server::Delegates::FServerSocketPortRangeDelegateData> OverridePortsData = KL::Debug::Server::Delegates::BroadcastOnGetDebugServerSocketPortRange();
+    if (OverridePortsData.IsSet())
+    {
+        StartWorldPort = OverridePortsData.GetValue().GetStartRange();
+        EndWorldPort = OverridePortsData.GetValue().GetEndRange();
+    }
+
     for (const TWeakObjectPtr<const UWorld>& AddeddWorld : _Context.GetNewWorlds())
     {
         if (!AddeddWorld.IsValid())
@@ -228,10 +238,10 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
             continue;
         }
 
-        FSocket* WorldArbitrerSocket = GetNewWorldSocket(Settings, DebugPort);
+        FSocket* WorldArbitrerSocket = GetNewWorldSocket(StartWorldPort, EndWorldPort, Settings, DebugPort);
         if (!WorldArbitrerSocket)
         {
-            UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> Failed in creating arbitrer socket for world [%s]"), *AddeddWorld->GetName());
+            UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> Failed in creating arbitrer socket for world [%s]"), *AddeddWorld->GetName());
             continue;
         }
 
@@ -263,11 +273,11 @@ bool FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateConnections(const FKLDeb
     return KeepTicking;
 }
 
-FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const
+FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const uint32 _StartPort, const uint32 _EndPort, const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const
 {
-    uint32 CurrentPort = _Settings.Server_GetStartPortRange();
+    uint32 CurrentPort = _StartPort;
     FSocket* NewSocket = nullptr;
-    while (!NewSocket && CurrentPort < static_cast<int32>(_Settings.Server_GetEndPortRange()))
+    while (!NewSocket && CurrentPort <= _EndPort)
     {
         _DebugPort = CurrentPort++;
         const FIPv4Endpoint Endpoint(mLocalAddress, static_cast<int32>(_DebugPort));
@@ -280,7 +290,7 @@ FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const UKLDebugImGui
 
     if (!NewSocket)
     {
-        UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket>> Failed in creating socket"));
+        UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket>> Failed in creating socket"));
         return nullptr;
     }
 

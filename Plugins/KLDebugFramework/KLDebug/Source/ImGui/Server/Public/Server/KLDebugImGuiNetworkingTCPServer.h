@@ -41,7 +41,7 @@ private:
     void GameThread_AddNewWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
     UE_NODISCARD bool GameThread_UpdateConnections(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
 
-    UE_NODISCARD FSocket* GetNewWorldSocket(const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const;
+    UE_NODISCARD FSocket* GetNewWorldSocket(const uint32 _StartPort, const uint32 _EndPort, const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const;
     UE_NODISCARD const TSharedPtr<FInternetAddr> GetWorldLocalAddress(const UWorld& _World) const;
 
     void ArbitrerNewWorldConnectionAdded(const int32 _ServerPort, const int32 _DebugPort, FArchive& _ArbitrerWriter);
