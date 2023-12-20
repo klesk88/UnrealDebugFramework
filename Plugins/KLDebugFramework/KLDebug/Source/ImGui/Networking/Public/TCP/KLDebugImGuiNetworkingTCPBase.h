@@ -25,7 +25,7 @@ public:
     void Exit() override;
     // FRunnable
 
-    virtual void CreateSocket() = 0;
+    virtual void CreateSocket();
     UE_NODISCARD virtual bool IsValid() const;
 
 protected:
@@ -45,6 +45,11 @@ private:
     bool mStop = false;
 };
 
+inline bool FKLDebugImGuiNetworkingTCPBase::Init()
+{
+    return IsValid();
+}
+
 inline void FKLDebugImGuiNetworkingTCPBase::Stop()
 {
     mStop = true;
@@ -58,6 +63,10 @@ inline bool FKLDebugImGuiNetworkingTCPBase::ShouldStop() const
 inline bool FKLDebugImGuiNetworkingTCPBase::IsValid() const
 {
     return mListenerSocket != nullptr;
+}
+
+inline void FKLDebugImGuiNetworkingTCPBase::CreateSocket()
+{
 }
 
 inline float FKLDebugImGuiNetworkingTCPBase::GetSleepTime() const

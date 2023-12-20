@@ -58,10 +58,13 @@ private:
     void Tick(float _DeltaTime) final;
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
 
+    void LunchArbitrerIfNeeded();
+
 private:
     // NOTE: if we change the ownership of the connection, then we need to update also FKLDebugImGuiNetworkingTCPServer::TickCachedConnections
     // where we request the tick to make sure is thread safe
     TKLDebugImGuiNetworkingConnectionRunnableContainer<FKLDebugImGuiNetworkingTCPServer> mServerConnection;
+    bool mHasTryToLunchArbitrer = false;
 
 #if !WITH_EDITOR
 public:

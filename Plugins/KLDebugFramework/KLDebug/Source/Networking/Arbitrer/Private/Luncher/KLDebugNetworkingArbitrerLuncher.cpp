@@ -2,6 +2,8 @@
 
 #include "Luncher/KLDebugNetworkingArbitrerLuncher.h"
 
+#include "Log/KLDebugNetworkingArbitrerLog.h"
+
 #if PLATFORM_WINDOWS
 #include "Luncher/Win/KLDebugNetworkingArbitrerLuncher_Win.h"
 #elif PLATFORM_UNIX
@@ -49,6 +51,7 @@ namespace KL::Debug::Networking::Arbitrer
         HasStartArbitrer = true;
         if (OnArbitrerShouldLunch.IsBound() && !OnArbitrerShouldLunch.Execute())
         {
+            UE_LOG(LogKL_DebugArbitrer, Display, TEXT("KL::Debug::Networking::Arbitrer::TryLunchArbitrer>> Arbitrer will not lunch as delegate doesn't allow so"));
             return;
         }
 
@@ -63,4 +66,10 @@ namespace KL::Debug::Networking::Arbitrer
         KL::Debug::Networking::Arbitrer::CloseArbitrer();
         HasStartArbitrer = false;
     }
+
+    bool IsArbitrerRunning()
+    {
+        return KL::Debug::Networking::Arbitrer::IsArbitrerRunningInternal();
+    }
+
 }    // namespace KL::Debug::Networking::Arbitrer

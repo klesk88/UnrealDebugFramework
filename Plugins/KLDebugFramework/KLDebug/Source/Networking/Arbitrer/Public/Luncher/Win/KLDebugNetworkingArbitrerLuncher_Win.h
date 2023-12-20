@@ -8,6 +8,7 @@ namespace KL::Debug::Networking::Arbitrer
 {
     void LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole);
     void CloseArbitrer();
+    UE_NODISCARD bool IsArbitrerRunningInternal();
 }    // namespace KL::Debug::Networking::Arbitrer
 
 #endif

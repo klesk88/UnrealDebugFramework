@@ -3,8 +3,8 @@
 #include "Server/KLDebugArbitrer_Server.h"
 
 // modules
+#include "Networking/Arbitrer/Public/Definitions/KLDebugNetworkingArbitrerDefinitions.h"
 #include "Networking/Arbitrer/Public/Log/KLDebugNetworkingArbitrerLog.h"
-
 #include "Networking/Arbitrer/Public/Messages/Client/KLDebugNetworkingArbitrerMessage_ClientServerData.h"
 #include "Networking/Arbitrer/Public/Messages/KLDebugNetworkingArbitrerMessage_Types.h"
 #include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerConnected.h"
@@ -95,8 +95,7 @@ void FKLDebugNetworkArbitrer_Server::CreateClientSocket()
 void FKLDebugNetworkArbitrer_Server::InitListenerSocket()
 {
     const UKLDebugNetworkingArbitrerSettings& Settings = UKLDebugNetworkingArbitrerSettings::Get();
-    const FIPv4Address IPAddr(127, 0, 0, 1);
-    const FIPv4Endpoint Endpoint(IPAddr, Settings.GetPort());
+    const FIPv4Endpoint Endpoint(KL::Debug::Networking::Arbitrer::ArbitrerIPAddr, Settings.GetPort());
 
     mListenerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
                       .AsNonBlocking()

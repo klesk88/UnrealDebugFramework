@@ -4,8 +4,6 @@
 
 // modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerConnected.h"
-#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerDisconnected.h"
 #include "Networking/Runtime/Public/Message/Header/KLDebugNetworkingMessageHeaderDefinitions.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 #include "Utils/Public/KLDebugLog.h"
@@ -32,25 +30,6 @@ FKLDebugImGuiServerWorldCachedConnection::~FKLDebugImGuiServerWorldCachedConnect
     ShutdownInternal(*SocketSubsystem);
 }
 
-void FKLDebugImGuiServerWorldCachedConnection::OnRemove(const FInternetAddr& _ArbitrerAddress, FSocket& _ArbitrerSocket, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer)
-{
-    if (mState == EServerWorldConnectionState::MessageSent)
-    {
-        _WriteTempBuffer.Reset();
-        _WriteBuffer.Reset();
-        FKLDebugNetworkingArbitrerMessage_ServerDisconnected ServerMessage{ static_cast<uint32>(mServerPort) };
-        FMemoryWriter TempWriter{ _WriteTempBuffer };
-        ServerMessage.Serialize(TempWriter);
-        FMemoryWriter Writer{ _WriteBuffer };
-        KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(ServerMessage, _WriteTempBuffer, Writer);
-        int32 DataSent = 0;
-        if (_ArbitrerSocket.SendTo(_WriteBuffer.GetData(), _WriteBuffer.Num(), DataSent, _ArbitrerAddress))
-        {
-            mState = EServerWorldConnectionState::MessageToSend;
-        }
-    }
-}
-
 void FKLDebugImGuiServerWorldCachedConnection::ShutdownInternal(ISocketSubsystem& _SocketSubsystem)
 {
     if (mWorldDebugSocket)
@@ -73,36 +52,10 @@ void FKLDebugImGuiServerWorldCachedConnection::RemoveInvalidClientConnections()
     }
 }
 
-bool FKLDebugImGuiServerWorldCachedConnection::Parallel_Tick(const FInternetAddr& _ArbitrerAddress, FSocket& _ArbitrerSocket, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer)
+bool FKLDebugImGuiServerWorldCachedConnection::Parallel_Tick()
 {
-    SendArbitrerMessageIfNeeded(_ArbitrerAddress, _ArbitrerSocket, _WriteTempBuffer, _WriteBuffer);
     TickPendingConnections();
     return TickClientsConnections();
-}
-
-void FKLDebugImGuiServerWorldCachedConnection::SendArbitrerMessageIfNeeded(const FInternetAddr& _ArbitrerAddress, FSocket& _ArbitrerSocket, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer)
-{
-    switch (mState)
-    {
-    case EServerWorldConnectionState::MessageToSend:
-    {
-        _WriteTempBuffer.Reset();
-        _WriteBuffer.Reset();
-        FKLDebugNetworkingArbitrerMessage_ServerConnected ServerMessage{ static_cast<uint32>(mServerPort), static_cast<uint32>(mDebugPort) };
-        FMemoryWriter TempWriter{ _WriteTempBuffer };
-        ServerMessage.Serialize(TempWriter);
-        FMemoryWriter Writer{ _WriteBuffer };
-        KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(ServerMessage, _WriteTempBuffer, Writer);
-        int32 DataSent = 0;
-        if (_ArbitrerSocket.SendTo(_WriteBuffer.GetData(), _WriteBuffer.Num(), DataSent, _ArbitrerAddress))
-        {
-            mState = EServerWorldConnectionState::MessageSent;
-        }
-        break;
-    }
-    case EServerWorldConnectionState::MessageSent:
-        break;
-    }
 }
 
 void FKLDebugImGuiServerWorldCachedConnection::TickPendingConnections()

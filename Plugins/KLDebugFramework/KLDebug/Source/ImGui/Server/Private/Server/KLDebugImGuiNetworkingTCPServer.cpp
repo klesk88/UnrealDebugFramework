@@ -9,6 +9,10 @@
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
+#include "Networking/Arbitrer/Public/Definitions/KLDebugNetworkingArbitrerDefinitions.h"
+#include "Networking/Arbitrer/Public/Luncher/KLDebugNetworkingArbitrerLuncher.h"
+#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerConnected.h"
+#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerDisconnected.h"
 #include "Networking/Arbitrer/Public/Settings/KLDebugNetworkingArbitrerSettings.h"
 #include "Utils/Public/KLDebugLog.h"
 
@@ -24,46 +28,36 @@
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 
-void FKLDebugImGuiNetworkingTCPServer::CreateSocket()
+void FKLDebugImGuiNetworkingTCPServer::RemoveCachedConnection(const int32 _Index, FArchive& _ArbitrerWriter)
 {
-    mListenerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
-                      .AsNonBlocking()
-                      .AsReusable()
-                      .Build();
+    if (mArbitrerAddress.Get())
+    {
+        FKLDebugImGuiServerWorldCachedConnection& RemoveConnection = mWorldCachedConnections[_Index];
+        ArbitrerRemovedWorldConnection(RemoveConnection.GetServerPort(), _ArbitrerWriter);
+    }
 
-    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-    check(SocketSubsystem);
-    const UKLDebugNetworkingArbitrerSettings& ArbitrerSettings = UKLDebugNetworkingArbitrerSettings::Get();
-    mArbitrerAddress = SocketSubsystem->CreateInternetAddr();
-    bool IsValid = false;
-    mArbitrerAddress->SetIp(TEXT("127.0.0.1"), IsValid);
-    checkf(IsValid, TEXT("must be valid"));
-    mArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
-
-    mArbitrerTempMessageBuffer.Reserve(500);
-    mArbitrerTempBuffer.Reserve(500);
-}
-
-void FKLDebugImGuiNetworkingTCPServer::RemoveCachedConnection(const int32 _Index)
-{
-    FKLDebugImGuiServerWorldCachedConnection& RemoveConnection = mWorldCachedConnections[_Index];
-    RemoveConnection.OnRemove(*mArbitrerAddress.Get(), *mListenerSocket, mArbitrerTempMessageBuffer, mArbitrerTempBuffer);
     mWorldCachedConnections.RemoveAtSwap(_Index, 1, false);
 }
 
 void FKLDebugImGuiNetworkingTCPServer::RunChild()
 {
     Parallel_TickCachedConnections();
+    Parallel_TickArbitrerConnection();
 }
 
 void FKLDebugImGuiNetworkingTCPServer::Parallel_TickCachedConnections()
 {
+    if (mWorldCachedConnections.IsEmpty())
+    {
+        return;
+    }
+
     checkf(mArbitrerAddress.IsValid(), TEXT("Internet address must be valid"));
 
     bool RequiresGameThreadTick = false;
     for (FKLDebugImGuiServerWorldCachedConnection& WorldConnection : mWorldCachedConnections)
     {
-        RequiresGameThreadTick |= WorldConnection.Parallel_Tick(*mArbitrerAddress.Get(), *mListenerSocket, mArbitrerTempMessageBuffer, mArbitrerTempBuffer);
+        RequiresGameThreadTick |= WorldConnection.Parallel_Tick();
     }
 
     // this works without locks because we are owned by the KLDebugImGuiServerSubsystem_Engine
@@ -73,6 +67,32 @@ void FKLDebugImGuiNetworkingTCPServer::Parallel_TickCachedConnections()
         UKLDebugImGuiServerSubsystem_Engine* EngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
         EngineSubsystem->SetShouldTick();
     }
+}
+
+void FKLDebugImGuiNetworkingTCPServer::Parallel_TickArbitrerConnection()
+{
+    // keep in mind arbitrer can exist or not
+
+    if (!mListenerSocket || mArbitrerTempBuffer.IsEmpty())
+    {
+        return;
+    }
+
+    if (!mArbitrerAddress.IsValid())
+    {
+        ensureMsgf(false, TEXT("Arbitrer addr must be valid if socket is valid"));
+        return;
+    }
+
+    int32 DataSent = 0;
+    if (!mListenerSocket->SendTo(mArbitrerTempBuffer.GetData(), mArbitrerTempBuffer.Num(), DataSent, *mArbitrerAddress))
+    {
+        // we dont expect this. Arbitrer and server machine should live in the same enviroment (same PC for example) so the message
+        // should be always be sent correctly.
+        UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::NewWorldConnectionAdded>> Failed tosend arbitrer message."));
+    }
+
+    mArbitrerTempBuffer.Reset();
 }
 
 void FKLDebugImGuiNetworkingTCPServer::TickGameThread(FKLDebugImGuiTCPServerGameThreadContext& _Context)
@@ -90,14 +110,77 @@ void FKLDebugImGuiNetworkingTCPServer::TickGameThread(FKLDebugImGuiTCPServerGame
         return;
     }
 
+    GameThread_InitLocalAddress(_Context);
     GameThread_AddNewWorlds(_Context);
     GameThread_RemoveOldWorlds(_Context);
     const bool KeepTicking = GameThread_UpdateConnections(_Context);
     _Context.SetShouldKeepTicking(KeepTicking);
 }
 
+void FKLDebugImGuiNetworkingTCPServer::GameThread_InitLocalAddress(const FKLDebugImGuiTCPServerGameThreadContext& _Context)
+{
+    // Initialize stuff that requires a world or the engine subsystem to have run here.
+
+    if (mLocalAddress.Value != TNumericLimits<uint32>::Max() || _Context.GetNewWorlds().IsEmpty())
+    {
+        return;
+    }
+
+    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+    check(SocketSubsystem);
+
+    for (const TWeakObjectPtr<const UWorld>& AddeddWorld : _Context.GetNewWorlds())
+    {
+        if (!AddeddWorld.IsValid())
+        {
+            continue;
+        }
+
+        const TSharedPtr<FInternetAddr> WorldLocalAddress = GetWorldLocalAddress(*AddeddWorld.Get());
+        if (!WorldLocalAddress.IsValid())
+        {
+            ensureMsgf(false, TEXT("No valid net connection for world. Not expected"));
+            continue;
+        }
+
+        const FString LocalAddress = WorldLocalAddress->ToString(false);
+        if (!FIPv4Address::Parse(LocalAddress, mLocalAddress))
+        {
+            ensureMsgf(false, TEXT("We expect the local address to be valid"));
+            continue;
+        }
+
+        if (_Context.GetIsArbitrerRunning())
+        {
+            mListenerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
+                              .AsNonBlocking()
+                              .AsReusable()
+                              .Build();
+
+            mArbitrerTempMessageBuffer.Reserve(30);
+            mArbitrerTempBuffer.Reserve(500);
+
+            const FString ArbitrerLocalAdd = KL::Debug::Networking::Arbitrer::ArbitrerIPAddr.ToString();
+            const UKLDebugNetworkingArbitrerSettings& ArbitrerSettings = UKLDebugNetworkingArbitrerSettings::Get();
+            mArbitrerAddress = SocketSubsystem->CreateInternetAddr();
+            bool IsValid = false;
+            mArbitrerAddress->SetIp(*ArbitrerLocalAdd, IsValid);
+            UE_CLOG(!IsValid, LogKL_Debug, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_InitLocalAddress>> Arbitrer could not send the IP"));
+            if (IsValid)
+            {
+                *mArbitrerAddress = *WorldLocalAddress;
+                mArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
+            }
+        }
+
+        break;
+    }
+}
+
 void FKLDebugImGuiNetworkingTCPServer::GameThread_RemoveOldWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context)
 {
+    FMemoryWriter ArbitrerWriter{ mArbitrerTempBuffer };
+
     for (const FObjectKey& RemovedWorld : _Context.GetRemovedWorlds())
     {
         const int32 Index = mWorldCachedConnections.IndexOfByKey(RemovedWorld);
@@ -107,7 +190,7 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_RemoveOldWorlds(const FKLDebug
             continue;
         }
 
-        RemoveCachedConnection(Index);
+        RemoveCachedConnection(Index, ArbitrerWriter);
     }
 }
 
@@ -126,8 +209,10 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
     }
 
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
-    const FString LocalHost(TEXT("127.0.0.1"));
+    FString LocalPort;
     int32 DebugPort = 0;
+
+    FMemoryWriter ArbitrerWriter{ mArbitrerTempBuffer };
 
     for (const TWeakObjectPtr<const UWorld>& AddeddWorld : _Context.GetNewWorlds())
     {
@@ -136,8 +221,7 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
             continue;
         }
 
-        const UNetDriver* WorldNetDriver = AddeddWorld->GetNetDriver();
-        const TSharedPtr<FInternetAddr> WorldLocalAddress = WorldNetDriver ? WorldNetDriver->LocalAddr : nullptr;
+        const TSharedPtr<FInternetAddr> WorldLocalAddress = GetWorldLocalAddress(*AddeddWorld.Get());
         if (!WorldLocalAddress.IsValid())
         {
             ensureMsgf(false, TEXT("No valid net connection for world. Not expected"));
@@ -151,11 +235,17 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
             continue;
         }
 
+        const int32 WorldServerPort = WorldLocalAddress->GetPort();
         int32 ReceiveBufferSize = 0;
         int32 SenderBufferSize = 0;
         WorldArbitrerSocket->SetReceiveBufferSize(static_cast<int32>(Settings.Server_GetReadBufferSize()), ReceiveBufferSize);
         WorldArbitrerSocket->SetSendBufferSize(static_cast<int32>(Settings.Server_GetWriteBufferSize()), SenderBufferSize);
-        mWorldCachedConnections.Emplace(*AddeddWorld.Get(), WorldLocalAddress->GetPort(), DebugPort, *WorldArbitrerSocket);
+        mWorldCachedConnections.Emplace(*AddeddWorld.Get(), WorldServerPort, DebugPort, *WorldArbitrerSocket);
+
+        if (_Context.GetIsArbitrerRunning())
+        {
+            ArbitrerNewWorldConnectionAdded(WorldServerPort, DebugPort, ArbitrerWriter);
+        }
     }
 }
 
@@ -175,13 +265,12 @@ bool FKLDebugImGuiNetworkingTCPServer::GameThread_UpdateConnections(const FKLDeb
 
 FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const
 {
-    const FIPv4Address IPAddr(127, 0, 0, 1);
     uint32 CurrentPort = _Settings.Server_GetStartPortRange();
     FSocket* NewSocket = nullptr;
     while (!NewSocket && CurrentPort < static_cast<int32>(_Settings.Server_GetEndPortRange()))
     {
         _DebugPort = CurrentPort++;
-        const FIPv4Endpoint Endpoint(IPAddr, static_cast<int32>(_DebugPort));
+        const FIPv4Endpoint Endpoint(mLocalAddress, static_cast<int32>(_DebugPort));
         NewSocket = FTcpSocketBuilder(TEXT("ClientListenerSocket"))
                     .AsNonBlocking()
                     .BoundToEndpoint(Endpoint)
@@ -196,4 +285,30 @@ FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const UKLDebugImGui
     }
 
     return NewSocket;
+}
+
+const TSharedPtr<FInternetAddr> FKLDebugImGuiNetworkingTCPServer::GetWorldLocalAddress(const UWorld& _World) const
+{
+    const UNetDriver* WorldNetDriver = _World.GetNetDriver();
+    return WorldNetDriver ? WorldNetDriver->LocalAddr : nullptr;
+}
+
+void FKLDebugImGuiNetworkingTCPServer::ArbitrerNewWorldConnectionAdded(const int32 _ServerPort, const int32 _DebugPort, FArchive& _ArbitrerWriter)
+{
+    mArbitrerTempMessageBuffer.Reset();
+    FMemoryWriter ArbitrerTempWriter{ mArbitrerTempMessageBuffer };
+
+    FKLDebugNetworkingArbitrerMessage_ServerConnected ServerMessage{ static_cast<uint32>(_ServerPort), static_cast<uint32>(_DebugPort) };
+    ServerMessage.Serialize(ArbitrerTempWriter);
+    KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(ServerMessage, mArbitrerTempMessageBuffer, _ArbitrerWriter);
+}
+
+void FKLDebugImGuiNetworkingTCPServer::ArbitrerRemovedWorldConnection(const int32 _ServerPort, FArchive& _ArbitrerWriter)
+{
+    mArbitrerTempMessageBuffer.Reset();
+    FMemoryWriter ArbitrerTempWriter{ mArbitrerTempMessageBuffer };
+
+    FKLDebugNetworkingArbitrerMessage_ServerDisconnected ServerMessage{ static_cast<uint32>(_ServerPort) };
+    ServerMessage.Serialize(ArbitrerTempWriter);
+    KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(ServerMessage, mArbitrerTempMessageBuffer, _ArbitrerWriter);
 }

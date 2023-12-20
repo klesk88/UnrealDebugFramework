@@ -7,11 +7,6 @@
 #include "Misc/ScopeTryLock.h"
 #include "Sockets.h"
 
-bool FKLDebugImGuiNetworkingTCPBase::Init()
-{
-    return mListenerSocket != nullptr;
-}
-
 uint32 FKLDebugImGuiNetworkingTCPBase::Run()
 {
     while (!mStop)

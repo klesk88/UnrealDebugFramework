@@ -36,7 +36,6 @@ void UKLDebugImGuiServerSubsystem_Engine::Initialize(FSubsystemCollectionBase& _
     KL::Debug::Networking::Message::InitHeaderSize();
 
     mServerConnection.InitSocket(TEXT("KLDebugImguiServerThread"));
-    KL::Debug::Networking::Arbitrer::TryLunchArbitrer();
 
 #if !WITH_EDITOR
     CookedOnly_InitFeatureMapIfNeeded();
@@ -66,12 +65,29 @@ void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerSubsystemEngine_Tick);
 
-    FKLDebugImGuiTCPServerGameThreadContext Context;
+    LunchArbitrerIfNeeded();
+
+    FKLDebugImGuiTCPServerGameThreadContext Context{ KL::Debug::Networking::Arbitrer::IsArbitrerRunning() };
     GatherUpdateData(Context);
 
     UKLDebugImGuiServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
     mServerConnection.GetConnectionMutable().TickGameThread(Context);
     mShouldTick = Context.GetShouldKeepTicking();
+}
+
+void UKLDebugImGuiServerSubsystem_Engine::LunchArbitrerIfNeeded()
+{
+    // we lunch the arbiter process only if we have world which make use of the server/client architecture
+    // After that we keep the process alive till the Unreal process itself stops (so we don't start a process up
+    // each time the user wants press Play in editor for example)
+
+    if (mHasTryToLunchArbitrer || !HasValidWorlds())
+    {
+        return;
+    }
+
+    mHasTryToLunchArbitrer = true;
+    KL::Debug::Networking::Arbitrer::TryLunchArbitrer();
 }
 
 #if !WITH_EDITOR

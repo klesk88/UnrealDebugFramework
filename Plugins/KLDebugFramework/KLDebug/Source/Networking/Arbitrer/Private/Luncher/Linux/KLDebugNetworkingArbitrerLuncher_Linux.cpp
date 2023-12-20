@@ -27,6 +27,12 @@ namespace KL::Debug::Networking::Arbitrer
     {
         ensureMsgf(false, TEXT("not implemented need a linux machine to test"));
     }
+
+    bool IsArbitrerRunningInternal()
+    {
+        return false;
+    }
+
 }    // namespace KL::Debug::Networking::Arbitrer
 
 #endif

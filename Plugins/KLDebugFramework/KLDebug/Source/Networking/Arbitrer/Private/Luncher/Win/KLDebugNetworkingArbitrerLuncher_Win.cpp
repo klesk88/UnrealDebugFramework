@@ -21,6 +21,7 @@ namespace KL::Debug::Networking::Arbitrer
     /// private
 
     static PROCESS_INFORMATION ProcessInfo{};
+    static bool IsArbitrerProcessRunning = false;
 
     /////////////////////////////////////////////////////
     /// public
@@ -42,6 +43,7 @@ namespace KL::Debug::Networking::Arbitrer
         if (KnownEvent != nullptr)
         {
             UE_LOG(LogKLDebug_Networking, Display, TEXT("KL::Debug::Networking::Arbitrer::LunchArbitrer>> Arbitrer process already lunched"));
+            IsArbitrerProcessRunning = true;
             return;
         }
 
@@ -56,8 +58,8 @@ namespace KL::Debug::Networking::Arbitrer
         }
 
         STARTUPINFOW StartupInfo = { sizeof(STARTUPINFOW) };
-        const BOOL bOk = CreateProcessW(LPWSTR(*_ExecutablePath), nullptr, nullptr, nullptr, false, CreateProcFlags, nullptr, nullptr, &StartupInfo, &ProcessInfo);
-        UE_CLOG(!bOk, LogKLDebug_Networking, Warning, TEXT("KL::Debug::Networking::Arbitrer::LunchArbitrerInternal>> unable to launch arbitrer with '%s' (%08x)"), *_ExecutablePath, GetLastError());
+        IsArbitrerProcessRunning = CreateProcessW(LPWSTR(*_ExecutablePath), nullptr, nullptr, nullptr, false, CreateProcFlags, nullptr, nullptr, &StartupInfo, &ProcessInfo);
+        UE_CLOG(!IsArbitrerProcessRunning, LogKLDebug_Networking, Warning, TEXT("KL::Debug::Networking::Arbitrer::LunchArbitrerInternal>> unable to launch arbitrer with '%s' (%08x)"), *_ExecutablePath, GetLastError());
     }
 
     void CloseArbitrer()
@@ -69,6 +71,7 @@ namespace KL::Debug::Networking::Arbitrer
             return;
         }
 
+        IsArbitrerProcessRunning = false;
         TerminateProcess(ProcessInfo.hProcess, 0);
 
         // 500 ms timeout; use INFINITE for no timeout
@@ -86,6 +89,11 @@ namespace KL::Debug::Networking::Arbitrer
         CloseHandle(ProcessInfo.hThread);
 
         ProcessInfo = PROCESS_INFORMATION{};
+    }
+
+    bool IsArbitrerRunningInternal()
+    {
+        return IsArbitrerProcessRunning;
     }
 
 }    // namespace KL::Debug::Networking::Arbitrer
