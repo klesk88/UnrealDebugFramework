@@ -18,9 +18,10 @@ namespace KL::Debug::Networking::Arbitrer
     /////////////////////////////////////////////////////
     /// public
 
-    void LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole)
+    bool LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole)
     {
         ensureMsgf(false, TEXT("not implemented need a linux machine to test"));
+        return false;
     }
 
     void CloseArbitrer()

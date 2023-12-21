@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Arbitrer/KLDebugImGuiServerArbitrerManager.h"
 #include "Server/KLDebugImGuiServerWorldCachedConnection.h"
 
 // modules
@@ -26,17 +27,18 @@ public:
     // FKLDebugImGuiNetworkingTCPBase
     void RunChild() final;
     UE_NODISCARD bool IsValid() const final;
+    void Exit() final;
     // FKLDebugImGuiNetworkingTCPBase
 
+    void InitArbitrer();
     void TickGameThread(FKLDebugImGuiTCPServerGameThreadContext& _Context);
 
 private:
-    void RemoveCachedConnection(const int32 _Index, FArchive& _ArbitrerWriter);
+    void RemoveCachedConnection(const int32 _Index);
 
     void Parallel_TickCachedConnections();
     void Parallel_TickArbitrerConnection();
 
-    void GameThread_InitLocalAddress(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
     void GameThread_RemoveOldWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
     void GameThread_AddNewWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
     UE_NODISCARD bool GameThread_UpdateConnections(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
@@ -44,19 +46,17 @@ private:
     UE_NODISCARD FSocket* GetNewWorldSocket(const uint32 _StartPort, const uint32 _EndPort, const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const;
     UE_NODISCARD const TSharedPtr<FInternetAddr> GetWorldLocalAddress(const UWorld& _World) const;
 
-    void ArbitrerNewWorldConnectionAdded(const int32 _ServerPort, const int32 _DebugPort, FArchive& _ArbitrerWriter);
-    void ArbitrerRemovedWorldConnection(const int32 _ServerPort, FArchive& _ArbitrerWriter);
-
 private:
+    FKLDebugImGuiServerArbitrerManager mArbitrerManager;
     TArray<FKLDebugImGuiServerWorldCachedConnection> mWorldCachedConnections;
-    TSharedPtr<FInternetAddr> mArbitrerAddress;
-    TArray<uint8> mArbitrerTempMessageBuffer;
-    TArray<uint8> mArbitrerTempBuffer;
-    // local addres can be different )for example 127.0.0.1 or 0.0.0.0)
-    FIPv4Address mLocalAddress = FIPv4Address{ TNumericLimits<uint32>::Max() };
 };
 
 inline bool FKLDebugImGuiNetworkingTCPServer::IsValid() const
 {
     return true;
+}
+
+inline void FKLDebugImGuiNetworkingTCPServer::InitArbitrer()
+{
+    mArbitrerManager.Init();
 }

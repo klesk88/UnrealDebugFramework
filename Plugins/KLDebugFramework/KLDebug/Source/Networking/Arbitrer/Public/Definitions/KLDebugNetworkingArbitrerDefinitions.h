@@ -9,5 +9,4 @@
 namespace KL::Debug::Networking::Arbitrer
 {
     extern KLDEBUGNETWORKINGARBITRER_API FString ArbitrerSessionEvent;
-    extern KLDEBUGNETWORKINGARBITRER_API const FIPv4Address ArbitrerIPAddr;
 }    // namespace KL::Debug::Networking::Arbitrer

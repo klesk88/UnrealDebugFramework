@@ -6,6 +6,8 @@
 #include "Networking/Arbitrer/Public/Definitions/KLDebugNetworkingArbitrerDefinitions.h"
 #include "Networking/Arbitrer/Public/Log/KLDebugNetworkingArbitrerLog.h"
 #include "Networking/Arbitrer/Public/Messages/Client/KLDebugNetworkingArbitrerMessage_ClientServerData.h"
+#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerPing.h"
+#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerPong.h"
 #include "Networking/Arbitrer/Public/Messages/KLDebugNetworkingArbitrerMessage_Types.h"
 #include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerConnected.h"
 #include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerDisconnected.h"
@@ -95,12 +97,17 @@ void FKLDebugNetworkArbitrer_Server::CreateClientSocket()
 void FKLDebugNetworkArbitrer_Server::InitListenerSocket()
 {
     const UKLDebugNetworkingArbitrerSettings& Settings = UKLDebugNetworkingArbitrerSettings::Get();
-    const FIPv4Endpoint Endpoint(KL::Debug::Networking::Arbitrer::ArbitrerIPAddr, Settings.GetPort());
+    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+    check(SocketSubsystem != nullptr);
 
+    const FIPv4Endpoint Endpoint(FIPv4Address::Any, Settings.GetPort());
     mListenerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
                       .AsNonBlocking()
                       .BoundToEndpoint(Endpoint)
                       .Build();
+
+    const FString ConnectionInfo = Endpoint.ToString();
+    UE_LOG(LogKL_DebugArbitrer, Display, TEXT("FKLDebugNetworkArbitrer_Server::InitListenerSocket>> Arbitrer listening on [%s]"), *ConnectionInfo);
 }
 
 void FKLDebugNetworkArbitrer_Server::Run()
@@ -163,6 +170,29 @@ void FKLDebugNetworkArbitrer_Server::ReadData(const FKLDebugNetworkingMessage_He
 
     switch (static_cast<EKLDebugArbitrerMessage>(_Header.GetMessageType()))
     {
+    case EKLDebugArbitrerMessage::ServerPing:
+    {
+        const FKLDebugNetworkingArbitrerMessage_ServerPing ServerPingMessage{ _Reader };
+        const uint32 AnswerPort = ServerPingMessage.Arbitrer_GetAnswerPort();
+
+        bool IsValid = false;
+        mTempClientAddress->SetIp(*FIPv4Address::InternalLoopback.ToString(), IsValid);
+        ensureMsgf(IsValid, TEXT("address must be valid"));
+        mTempClientAddress->SetPort(static_cast<int32>(AnswerPort));
+
+        mTempSendMessageBuffer.Reset();
+        mSendMessageBuffer.Reset();
+        FMemoryWriter TempWriter{ mTempSendMessageBuffer };
+        FMemoryWriter Writer{ mSendMessageBuffer };
+
+        FKLDebugNetworkingArbitrerMessage_ServerPong ServerPongData;
+        ServerPongData.Serialize(TempWriter);
+        KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(ServerPongData, mTempSendMessageBuffer, Writer);
+        int32 BytesSent = 0;
+        const bool Sent = mClientSocket->SendTo(mSendMessageBuffer.GetData(), mSendMessageBuffer.Num(), BytesSent, *mTempClientAddress.Get());
+        UE_CLOG(!Sent, LogKL_DebugArbitrer, Warning, TEXT("ServerPing>> Coult not send message back to server"));
+        break;
+    }
     case EKLDebugArbitrerMessage::ServerRegistration:
     {
         const FKLDebugNetworkingArbitrerMessage_ServerConnected ServerMessage{ _Reader };

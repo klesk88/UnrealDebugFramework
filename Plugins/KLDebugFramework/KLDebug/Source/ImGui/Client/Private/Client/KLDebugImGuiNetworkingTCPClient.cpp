@@ -3,13 +3,14 @@
 #include "Client/KLDebugImGuiNetworkingTCPClient.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
+#include "Delegates/KLDebugImGuiClientDelegates.h"
+#include "ServerPortGetter/Arbitrer/KLDebugImGuiClientServerPortGetterArbitrer.h"
+#include "ServerPortGetter/User/KLDebugImGuiClientServerPortGetterUser.h"
 #include "Subsystem/Engine/KLDebugImGuiClientSubsystem_Engine.h"
 
 // modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "Networking/Arbitrer/Public/Messages/Client/KLDebugNetworkingArbitrerMessage_ClientServerData.h"
-#include "Networking/Arbitrer/Public/Settings/KLDebugNetworkingArbitrerSettings.h"
-#include "Utils/Public/KLDebugLog.h"
+#include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 
 // engine
 #include "Common/TcpSocketBuilder.h"
@@ -27,67 +28,20 @@
 #include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
 #include "SocketSubsystem.h"
+#include "Templates/SharedPointer.h"
 
 void FKLDebugImGuiNetworkingTCPClient::CreateSocket()
 {
-    mListenerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
-                      .AsNonBlocking()
-                      .AsReusable()
-                      .Build();
-
     mCachedConnections.Reserve(3);
-
-    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-    check(SocketSubsystem);
-    const UKLDebugNetworkingArbitrerSettings& ArbitrerSettings = UKLDebugNetworkingArbitrerSettings::Get();
-    mArbitrerAddress = SocketSubsystem->CreateInternetAddr();
-    mArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
-
-    mTempAddress = SocketSubsystem->CreateInternetAddr();
-
-    mArbitrerTempWriteBuffer.Reserve(500);
-    mArbitrerWriteBuffer.Reserve(500);
-    mArbitrerReplyReadData.Init(0, 500);
-
-    CreateArbitrerReplySocket(ArbitrerSettings);
-}
-
-void FKLDebugImGuiNetworkingTCPClient::CreateArbitrerReplySocket(const UKLDebugNetworkingArbitrerSettings& _ArbitrerSettings)
-{
-    const FIPv4Address IPAddr(127, 0, 0, 1);
-    uint32 CurrentPort = _ArbitrerSettings.GetStartClientPortRange();
-    while (!mArbitrerReplySocket && CurrentPort < _ArbitrerSettings.GetEndClientPortRange())
-    {
-        mArbitrerReplyPort = CurrentPort++;
-        const FIPv4Endpoint Endpoint(IPAddr, static_cast<int32>(mArbitrerReplyPort));
-        mArbitrerReplySocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
-                               .AsNonBlocking()
-                               .BoundToEndpoint(Endpoint)
-                               .Build();
-    }
-
-    if (!mArbitrerReplySocket)
-    {
-        UE_LOG(LogKL_Debug, Log, TEXT("FKLDebugImGuiNetworkingTCPClient::CreateArbitrerReplySocket>> we didnt manage to create the reply socket"));
-        return;
-    }
-
-    int32 ReceiveBufferSize = 0;
-    int32 SenderBufferSize = 0;
-    mArbitrerReplySocket->SetReceiveBufferSize(static_cast<int32>(_ArbitrerSettings.GetReceiveBufferSize()), ReceiveBufferSize);
-    mArbitrerReplySocket->SetSendBufferSize(static_cast<int32>(_ArbitrerSettings.GetWriteBufferSize()), SenderBufferSize);
 }
 
 void FKLDebugImGuiNetworkingTCPClient::Exit()
 {
     FKLDebugImGuiNetworkingTCPBase::Exit();
 
-    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-    if (mArbitrerReplySocket && SocketSubsystem)
+    if (mServerPortGetter.IsValid())
     {
-        mArbitrerReplySocket->Close();
-        SocketSubsystem->DestroySocket(mArbitrerReplySocket);
-        mArbitrerReplySocket = nullptr;
+        mServerPortGetter->Shutdown();
     }
 }
 
@@ -99,27 +53,30 @@ void FKLDebugImGuiNetworkingTCPClient::RemoveCachedConnection(const int32 _Index
 
 void FKLDebugImGuiNetworkingTCPClient::RunChild()
 {
-    TickReadArbitrerData();
+    TickPortGetter();
     TickConnections();
+}
 
-#if !WITH_EDITOR
-    // in package builds, once we disconnect from the server to connect to a new one, recreate the socket
-    // so we are listening again for new connections
-    if (mCachedConnections.IsEmpty())
+void FKLDebugImGuiNetworkingTCPClient::TickPortGetter()
+{
+    QUICK_SCOPE_CYCLE_COUNTER(FKLDebugImGuiNetworkingTCPClient_TickPortGetter);
+
+    if (mServerPortGetter.IsValid())
     {
-        InitSocket();
+        mServerPortGetter->ParallelTick(mCachedConnections);
     }
-#endif
 }
 
 void FKLDebugImGuiNetworkingTCPClient::TickConnections()
 {
+    QUICK_SCOPE_CYCLE_COUNTER(FKLDebugImGuiNetworkingTCPClient_TickConnections);
+
     bool RequiresGameThreadTick = false;
 
     for (int32 i = mCachedConnections.Num() - 1; i >= 0; --i)
     {
         FKLDebugImGuiClientWorldCacheConnection& CachedConnection = mCachedConnections[i];
-        RequiresGameThreadTick |= CachedConnection.Parallel_Tick(mArbitrerReplyPort, mArbitrerTempWriteBuffer, mArbitrerWriteBuffer);
+        RequiresGameThreadTick |= CachedConnection.Parallel_Tick();
     }
 
     // this works without locks because we are sure the subsystem exists because it is owning us
@@ -131,77 +88,6 @@ void FKLDebugImGuiNetworkingTCPClient::TickConnections()
             EngineSubsystem->SetShouldTick();
         }
     }
-}
-
-void FKLDebugImGuiNetworkingTCPClient::TickReadArbitrerData()
-{
-    QUICK_SCOPE_CYCLE_COUNTER(FKLDebugImGuiNetworkingTCPClient_TickReadArbitrerData);
-
-    uint32 Size = 0;
-    int32 BytesRead = 0;
-
-    while (mArbitrerReplySocket->HasPendingData(Size) && Size > 0)
-    {
-        mArbitrerReplyReadData.SetNumUninitialized(Size, false);
-        Size = 0;
-        mArbitrerReplySocket->Recv(mArbitrerReplyReadData.GetData(), mArbitrerReplyReadData.Num(), BytesRead);
-        if (BytesRead == 0)
-        {
-            UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingTCPClient::TickReadArbitrerData>> Socket had pending data but didnt read any bytes"));
-            continue;
-        }
-
-        TArrayView<uint8> ReceiverView{ mArbitrerReplyReadData.GetData(), BytesRead };
-        FMemoryReaderView Reader{ ReceiverView };
-        OnReadArbitrerData(Reader);
-    }
-}
-
-void FKLDebugImGuiNetworkingTCPClient::OnReadArbitrerData(FArchive& _Reader)
-{
-    if (_Reader.AtEnd())
-    {
-        return;
-    }
-
-    const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
-
-    auto ReadMessagesLambda = [this, &Settings](const FKLDebugNetworkingMessage_Header& _MessageHeader, FArchive& _MessageData) -> void {
-        if (_MessageHeader.GetMessageEnumType() != static_cast<uint16>(EKLDebugNetworkingMessagesTypes::Arbitrer))
-        {
-            ensureMsgf(false, TEXT("received a message which was not expected"));
-            return;
-        }
-
-        switch (static_cast<EKLDebugArbitrerMessage>(_MessageHeader.GetMessageType()))
-        {
-        case EKLDebugArbitrerMessage::Client_GetServerData:
-        {
-            const FKLDebugNetworkingArbitrerMessage_ClientServerData ServerData{ _MessageData };
-            const int32 Index = mCachedConnections.IndexOfByKey(ServerData.Client_GetClientID());
-            if (Index == INDEX_NONE)
-            {
-                return;
-            }
-
-            if (!ServerData.Client_GetCanConnect())
-            {
-                UE_LOG(LogKL_Debug, Warning, TEXT("FKLDebugImGuiNetworkingTCPClient::OnReadArbitrerData>> Client has header version different then the server. Cant connect to it removing"));
-                mCachedConnections.RemoveAtSwap(Index, 1, false);
-                return;
-            }
-
-            FKLDebugImGuiClientWorldCacheConnection& CacheData = mCachedConnections[Index];
-            CacheData.OnArbitrerMessageRecv(Settings, ServerData, *mTempAddress.Get());
-            break;
-        }
-        default:
-            ensureMsgf(false, TEXT("not handled"));
-            break;
-        }
-    };
-
-    KL::Debug::Networking::Message::ReadBufferGetStopReadLocation(ReadMessagesLambda, mArbitrerReplyTempData, _Reader);
 }
 
 void FKLDebugImGuiNetworkingTCPClient::TickGameThread(FKLDebugImGuiClientGameThreadContext& _Context)
@@ -218,9 +104,31 @@ void FKLDebugImGuiNetworkingTCPClient::TickGameThread(FKLDebugImGuiClientGameThr
         return;
     }
 
+    GameThread_InitServerPortGetter(_Context);
     GameThread_NewWorlds(_Context);
     GameThread_RemoveInvalidWorlds(_Context);
     GameThread_TickImGuiData(_Context);
+}
+
+void FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter(const FKLDebugImGuiClientGameThreadContext& _Context)
+{
+    if (mServerPortGetter.IsValid())
+    {
+        return;
+    }
+
+    if (KL::Debug::Client::Delegates::IsGetDebugServerSocketPortBound())
+    {
+        UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter>> using user server port getter"));
+        mServerPortGetter = MakeUnique<FKLDebugImGuiClientServerPortGetterUser>();
+    }
+    else
+    {
+        UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter>> using arbitrer server port getter"));
+        mServerPortGetter = MakeUnique<FKLDebugImGuiClientServerPortGetterArbitrer>();
+    }
+
+    mServerPortGetter->Init();
 }
 
 void FKLDebugImGuiNetworkingTCPClient::GameThread_RemoveInvalidWorlds(const FKLDebugImGuiClientGameThreadContext& _Context)
@@ -239,61 +147,9 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_NewWorlds(const FKLDebugImGuiC
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPClient_GameThread_NewWorlds);
 
-    ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-    if (!SocketSubsystem)
+    if (mServerPortGetter.IsValid())
     {
-        return;
-    }
-
-    const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
-    const UKLDebugNetworkingArbitrerSettings& ArbitrerSettings = UKLDebugNetworkingArbitrerSettings::Get();
-
-    for (const TWeakObjectPtr<const UWorld>& WorldPtr : _Context.GetNewWorlds())
-    {
-        if (!WorldPtr.IsValid())
-        {
-            continue;
-        }
-
-        const UNetDriver* WorldNetDriver = WorldPtr->GetNetDriver();
-        const UNetConnection* NetConnection = WorldNetDriver ? WorldNetDriver->ServerConnection : nullptr;
-        if (!NetConnection)
-        {
-            ensureMsgf(false, TEXT("we expect the world to be fully initialize here"));
-            continue;
-        }
-
-        FSocket* ArbitrerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ClientSocket"))
-                                  .AsNonBlocking()
-                                  .AsReusable()
-                                  .Build();
-
-        if (!ArbitrerSocket)
-        {
-            ensureMsgf(false, TEXT("Coult not create an arbitrer socket"));
-            continue;
-        }
-
-        TSharedPtr<FInternetAddr> ArbitrerAddress = SocketSubsystem->CreateInternetAddr();
-        if (!ArbitrerAddress.IsValid())
-        {
-            ArbitrerSocket->Close();
-            SocketSubsystem->DestroySocket(ArbitrerSocket);
-
-            ensureMsgf(false, TEXT("Coult not create an arbitrer address"));
-            continue;
-        }
-
-        bool IsValid = false;
-        ArbitrerAddress->SetIp(*NetConnection->URL.Host, IsValid);
-        if (!IsValid)
-        {
-            ensureMsgf(false, TEXT("Coult not store IP address to world"));
-            continue;
-        }
-
-        ArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
-        mCachedConnections.Emplace(*WorldPtr.Get(), NetConnection->URL.Host, static_cast<uint32>(NetConnection->URL.Port), ArbitrerAddress.ToSharedRef(), *ArbitrerSocket);
+        mServerPortGetter->AddNewConnections(_Context);
     }
 }
 

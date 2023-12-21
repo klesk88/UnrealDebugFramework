@@ -72,7 +72,7 @@ void UKLDebugImGuiServerSubsystem_Engine::Tick(float _DeltaTime)
 
     LunchArbitrerIfNeeded();
 
-    FKLDebugImGuiTCPServerGameThreadContext Context{ KL::Debug::Networking::Arbitrer::IsArbitrerRunning() };
+    FKLDebugImGuiTCPServerGameThreadContext Context;
     GatherUpdateData(Context);
 
     UKLDebugImGuiServerSubsystem_Engine* ServerEngineSubsystem = UKLDebugImGuiServerSubsystem_Engine::TryGetMutable();
@@ -92,7 +92,11 @@ void UKLDebugImGuiServerSubsystem_Engine::LunchArbitrerIfNeeded()
     }
 
     mHasTryToLunchArbitrer = true;
-    KL::Debug::Networking::Arbitrer::TryLunchArbitrer();
+    static_cast<void>(KL::Debug::Networking::Arbitrer::TryLunchArbitrer());
+    if (KL::Debug::Networking::Arbitrer::IsArbitrerRunning())
+    {
+        mServerConnection.GetConnectionMutable().InitArbitrer();
+    }
 }
 
 #if !WITH_EDITOR

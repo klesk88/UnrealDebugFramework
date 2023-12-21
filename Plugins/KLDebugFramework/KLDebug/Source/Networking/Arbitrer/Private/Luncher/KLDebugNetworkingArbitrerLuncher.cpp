@@ -40,25 +40,35 @@ namespace KL::Debug::Networking::Arbitrer
         OnArbitrerShouldLunch.Unbind();
     }
 
-    void TryLunchArbitrer()
+    bool IsArbitrerSupported()
+    {
+        if (OnArbitrerShouldLunch.IsBound())
+        {
+            return OnArbitrerShouldLunch.Execute();
+        }
+
+        return true;
+    }
+
+    bool TryLunchArbitrer()
     {
         static const FString ExecutablePath = FString::Format(TEXT("{0}/Resources/Arbitrer/KLDebugArbitrer.exe"), { *(IPluginManager::Get().FindPlugin("KLDebug")->GetBaseDir()) });
         if (HasStartArbitrer)
         {
-            return;
+            return false;
         }
 
         HasStartArbitrer = true;
-        if (OnArbitrerShouldLunch.IsBound() && !OnArbitrerShouldLunch.Execute())
+        if (!IsArbitrerSupported())
         {
             UE_LOG(LogKL_DebugArbitrer, Display, TEXT("KL::Debug::Networking::Arbitrer::TryLunchArbitrer>> Arbitrer will not lunch as delegate doesn't allow so"));
-            return;
+            return false;
         }
 
         const FString CmdLine = FCommandLine::Get();
         const bool CreateConsole = FParse::Param(*CmdLine, TEXT("showarbitrerlog"));
 
-        KL::Debug::Networking::Arbitrer::LunchArbitrer(ExecutablePath, CreateConsole);
+        return KL::Debug::Networking::Arbitrer::LunchArbitrer(ExecutablePath, CreateConsole);
     }
 
     void TryCloseArbitrer()

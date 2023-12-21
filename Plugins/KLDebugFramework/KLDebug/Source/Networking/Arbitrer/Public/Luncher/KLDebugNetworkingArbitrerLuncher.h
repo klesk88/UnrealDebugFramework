@@ -12,7 +12,8 @@ namespace KL::Debug::Networking::Arbitrer
     KLDEBUGNETWORKINGARBITRER_API void BindOnArbitrerShouldLunch(const FOnArbitrerShouldLunch& _Delegate);
     KLDEBUGNETWORKINGARBITRER_API void UnbindOnArbitrerShouldLunch();
 
-    KLDEBUGNETWORKINGARBITRER_API void TryLunchArbitrer();
+    KLDEBUGNETWORKINGARBITRER_API UE_NODISCARD bool IsArbitrerSupported();
+    KLDEBUGNETWORKINGARBITRER_API UE_NODISCARD bool TryLunchArbitrer();
     KLDEBUGNETWORKINGARBITRER_API void TryCloseArbitrer();
     KLDEBUGNETWORKINGARBITRER_API UE_NODISCARD bool IsArbitrerRunning();
 }    // namespace KL::Debug::Networking::Arbitrer

@@ -26,14 +26,14 @@ namespace KL::Debug::Networking::Arbitrer
     /////////////////////////////////////////////////////
     /// public
 
-    void LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole)
+    bool LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole)
     {
         DWORD HandleFlags = 0;
         if (GetHandleInformation(ProcessInfo.hProcess, &HandleFlags))
         {
             ensureMsgf(false, TEXT("we started already the arbitrer process"));
             // we already started the process
-            return;
+            return false;
         }
 
         // based on TryAutoConnect in TraceAucilary.cpp
@@ -44,7 +44,7 @@ namespace KL::Debug::Networking::Arbitrer
         {
             UE_LOG(LogKLDebug_Networking, Display, TEXT("KL::Debug::Networking::Arbitrer::LunchArbitrer>> Arbitrer process already lunched"));
             IsArbitrerProcessRunning = true;
-            return;
+            return false;
         }
 
         uint32 CreateProcFlags = CREATE_BREAKAWAY_FROM_JOB;
@@ -60,6 +60,7 @@ namespace KL::Debug::Networking::Arbitrer
         STARTUPINFOW StartupInfo = { sizeof(STARTUPINFOW) };
         IsArbitrerProcessRunning = CreateProcessW(LPWSTR(*_ExecutablePath), nullptr, nullptr, nullptr, false, CreateProcFlags, nullptr, nullptr, &StartupInfo, &ProcessInfo);
         UE_CLOG(!IsArbitrerProcessRunning, LogKLDebug_Networking, Warning, TEXT("KL::Debug::Networking::Arbitrer::LunchArbitrerInternal>> unable to launch arbitrer with '%s' (%08x)"), *_ExecutablePath, GetLastError());
+        return IsArbitrerProcessRunning;
     }
 
     void CloseArbitrer()

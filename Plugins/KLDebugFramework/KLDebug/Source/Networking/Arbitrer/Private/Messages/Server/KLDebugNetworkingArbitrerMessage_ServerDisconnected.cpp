@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "Messages/Server/KLDebugNetworkingArbitrerMessage_ServerDisconnected.h"
 
 // modules
