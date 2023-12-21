@@ -1,0 +1,123 @@
+{
+  "FileVersion": 1,
+  "Version": 1,
+  "VersionName": "1",
+  "FriendlyName": "KLDebug",
+  "Description": "",
+  "Category": "Debug",
+  "CreatedBy": "Michele Ermacora",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "KLDebugCore",
+      "Type": "Runtime",
+      "LoadingPhase": "EarliestPossible"
+    },
+    {
+      "Name": "KLDebugExamples",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugGameplayRuntime",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiFramework",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiUser",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiNetworking",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugNetworkingArbitrer",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugNetworkingRuntime",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugUtils",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ImGuiNodeEditor",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ImGuiThirdParty",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "ImPlotThirdParty",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "NetImGuiThirdParty",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "UnrealImGui",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLUnrealImGui",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiClient",
+      "Type": "ClientOnlyNoCommandlet",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiServer",
+      "Type": "ServerOnly",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "KLDebugImGuiEditor",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "KLDebugImGuiTests",
+      "Type": "UncookedOnly",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "EnhancedInput",
+      "Enabled": true
+    },
+    {
+      "Name": "StructUtils",
+      "Enabled": true
+    }
+  ]
+}

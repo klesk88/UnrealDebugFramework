@@ -10,7 +10,10 @@ Plugins/*/*/Intermediate/*
 Plugins/*/*/Binaries/*
 Plugins/*/*/Saved/*
 Plugins/*/KLDebugExamples/*
-Plugins/*/KLTest/*
+Plugins/*/Intermediate/*
+Plugins/*/Binaries/*
+Plugins/*/Saved/*
+Plugins/KLDebugExamples/*
 Binaries/*
 Intermediate/*
 Content/*
