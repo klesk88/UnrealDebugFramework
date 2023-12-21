@@ -26,7 +26,6 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiNetworkingTCPServer final : public FKL
 public:
     // FKLDebugImGuiNetworkingTCPBase
     void RunChild() final;
-    UE_NODISCARD bool IsValid() const final;
     void Exit() final;
     // FKLDebugImGuiNetworkingTCPBase
 
@@ -50,11 +49,6 @@ private:
     FKLDebugImGuiServerArbitrerManager mArbitrerManager;
     TArray<FKLDebugImGuiServerWorldCachedConnection> mWorldCachedConnections;
 };
-
-inline bool FKLDebugImGuiNetworkingTCPServer::IsValid() const
-{
-    return true;
-}
 
 inline void FKLDebugImGuiNetworkingTCPServer::InitArbitrer()
 {

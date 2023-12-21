@@ -3,15 +3,9 @@
 #pragma once
 
 // engine
-#include "Containers/Array.h"
-#include "CoreMinimal.h"
 #include "HAL/CriticalSection.h"
 #include "HAL/Platform.h"
 #include "HAL/Runnable.h"
-#include "Interfaces/IPv4/IPv4Endpoint.h"
-
-class FSocket;
-class UWorld;
 
 // Basic interface to have a server running on its own thread
 // based on FCookOnTheFlyServerTCP and FTcpMessageTransport and FTcpMessageTransportConnection
@@ -19,36 +13,23 @@ class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingTCPBase : public FRunnab
 {
 public:
     // FRunnable
-    bool Init() override;
-    void Stop() final;
     uint32 Run() final;
-    void Exit() override;
+    void Stop() final;
     // FRunnable
-
-    virtual void CreateSocket();
-    UE_NODISCARD virtual bool IsValid() const;
 
 protected:
     virtual void RunChild() = 0;
     UE_NODISCARD virtual float GetSleepTime() const;
 
-    void ClearListenerSocket();
-
     UE_NODISCARD bool ShouldStop() const;
 
 protected:
-    FSocket* mListenerSocket = nullptr;
     float mSecondsToSleep = 0.2f;
     mutable FCriticalSection mGameThreadUpdateLock;
 
 private:
     bool mStop = false;
 };
-
-inline bool FKLDebugImGuiNetworkingTCPBase::Init()
-{
-    return IsValid();
-}
 
 inline void FKLDebugImGuiNetworkingTCPBase::Stop()
 {
@@ -58,15 +39,6 @@ inline void FKLDebugImGuiNetworkingTCPBase::Stop()
 inline bool FKLDebugImGuiNetworkingTCPBase::ShouldStop() const
 {
     return mStop;
-}
-
-inline bool FKLDebugImGuiNetworkingTCPBase::IsValid() const
-{
-    return mListenerSocket != nullptr;
-}
-
-inline void FKLDebugImGuiNetworkingTCPBase::CreateSocket()
-{
 }
 
 inline float FKLDebugImGuiNetworkingTCPBase::GetSleepTime() const

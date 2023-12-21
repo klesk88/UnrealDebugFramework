@@ -5,7 +5,6 @@
 // engine
 #include "HAL/PlatformProcess.h"
 #include "Misc/ScopeTryLock.h"
-#include "Sockets.h"
 
 uint32 FKLDebugImGuiNetworkingTCPBase::Run()
 {
@@ -24,18 +23,4 @@ uint32 FKLDebugImGuiNetworkingTCPBase::Run()
     }
 
     return 0;
-}
-
-void FKLDebugImGuiNetworkingTCPBase::Exit()
-{
-    ClearListenerSocket();
-}
-
-void FKLDebugImGuiNetworkingTCPBase::ClearListenerSocket()
-{
-    if (mListenerSocket)
-    {
-        mListenerSocket->Close();
-        mListenerSocket = nullptr;
-    }
 }

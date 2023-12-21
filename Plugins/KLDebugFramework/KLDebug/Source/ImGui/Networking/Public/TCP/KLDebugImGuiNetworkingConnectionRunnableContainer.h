@@ -47,11 +47,7 @@ void TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::ClearCo
 template <typename ConnectionType>
 void TKLDebugImGuiNetworkingConnectionRunnableContainer<ConnectionType>::InitSocket(const TCHAR* _ThreadName)
 {
-    mConnection.CreateSocket();
-    if (mConnection.IsValid())
-    {
-        mThread = FRunnableThread::Create(&mConnection, _ThreadName, 128 * 1024, TPri_Normal);
-    }
+    mThread = FRunnableThread::Create(&mConnection, _ThreadName, 128 * 1024, TPri_Normal);
 }
 
 template <typename ConnectionType>

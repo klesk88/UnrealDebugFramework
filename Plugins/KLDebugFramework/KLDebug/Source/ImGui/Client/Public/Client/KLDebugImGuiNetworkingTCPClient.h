@@ -22,10 +22,9 @@ class KLDEBUGIMGUICLIENT_API FKLDebugImGuiNetworkingTCPClient final : public FKL
 {
 public:
     // FKLDebugImGuiNetworkingTCPBase
+    bool Init() final;
     void RunChild() final;
-    void CreateSocket() final;
     void Exit() final;
-    UE_NODISCARD bool IsValid() const final;
     // FKLDebugImGuiNetworkingTCPBase
 
     void TickGameThread(FKLDebugImGuiClientGameThreadContext& _Context);
@@ -44,8 +43,3 @@ private:
     TArray<FKLDebugImGuiClientWorldCacheConnection> mCachedConnections;
     TUniquePtr<IKLDebugImGuiClientServerPortGetterBase> mServerPortGetter;
 };
-
-inline bool FKLDebugImGuiNetworkingTCPClient::IsValid() const
-{
-    return true;
-}

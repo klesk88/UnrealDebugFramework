@@ -30,9 +30,11 @@
 #include "SocketSubsystem.h"
 #include "Templates/SharedPointer.h"
 
-void FKLDebugImGuiNetworkingTCPClient::CreateSocket()
+bool FKLDebugImGuiNetworkingTCPClient::Init()
 {
     mCachedConnections.Reserve(3);
+
+    return true;
 }
 
 void FKLDebugImGuiNetworkingTCPClient::Exit()
