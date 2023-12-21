@@ -5,11 +5,6 @@
 .vs/*
 
 #Unreal ignore list
-
-Plugins/*/*/Intermediate/*
-Plugins/*/*/Binaries/*
-Plugins/*/*/Saved/*
-Plugins/*/KLDebugExamples/*
 Plugins/*/Intermediate/*
 Plugins/*/Binaries/*
 Plugins/*/Saved/*
