@@ -15,6 +15,8 @@ public class KLDebugImGuiServer : ModuleRules
         );
 
         RuntimeDependencies.Add(Path.Combine(PluginDirectory, "Resources/Arbitrer/KLDebugArbitrer.exe"));
+        RuntimeDependencies.Add(Path.Combine(PluginDirectory, "Resources/Arbitrer/OpenColorIO_2_2.dll"));
+        RuntimeDependencies.Add(Path.Combine(PluginDirectory, "Resources/Arbitrer/tbbmalloc.dll"));
 
         PublicDependencyModuleNames.AddRange(
             new string[]

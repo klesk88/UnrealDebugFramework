@@ -11,10 +11,9 @@
 #endif
 
 // engine
-#include "Containers/UnrealString.h"
 #include "Interfaces/IPluginManager.h"
 #include "Misc/CommandLine.h"
-#include "Misc/Parse.h"
+#include "Misc/Paths.h"
 #include "Templates/SharedPointer.h"
 
 namespace KL::Debug::Networking::Arbitrer
@@ -52,7 +51,12 @@ namespace KL::Debug::Networking::Arbitrer
 
     bool TryLunchArbitrer()
     {
-        static const FString ExecutablePath = FString::Format(TEXT("{0}/Resources/Arbitrer/KLDebugArbitrer.exe"), { *(IPluginManager::Get().FindPlugin("KLDebug")->GetBaseDir()) });
+        static const FString AbsSavePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir());
+        static const FString ExecutablePath = FString::Format(TEXT("{0}/Resources/Arbitrer"), { *(IPluginManager::Get().FindPlugin("KLDebug")->GetBaseDir()) });
+        // Add -UserDir here so we can override the location of the logs for the arbitrer and have them in the project Saved Folder (like all the rest)
+        // instead of some arbitrary folder under the Plugin folder
+        static const FString ExecutablePathWithExe = FString::Format(TEXT("{0}/KLDebugArbitrer.exe -UserDir={1}/DebugArbitrer"), { *ExecutablePath, *AbsSavePath });
+
         if (HasStartArbitrer)
         {
             return false;
@@ -68,7 +72,7 @@ namespace KL::Debug::Networking::Arbitrer
         const FString CmdLine = FCommandLine::Get();
         const bool CreateConsole = FParse::Param(*CmdLine, TEXT("showarbitrerlog"));
 
-        return KL::Debug::Networking::Arbitrer::LunchArbitrer(ExecutablePath, CreateConsole);
+        return KL::Debug::Networking::Arbitrer::LunchArbitrer(ExecutablePathWithExe, CreateConsole);
     }
 
     void TryCloseArbitrer()
@@ -81,5 +85,4 @@ namespace KL::Debug::Networking::Arbitrer
     {
         return KL::Debug::Networking::Arbitrer::IsArbitrerRunningInternal();
     }
-
 }    // namespace KL::Debug::Networking::Arbitrer

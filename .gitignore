@@ -12,6 +12,7 @@ Plugins/KLDebugExamples/*
 Binaries/*
 Intermediate/*
 Content/*
+Build/*
 DerivedDataCache/*
 Platforms/*
 Saved/*

@@ -3,6 +3,7 @@
 #pragma once
 
 // engine
+#include "Containers/UnrealString.h"
 #include "Delegates/DelegateCombinations.h"
 
 DECLARE_DELEGATE_RetVal(bool, FOnArbitrerShouldLunch);

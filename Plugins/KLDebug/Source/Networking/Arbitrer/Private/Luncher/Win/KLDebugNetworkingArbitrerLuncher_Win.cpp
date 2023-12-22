@@ -58,7 +58,7 @@ namespace KL::Debug::Networking::Arbitrer
         }
 
         STARTUPINFOW StartupInfo = { sizeof(STARTUPINFOW) };
-        IsArbitrerProcessRunning = CreateProcessW(LPWSTR(*_ExecutablePath), nullptr, nullptr, nullptr, false, CreateProcFlags, nullptr, nullptr, &StartupInfo, &ProcessInfo);
+        IsArbitrerProcessRunning = CreateProcessW(nullptr, LPWSTR(*_ExecutablePath), nullptr, nullptr, false, CreateProcFlags, nullptr, nullptr, &StartupInfo, &ProcessInfo);
         UE_CLOG(!IsArbitrerProcessRunning, LogKLDebug_Networking, Warning, TEXT("KL::Debug::Networking::Arbitrer::LunchArbitrerInternal>> unable to launch arbitrer with '%s' (%08x)"), *_ExecutablePath, GetLastError());
         return IsArbitrerProcessRunning;
     }

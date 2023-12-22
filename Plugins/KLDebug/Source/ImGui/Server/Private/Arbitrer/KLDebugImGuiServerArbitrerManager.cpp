@@ -149,6 +149,11 @@ void FKLDebugImGuiServerArbitrerManager::ArbitrerRemovedWorldConnection(const in
 
 void FKLDebugImGuiServerArbitrerManager::Parallel_Tick()
 {
+    if (mState == EServerArbitrerState::Failed)
+    {
+        return;
+    }
+
     if (!mArbitrerSenderSocket)
     {
         ensureMsgf(false, TEXT("should be valid"));
