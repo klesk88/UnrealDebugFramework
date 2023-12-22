@@ -7,7 +7,7 @@
 // engine
 #include "Serialization/Archive.h"
 
-FKLDebugNetworkingArbitrerMessage_ClientConnected::FKLDebugNetworkingArbitrerMessage_ClientConnected(const FString& _Host, const uint32 _WorldServerPort, const uint32 _ArbitrerReplyPort, const uint16 _ID)
+FKLDebugNetworkingArbitrerMessage_ClientConnected::FKLDebugNetworkingArbitrerMessage_ClientConnected(const uint32 _Host, const uint32 _WorldServerPort, const uint32 _ArbitrerReplyPort, const uint16 _ID)
     : mHost(_Host)
     , mWorldServerPort(_WorldServerPort)
     , mArbitrerReplyPort(_ArbitrerReplyPort)

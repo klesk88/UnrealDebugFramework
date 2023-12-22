@@ -19,6 +19,14 @@ class FKLDebugNetworkingMessage_Header;
 class FSocket;
 class ISocketSubsystem;
 
+/*
+ * This is the arbitrer which will run in a separate cmd line process. This should run on the server machine
+ * and it allows the clients to be able to establish a connection with the game servers they are connected to.
+ * Because both server and clients will choose a port which is inside a range, this allows to have a service
+ * with a static port that both can connect to and use to communicate
+ * NOTE: server uses UDP connection as it is mean to live in the same machine of the arbitrer so there is no need
+ * of using TCP
+ */
 class FKLDebugNetworkArbitrer_Server final : public FNoncopyable
 {
 public:

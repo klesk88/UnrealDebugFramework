@@ -133,16 +133,28 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections(const FKLDeb
             continue;
         }
 
-        TSharedRef<FInternetAddr> ArbitrerAddress = KL::Debug::Networking::Helpers::GetDebugAddress(*SocketSubsystem);
+        TSharedPtr<FInternetAddr> ArbitrerAddress = SocketSubsystem->CreateInternetAddr();
+        if (!ArbitrerAddress.IsValid())
+        {
+            ensureMsgf(false, TEXT("Coult not createarbitrer address"));
+
+            ArbitrerSocket->Close();
+            SocketSubsystem->DestroySocket(ArbitrerSocket);
+            continue;
+        }
+
+        uint32 RemoteIP = 0;
+        NetConnection->RemoteAddr->GetIp(RemoteIP);
+        ArbitrerAddress->SetIp(RemoteIP);
+        KL::Debug::Networking::Helpers::ChangeAddressToLocalIfLoopback(ArbitrerAddress.ToSharedRef());
         ArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
-        const FString HostIP = ArbitrerAddress->ToString(false);
 
 #if !NO_LOGGING
         const FString ConnectionInfo = ArbitrerAddress->ToString(true);
         UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections>> Client connecting to arbitrer [%s]"), *ConnectionInfo);
 #endif
 
-        mArbitrerConnections.Emplace(*WorldPtr.Get(), HostIP, static_cast<uint32>(NetConnection->URL.Port), ArbitrerAddress, *ArbitrerSocket);
+        mArbitrerConnections.Emplace(*WorldPtr.Get(), static_cast<uint32>(NetConnection->URL.Port), ArbitrerAddress.ToSharedRef(), *ArbitrerSocket);
     }
 }
 
@@ -245,14 +257,7 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::OnArbitrerMessageRecv(const FK
 {
     checkf(mTempAddress.IsValid(), TEXT("mTempAddress must be valid"));
 
-    bool IsValid = false;
-    mTempAddress->SetIp(*_ArbitrerConnection.GetHost(), IsValid);
-    if (!IsValid)
-    {
-        ensureMsgf(false, TEXT("should be able to parse teh host"));
-        return;
-    }
-
+    mTempAddress->SetIp(_ArbitrerConnection.GetHost());
     mTempAddress->SetPort(_Data.Client_GetDebugPort());
     FSocket* NewSocket = FTcpSocketBuilder(TEXT("ClientDebugSocket"))
                          .AsNonBlocking()

@@ -6,7 +6,6 @@
 
 // engine
 #include "Containers/Array.h"
-#include "Containers/UnrealString.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "IPAddress.h"
 #include "Templates/SharedPointer.h"
@@ -33,13 +32,13 @@ private:
     };
 
 public:
-    explicit FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const FString& _Host, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket);
+    explicit FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket);
     ~FKLDebugImGuiClientArbitrerCacheConnection();
     UE_NODISCARD bool operator==(const uint16& _ID) const;
 
     void Parallel_Tick(const uint32 _ArbitrerReplyPort, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer);
 
-    UE_NODISCARD const FString& GetHost() const;
+    UE_NODISCARD uint32 GetHost() const;
     UE_NODISCARD const FObjectKey& GetWorldObjKey() const;
 
 private:
@@ -47,7 +46,7 @@ private:
 
 private:
     FObjectKey mWorldKey;
-    FString mHost;
+    uint32 mHost = 0;
     TSharedPtr<FInternetAddr> mArbitrerAddress;
     FSocket* mArbitrerSocket = nullptr;
     double mSentArbitrerMessageTime = 0.0;
@@ -61,7 +60,7 @@ inline bool FKLDebugImGuiClientArbitrerCacheConnection::operator==(const uint16&
     return mID == _ID;
 }
 
-inline const FString& FKLDebugImGuiClientArbitrerCacheConnection::GetHost() const
+inline uint32 FKLDebugImGuiClientArbitrerCacheConnection::GetHost() const
 {
     return mHost;
 }

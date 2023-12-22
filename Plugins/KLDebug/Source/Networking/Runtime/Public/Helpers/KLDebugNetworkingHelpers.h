@@ -3,7 +3,6 @@
 #pragma once
 
 // engine
-#include "Interfaces/IPv4/IPv4Address.h"
 #include "IPAddress.h"
 #include "Templates/SharedPointer.h"
 
@@ -11,6 +10,6 @@ class ISocketSubsystem;
 
 namespace KL::Debug::Networking::Helpers
 {
-    KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD TSharedRef<FInternetAddr> GetDebugAddress(ISocketSubsystem& _SocketSubsystem);
-    KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD FIPv4Address GetDebugIPAddress();
+    KLDEBUGNETWORKINGRUNTIME_API void ChangeAddressToLocalIfLoopback(TSharedRef<FInternetAddr> _Address);
+    KLDEBUGNETWORKINGRUNTIME_API void SetAddressToLocal(TSharedRef<FInternetAddr> _Address);
 }    // namespace KL::Debug::Networking::Helpers

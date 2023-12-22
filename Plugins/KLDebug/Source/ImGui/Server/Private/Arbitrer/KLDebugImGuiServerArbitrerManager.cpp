@@ -91,7 +91,8 @@ void FKLDebugImGuiServerArbitrerManager::CreateSenderSocket(const UKLDebugNetwor
     mArbitrerTempMessageBuffer.Reserve(30);
     mArbitrerTempBuffer.Reserve(500);
 
-    mArbitrerAddress = KL::Debug::Networking::Helpers::GetDebugAddress(_SocketSubsytem);
+    mArbitrerAddress = _SocketSubsytem.CreateInternetAddr();
+    KL::Debug::Networking::Helpers::SetAddressToLocal(mArbitrerAddress.ToSharedRef());
     mArbitrerAddress->SetPort(_ArbitrerSettings.GetPort());
 
 #if !NO_LOGGING

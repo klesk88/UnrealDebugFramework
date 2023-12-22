@@ -6,11 +6,11 @@
 #include "Networking/Arbitrer/Public/Definitions/KLDebugNetworkingArbitrerDefinitions.h"
 #include "Networking/Arbitrer/Public/Log/KLDebugNetworkingArbitrerLog.h"
 #include "Networking/Arbitrer/Public/Messages/Client/KLDebugNetworkingArbitrerMessage_ClientServerData.h"
-#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerPing.h"
-#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerPong.h"
 #include "Networking/Arbitrer/Public/Messages/KLDebugNetworkingArbitrerMessage_Types.h"
 #include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerConnected.h"
 #include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerDisconnected.h"
+#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerPing.h"
+#include "Networking/Arbitrer/Public/Messages/Server/KLDebugNetworkingArbitrerMessage_ServerPong.h"
 #include "Networking/Arbitrer/Public/Settings/KLDebugNetworkingArbitrerSettings.h"
 #include "Networking/Runtime/Public/Message/Header/KLDebugNetworkingMessage_Header.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
@@ -241,10 +241,20 @@ void FKLDebugNetworkArbitrer_Server::TickPendingClientMessages()
     for (int32 i = mPendingMessages.Num() - 1; i >= 0; --i)
     {
         const FKLDebugArbitrerPendingMessages& PendingMessage = mPendingMessages[i];
+        if (!PendingMessage.GetMessage().Arbitrer_IsValid())
+        {
+            UE_LOG(LogKL_DebugArbitrer, Error, TEXT("FKLDebugNetworkArbitrer_Server::TickPendingClientMessages>> Client message has invalid host"));
+            mPendingMessages.RemoveAtSwap(i, 1, false);
+            continue;
+        }
+
         const bool Sent = TrySendPendingClientMessage(PendingMessage.GetMessage());
         if (Sent || PendingMessage.GetTimeSinceAdded() > static_cast<double>(Settings.GetMaxTimeForClientAnswer()))
         {
-            UE_CLOG(!Sent, LogKL_DebugArbitrer, Error, TEXT("FKLDebugNetworkArbitrer_Server::TickPendingClientMessages>> Coult not send message to client [%s]:[%d]. Retry time passed"), *PendingMessage.GetMessage().Arbitrer_GetHost(), PendingMessage.GetMessage().Arbitrer_GetArbitrerReplyPort());
+#if !NO_LOGGING
+            const FString ClientHost = mTempClientAddress->ToString(true);
+            UE_CLOG(!Sent, LogKL_DebugArbitrer, Error, TEXT("FKLDebugNetworkArbitrer_Server::TickPendingClientMessages>> Coult not send message to client [%s]. Retry time passed"), *ClientHost);
+#endif
             mPendingMessages.RemoveAtSwap(i, 1, false);
         }
     }
@@ -258,14 +268,7 @@ bool FKLDebugNetworkArbitrer_Server::TrySendPendingClientMessage(const FKLDebugN
         return false;
     }
 
-    bool IsValid = false;
-    mTempClientAddress->SetIp(*_Message.Arbitrer_GetHost(), IsValid);
-    if (!IsValid)
-    {
-        UE_LOG(LogKL_DebugArbitrer, Warning, TEXT("FKLDebugNetworkArbitrer_Server::HandleClientConnected>> Coult not create connection for client [%s]:[%d]"), *_Message.Arbitrer_GetHost(), _Message.Arbitrer_GetArbitrerReplyPort());
-        return false;
-    }
-
+    mTempClientAddress->SetIp(_Message.Arbitrer_GetHost());
     mTempSendMessageBuffer.Reset();
     mSendMessageBuffer.Reset();
     FMemoryWriter TempWriter{ mTempSendMessageBuffer };
@@ -280,7 +283,12 @@ bool FKLDebugNetworkArbitrer_Server::TrySendPendingClientMessage(const FKLDebugN
     KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(ServerData, mTempSendMessageBuffer, Writer);
     int32 BytesSent = 0;
     const bool Sent = mClientSocket->SendTo(mSendMessageBuffer.GetData(), mSendMessageBuffer.Num(), BytesSent, *mTempClientAddress.Get());
-    UE_CLOG(!Sent, LogKL_DebugArbitrer, Warning, TEXT("FKLDebugNetworkArbitrer_Server::HandleClientConnected>> Coult not send message to client [%s]:[%d]"), *_Message.Arbitrer_GetHost(), _Message.Arbitrer_GetArbitrerReplyPort());
-    UE_CLOG(Sent, LogKL_DebugArbitrer, Display, TEXT("Send message to client [%s]:[%d]"), *_Message.Arbitrer_GetHost(), _Message.Arbitrer_GetArbitrerReplyPort());
+
+#if !NO_LOGGING
+    const FString ClientHost = mTempClientAddress->ToString(true);
+    UE_CLOG(!Sent, LogKL_DebugArbitrer, Warning, TEXT("FKLDebugNetworkArbitrer_Server::HandleClientConnected>> Coult not send message to client [%s]"), *ClientHost);
+    UE_CLOG(Sent, LogKL_DebugArbitrer, Display, TEXT("Send message to client [%s]"), *ClientHost);
+#endif
+
     return Sent;
 }

@@ -39,14 +39,14 @@ namespace KL::Debug::NetworkingClient
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-FKLDebugImGuiClientArbitrerCacheConnection::FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const FString& _Host, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket)
+FKLDebugImGuiClientArbitrerCacheConnection::FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket)
     : mWorldKey(&_World)
-    , mHost(_Host)
     , mArbitrerAddress(_ArbitrerAddress)
     , mArbitrerSocket(&_ArbitrerSocket)
     , mWorldPort(_WorldPort)
     , mID(KL::Debug::NetworkingClient::GetNewID())
 {
+    _ArbitrerAddress->GetIp(mHost);
 }
 
 FKLDebugImGuiClientArbitrerCacheConnection::~FKLDebugImGuiClientArbitrerCacheConnection()

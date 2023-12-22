@@ -2,41 +2,36 @@
 
 #include "Helpers/KLDebugNetworkingHelpers.h"
 
-#include "Delegates/KLDebugNetworkingDelegates.h"
-
 // engine
-#include "Containers/UnrealString.h"
-#include "Sockets.h"
-#include "SocketSubsystem.h"
+#include "GenericPlatform/GenericPlatform.h"
+#include "Math/NumericLimits.h"
 
 namespace KL::Debug::Networking::Helpers
 {
-    TSharedRef<FInternetAddr> GetDebugAddress(ISocketSubsystem& _SocketSubsystem)
+    //////////////////////////////////////////////
+    /// private
+
+    static constexpr uint32 LoopBackAddrMask = 0xff000000;
+    static constexpr uint32 LoopBackAddr = 0x7f000000;    // loopback
+    static constexpr uint32 LocalAddr = 0x7f000001;       // 127.0.0.1
+
+    //////////////////////////////////////////////
+    /// public
+
+    void ChangeAddressToLocalIfLoopback(TSharedRef<FInternetAddr> _Address)
     {
-        TSharedPtr<FInternetAddr> ArbitrerIP = _SocketSubsystem.CreateInternetAddr();
-        const FIPv4Address Address = GetDebugIPAddress();
-        const FString AddressString = Address.ToString();
-        bool IsValid = false;
-        ArbitrerIP->SetIp(*AddressString, IsValid);
-        checkf(IsValid, TEXT("address must be valid"));
-        return ArbitrerIP.ToSharedRef();
+        uint32 RemoteIP = TNumericLimits<uint32>::Max();
+        _Address->GetIp(RemoteIP);
+        // If this address is on loop back interface, advertise it as 127.0.0.1
+        if ((RemoteIP & LoopBackAddrMask) == LoopBackAddr)
+        {
+            SetAddressToLocal(_Address);
+        }
     }
 
-    FIPv4Address GetDebugIPAddress()
+    void SetAddressToLocal(TSharedRef<FInternetAddr> _Address)
     {
-        // initialization of IP address based on
-        // https://forums.unrealengine.com/t/getting-data-through-udp-connection-no-data-received/286980
-        // "Is the sender on the same computer? Your UDP socket is bound to localhost (127.0.0.1) - if you intend to receive packets
-        // from other machines you should bind to one of your local IP addresses or to 0.0.0.0 for “any adapter”".
-
-        if (KL::Debug::Networking::Delegates::BroadcastIsServerLocalHost())
-        {
-            return FIPv4Address::InternalLoopback;
-        }
-        else
-        {
-            return FIPv4Address::Any;
-        }
+        _Address->SetIp(LocalAddr);
     }
 
 }    // namespace KL::Debug::Networking::Helpers
