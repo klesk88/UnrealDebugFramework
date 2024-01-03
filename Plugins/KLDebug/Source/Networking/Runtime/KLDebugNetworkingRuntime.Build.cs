@@ -17,6 +17,9 @@ public class KLDebugNetworkingRuntime : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
+                "KLDebugUserNetworking",
+                "KLDebugUtils",
+
                 //engine
                 "Networking",
                 "Sockets"

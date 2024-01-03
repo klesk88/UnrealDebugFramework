@@ -7,12 +7,14 @@
 
 // modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
+#include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingMessage.h"
 
 // engine
 #include "Containers/Array.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "HAL/Platform.h"
 #include "Misc/Optional.h"
+#include "Templates/UnrealTemplate.h"
 
 class FArchive;
 
@@ -23,23 +25,20 @@ class FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate;
 class FKLDebugImGuiNetworkingPendingMessage;
 class FKLDebugNetworkingPendingMessage;
 class FNetworkGUID;
-class UKLDebugImGuiNetworkingSettings;
 class UWorld;
 
-namespace KL::Debug::Networking::ImGuiServer
-{
-    void InitFromSettings(const UKLDebugImGuiNetworkingSettings& _Settings);
-}
-
-class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection
+class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection final : public FNoncopyable
 {
 public:
     explicit FKLDebugImGuiServerCacheConnection();
 
-    void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, TArray<FKLDebugNetworkingPendingMessage>& _MessagesReceived);
+    void AddPendingMessage(FKLDebugNetworkingPendingMessage&& _PendingMessage);
+
+    void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer);
     void WriteData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
 
     UE_NODISCARD bool NeedsTicking() const;
+    UE_NODISCARD bool HasPendingData() const;
 
 private:
     UE_NODISCARD FKLDebugImGuiServerObjectFeatures& GetOrAddFeaturesPerObject(const UWorld& _World, const FNetworkGUID& _NetworkID);
@@ -58,6 +57,7 @@ private:
 private:
     FKLDebugImGuiServerUniqueFeatures mUniqueFeatures;
     TArray<FKLDebugImGuiServerObjectFeatures> mFeaturesPerObject;
+    TArray<FKLDebugNetworkingPendingMessage> mPendingMessages;
     TArray<uint8> mTempData;
     TArray<uint8> mTempCompressedData;
     TArray<uint8> mTempFeatureData;
@@ -72,4 +72,14 @@ inline FKLDebugImGuiServerObjectFeatures* FKLDebugImGuiServerCacheConnection::Tr
 inline bool FKLDebugImGuiServerCacheConnection::NeedsTicking() const
 {
     return !mUniqueFeatures.GetFeatures().IsEmpty() || !mFeaturesPerObject.IsEmpty();
+}
+
+inline void FKLDebugImGuiServerCacheConnection::AddPendingMessage(FKLDebugNetworkingPendingMessage&& _PendingMessage)
+{
+    mPendingMessages.Emplace(MoveTemp(_PendingMessage));
+}
+
+inline bool FKLDebugImGuiServerCacheConnection::HasPendingData() const
+{
+    return !mPendingMessages.IsEmpty();
 }

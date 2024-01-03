@@ -18,14 +18,12 @@ public class KLDebugUtils : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "Engine"
             }
         );
 
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "AIModule",
                 "Core",
                 "CoreUObject"
             }

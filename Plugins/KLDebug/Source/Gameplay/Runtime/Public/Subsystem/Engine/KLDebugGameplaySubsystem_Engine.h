@@ -27,7 +27,6 @@ public:
 
 private:
     FKLDebugGameplayCameraManager mCameraManager;
-    bool mPauseState = false;
 };
 
 inline const UKLDebugGameplaySubsystem_Engine* UKLDebugGameplaySubsystem_Engine::TryGet()

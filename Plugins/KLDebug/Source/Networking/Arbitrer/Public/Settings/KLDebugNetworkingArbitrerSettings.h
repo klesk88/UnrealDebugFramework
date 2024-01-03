@@ -18,7 +18,8 @@ public:
     UE_NODISCARD uint32 GetPort() const;
     UE_NODISCARD uint32 GetStartClientPortRange() const;
     UE_NODISCARD uint32 GetEndClientPortRange() const;
-    UE_NODISCARD uint32 GetServerPortListening() const;
+    UE_NODISCARD uint32 GetServerPortListeningStart() const;
+    UE_NODISCARD uint32 GetServerPortListeningEnd() const;
     UE_NODISCARD uint32 GetReceiveBufferSize() const;
     UE_NODISCARD uint32 GetWriteBufferSize() const;
     UE_NODISCARD float GetMaxTimeForClientAnswer() const;
@@ -38,7 +39,10 @@ private:
 
     // the port that we use on the server to listen to arbitrer communications
     UPROPERTY(Config, Category = "Arbitrer", EditDefaultsOnly)
-    uint32 ServerPortListening = 50009;
+    uint32 ServerPortListeningStartRange = 50100;
+
+    UPROPERTY(Config, Category = "Arbitrer", EditDefaultsOnly)
+    uint32 ServerPortListeningEndRange = 50200;
 
     UPROPERTY(Config, Category = "Arbitrer", EditDefaultsOnly)
     uint32 ReceiveBufferSize = 2 * 1024 * 1024;
@@ -72,9 +76,14 @@ inline uint32 UKLDebugNetworkingArbitrerSettings::GetEndClientPortRange() const
     return ClientEndPortRange;
 }
 
-inline uint32 UKLDebugNetworkingArbitrerSettings::GetServerPortListening() const
+inline uint32 UKLDebugNetworkingArbitrerSettings::GetServerPortListeningStart() const
 {
-    return ServerPortListening;
+    return ServerPortListeningStartRange;
+}
+
+inline uint32 UKLDebugNetworkingArbitrerSettings::GetServerPortListeningEnd() const
+{
+    return ServerPortListeningEndRange;
 }
 
 inline uint32 UKLDebugNetworkingArbitrerSettings::GetReceiveBufferSize() const

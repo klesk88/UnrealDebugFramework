@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ServerPortGetter/KLDebugImGuiClientServerPortGetterBase.h"
+#include "ServerPortGetter/User/KLDebugImGuiClientServerPortGetterUser_PendingWorld.h"
 
 // engine
 #include "Containers/Array.h"
@@ -23,13 +24,14 @@ public:
     void AddNewConnections(const FKLDebugImGuiClientGameThreadContext& _Context) final;
     void ParallelTick(TArray<FKLDebugImGuiClientWorldCacheConnection>& _CachedConnections) final;
     void Shutdown() final;
+    void RemoveWorlds(const TArray<FObjectKey>& _RemovedWorlds) final;
     // IKLDebugImGuiClientServerPortGetterBase
 
 private:
     void TickPendingWorlds(const uint32 _ServerPort, TArray<FKLDebugImGuiClientWorldCacheConnection>& _CachedConnections);
 
 private:
-    TArray<TWeakObjectPtr<const UWorld>> mPendingWorlds;
+    TArray<FKLDebugImGuiClientServerPortGetterUser_PendingWorld> mPendingWorlds;
     TSharedPtr<FInternetAddr> mTempAddress;
     uint32 mServerPort = 0;
 };

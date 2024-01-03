@@ -19,9 +19,8 @@
 #include "Common/TcpSocketBuilder.h"
 #include "Common/UdpSocketBuilder.h"
 #include "Engine/EngineBaseTypes.h"
-#include "Engine/NetConnection.h"
-#include "Engine/NetDriver.h"
 #include "Engine/World.h"
+#include "GameFramework/OnlineReplStructs.h"
 #include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
 #include "Sockets.h"
@@ -59,9 +58,9 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::CreateArbitrerReplySocket(cons
         mArbitrerReplyPort = CurrentPort++;
         const FIPv4Endpoint Endpoint(FIPv4Address::Any, static_cast<int32>(mArbitrerReplyPort));
         mArbitrerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
-                          .AsNonBlocking()
-                          .BoundToEndpoint(Endpoint)
-                          .Build();
+                              .AsNonBlocking()
+                              .BoundToEndpoint(Endpoint)
+                              .Build();
     }
 
     if (!mArbitrerSocket)
@@ -106,6 +105,9 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections(const FKLDeb
 
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
     const UKLDebugNetworkingArbitrerSettings& ArbitrerSettings = UKLDebugNetworkingArbitrerSettings::Get();
+    uint32 ServerIP = 0;
+    int32 ServerPort = 0;
+    FUniqueNetIdRepl LocalPlayerNetID;
 
     for (const TWeakObjectPtr<const UWorld>& WorldPtr : _Context.GetNewWorlds())
     {
@@ -114,18 +116,15 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections(const FKLDeb
             continue;
         }
 
-        const UNetDriver* WorldNetDriver = WorldPtr->GetNetDriver();
-        const UNetConnection* NetConnection = WorldNetDriver ? WorldNetDriver->ServerConnection : nullptr;
-        if (!NetConnection || !NetConnection->RemoteAddr.IsValid())
+        if (!GatherWorldData(*WorldPtr.Get(), ServerIP, ServerPort, LocalPlayerNetID))
         {
-            ensureMsgf(false, TEXT("we expect the world to be fully initialize here"));
             continue;
         }
 
         FSocket* ArbitrerSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ClientSocket"))
-                                  .AsNonBlocking()
-                                  .AsReusable()
-                                  .Build();
+                                      .AsNonBlocking()
+                                      .AsReusable()
+                                      .Build();
 
         if (!ArbitrerSocket)
         {
@@ -143,9 +142,7 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections(const FKLDeb
             continue;
         }
 
-        uint32 RemoteIP = 0;
-        NetConnection->RemoteAddr->GetIp(RemoteIP);
-        ArbitrerAddress->SetIp(RemoteIP);
+        ArbitrerAddress->SetIp(ServerIP);
         KL::Debug::Networking::Helpers::ChangeAddressToLocalIfLoopback(ArbitrerAddress.ToSharedRef());
         ArbitrerAddress->SetPort(ArbitrerSettings.GetPort());
 
@@ -154,7 +151,7 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections(const FKLDeb
         UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiClientServerPortGetterArbitrer::AddNewConnections>> Client connecting to arbitrer [%s]"), *ConnectionInfo);
 #endif
 
-        mArbitrerConnections.Emplace(*WorldPtr.Get(), static_cast<uint32>(NetConnection->URL.Port), ArbitrerAddress.ToSharedRef(), *ArbitrerSocket);
+        mArbitrerConnections.Emplace(*WorldPtr.Get(), LocalPlayerNetID, static_cast<uint32>(ServerPort), ArbitrerAddress.ToSharedRef(), *ArbitrerSocket);
     }
 }
 
@@ -173,7 +170,7 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::TickPendingArbitrerConnections
     for (FKLDebugImGuiClientArbitrerCacheConnection& Connection : mArbitrerConnections)
     {
         mArbitrerTempWriteBuffer.Reset(),
-        mArbitrerWriteBuffer.Reset();
+            mArbitrerWriteBuffer.Reset();
 
         Connection.Parallel_Tick(mArbitrerReplyPort, mArbitrerTempWriteBuffer, mArbitrerWriteBuffer);
     }
@@ -260,8 +257,8 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::OnArbitrerMessageRecv(const FK
     mTempAddress->SetIp(_ArbitrerConnection.GetHost());
     mTempAddress->SetPort(_Data.Client_GetDebugPort());
     FSocket* NewSocket = FTcpSocketBuilder(TEXT("ClientDebugSocket"))
-                         .AsNonBlocking()
-                         .Build();
+                             .AsNonBlocking()
+                             .Build();
 
     if (!NewSocket)
     {
@@ -285,5 +282,5 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::OnArbitrerMessageRecv(const FK
         return;
     }
 
-    _CachedConnections.Emplace(_ArbitrerConnection.GetWorldObjKey(), ReceiveBufferSize, SenderBufferSize, *NewSocket);
+    _CachedConnections.Emplace(_ArbitrerConnection.GetWorldObjKey(), _ArbitrerConnection.GetNetLocalPlayerID(), ReceiveBufferSize, SenderBufferSize, *NewSocket);
 }

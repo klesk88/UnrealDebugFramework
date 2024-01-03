@@ -2,6 +2,9 @@
 
 #include "Subsystem/Engine/KLDebugGameplaySubsystem_Engine.h"
 
+// modules
+#include "User/Gameplay/Public/Input/Delegates/KLDebugUserInputDelegates.h"
+
 // engine
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
@@ -17,7 +20,13 @@ void UKLDebugGameplaySubsystem_Engine::TooglePause(const TWeakObjectPtr<const UL
     const UWorld* World = _LocalPlayer.IsValid() ? _LocalPlayer->GetWorld() : nullptr;
     if (World)
     {
-        mPauseState = !mPauseState;
-        UGameplayStatics::SetGamePaused(World, mPauseState);
+        const KL::Debug::User::Gameplay::Input::FOnInputTriggerData InputData{ *World };
+        if (KL::Debug::User::Gameplay::Input::BroadcastOnInputPressed(EKLDebugGameplayInputType::TooglePause, InputData) == EKLDebugInputReply::Handled)
+        {
+            return;
+        }
+
+        const bool ShouldPause = !UGameplayStatics::IsGamePaused(World);
+        UGameplayStatics::SetGamePaused(World, ShouldPause);
     }
 }

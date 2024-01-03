@@ -40,64 +40,6 @@ namespace KL::Debug::Networking::ImGuiServer
     /////////////////////////////////////////////////////////////////////////
     /// private
 
-    static uint32 FeatureMessageMaxDataSize = 500;
-    static float FeatureMessageMaxDataSizeInv = 1.f / 500.f;
-
-    void Write_FeatureUpdatePrivate(const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const bool _IsCompressed, const uint32 _CompressTotalSize, const uint32 _UncompressTotalSize, TArray<uint8>& _FeatureData, TArray<uint8>& _Data, FArchive& _Archive)
-    {
-        int32 MessagesCount = FMath::CeilToInt(static_cast<float>(_FeatureData.Num()) * FeatureMessageMaxDataSizeInv);
-        MessagesCount = FMath::Clamp(MessagesCount, 1, MessagesCount);
-        const KL::Debug::Networking::Message::MessageID MessageID = MessagesCount > 1 ? KL::Debug::Networking::Message::GetNewMessageID() : 0;
-
-        _Data.Reset();
-        FMemoryWriter FinalData{ _Data };
-
-        FKLDebugImGuiNetworkingMessage_FeatureDataUpdate Message{ _NetworkID, _InterfaceType, _FeatureInterface.GetFeatureNameID(), _ClientFeatureIndex };
-        Message.Serialize(FinalData);
-        const uint32 MessageSize = static_cast<uint32>(_Data.Num());
-        uint32 MessageOffset = 0;
-
-        const uint32 FinalTotalUncompressSize = _UncompressTotalSize + MessageSize;
-        const uint32 FinalTotalCompressSize = _IsCompressed ? _CompressTotalSize + MessageSize : 0;
-        const uint32 StartCompressDataOffset = _IsCompressed ? MessageSize : FinalTotalCompressSize + 100;
-
-#if DO_ENSURE
-        uint32 EnsureTotalSizeSent = 0;
-#endif
-
-        for (int32 i = 0; i < MessagesCount; ++i)
-        {
-            const int32 StartIndex = i * FeatureMessageMaxDataSize;
-            const int32 EndIndex = FMath::Min((i + 1) * static_cast<int32>(FeatureMessageMaxDataSize), _FeatureData.Num());
-            checkf(EndIndex - StartIndex <= _FeatureData.Num(), TEXT("going out of bounds"));
-            const TArrayView<uint8> MessageDataView(&_FeatureData[StartIndex], EndIndex - StartIndex);
-
-            FinalData.Serialize(MessageDataView.GetData(), MessageDataView.Num());
-
-            KL::Debug::Networking::Message::PrepareMessageToSend(
-            Message,
-            _IsCompressed,
-            FinalTotalUncompressSize,
-            FinalTotalCompressSize,
-            MessageOffset,
-            StartCompressDataOffset,
-            MessageID,
-            _Data,
-            _Archive);
-
-            MessageOffset += _Data.Num();
-
-#if DO_ENSURE
-            EnsureTotalSizeSent += _Data.Num();
-#endif
-
-            _Data.Reset();
-            FinalData.Seek(0);
-        }
-
-        ensureMsgf(_IsCompressed ? EnsureTotalSizeSent == FinalTotalCompressSize : EnsureTotalSizeSent == FinalTotalUncompressSize, TEXT("we sent more or less bytes then exptected"));
-    }
-
     void Write_FeatureUpdateCommon(const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const UWorld& _World, UObject* _Owner, FKLDebugImGuiFeatureContext_Base* _Context, TArray<uint8>& _Data, TArray<uint8>& _TempFeatureData, TArray<uint8>& _CompressFeatureData, uint32& _DataCRC, FArchive& _Archive)
     {
         const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = _FeatureInterface.TryGetNetworkInterface();
@@ -135,42 +77,13 @@ namespace KL::Debug::Networking::ImGuiServer
         }
 
         _CompressFeatureData.Reset();
-        TArray<uint8>* FeatureBufferToUse = &_TempFeatureData;
-        const uint32 UncompressSize = static_cast<uint32>(_TempFeatureData.Num());
-        const bool ShouldCompressData = NetworkInterface->ShouldCompressData();
-        if (ShouldCompressData)
-        {
-            KL::Debug::Networking::Message::CompressBuffer(_TempFeatureData, _CompressFeatureData);
-            if (_CompressFeatureData.IsEmpty())
-            {
-                UE_LOG(LogKL_Debug, Error, TEXT("Write_FeatureUpdateCommon>> Compressing data for feature [%s] failed, returned an empty data buffer"), *_FeatureInterface.GetFeatureNameID().ToString());
-                return;
-            }
+        _Data.Reset();
+        FMemoryWriter FinalData{ _Data };
+        FKLDebugImGuiNetworkingMessage_FeatureDataUpdate Message{ _NetworkID, _InterfaceType, _FeatureInterface.GetFeatureNameID(), _ClientFeatureIndex };
+        Message.Serialize(FinalData);
+        FinalData.Serialize(_TempFeatureData.GetData(), _TempFeatureData.Num());
 
-            FeatureBufferToUse = &_CompressFeatureData;
-            UE_LOG(LogKL_Debug, Display, TEXT("Write_FeatureUpdateCommon>> Compressing feature data [%s]. Original size [%d] compress size [%d]"), *_FeatureInterface.GetFeatureNameID().ToString(), UncompressSize, _CompressFeatureData.Num());
-        }
-
-        const uint32 CompressSize = static_cast<uint32>(_CompressFeatureData.Num());
-        Write_FeatureUpdatePrivate(_FeatureInterface,
-        _NetworkID,
-        _InterfaceType,
-        _ClientFeatureIndex,
-        ShouldCompressData,
-        CompressSize,
-        UncompressSize,
-        *FeatureBufferToUse,
-        _Data,
-        _Archive);
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    /// public
-
-    void InitFromSettings(const UKLDebugImGuiNetworkingSettings& _Settings)
-    {
-        FeatureMessageMaxDataSize = _Settings.Server_GetFeatureMaxMessageDataSize();
-        FeatureMessageMaxDataSizeInv = 1.f / static_cast<float>(FeatureMessageMaxDataSize);
+        KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, _Data, _CompressFeatureData, _Archive);
     }
 
 }    // namespace KL::Debug::Networking::ImGuiServer
@@ -235,11 +148,11 @@ TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> FKLDebugImGuiServerCa
 #endif
 }
 
-void FKLDebugImGuiServerCacheConnection::ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, TArray<FKLDebugNetworkingPendingMessage>& _MessagesReceived)
+void FKLDebugImGuiServerCacheConnection::ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerCacheConnection_ReadData);
 
-    for (const FKLDebugNetworkingPendingMessage& PendingMessage : _MessagesReceived)
+    for (const FKLDebugNetworkingPendingMessage& PendingMessage : mPendingMessages)
     {
         if (PendingMessage.GetMessageEnumType() != static_cast<uint16>(EKLDebugImGuiNetworkMessageTypes::ImGuiMessage))
         {
@@ -262,7 +175,7 @@ void FKLDebugImGuiServerCacheConnection::ReadData(const UWorld& _World, const FK
         }
     }
 
-    _MessagesReceived.Reset();
+    mPendingMessages.Reset();
 }
 
 bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FArchive& _Archive)
@@ -410,19 +323,19 @@ void FKLDebugImGuiServerCacheConnection::Write_UniqueFeatures(const UWorld& _Wor
 
         uint32 CRC = FeatureData.GetCRC();
         KL::Debug::Networking::ImGuiServer::Write_FeatureUpdateCommon(
-        FeatureInterface,
-        FakeGuid,
-        InterfaceType,
-        FeatureInterface.GetFeatureNameID(),
-        FeatureData.GetServerFeatureIndex(),
-        _World,
-        nullptr,
-        FeatureData.GetFeatureContextMutable(),
-        mTempData,
-        mTempFeatureData,
-        mTempCompressedData,
-        CRC,
-        _Archive);
+            FeatureInterface,
+            FakeGuid,
+            InterfaceType,
+            FeatureInterface.GetFeatureNameID(),
+            FeatureData.GetServerFeatureIndex(),
+            _World,
+            nullptr,
+            FeatureData.GetFeatureContextMutable(),
+            mTempData,
+            mTempFeatureData,
+            mTempCompressedData,
+            CRC,
+            _Archive);
 
         FeatureData.SetCRC(CRC);
     }
@@ -452,19 +365,19 @@ void FKLDebugImGuiServerCacheConnection::Write_ObjectFeatures(const UWorld& _Wor
             const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureData.GetServerFeatureIndex());
             uint32 CRC = FeatureData.GetLastSentCRC();
             KL::Debug::Networking::ImGuiServer::Write_FeatureUpdateCommon(
-            FeatureInterface,
-            Feature.GetNetworkID(),
-            InterfaceType,
-            FeatureInterface.GetFeatureNameID(),
-            FeatureData.GetClientFeatureIndex(),
-            _World,
-            OwnerObject,
-            FeatureData.GetContextMutable(),
-            mTempData,
-            mTempFeatureData,
-            mTempCompressedData,
-            CRC,
-            _Archive);
+                FeatureInterface,
+                Feature.GetNetworkID(),
+                InterfaceType,
+                FeatureInterface.GetFeatureNameID(),
+                FeatureData.GetClientFeatureIndex(),
+                _World,
+                OwnerObject,
+                FeatureData.GetContextMutable(),
+                mTempData,
+                mTempFeatureData,
+                mTempCompressedData,
+                CRC,
+                _Archive);
 
             FeatureData.SetLastSendCRC(CRC);
         }

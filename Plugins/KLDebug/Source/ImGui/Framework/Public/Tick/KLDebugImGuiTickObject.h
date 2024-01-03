@@ -8,7 +8,7 @@
 
 #include "KLDebugImGuiTickObject.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnTick, const float /*_DeltaTime*/)
+DECLARE_DELEGATE_OneParam(FOnTick, const float /*_DeltaTime*/);
 
 USTRUCT()
 struct KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiTickObject final : public FTickFunction

@@ -14,11 +14,11 @@ class TKLDebugImGuiFeatureManagerEntry final : public FKLDebugImGuiFeatureManage
 public:
     explicit TKLDebugImGuiFeatureManagerEntry(const FName& _NameToCheck);
 
-    // FKLDebugWindowManagerEntryBase
+    // FKLDebugImGuiFeatureManagerEntryBase
     UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const final;
     UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
     UE_NODISCARD size_t GetSize() const final;
-    // FKLDebugWindowManagerEntryBase
+    // FKLDebugImGuiFeatureManagerEntryBase
 };
 
 template <typename FeatureInterfaceType>

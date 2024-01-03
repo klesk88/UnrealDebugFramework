@@ -15,6 +15,11 @@ class FSocket;
 class ISocketSubsystem;
 class UWorld;
 
+namespace KL::Debug::Networking::Commands::Internal
+{
+    class FKLDebugOnNewCommandInput;
+}
+
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerWorldCachedConnection final : public FNoncopyable
 {
 public:
@@ -34,6 +39,10 @@ private:
 
     void TickPendingConnections();
     UE_NODISCARD bool TickClientsConnections();
+
+    void RemoveInvalidConnections();
+
+    void OnNewCommandRequest(const KL::Debug::Networking::Commands::Internal::FKLDebugOnNewCommandInput& _Input);
 
 private:
     TArray<FKLDebugImGuiServerClientCachedConnection> mCachedClientConnections;

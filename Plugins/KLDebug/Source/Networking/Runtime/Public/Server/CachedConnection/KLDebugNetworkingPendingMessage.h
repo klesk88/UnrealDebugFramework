@@ -15,6 +15,7 @@ class KLDEBUGNETWORKINGRUNTIME_API FKLDebugNetworkingPendingMessage final : publ
 public:
     explicit FKLDebugNetworkingPendingMessage(const FKLDebugNetworkingMessage_Header& _Header, const TArray<uint8>& _MessageData);
     explicit FKLDebugNetworkingPendingMessage(const FKLDebugNetworkingMessage_Header& _Header, TArray<uint8>&& _MessageData);
+    explicit FKLDebugNetworkingPendingMessage(FKLDebugNetworkingPendingMessage&& _Other);
 
     UE_NODISCARD bool HasData() const;
     UE_NODISCARD uint16 GetMessageType() const;

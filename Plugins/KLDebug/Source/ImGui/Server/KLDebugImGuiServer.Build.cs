@@ -10,7 +10,7 @@ public class KLDebugImGuiServer : ModuleRules
         PrivateIncludePaths.AddRange(
           new string[]
           {
-                Path.Combine(ModuleDirectory, "Private"),
+                Path.Combine(ModuleDirectory, "Private")
           }
         );
 
@@ -26,6 +26,7 @@ public class KLDebugImGuiServer : ModuleRules
                 "KLDebugImGuiUser",
                 "KLDebugNetworkingArbitrer",
                 "KLDebugNetworkingRuntime",
+                "KLDebugUserNetworking",
                 "KLDebugUtils",
 
                 //engine
@@ -33,7 +34,7 @@ public class KLDebugImGuiServer : ModuleRules
                 "Networking",
                 "Sockets"
             }
-        );
+        ); ;
 
         PrivateDependencyModuleNames.AddRange(
             new string[]

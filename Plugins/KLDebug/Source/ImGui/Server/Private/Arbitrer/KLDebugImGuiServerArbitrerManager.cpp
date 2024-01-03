@@ -54,7 +54,7 @@ void FKLDebugImGuiServerArbitrerManager::Init()
 
 void FKLDebugImGuiServerArbitrerManager::Shutdown()
 {
-    if (mArbitrerSenderSocket)
+    if (mArbitrerSenderSocket || mArbitrerReceiveSocket)
     {
         Clear();
     }
@@ -69,12 +69,19 @@ void FKLDebugImGuiServerArbitrerManager::Clear()
         return;
     }
 
-    mArbitrerSenderSocket->Close();
-    mArbitrerReceiveSocket->Close();
-    SocketSubsystem->DestroySocket(mArbitrerSenderSocket);
-    SocketSubsystem->DestroySocket(mArbitrerReceiveSocket);
-    mArbitrerSenderSocket = nullptr;
-    mArbitrerReceiveSocket = nullptr;
+    if (mArbitrerSenderSocket)
+    {
+        mArbitrerSenderSocket->Close();
+        SocketSubsystem->DestroySocket(mArbitrerSenderSocket);
+        mArbitrerSenderSocket = nullptr;
+    }
+
+    if (mArbitrerReceiveSocket)
+    {
+        mArbitrerReceiveSocket->Close();
+        SocketSubsystem->DestroySocket(mArbitrerReceiveSocket);
+        mArbitrerReceiveSocket = nullptr;
+    }
 
     mArbitrerTempMessageBuffer.Empty();
     mArbitrerTempBuffer.Empty();
@@ -84,9 +91,15 @@ void FKLDebugImGuiServerArbitrerManager::Clear()
 void FKLDebugImGuiServerArbitrerManager::CreateSenderSocket(const UKLDebugNetworkingArbitrerSettings& _ArbitrerSettings, ISocketSubsystem& _SocketSubsytem)
 {
     mArbitrerSenderSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocketSend"))
-                            .AsNonBlocking()
-                            .AsReusable()
-                            .Build();
+                                .AsNonBlocking()
+                                .AsReusable()
+                                .Build();
+
+    if (!mArbitrerSenderSocket)
+    {
+        UE_LOG(LogKLDebug_Networking, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::CreateSenderSocket>> Failed to create socket"));
+        return;
+    }
 
     mArbitrerTempMessageBuffer.Reserve(30);
     mArbitrerTempBuffer.Reserve(500);
@@ -97,18 +110,28 @@ void FKLDebugImGuiServerArbitrerManager::CreateSenderSocket(const UKLDebugNetwor
 
 #if !NO_LOGGING
     const FString ConnectionInfo = mArbitrerAddress->ToString(true);
-    UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_InitLocalAddress>> Server connecting to arbitrer [%s]"), *ConnectionInfo);
+    UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::CreateSenderSocket>> Server connecting to arbitrer [%s]"), *ConnectionInfo);
 #endif
 }
 
 void FKLDebugImGuiServerArbitrerManager::CreateListenerSocket(const UKLDebugNetworkingArbitrerSettings& _ArbitrerSettings, ISocketSubsystem& _SocketSubsytem)
 {
-    mArbitrerAnswerPort = _ArbitrerSettings.GetServerPortListening();
-    const FIPv4Endpoint Endpoint(FIPv4Address::Any, static_cast<int32>(mArbitrerAnswerPort));
-    mArbitrerReceiveSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
-                             .AsNonBlocking()
-                             .BoundToEndpoint(Endpoint)
-                             .Build();
+    uint32 ListeningPort = _ArbitrerSettings.GetServerPortListeningStart();
+    while (!mArbitrerReceiveSocket && mArbitrerAnswerPort != _ArbitrerSettings.GetServerPortListeningEnd())
+    {
+        mArbitrerAnswerPort = ListeningPort++;
+        const FIPv4Endpoint Endpoint(FIPv4Address::Any, static_cast<int32>(mArbitrerAnswerPort));
+        mArbitrerReceiveSocket = FUdpSocketBuilder(TEXT("NetworkArbitrer_ServerSocket"))
+                                     .AsNonBlocking()
+                                     .BoundToEndpoint(Endpoint)
+                                     .Build();
+    }
+
+    if (!mArbitrerReceiveSocket)
+    {
+        UE_LOG(LogKLDebug_Networking, Error, TEXT("FKLDebugImGuiNetworkingTCPServer::CreateListenerSocket>> Failed to create socket"));
+        return;
+    }
 
     int32 ReceiveBufferSize = 0;
     int32 SenderBufferSize = 0;
@@ -227,7 +250,7 @@ void FKLDebugImGuiServerArbitrerManager::ReadArbitrerData()
     uint32 Size = 0;
     int32 BytesRead = 0;
 
-    while (mArbitrerReceiveSocket->HasPendingData(Size) && Size > 0)
+    while (mArbitrerReceiveSocket && mArbitrerReceiveSocket->HasPendingData(Size) && Size > 0)
     {
         TArray<uint8> ReadData;
         ReadData.SetNumUninitialized(Size);

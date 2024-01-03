@@ -39,15 +39,16 @@ void FKLDebugImGuiClientManager::Init()
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
     mTempWriteDataBuffer.Reserve(Settings.Client_GetConnectionTempDataSize());
     mPendingFeaturesStatusUpdates.Reserve(30);
+    mPendingMessages.Reserve(10);
 }
 
-void FKLDebugImGuiClientManager::GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData, TArray<FKLDebugNetworkingPendingMessage>& _NewData)
+void FKLDebugImGuiClientManager::GameThread_TickReadData(FKLDebugImGuiClientData& _ClientData)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_TickReadData);
 
     GameThread_CopyPendingMessages(_ClientData);
     _ClientData.GetFeaturesStatusUpdateMutable().Reset();
-    GameThread_ReadMessages(_ClientData.GetWorld(), _NewData);
+    GameThread_ReadMessages(_ClientData.GetWorld());
 }
 
 void FKLDebugImGuiClientManager::GameThread_CopyPendingMessages(FKLDebugImGuiClientData& _ClientData)
@@ -78,7 +79,7 @@ void FKLDebugImGuiClientManager::GameThread_CopyPendingMessages(FKLDebugImGuiCli
     }
 }
 
-void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, TArray<FKLDebugNetworkingPendingMessage>& _NewData)
+void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_ReadMessages);
 
@@ -86,14 +87,14 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, T
     const UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
     if (!ImGuiWorldSubsystem || !ImGuiEngineSubsystem)
     {
-        _NewData.Reset();
+        mPendingMessages.Reset();
         ensureMsgf(false, TEXT("not expected"));
         return;
     }
 
     const FKLDebugImGuiFeaturesTypesContainerManager& FeatureContainerManager = ImGuiEngineSubsystem->GetFeatureContainerManager();
 
-    for (const FKLDebugNetworkingPendingMessage& PendingMessage : _NewData)
+    for (const FKLDebugNetworkingPendingMessage& PendingMessage : mPendingMessages)
     {
         if (PendingMessage.GetMessageEnumType() != static_cast<uint16>(EKLDebugImGuiNetworkMessageTypes::ImGuiMessage))
         {
@@ -142,7 +143,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World, T
         }
     }
 
-    _NewData.Reset();
+    mPendingMessages.Reset();
 }
 
 void FKLDebugImGuiClientManager::Parallel_TickWriteData(FArchive& _Writer)

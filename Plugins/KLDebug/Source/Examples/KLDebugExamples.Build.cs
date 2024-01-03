@@ -22,10 +22,14 @@ public class KLDebugExamples : ModuleRules
                 "ImPlotThirdParty",
                 "KLDebugImGuiFramework",
                 "KLDebugImGuiUser",
+                "KLDebugUserGameplay",
+                "KLDebugUserNetworking",
+                "KLDebugUtils",
 
                 //engine
                 "AIModule",
-                "Engine"
+                "Engine",
+                "NavigationSystem"
             }
         );
 

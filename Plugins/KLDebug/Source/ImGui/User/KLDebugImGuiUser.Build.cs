@@ -19,6 +19,7 @@ public class KLDebugImGuiUser : ModuleRules
             new string[]
             {
                 "ImGuiThirdParty",
+                "KLDebugUtils",
 
                 //engine
                 "Engine"

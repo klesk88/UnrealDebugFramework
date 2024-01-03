@@ -19,6 +19,7 @@ enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkMessageTypes : uint8
 enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkMessage : uint8
 {
     Client_FeatureStatusUpdate = 0,
+    Client_FeatureRequestUpdate,
 
     Server_InitClientConnection,
     Server_FeatureDataUpdate,

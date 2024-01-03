@@ -7,12 +7,12 @@ ColumnLimit: 140
 IndentWidth: 4
 AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
+ContinuationIndentWidth: 4 #if USTRUCT is after delegate this keeps the USTRUCT in its place
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlines: Left
-AlignOperands:   true
+AlignOperands: true
 AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
@@ -23,6 +23,8 @@ AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BinPackParameters: false
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -54,7 +56,6 @@ CompactNamespaces: false
 FixNamespaceComments: true
 NamespaceIndentation: All
 PackConstructorInitializers : Never
-ContinuationIndentWidth: 0 #if USTRUCT is after delegate this keeps the USTRUCT in its place
 AlignConsecutiveMacros:
     Enabled: true
     AcrossEmptyLines: false
@@ -85,7 +86,7 @@ JavaScriptQuotes: Leave
 JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1
-
+AllowAllArgumentsOnNextLine: true
 ObjCBinPackProtocolList: Never
 ObjCBlockIndentWidth: 2
 ObjCSpaceAfterProperty: false

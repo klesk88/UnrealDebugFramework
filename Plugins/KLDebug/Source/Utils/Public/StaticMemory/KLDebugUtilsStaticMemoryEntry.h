@@ -3,13 +3,11 @@
 #pragma once
 
 // engine
-#include "Containers/Array.h"
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
-#include "Templates/UniquePtr.h"
+#include "HAL/Platform.h"
 #include "Templates/UnrealTemplate.h"
-
-class IKLDebugImGuiFilterInterface;
+#include "Templates/UnrealTypeTraits.h"
 
 template <typename InterfaceType, typename EntryType>
 class TKLDebugImGuiStaticMemoryEntryBase : public FNoncopyable

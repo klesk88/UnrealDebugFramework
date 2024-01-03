@@ -109,7 +109,12 @@ void FKLDebugImGuiNetworkingTCPClient::TickGameThread(FKLDebugImGuiClientGameThr
     GameThread_InitServerPortGetter(_Context);
     GameThread_NewWorlds(_Context);
     GameThread_RemoveInvalidWorlds(_Context);
-    GameThread_TickImGuiData(_Context);
+    GameThread_TickConnection(_Context);
+
+    if (!mPendingWorlds.IsEmpty())
+    {
+        _Context.SetShouldKeepTicking(true);
+    }
 }
 
 void FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter(const FKLDebugImGuiClientGameThreadContext& _Context)
@@ -135,6 +140,11 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter(const FKL
 
 void FKLDebugImGuiNetworkingTCPClient::GameThread_RemoveInvalidWorlds(const FKLDebugImGuiClientGameThreadContext& _Context)
 {
+    if (_Context.GetRemovedWorlds().IsEmpty())
+    {
+        return;
+    }
+
     for (const FObjectKey& RemovedWorld : _Context.GetRemovedWorlds())
     {
         const int32 Index = mCachedConnections.IndexOfByKey(RemovedWorld);
@@ -143,11 +153,42 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_RemoveInvalidWorlds(const FKLD
             RemoveCachedConnection(Index);
         }
     }
+
+    if (mServerPortGetter.IsValid())
+    {
+        mServerPortGetter->RemoveWorlds(_Context.GetRemovedWorlds());
+    }
 }
 
-void FKLDebugImGuiNetworkingTCPClient::GameThread_NewWorlds(const FKLDebugImGuiClientGameThreadContext& _Context)
+void FKLDebugImGuiNetworkingTCPClient::GameThread_NewWorlds(FKLDebugImGuiClientGameThreadContext& _Context)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPClient_GameThread_NewWorlds);
+
+    for (const TWeakObjectPtr<const UWorld>& WorldPtr : _Context.GetNewWorlds())
+    {
+        mPendingWorlds.Emplace(WorldPtr);
+    }
+
+    TArray<TWeakObjectPtr<const UWorld>> WorldReadys;
+    WorldReadys.Reserve(mPendingWorlds.Num());
+
+    for (int32 i = mPendingWorlds.Num() - 1; i >= 0; --i)
+    {
+        const TWeakObjectPtr<const UWorld>& WorldPtr = mPendingWorlds[i];
+        if (!WorldPtr.IsValid())
+        {
+            mPendingWorlds.RemoveAt(i, 1, false);
+            continue;
+        }
+
+        if (mServerPortGetter->IsWorldDataReady(*WorldPtr.Get()))
+        {
+            WorldReadys.Emplace(WorldPtr);
+            mPendingWorlds.RemoveAt(i, 1, false);
+        }
+    }
+
+    _Context.SetNewWorlds(WorldReadys);
 
     if (mServerPortGetter.IsValid())
     {
@@ -155,7 +196,7 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_NewWorlds(const FKLDebugImGuiC
     }
 }
 
-void FKLDebugImGuiNetworkingTCPClient::GameThread_TickImGuiData(FKLDebugImGuiClientGameThreadContext& _Context)
+void FKLDebugImGuiNetworkingTCPClient::GameThread_TickConnection(FKLDebugImGuiClientGameThreadContext& _Context)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPClient_TickImGuiData);
 

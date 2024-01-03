@@ -39,8 +39,9 @@ namespace KL::Debug::NetworkingClient
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-FKLDebugImGuiClientArbitrerCacheConnection::FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket)
+FKLDebugImGuiClientArbitrerCacheConnection::FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const FUniqueNetIdRepl& _LocalPlayerNetID, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket)
     : mWorldKey(&_World)
+    , mLocalPlayerNetID(_LocalPlayerNetID)
     , mArbitrerAddress(_ArbitrerAddress)
     , mArbitrerSocket(&_ArbitrerSocket)
     , mWorldPort(_WorldPort)

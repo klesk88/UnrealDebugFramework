@@ -37,6 +37,13 @@ FKLDebugNetworkingPendingMessage::FKLDebugNetworkingPendingMessage(const FKLDebu
     }
 }
 
+FKLDebugNetworkingPendingMessage::FKLDebugNetworkingPendingMessage(FKLDebugNetworkingPendingMessage&& _Other)
+    : mMessageType(_Other.GetMessageType())
+    , mMessageEnumType(_Other.GetMessageEnumType())
+    , mData(MoveTemp(_Other.mData))
+{
+}
+
 void FKLDebugNetworkingPendingMessage::UncompressData(const FKLDebugNetworkingMessage_Header& _Header, const TArray<uint8>& _MessageData)
 {
     if (!_MessageData.IsValidIndex(_Header.GetStartCompressDataOffset()))
@@ -46,7 +53,11 @@ void FKLDebugNetworkingPendingMessage::UncompressData(const FKLDebugNetworkingMe
     }
 
     mData.AddUninitialized(static_cast<int32>(_Header.GetTotalUncompressDataSize()));
-    FMemory::Memcpy(&mData[0], _MessageData.GetData(), _Header.GetStartCompressDataOffset());
+    if (_Header.GetStartCompressDataOffset() != 0)
+    {
+        FMemory::Memcpy(&mData[0], _MessageData.GetData(), _Header.GetStartCompressDataOffset());
+    }
+
     const int32 CompressSize = _MessageData.Num() - _Header.GetStartCompressDataOffset();
     const TArrayView<const uint8> CompressData(&_MessageData[_Header.GetStartCompressDataOffset()], CompressSize);
 

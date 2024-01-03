@@ -6,6 +6,7 @@
 
 // engine
 #include "Containers/Array.h"
+#include "GameFramework/OnlineReplStructs.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "IPAddress.h"
 #include "Templates/SharedPointer.h"
@@ -32,7 +33,7 @@ private:
     };
 
 public:
-    explicit FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket);
+    explicit FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const FUniqueNetIdRepl& _LocalPlayerNetID, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket);
     ~FKLDebugImGuiClientArbitrerCacheConnection();
     UE_NODISCARD bool operator==(const uint16& _ID) const;
 
@@ -40,12 +41,14 @@ public:
 
     UE_NODISCARD uint32 GetHost() const;
     UE_NODISCARD const FObjectKey& GetWorldObjKey() const;
+    UE_NODISCARD const FUniqueNetIdRepl& GetNetLocalPlayerID() const;
 
 private:
     void TickArbitrer(const uint32 _ArbitrerReplyPort, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer);
 
 private:
     FObjectKey mWorldKey;
+    FUniqueNetIdRepl mLocalPlayerNetID;
     uint32 mHost = 0;
     TSharedPtr<FInternetAddr> mArbitrerAddress;
     FSocket* mArbitrerSocket = nullptr;
@@ -68,4 +71,9 @@ inline uint32 FKLDebugImGuiClientArbitrerCacheConnection::GetHost() const
 inline const FObjectKey& FKLDebugImGuiClientArbitrerCacheConnection::GetWorldObjKey() const
 {
     return mWorldKey;
+}
+
+inline const FUniqueNetIdRepl& FKLDebugImGuiClientArbitrerCacheConnection::GetNetLocalPlayerID() const
+{
+    return mLocalPlayerNetID;
 }

@@ -2,16 +2,26 @@
 
 #include "Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"
 
+#include "Settings/KLDebugImGuiNetworkingSettings.h"
 #include "Subsystem/Engine/KLDebugImGuiNetworkingGameThreadUpdateContextBase.h"
 #include "TCP/KLDebugImGuiNetworkingTCPBase.h"
 
 // modules
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+#include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 
 void UKLDebugImGuiNetworkingSubsystem_EngineBase::Initialize(FSubsystemCollectionBase& _Collection)
 {
     Super::Initialize(_Collection);
+
+    const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
+
+    KL::Debug::Networking::Message::Init(
+        Settings.Common_GetMaxMessageDataSizeBeforeSplit(),
+        Settings.Common_GetMaxMessageDataSizeBeforeCompression(),
+        Settings.Common_GetCompressMinBytesSaved(),
+        Settings.Common_GetCompressMinPercentSaved());
 
     mCurrentWorlds.Reserve(10);
     mNewWorlds.Reserve(10);

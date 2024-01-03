@@ -25,7 +25,6 @@ public:
     UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
     void GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
     void ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
-    UE_NODISCARD bool ShouldCompressData() const final;
     // IKLDebugImGuiNetworing_FeatureInterface
 
 private:
@@ -41,11 +40,6 @@ private:
 };
 
 inline bool FKLDebugFeatureAI_BehaviorTree::Client_InformServerWhenActive() const
-{
-    return true;
-}
-
-inline bool FKLDebugFeatureAI_BehaviorTree::ShouldCompressData() const
 {
     return true;
 }

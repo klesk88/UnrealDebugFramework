@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "StaticMemory/KLDebugImGuiStaticMemoryEntryBase.h"
+// modules
+#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryEntryBase.h"
 
-class KLDEBUGIMGUIUSER_API FKLDebugImGuiFilterManagerEntryBase : public TKLDebugImGuiStaticMemoryEntryBase<IKLDebugImGuiFilterInterface, FKLDebugImGuiFilterManagerEntryBase>
+class KLDEBUGIMGUIUSER_API FKLDebugImGuiFilterManagerEntryBase : public TKLDebugUtilsStaticMemoryEntryBase<IKLDebugImGuiFilterInterface, FKLDebugImGuiFilterManagerEntryBase>
 {
 public:
     explicit FKLDebugImGuiFilterManagerEntryBase(const size_t _ClassSize);

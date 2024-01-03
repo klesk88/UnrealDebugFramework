@@ -5,23 +5,19 @@
 #include "Client/KLDebugImGuiClientServerCacheConnection.h"
 
 // engine
-#include "Containers/Array.h"
-#include "Containers/UnrealString.h"
 #include "GenericPlatform/GenericPlatform.h"
-#include "IPAddress.h"
-#include "Templates/SharedPointer.h"
-#include "Templates/UniquePtr.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/ObjectKey.h"
 
 class FKLDebugImGuiClientData;
 class FSocket;
-class UWorld;
+
+struct FUniqueNetIdRepl;
 
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientWorldCacheConnection final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiClientWorldCacheConnection(const FObjectKey& _WorldKey, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _WorldServerSocket);
+    explicit FKLDebugImGuiClientWorldCacheConnection(const FObjectKey& _WorldKey, const FUniqueNetIdRepl& _LocalPlayerNetID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _WorldServerSocket);
     UE_NODISCARD bool operator==(const FObjectKey& _WorldID) const;
 
     UE_NODISCARD bool Parallel_Tick();

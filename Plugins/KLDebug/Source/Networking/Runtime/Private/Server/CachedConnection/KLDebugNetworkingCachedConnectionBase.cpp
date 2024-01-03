@@ -7,6 +7,9 @@
 #include "Message/Header/KLDebugNetworkingMessage_Header.h"
 #include "Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 
+// modules
+#include "Networking/Runtime/Public/Message/KLDebugNetworkingMessageDefinitions.h"
+
 // engine
 #include "Containers/ArrayView.h"
 #include "HAL/UnrealMemory.h"
@@ -29,8 +32,6 @@ FKLDebugNetworkingCachedConnectionBase::FKLDebugNetworkingCachedConnectionBase(c
     mWriteBuffers.Reserve(_WriteBufferSize);
     mReceiveBuffer.Init(0, _ReadBufferSize);
     mTempMessageBuffer.Reserve(500);
-
-    KL::Debug::Networking::Message::InitHeaderSize();
 
     mCheckIfAliveMessage.Reserve(50);
     FMemoryWriter Writer(mCheckIfAliveMessage);
@@ -85,11 +86,6 @@ void FKLDebugNetworkingCachedConnectionBase::Tick()
     {
         Shutdown();
         return;
-    }
-
-    if (mPendingMessages.IsEmpty())
-    {
-        mHasNewReadData = false;
     }
 
     if (mSocket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
@@ -228,18 +224,12 @@ bool FKLDebugNetworkingCachedConnectionBase::TickReadMessagesWithHeader(FArchive
             return;
         }
 
-        if (ReadBufferChildHasHandleMessage(_MessageHeader, _MessageData))
-        {
-            // this message was intended for the child class
-            return;
-        }
-
         if (!_MessageHeader.IsSplittedMessage())
         {
-            FKLDebugNetworkingPendingMessage& LastMessage = mPendingMessages.Emplace_GetRef(_MessageHeader, mTempMessageBuffer);
-            if (!LastMessage.HasData())
+            FKLDebugNetworkingPendingMessage NewPendingMessage{ _MessageHeader, mTempMessageBuffer };
+            if (NewPendingMessage.HasData())
             {
-                mPendingMessages.RemoveAtSwap(mPendingMessages.Num() - 1, 1, false);
+                Parallel_HandlePendingMessageChild(MoveTemp(NewPendingMessage));
             }
 
             return;
@@ -252,19 +242,20 @@ bool FKLDebugNetworkingCachedConnectionBase::TickReadMessagesWithHeader(FArchive
             return;
         }
 
-        FKLDebugNetworkingPendingSplittedMessage& PendingMessage = mPendingSplittedMessages[Index];
-        PendingMessage.AddData(mTempMessageBuffer, _MessageHeader.GetMessageDataOffset());
-        if (!PendingMessage.IsFullyReceived())
+        FKLDebugNetworkingPendingSplittedMessage& PendingSplitMessage = mPendingSplittedMessages[Index];
+        PendingSplitMessage.AddData(mTempMessageBuffer, _MessageHeader.GetMessageDataOffset());
+        if (!PendingSplitMessage.IsFullyReceived())
         {
             return;
         }
 
-        if (!PendingMessage.HasFailedToReadData())
+        if (!PendingSplitMessage.HasFailedToReadData())
         {
-            FKLDebugNetworkingPendingMessage& LastMessage = mPendingMessages.Emplace_GetRef(PendingMessage.GetHeaderMessage(), MoveTemp(PendingMessage.GetDataMutable()));
-            if (!LastMessage.HasData())
+            FKLDebugNetworkingPendingMessage NewPendingMessage{ PendingSplitMessage.GetHeaderMessage(), MoveTemp(PendingSplitMessage.GetDataMutable()) };
+
+            if (NewPendingMessage.HasData())
             {
-                mPendingMessages.RemoveAtSwap(mPendingMessages.Num() - 1, 1, false);
+                Parallel_HandlePendingMessageChild(MoveTemp(NewPendingMessage));
             }
         }
 
@@ -276,11 +267,6 @@ bool FKLDebugNetworkingCachedConnectionBase::TickReadMessagesWithHeader(FArchive
     const int64 TotalSize = _Reader.TotalSize();
     checkf(TotalSize < TNumericLimits<uint32>::Max(), TEXT("total size too high not expected"));
     UpdateBufferStartIndex(StopReadLocation, TotalSize);
-
-    if (!mPendingMessages.IsEmpty())
-    {
-        mHasNewReadData = true;
-    }
 
     return false;
 }
@@ -327,7 +313,6 @@ bool FKLDebugNetworkingCachedConnectionBase::HandleInternalMessages(const FKLDeb
         return true;
     }
     default:
-        ensureMsgf(false, TEXT("not handled"));
         return false;
     }
 }

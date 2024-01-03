@@ -19,6 +19,7 @@ public class KLDebugGameplayRuntime : ModuleRules
             new string[]
             {
                 "KLDebugImGuiFramework",
+                "KLDebugUserGameplay",
                 "KLDebugUtils",
 
                 //engine

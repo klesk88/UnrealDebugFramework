@@ -3,10 +3,13 @@
 #include "Server/KLDebugImGuiServerWorldCachedConnection.h"
 
 // modules
+#include "ImGui/Networking/Public/Commands/Manager/KLDebugNetworkingCommandManager.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
+#include "Networking/Runtime/Public/Commands/Message/KLDebugNetworkingMessage_Command.h"
+#include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Header/KLDebugNetworkingMessageHeaderDefinitions.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
-#include "Utils/Public/KLDebugLog.h"
+#include "User/Networking/Internal/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -21,6 +24,7 @@ FKLDebugImGuiServerWorldCachedConnection::FKLDebugImGuiServerWorldCachedConnecti
     , mDebugPort(_DebugPort)
     , mWorldDebugSocket(&_WorldDebugSocket)
 {
+    KL::Debug::Networking::Commands::Manager::BindOnNewCommandWorldRequest(mWorldKey, FOnKLDebugNewCommandWorld::CreateRaw(this, &FKLDebugImGuiServerWorldCachedConnection::OnNewCommandRequest));
 }
 
 FKLDebugImGuiServerWorldCachedConnection::~FKLDebugImGuiServerWorldCachedConnection()
@@ -28,6 +32,8 @@ FKLDebugImGuiServerWorldCachedConnection::~FKLDebugImGuiServerWorldCachedConnect
     ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
     check(SocketSubsystem);
     ShutdownInternal(*SocketSubsystem);
+
+    KL::Debug::Networking::Commands::Manager::UnbindOnNewCommandWorldRequest(mWorldKey);
 }
 
 void FKLDebugImGuiServerWorldCachedConnection::ShutdownInternal(ISocketSubsystem& _SocketSubsystem)
@@ -70,7 +76,7 @@ void FKLDebugImGuiServerWorldCachedConnection::TickPendingConnections()
         FSocket* IncomingConnection = mWorldDebugSocket->Accept(TEXT("ClientRequest"));
         if (!IncomingConnection)
         {
-            UE_LOG(LogKL_Debug, Error, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickPendingConnections>> Could not accept socket"));
+            UE_LOG(LogKLDebug_Networking, Error, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickPendingConnections>> Could not accept socket"));
             continue;
         }
 
@@ -91,13 +97,13 @@ bool FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections()
         FKLDebugImGuiServerClientCachedConnection& Connection = mCachedClientConnections[i];
         if (!Connection.IsValid())
         {
-            UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections>> Removing client connection because marked invalid"));
+            UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections>> Removing client connection because marked invalid"));
             mCachedClientConnections.RemoveAtSwap(i, 1, false);
             continue;
         }
 
         Connection.Tick();
-        HasNewReadData |= Connection.HasNewReadData();
+        HasNewReadData |= Connection.HasPendingDataToRead();
     }
 
     return HasNewReadData;
@@ -105,8 +111,22 @@ bool FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections()
 
 bool FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread()
 {
-    const UWorld* World = Cast<const UWorld>(mWorldKey.ResolveObjectPtr());
+    RemoveInvalidConnections();
+    if (mCachedClientConnections.IsEmpty())
+    {
+        return false;
+    }
+
+    UWorld* World = Cast<UWorld>(mWorldKey.ResolveObjectPtr());
     checkf(World != nullptr, TEXT("must be valid"));
+
+    TArray<FKLDebugNetworkingCommandConnectionManagerBase*> ClientsCommandMangers;
+    ClientsCommandMangers.Reserve(mCachedClientConnections.Num());
+
+    for (FKLDebugImGuiServerClientCachedConnection& Client : mCachedClientConnections)
+    {
+        ClientsCommandMangers.Emplace(&Client.GetCommandManagerMutable());
+    }
 
     bool KeepTicking = false;
     for (int32 i = mCachedClientConnections.Num() - 1; i >= 0; --i)
@@ -114,13 +134,71 @@ bool FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread()
         FKLDebugImGuiServerClientCachedConnection& Connection = mCachedClientConnections[i];
         if (!Connection.IsValid())
         {
-            UE_LOG(LogKL_Debug, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread>> Removing client connection because marked invalid"));
+            UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread>> Removing client connection because marked invalid"));
             mCachedClientConnections.RemoveAtSwap(i, 1, false);
             continue;
         }
 
-        KeepTicking |= Connection.TickOnGameThread(*World);
+        KeepTicking |= Connection.TickOnGameThread(ClientsCommandMangers, *World);
     }
 
     return KeepTicking;
+}
+
+void FKLDebugImGuiServerWorldCachedConnection::RemoveInvalidConnections()
+{
+    for (int32 i = mCachedClientConnections.Num() - 1; i >= 0; --i)
+    {
+        FKLDebugImGuiServerClientCachedConnection& Connection = mCachedClientConnections[i];
+        if (!Connection.IsValid())
+        {
+            UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread>> Removing client connection because marked invalid"));
+            mCachedClientConnections.RemoveAtSwap(i, 1, false);
+            continue;
+        }
+    }
+}
+
+void FKLDebugImGuiServerWorldCachedConnection::OnNewCommandRequest(const KL::Debug::Networking::Commands::Internal::FKLDebugOnNewCommandInput& _Input)
+{
+    if (_Input.GetClientFilter())
+    {
+        for (FKLDebugImGuiServerClientCachedConnection& Client : mCachedClientConnections)
+        {
+            if (_Input.GetContextData().IsEmpty())
+            {
+                Client.AddCommand(FKLDebugNetworkingMessage_Command(_Input.GetCommandID()));
+            }
+            else
+            {
+                Client.AddCommand(FKLDebugNetworkingMessage_Command(_Input.GetCommandID(), _Input.GetContextDataMutable()));
+            }
+        }
+    }
+    else
+    {
+        for (FKLDebugImGuiServerClientCachedConnection& Client : mCachedClientConnections)
+        {
+            const APlayerController* ClientOwningPlayer = Client.TryGetPlayerController();
+            if (!ClientOwningPlayer)
+            {
+                UE_LOG(LogKLDebug_Networking, Warning, TEXT("FKLDebugImGuiServerWorldCachedConnection::OnNewCommandRequest>> Client connection didnt have a valid player character. Will not send to client"));
+                continue;
+            }
+
+            if (!_Input.GetClientFilter()(*ClientOwningPlayer))
+            {
+                continue;
+            }
+
+            if (_Input.GetContextData().IsEmpty())
+            {
+                Client.AddCommand(FKLDebugNetworkingMessage_Command(_Input.GetCommandID()));
+            }
+            else
+            {
+                Client.AddCommand(FKLDebugNetworkingMessage_Command(_Input.GetCommandID(), _Input.GetContextDataMutable()));
+            }
+        }
+    }
 }

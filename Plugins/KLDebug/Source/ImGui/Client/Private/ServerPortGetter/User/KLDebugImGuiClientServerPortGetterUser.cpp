@@ -34,6 +34,10 @@ void FKLDebugImGuiClientServerPortGetterUser::Init()
 
 void FKLDebugImGuiClientServerPortGetterUser::AddNewConnections(const FKLDebugImGuiClientGameThreadContext& _Context)
 {
+    uint32 ServerIP = 0;
+    int32 ServerPort = 0;
+    FUniqueNetIdRepl LocalPlayerNetID;
+
     for (const TWeakObjectPtr<const UWorld>& WorldPtr : _Context.GetNewWorlds())
     {
         if (!WorldPtr.IsValid())
@@ -41,7 +45,24 @@ void FKLDebugImGuiClientServerPortGetterUser::AddNewConnections(const FKLDebugIm
             continue;
         }
 
-        mPendingWorlds.Emplace(WorldPtr);
+        if (!GatherWorldData(*WorldPtr.Get(), ServerIP, ServerPort, LocalPlayerNetID))
+        {
+            continue;
+        }
+
+        mPendingWorlds.Emplace(*WorldPtr.Get(), ServerIP, LocalPlayerNetID);
+    }
+}
+
+void FKLDebugImGuiClientServerPortGetterUser::RemoveWorlds(const TArray<FObjectKey>& _RemovedWorlds)
+{
+    for (const FObjectKey& RemovedWorld : _RemovedWorlds)
+    {
+        const int32 Index = mPendingWorlds.IndexOfByKey(RemovedWorld);
+        if (Index != INDEX_NONE)
+        {
+            mPendingWorlds.RemoveAtSwap(Index, 1, false);
+        }
     }
 }
 
@@ -59,16 +80,6 @@ void FKLDebugImGuiClientServerPortGetterUser::ParallelTick(TArray<FKLDebugImGuiC
     {
         // the user can do its own logic to pass us the port which can take time (for example communicating with a remote
         // virtual machine). So it can happen we still dont have valid data here
-
-        for (int32 i = mPendingWorlds.Num() - 1; i >= 0; --i)
-        {
-            const TWeakObjectPtr<const UWorld>& WorldPtr = mPendingWorlds[i];
-            if (!WorldPtr.IsValid())
-            {
-                mPendingWorlds.RemoveAtSwap(i, 1, false);
-            }
-        }
-
         return;
     }
 
@@ -90,25 +101,12 @@ void FKLDebugImGuiClientServerPortGetterUser::TickPendingWorlds(const uint32 _Se
     FString ConnectionInfo;
 #endif
 
-    for (const TWeakObjectPtr<const UWorld>& WorldPtr : mPendingWorlds)
+    for (const FKLDebugImGuiClientServerPortGetterUser_PendingWorld& PendingWorld : mPendingWorlds)
     {
-        if (!WorldPtr.IsValid())
-        {
-            continue;
-        }
-
-        const UNetDriver* WorldNetDriver = WorldPtr->GetNetDriver();
-        const UNetConnection* NetConnection = WorldNetDriver ? WorldNetDriver->ServerConnection : nullptr;
-        if (!NetConnection || !NetConnection->RemoteAddr.IsValid())
-        {
-            ensureMsgf(false, TEXT("we expect the world to be fully initialize here"));
-            continue;
-        }
-
-        *mTempAddress = *NetConnection->RemoteAddr;
+        mTempAddress->SetIp(PendingWorld.GetServerIP());
         FSocket* NewSocket = FTcpSocketBuilder(TEXT("ClientDebugSocket"))
-                             .AsNonBlocking()
-                             .Build();
+                                 .AsNonBlocking()
+                                 .Build();
 
         if (!NewSocket)
         {
@@ -133,6 +131,6 @@ void FKLDebugImGuiClientServerPortGetterUser::TickPendingWorlds(const uint32 _Se
             return;
         }
 
-        _CachedConnections.Emplace(FObjectKey(WorldPtr.Get()), ReceiveBufferSize, SenderBufferSize, *NewSocket);
+        _CachedConnections.Emplace(PendingWorld.GetWorldKey(), PendingWorld.GetNetLocalPlayerID(), ReceiveBufferSize, SenderBufferSize, *NewSocket);
     }
 }

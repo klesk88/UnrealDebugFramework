@@ -31,7 +31,11 @@ public:
     UE_NODISCARD uint32 Server_GetWriteBufferSize() const;
     UE_NODISCARD uint32 Server_GetConnectionTempDataSize() const;
     UE_NODISCARD uint32 Server_GetConnectionTempCompressDataSize() const;
-    UE_NODISCARD uint32 Server_GetFeatureMaxMessageDataSize() const;
+
+    UE_NODISCARD uint32 Common_GetMaxMessageDataSizeBeforeSplit() const;
+    UE_NODISCARD uint32 Common_GetMaxMessageDataSizeBeforeCompression() const;
+    UE_NODISCARD uint32 Common_GetCompressMinBytesSaved() const;
+    UE_NODISCARD uint32 Common_GetCompressMinPercentSaved() const;
 
 private:
     // Client
@@ -74,8 +78,17 @@ private:
 
     // determine the max size of the data to send in a single message. If the message is higher then this size
     // it will be splitted in multiple ones.
-    UPROPERTY(Config, Category = "ImGuiServer", EditDefaultsOnly)
-    uint32 ServerFeatureMaxMessageDataSize = 500;
+    UPROPERTY(Config, Category = "Common", EditDefaultsOnly, meta = (Units = "Bytes"))
+    uint32 CommonMaxMessageDataSizeBeforeSplit = 1024;
+
+    UPROPERTY(Config, Category = "Common", EditDefaultsOnly, meta = (Units = "Bytes"))
+    uint32 CommonMaxMessageDataSizeBeforeCompression = 1024;
+
+    UPROPERTY(Config, Category = "Common", EditDefaultsOnly, meta = (Units = "Bytes"))
+    uint32 CompressMinBytesSaved = 10;
+
+    UPROPERTY(Config, Category = "Common", EditDefaultsOnly, meta = (Units = "%", ClampMin = 0, ClampMax = 100))
+    uint32 CompressMinPercentSaved = 5;
 
 #if WITH_EDITOR
 private:
@@ -150,7 +163,22 @@ inline uint32 UKLDebugImGuiNetworkingSettings::Server_GetConnectionTempCompressD
     return ServerTempCompressedDataSizePerConnection;
 }
 
-inline uint32 UKLDebugImGuiNetworkingSettings::Server_GetFeatureMaxMessageDataSize() const
+inline uint32 UKLDebugImGuiNetworkingSettings::Common_GetMaxMessageDataSizeBeforeSplit() const
 {
-    return ServerFeatureMaxMessageDataSize;
+    return CommonMaxMessageDataSizeBeforeSplit;
+}
+
+inline uint32 UKLDebugImGuiNetworkingSettings::Common_GetMaxMessageDataSizeBeforeCompression() const
+{
+    return CommonMaxMessageDataSizeBeforeCompression;
+}
+
+inline uint32 UKLDebugImGuiNetworkingSettings::Common_GetCompressMinBytesSaved() const
+{
+    return CompressMinBytesSaved;
+}
+
+inline uint32 UKLDebugImGuiNetworkingSettings::Common_GetCompressMinPercentSaved() const
+{
+    return CompressMinPercentSaved;
 }

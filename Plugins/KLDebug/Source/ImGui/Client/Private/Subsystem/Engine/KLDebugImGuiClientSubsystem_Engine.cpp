@@ -8,6 +8,7 @@
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
+#include "ImGui/Networking/Public/Commands/Manager/KLDebugNetworkingCommandManager.h"
 
 // engine
 #include "Engine/Engine.h"
@@ -19,6 +20,7 @@ void UKLDebugImGuiClientSubsystem_Engine::Initialize(FSubsystemCollectionBase& _
 {
     Super::Initialize(_Collection);
 
+    KL::Debug::Networking::Commands::Manager::Init();
     mClientConnection.InitSocket(TEXT("KLDebugImguiClientThread"));
     mClientsData.Reserve(10);
 }

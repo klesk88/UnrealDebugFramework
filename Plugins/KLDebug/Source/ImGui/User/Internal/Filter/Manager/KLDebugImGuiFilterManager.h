@@ -3,7 +3,9 @@
 #pragma once
 
 #include "Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
-#include "StaticMemory/KLDebugImGuiStaticMemoryManager.h"
+
+// modules
+#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryManager.h"
 
 // engine
 #include "Containers/StaticArray.h"
@@ -14,7 +16,7 @@
 
 class FKLDebugImGuiFilterManagerEntryBase;
 
-class KLDEBUGIMGUIUSER_API FKLDebugImGuiFilterManager final : public TKLDebugImGuiStaticMemoryManager<FKLDebugImGuiFilterManager, FKLDebugImGuiFilterManagerEntryBase>
+class KLDEBUGIMGUIUSER_API FKLDebugImGuiFilterManager final : public TKLDebugUtilsStaticMemoryManager<FKLDebugImGuiFilterManager, FKLDebugImGuiFilterManagerEntryBase>
 {
 public:
     FKLDebugImGuiFilterManager();

@@ -2,6 +2,9 @@
 
 #pragma once
 
+// modules
+#include "User/Gameplay/Public/Input/Definitions/KLDebugUserInputDefinitions.h"
+
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
@@ -11,17 +14,6 @@
 #include "UObject/SoftObjectPtr.h"
 
 #include "KLDebugGameplayInputConfig.generated.h"
-
-UENUM()
-enum class EKLDebugGameplayInputType : uint8
-{
-    ToogleDebug = 0,
-    ToogleInput,
-    ToogleCamera,
-    TooglePause,
-
-    Count
-};
 
 USTRUCT()
 struct KLDEBUGGAMEPLAYRUNTIME_API FKLDebugGameplayInputConfig

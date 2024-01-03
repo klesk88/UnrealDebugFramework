@@ -20,6 +20,7 @@ public class KLDebugImGuiNetworking : ModuleRules
                 "KLDebugImGuiFramework",
                 "KLDebugImGuiUser",
                 "KLDebugNetworkingRuntime",
+                "KLDebugUserNetworking",
                 "KLDebugUtils",
 
                 //engine

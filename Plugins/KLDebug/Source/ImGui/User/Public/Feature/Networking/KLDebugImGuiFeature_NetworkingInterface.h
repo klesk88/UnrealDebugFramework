@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NameTypes.h"
 
+class FArchive;
 class FKLDebugImGuiFeature_NetworkingGatherDataInput;
 class FKLDebugImGuiFeature_NetworkingReceiveDataInput;
 
@@ -23,15 +24,21 @@ public:
 
     UE_NODISCARD virtual uint8 GetVersion() const;
     UE_NODISCARD virtual bool Client_InformServerWhenActive() const;
+
+    virtual void Server_OnClientMessageRequest(FArchive& _Archive);
+
     // if true we will check the crc of the data buffer gather trough GatherData before sending the message
     // if is the same then we will skip the message
     UE_NODISCARD virtual bool ShouldVerifyCRCBeforeSendData() const;
-    UE_NODISCARD virtual bool ShouldCompressData() const;
 };
 
 inline bool IKLDebugImGuiFeature_NetworkingInterface::Client_InformServerWhenActive() const
 {
     return false;
+}
+
+inline void IKLDebugImGuiFeature_NetworkingInterface::Server_OnClientMessageRequest(FArchive& _Archive)
+{
 }
 
 inline uint8 IKLDebugImGuiFeature_NetworkingInterface::GetVersion() const
@@ -42,9 +49,4 @@ inline uint8 IKLDebugImGuiFeature_NetworkingInterface::GetVersion() const
 inline bool IKLDebugImGuiFeature_NetworkingInterface::ShouldVerifyCRCBeforeSendData() const
 {
     return true;
-}
-
-inline bool IKLDebugImGuiFeature_NetworkingInterface::ShouldCompressData() const
-{
-    return false;
 }

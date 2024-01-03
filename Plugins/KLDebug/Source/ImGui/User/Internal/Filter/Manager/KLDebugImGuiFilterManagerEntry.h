@@ -5,6 +5,9 @@
 #include "Filter/Interface/KLDebugImGuiFilterInterface.h"
 #include "Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
 
+// modules
+#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryDefines.h"
+
 // engine
 #include "Templates/UnrealTypeTraits.h"
 
@@ -14,24 +17,6 @@
 
 class IKLDebugImGuiFeatureInterfaceBase;
 
-#define GENERATE_STATIC_FUNCTION_CHECK(_FunctionName, _Result, ...) \
-    template <typename T>                                           \
-    class THasStaticFunction_##_FunctionName                        \
-    {                                                               \
-        template <typename U, _Result (*)(__VA_ARGS__)>             \
-        struct Check;                                               \
-        template <typename U>                                       \
-        static char StaticTest(Check<U, &T::_FunctionName>*);       \
-        template <typename U>                                       \
-        static int32 StaticTest(...);                               \
-                                                                    \
-    public:                                                         \
-        enum                                                        \
-        {                                                           \
-            Value = sizeof(StaticTest<T>(nullptr)) == sizeof(char)  \
-        };                                                          \
-    };
-
 GENERATE_STATIC_FUNCTION_CHECK(StaticGetFilterID, const FName&)
 
 template <typename FilterInterfaceType>
@@ -40,10 +25,10 @@ class TKLDebugImGuiFilterManagerEntry final : public FKLDebugImGuiFilterManagerE
 public:
     TKLDebugImGuiFilterManagerEntry();
 
-    // FKLDebugWindowManagerEntryBase
+    // FKLDebugImGuiFilterManagerEntryBase
     UE_NODISCARD IKLDebugImGuiFilterInterface& AllocateInPlace(void* _PoolStartAddress) const final;
     UE_NODISCARD size_t GetSize() const final;
-    // FKLDebugWindowManagerEntryBase
+    // FKLDebugImGuiFilterManagerEntryBase
 };
 
 template <typename FilterInterfaceType>
