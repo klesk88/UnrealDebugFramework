@@ -39,16 +39,17 @@ public:
     void OnWorldBeginPlay(UWorld& _World) final;
     // UWorldSubsystem
 
+    UE_NODISCARD static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
+    UE_NODISCARD static const UKLDebugImGuiWorldSubsystem* TryGet(const UObject& _Object);
+
     void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
     void Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
-
-    UE_NODISCARD static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
 
     // this can be called externally when an object is selected. For example from the editor module of the imgui
     // to support editor selection
     void OnObjectSelected(UObject& _Object);
 
-    UE_NODISCARD FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
+    FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
     void UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle);
 
     void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
@@ -66,6 +67,11 @@ private:
     FOnImGuiFeatureStateUpdated mOnFeaturesUpdatedDelegate;
     bool mShouldStoreDelta = false;
 };
+
+inline const UKLDebugImGuiWorldSubsystem* UKLDebugImGuiWorldSubsystem::TryGet(const UObject& _Object)
+{
+    return TryGetMutable(_Object);
+}
 
 inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate)
 {

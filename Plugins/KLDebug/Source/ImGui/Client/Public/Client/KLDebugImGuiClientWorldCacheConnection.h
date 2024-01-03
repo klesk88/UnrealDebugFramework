@@ -9,7 +9,6 @@
 #include "Templates/UnrealTemplate.h"
 #include "UObject/ObjectKey.h"
 
-class FKLDebugImGuiClientData;
 class FSocket;
 
 struct FUniqueNetIdRepl;
@@ -21,7 +20,7 @@ public:
     UE_NODISCARD bool operator==(const FObjectKey& _WorldID) const;
 
     UE_NODISCARD bool Parallel_Tick();
-    UE_NODISCARD bool TickOnGameThread(FKLDebugImGuiClientData& _ClientData);
+    UE_NODISCARD bool TickOnGameThread();
 
 private:
     FKLDebugImGuiClientServerCacheConnection mCacheConnection;

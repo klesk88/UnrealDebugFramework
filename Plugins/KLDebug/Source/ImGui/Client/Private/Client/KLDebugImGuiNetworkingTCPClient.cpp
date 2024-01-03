@@ -201,15 +201,9 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_TickConnection(FKLDebugImGuiCl
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiNetworkingTCPClient_TickImGuiData);
 
     bool KeepTicking = false;
-    for (FKLDebugImGuiClientData& ClientData : _Context.GetClientDataMutable())
+    for (FKLDebugImGuiClientWorldCacheConnection& WorldCacheConnection : mCachedConnections)
     {
-        FKLDebugImGuiClientWorldCacheConnection* CachedConnection = mCachedConnections.FindByKey(ClientData.GetWorldID());
-        if (!CachedConnection)
-        {
-            continue;
-        }
-
-        KeepTicking |= CachedConnection->TickOnGameThread(ClientData);
+        KeepTicking |= WorldCacheConnection.TickOnGameThread();
     }
 
     _Context.SetShouldKeepTicking(KeepTicking);

@@ -16,7 +16,6 @@
 
 class FArchive;
 class FInternetAddr;
-class FKLDebugImGuiClientData;
 class FKLDebugNetworkingArbitrerMessage_ClientServerData;
 class FSocket;
 class UKLDebugImGuiNetworkingSettings;

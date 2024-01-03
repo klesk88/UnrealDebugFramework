@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Client/KLDebugImGuiNetworkingTCPClient.h"
-#include "Subsystem/Engine/KLDebugImGuiClientData.h"
 
 // modules
 #include "ImGui/Networking/Public/Subsystem/Engine/KLDebugImGuiNetworkingSubsystem_EngineBase.h"
@@ -38,18 +37,14 @@ private:
     UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
     UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
     void OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World) final;
-    void OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World) final;
 
     ETickableTickType GetTickableTickTypeChild() const;
     TStatId GetStatId() const final;
     void Tick(float _DeltaTime) final;
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
 
-    void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
-
 private:
     TKLDebugImGuiNetworkingConnectionRunnableContainer<FKLDebugImGuiNetworkingTCPClient> mClientConnection;
-    TArray<FKLDebugImGuiClientData> mClientsData;
 };
 
 inline const UKLDebugImGuiClientSubsystem_Engine* UKLDebugImGuiClientSubsystem_Engine::TryGet()

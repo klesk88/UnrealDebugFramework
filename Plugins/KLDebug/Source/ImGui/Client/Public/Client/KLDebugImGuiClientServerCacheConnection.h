@@ -15,7 +15,6 @@
 #include "HAL/Platform.h"
 
 class FArchive;
-class FKLDebugImGuiClientData;
 class UWorld;
 
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientServerCacheConnection final : public FKLDebugNetworkingCachedConnectionBase
@@ -37,7 +36,7 @@ public:
     UE_NODISCARD bool HasPendingDataToRead() const final;
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase
 
-    UE_NODISCARD bool TickOnGameThread(UWorld& _World, FKLDebugImGuiClientData& _ClientData);
+    UE_NODISCARD bool TickOnGameThread(UWorld& _World);
 
 private:
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase

@@ -19,6 +19,7 @@
 FKLDebugImGuiClientServerCacheConnection::FKLDebugImGuiClientServerCacheConnection(const FObjectKey& _WorldKey, const FUniqueNetIdRepl& _LocalPlayerNetID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _Socket)
     : FKLDebugNetworkingCachedConnectionBase(_ReadBufferSize, _WriteBufferSize, _Socket)
     , mCommandsManager(_WorldKey)
+    , mClientImGuiData(*CastChecked<const UWorld>(_WorldKey.ResolveObjectPtr()))
     , mLocalPlayerNetID(_LocalPlayerNetID)
 {
 }
@@ -102,13 +103,13 @@ void FKLDebugImGuiClientServerCacheConnection::Parallel_HandlePendingMessageChil
     }
 }
 
-bool FKLDebugImGuiClientServerCacheConnection::TickOnGameThread(UWorld& _World, FKLDebugImGuiClientData& _ClientData)
+bool FKLDebugImGuiClientServerCacheConnection::TickOnGameThread(UWorld& _World)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiTCPClientCachedConnection_TickOnGameThread);
 
     TArray<uint8>& WriteBuffer = GetWriteBuffer();
 
     mCommandsManager.GameThread_Tick(_World);
-    mClientImGuiData.GameThread_TickReadData(_ClientData);
+    mClientImGuiData.GameThread_TickReadData(_World);
     return HasPendingDataToRead();
 }

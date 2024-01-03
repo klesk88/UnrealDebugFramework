@@ -17,7 +17,7 @@ bool FKLDebugImGuiClientWorldCacheConnection::Parallel_Tick()
     return mCacheConnection.HasPendingDataToRead();
 }
 
-bool FKLDebugImGuiClientWorldCacheConnection::TickOnGameThread(FKLDebugImGuiClientData& _ClientData)
+bool FKLDebugImGuiClientWorldCacheConnection::TickOnGameThread()
 {
     QUICK_SCOPE_CYCLE_COUNTER(FKLDebugImGuiClientWorldCacheConnection_TickOnGameThread);
 
@@ -28,5 +28,5 @@ bool FKLDebugImGuiClientWorldCacheConnection::TickOnGameThread(FKLDebugImGuiClie
         return false;
     }
 
-    return mCacheConnection.TickOnGameThread(*World, _ClientData);
+    return mCacheConnection.TickOnGameThread(*World);
 }
