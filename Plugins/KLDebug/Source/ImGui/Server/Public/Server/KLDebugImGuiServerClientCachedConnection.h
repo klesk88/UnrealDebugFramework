@@ -27,7 +27,7 @@ public:
     explicit FKLDebugImGuiServerClientCachedConnection(const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _ClientSocket);
 
     // FKLDebugNetworkingCachedConnectionBase
-    UE_NODISCARD bool HasPendingDataToRead() const final;
+    UE_NODISCARD bool RequiresGameThreadTick() const final;
     // FKLDebugNetworkingCachedConnectionBase
 
     // this is called from the game thread.
@@ -55,9 +55,9 @@ private:
     double mCheckTimer;
 };
 
-inline bool FKLDebugImGuiServerClientCachedConnection::HasPendingDataToRead() const
+inline bool FKLDebugImGuiServerClientCachedConnection::RequiresGameThreadTick() const
 {
-    return mClientDataForConnection.HasPendingData() || mCommandsManager.HasPendingData();
+    return mClientDataForConnection.RequiresGameThreadTick() || mCommandsManager.HasPendingData();
 }
 
 inline void FKLDebugImGuiServerClientCachedConnection::AddCommand(FKLDebugNetworkingMessage_Command&& _Command)

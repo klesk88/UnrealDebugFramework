@@ -29,7 +29,7 @@ public:
     explicit FKLDebugNetworkingCachedConnectionBase(const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _Socket);
     virtual ~FKLDebugNetworkingCachedConnectionBase();
 
-    UE_NODISCARD virtual bool HasPendingDataToRead() const = 0;
+    UE_NODISCARD virtual bool RequiresGameThreadTick() const = 0;
 
     void Shutdown();
     void Tick();

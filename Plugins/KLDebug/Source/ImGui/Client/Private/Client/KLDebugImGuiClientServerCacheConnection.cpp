@@ -111,5 +111,5 @@ bool FKLDebugImGuiClientServerCacheConnection::TickOnGameThread(UWorld& _World)
 
     mCommandsManager.GameThread_Tick(_World);
     mClientImGuiData.GameThread_TickReadData(_World);
-    return HasPendingDataToRead();
+    return RequiresGameThreadTick();
 }

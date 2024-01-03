@@ -31,7 +31,7 @@ public:
     void GameThread_TickReadData(const UWorld& _World);
     void Parallel_TickWriteData(FArchive& _Writer);
 
-    UE_NODISCARD bool HasPendingData() const;
+    UE_NODISCARD bool RequiresGameThreadTick() const;
 
 private:
     void GameThread_ReadMessages(const UWorld& _World);
@@ -40,7 +40,6 @@ private:
     void Parallel_WritePendingFeaturesStatusUpdate(TArray<uint8>& _TempData, FArchive& _Archive);
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
-    UE_NODISCARD bool OnFeatureUpdateInternal(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
 
 private:
     TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate> mParallelPendingFeaturesStatusUpdates;
@@ -63,7 +62,7 @@ inline void FKLDebugImGuiClientManager::AddPendingMessage(FKLDebugNetworkingPend
     mPendingMessages.Emplace(MoveTemp(_PendingMessage));
 }
 
-inline bool FKLDebugImGuiClientManager::HasPendingData() const
+inline bool FKLDebugImGuiClientManager::RequiresGameThreadTick() const
 {
-    return !mPendingMessages.IsEmpty();
+    return !mPendingMessages.IsEmpty() || !mPendingFeaturesStatusUpdates.IsEmpty();
 }

@@ -113,7 +113,7 @@ bool FKLDebugImGuiServerClientCachedConnection::TickOnGameThread(const TArray<FK
     mClientDataForConnection.ReadData(_World, FeaturesContainer);
     mClientDataForConnection.WriteData(_World, FeaturesContainer, Writer);
 
-    return HasPendingDataToRead();
+    return RequiresGameThreadTick();
 }
 
 APlayerController* FKLDebugImGuiServerClientCachedConnection::TryGetPlayerControllerMutable() const

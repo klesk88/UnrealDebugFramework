@@ -14,7 +14,7 @@ FKLDebugImGuiClientWorldCacheConnection::FKLDebugImGuiClientWorldCacheConnection
 bool FKLDebugImGuiClientWorldCacheConnection::Parallel_Tick()
 {
     mCacheConnection.Tick();
-    return mCacheConnection.HasPendingDataToRead();
+    return mCacheConnection.RequiresGameThreadTick();
 }
 
 bool FKLDebugImGuiClientWorldCacheConnection::TickOnGameThread()

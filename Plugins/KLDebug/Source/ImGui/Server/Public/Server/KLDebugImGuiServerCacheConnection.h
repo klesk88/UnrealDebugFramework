@@ -37,8 +37,7 @@ public:
     void ReadData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer);
     void WriteData(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
 
-    UE_NODISCARD bool NeedsTicking() const;
-    UE_NODISCARD bool HasPendingData() const;
+    UE_NODISCARD bool RequiresGameThreadTick() const;
 
 private:
     UE_NODISCARD FKLDebugImGuiServerObjectFeatures& GetOrAddFeaturesPerObject(const UWorld& _World, const FNetworkGUID& _NetworkID);
@@ -69,17 +68,12 @@ inline FKLDebugImGuiServerObjectFeatures* FKLDebugImGuiServerCacheConnection::Tr
     return Feature;
 }
 
-inline bool FKLDebugImGuiServerCacheConnection::NeedsTicking() const
+inline bool FKLDebugImGuiServerCacheConnection::RequiresGameThreadTick() const
 {
-    return !mUniqueFeatures.GetFeatures().IsEmpty() || !mFeaturesPerObject.IsEmpty();
+    return !mUniqueFeatures.GetFeatures().IsEmpty() || !mFeaturesPerObject.IsEmpty() || !mPendingMessages.IsEmpty();
 }
 
 inline void FKLDebugImGuiServerCacheConnection::AddPendingMessage(FKLDebugNetworkingPendingMessage&& _PendingMessage)
 {
     mPendingMessages.Emplace(MoveTemp(_PendingMessage));
-}
-
-inline bool FKLDebugImGuiServerCacheConnection::HasPendingData() const
-{
-    return !mPendingMessages.IsEmpty();
 }

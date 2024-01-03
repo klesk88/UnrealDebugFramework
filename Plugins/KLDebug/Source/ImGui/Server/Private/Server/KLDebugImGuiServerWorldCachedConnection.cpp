@@ -103,7 +103,7 @@ bool FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections()
         }
 
         Connection.Tick();
-        HasNewReadData |= Connection.HasPendingDataToRead();
+        HasNewReadData |= Connection.RequiresGameThreadTick();
     }
 
     return HasNewReadData;

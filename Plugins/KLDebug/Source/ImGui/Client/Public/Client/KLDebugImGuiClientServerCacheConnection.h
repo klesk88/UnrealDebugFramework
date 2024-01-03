@@ -33,7 +33,7 @@ public:
 
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase
     UE_NODISCARD bool IsValid() const final;
-    UE_NODISCARD bool HasPendingDataToRead() const final;
+    UE_NODISCARD bool RequiresGameThreadTick() const final;
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase
 
     UE_NODISCARD bool TickOnGameThread(UWorld& _World);
@@ -53,9 +53,9 @@ private:
     bool mIsWorldValid = true;
 };
 
-inline bool FKLDebugImGuiClientServerCacheConnection::HasPendingDataToRead() const
+inline bool FKLDebugImGuiClientServerCacheConnection::RequiresGameThreadTick() const
 {
-    return mClientImGuiData.HasPendingData() || mCommandsManager.HasPendingData();
+    return mClientImGuiData.RequiresGameThreadTick() || mCommandsManager.HasPendingData();
 }
 
 inline bool FKLDebugImGuiClientServerCacheConnection::TickChild()

@@ -3,7 +3,6 @@
 #include "Client/KLDebugImGuiClientManager.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
-#include "Subsystem/Engine/KLDebugImGuiClientSubsystem_Engine.h"
 
 // modules
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
@@ -215,28 +214,12 @@ void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatu
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_OnFeatureUpdate);
 
-    const bool UpdateFromGT = OnFeatureUpdateInternal(_FeatureUpdateData);
-    if (UpdateFromGT)
-    {
-        if (UKLDebugImGuiClientSubsystem_Engine* ImGuiEngineSubsystem = UKLDebugImGuiClientSubsystem_Engine::TryGetMutable())
-        {
-            ImGuiEngineSubsystem->SetShouldTick();
-        }
-        else
-        {
-            ensureMsgf(false, TEXT("we must have a valid engine subsystem"));
-        }
-    }
-}
-
-bool FKLDebugImGuiClientManager::OnFeatureUpdateInternal(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
-{
     const AActor* ObjectAsActor = Cast<const AActor>(_FeatureUpdateData.TryGetObject());
     if (ObjectAsActor && ObjectAsActor->GetLocalRole() == ROLE_Authority)
     {
         UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiClientManager::OnFeatureUpdate>> actor [%s] is locally controlled no message sent to server"), *ObjectAsActor->GetName());
 
-        return false;
+        return;
     }
 
     TArray<TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>> FeaturesIndexes;
@@ -261,7 +244,7 @@ bool FKLDebugImGuiClientManager::OnFeatureUpdateInternal(const FKLDebugImGuiFeat
 
     if (FeaturesIndexes.IsEmpty())
     {
-        return false;
+        return;
     }
 
     FNetworkGUID NetworkID;
@@ -275,13 +258,13 @@ bool FKLDebugImGuiClientManager::OnFeatureUpdateInternal(const FKLDebugImGuiFeat
         {
             // the feature has been removed but we yet didnt send any message to the server. This can happen if
             // we select an actor and just press on the remove button, before opening any window which is networked
-            return false;
+            return;
         }
 
         if (!_FeatureUpdateData.TryGetObject())
         {
             ensureMsgf(false, TEXT("no valid object passed should not be possible"));
-            return false;
+            return;
         }
 
         checkf(_FeatureUpdateData.GetObjectKey().ResolveObjectPtr() != nullptr, TEXT("must be valid"));
@@ -289,7 +272,7 @@ bool FKLDebugImGuiClientManager::OnFeatureUpdateInternal(const FKLDebugImGuiFeat
         if (!NetworkID.IsValid())
         {
             ensureMsgf(false, TEXT("no valid network ID"));
-            return false;
+            return;
         }
 
         mObjectToNetworkID.Emplace(_FeatureUpdateData.GetObjectKey(), NetworkID);
@@ -326,8 +309,6 @@ bool FKLDebugImGuiClientManager::OnFeatureUpdateInternal(const FKLDebugImGuiFeat
             FeatureUpdate->Client_AddFeatureUpdate(FeatureIndexPair.Key, FeatureIndexPair.Value, _FeatureUpdateData.IsFeatureAdded());
         }
     }
-
-    return true;
 }
 
 #if DO_ENSURE
