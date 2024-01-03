@@ -118,10 +118,9 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
 
 void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const
 {
-    const FKLDebugImGuiFeaturesTypesContainerManager& ContainerManager = _Input.GetContainerManager();
-    FKLDebugImGuiFeatureContainerBase& Container = ContainerManager.GetContainerMutable(_Input.GetContainerType());
-    IKLDebugImGuiFeatureInterfaceBase& Interface = Container.GetFeatureMutable(_Input.GetFeatureIndex());
     FKLDebugImGuiFeatureContext_Base* FeatureContext = nullptr;
+    IKLDebugImGuiFeatureInterfaceBase* Interface = nullptr;
+    bool IsFeatureStillValid = false;
 
     switch (_Input.GetContainerType())
     {
@@ -130,18 +129,33 @@ void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGather
         {
             const FKLDebugImGuiFeatureVisualizer_Selectable* ObjectFeatures = mSelectedObjectsVisualizers.FindByKey(*Object);
             const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = ObjectFeatures ? ObjectFeatures->TryGetSelectedFeature(_Input.GetFeatureIndex()) : nullptr;
-            FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
+            if (VisualizerEntry)
+            {
+                FeatureContext = VisualizerEntry->TryGetFeatureContextMutable();
+                IsFeatureStillValid = true;
+            }
         }
         break;
     case EImGuiInterfaceType::UNIQUE:
     {
         const FKLDebugImGuiFeatureVisualizerEntry* VisualizerEntry = mUniqueFeaturesVisualizer.TryGetSelectedFeature(_Input.GetFeatureIndex());
-        FeatureContext = VisualizerEntry ? VisualizerEntry->TryGetFeatureContextMutable() : nullptr;
+        if (VisualizerEntry)
+        {
+            IsFeatureStillValid = true;
+            FeatureContext = VisualizerEntry->TryGetFeatureContextMutable();
+        }
     }
     break;
     case EImGuiInterfaceType::COUNT:
         ensureMsgf(false, TEXT("should never enter here"));
         break;
+    }
+
+    if (IsFeatureStillValid)
+    {
+        const FKLDebugImGuiFeaturesTypesContainerManager& ContainerManager = _Input.GetContainerManager();
+        FKLDebugImGuiFeatureContainerBase& Container = ContainerManager.GetContainerMutable(_Input.GetContainerType());
+        Interface = &Container.GetFeatureMutable(_Input.GetFeatureIndex());
     }
 
     _Input.SetFeatureData(Interface, FeatureContext);

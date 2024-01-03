@@ -19,7 +19,7 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiGatherFeatureInput final : public F
 public:
     explicit FKLDebugImGuiGatherFeatureInput(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const EImGuiInterfaceType _ContainerType, const UObject* _Object, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
 
-    void SetFeatureData(IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, FKLDebugImGuiFeatureContext_Base* _FeatureContext);
+    void SetFeatureData(IKLDebugImGuiFeatureInterfaceBase* _FeatureInterface, FKLDebugImGuiFeatureContext_Base* _FeatureContext);
 
     UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManager() const;
     UE_NODISCARD const UObject* TryGetObject() const;
@@ -38,9 +38,9 @@ private:
     FKLDebugImGuiFeatureContext_Base* mFeatureContext = nullptr;
 };
 
-inline void FKLDebugImGuiGatherFeatureInput::SetFeatureData(IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, FKLDebugImGuiFeatureContext_Base* _FeatureContext)
+inline void FKLDebugImGuiGatherFeatureInput::SetFeatureData(IKLDebugImGuiFeatureInterfaceBase* _FeatureInterface, FKLDebugImGuiFeatureContext_Base* _FeatureContext)
 {
-    mInterfaceBase = &_FeatureInterface;
+    mInterfaceBase = _FeatureInterface;
     mFeatureContext = _FeatureContext;
 }
 

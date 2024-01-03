@@ -156,6 +156,11 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
             FKLDebugImGuiGatherFeatureInput Input{ FeatureDataUpdate.Client_GetFeatureIndex(), FeatureDataUpdate.Client_GetImGuiInterfaceType(), OwnerObject, FeatureContainerManager };
             ImGuiWorldSubsystem->TryGatherFeatureAndContext(Input);
             IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
+            if (!FeatureInterface)
+            {
+                // we have received an update for a feature which is not selected anymore
+                continue;
+            }
             IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;
             if (!NetworkInterface)
             {

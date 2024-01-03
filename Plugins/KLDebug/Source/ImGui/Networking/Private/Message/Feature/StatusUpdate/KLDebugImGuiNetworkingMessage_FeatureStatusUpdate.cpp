@@ -26,15 +26,6 @@ void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::SerializeChild(const FK
     Archive << mFullyRemoved;
     Archive << mContainerType;
 
-    if (mFullyRemoved)
-    {
-        ensureMsgf(mFeatureData.IsEmpty(), TEXT("we should not have elements when calling this"));
-        return;
-    }
-
-    Archive << mFeatureData;
-
-    ensureMsgf(!mFeatureData.IsEmpty(), TEXT("we should have elements when calling this"));
     ensureMsgf(mContainerType != EImGuiInterfaceType::COUNT, TEXT("invalid container type"));
 
     switch (mContainerType)
@@ -48,6 +39,15 @@ void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::SerializeChild(const FK
     default:
         checkNoEntry();
     }
+
+    if (mFullyRemoved)
+    {
+        ensureMsgf(mFeatureData.IsEmpty(), TEXT("we should not have elements when calling this"));
+        return;
+    }
+
+    Archive << mFeatureData;
+    ensureMsgf(!mFeatureData.IsEmpty(), TEXT("we should have elements when calling this"));
 }
 
 void FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate::SerializeSelectable(FArchive& _Archive)
