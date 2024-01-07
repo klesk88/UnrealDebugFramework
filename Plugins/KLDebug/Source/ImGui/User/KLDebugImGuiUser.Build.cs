@@ -22,15 +22,14 @@ public class KLDebugImGuiUser : ModuleRules
                 "KLDebugUtils",
 
                 //engine
-                "Engine"
+                "GameplayDebugger" //for FGameplayDebuggerCanvasContext
             }
         );
 
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "Core",
-                "CoreUObject",
+                "Core"
             }
         );
     }

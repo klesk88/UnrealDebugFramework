@@ -76,12 +76,12 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiTree(const FKLDebugImGu
     }
 
     const FKLDebugImGuiFeatureContextInput ContextInput{ _Context.GetCurrentNetMode(), *mObject.Get() };
-    mTreeVisualizer.DrawImGuiTree(EImGuiInterfaceType::SELECTABLE, ContextInput, _Context, mSelectedFeaturesIndexes);
+    mTreeVisualizer.DrawImGuiTree(EImGuiInterfaceType::SELECTABLE, ContextInput, _Context, mObject.Get(), mSelectedFeaturesIndexes);
 
     ImGui::TreePop();
 }
 
-void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
+void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing)
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -93,14 +93,15 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const F
 
     UObject& Object = *mObject.Get();
 
-    auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
+    auto Callback = [&_Context, &Object, &_RequireCanvasDrawing](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Selectable& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Selectable>();
+        _RequireCanvasDrawing |= Interface.RequireCanvasUpdate();
         const FKLDebugImGuiFeatureImGuiInput_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable(), Object };
         Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };
 
-    DrawImguiFeaturesEnabledCommon(_Context, Object, Callback);
+    DrawImguiFeaturesEnabledCommon(_Context, Callback, &Object);
 }
 
 UMeshComponent* FKLDebugImGuiFeatureVisualizer_Selectable::TryGetMeshComponent() const
@@ -134,6 +135,8 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::SetMaterialOverlay(UMaterialInte
 
 void FKLDebugImGuiFeatureVisualizer_Selectable::Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const
 {
+    // NOTE: we allow the user to modify the context (if present)
+
 #if DO_ENSURE
     if (!IsValid())
     {
@@ -143,11 +146,12 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::Render(const FKLDebugImGuiFeatur
 #endif
 
     const UObject& Object = *mObject.Get();
-    const FKLDebugImGuiFeatureRenderInput_Selectable FeatureContext{ _Context.GetWorld(), Object };
     const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _Context.GetFeaturesContainerManager().GetContainer(GetInterfaceType());
     FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
+        const FKLDebugImGuiFeatureVisualizerEntry& VisualizerData = Iterator.GetEntryData();
+        const FKLDebugImGuiFeatureRenderInput_Selectable FeatureContext{ _Context.GetWorld(), Object, VisualizerData.TryGetFeatureContextMutable() };
         const IKLDebugImGuiFeatureInterface_Selectable& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Selectable>();
         Interface.Render(FeatureContext);
     }

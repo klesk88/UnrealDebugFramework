@@ -6,6 +6,8 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 
+class FString;
+
 // main editor module
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFrameworkModule final : public IModuleInterface
 {
@@ -16,4 +18,6 @@ public:
     //
 
     UE_NODISCARD static FKLDebugImGuiFrameworkModule& Get();
+
+    UE_NODISCARD const FString& GetKLDebugEngineFlag() const;
 };

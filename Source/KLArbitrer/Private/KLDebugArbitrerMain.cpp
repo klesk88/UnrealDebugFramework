@@ -142,7 +142,7 @@ INT32_MAIN_INT32_ARGC_TCHAR_ARGV()
         return 0;
     }
 
-    KL::Debug::Networking::Message::InitHeaderSize();
+    KL::Debug::Networking::Message::Init(1024, 1024, 0, 0);
 
     UE_LOG(LogKL_DebugArbitrer, Display, TEXT("Arbitrer log dir set at [%s]"), *ArbitrerWorkingDir);
     static constexpr float SecondsToSleep = 0.2f;

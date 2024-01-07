@@ -188,7 +188,9 @@ namespace KL::Debug::Networking::Message
 #endif
         }
 
+#if DO_ENSURE
         ensureMsgf(_IsCompressed ? EnsureTotalSizeSent == _CompressTotalSize : EnsureTotalSizeSent == _UncompressTotalSize, TEXT("we sent more or less bytes then exptected"));
+#endif
     }
 
     void PrepareMessageToSend_SplitIfRequired(const IKLDebugNetworkingMessageInterface& _Message, TArray<uint8>& _DataToSend, TArray<uint8>& _CompressDataBuffer, FArchive& _Archive)

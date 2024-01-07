@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Interface/Selectable/Input/KLDebugImGuiFeatureImGuiInput_Selectable.h"
 #include "Feature/Interface/Selectable/Input/KLDebugImGuiFeatureRenderInput_Selectable.h"
@@ -9,9 +10,13 @@
 // engine
 #include "Containers/Array.h"
 
+class UObject;
+
 /*
  * This class can be used for represent data which can be selected in some form. For example this can be represented by an AActor
  * that is picked in the game viewport.
+ * The class is shared between all the entities which support the feature. To allow for data on a per entity basis, please create a context,
+ * by overriding GetFeatureContext.
  *
  * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() in the .cpp so that the class
  * can auto subscribe to the system. For example:
@@ -32,6 +37,18 @@ class KLDEBUGIMGUIUSER_API IKLDebugImGuiFeatureInterface_Selectable : public IKL
 
 public:
     virtual void GetFilterPath(TArray<FName>& _OutFilters) const = 0;
+
+    // This is called each time an entity which supports this feature is selected and start to make use of this feature
+    // This can be used to setup the owner object that this feature will operate on
+    virtual void OnFeatureSelected(UObject& _OwnerObject) const;
+    // This is called for each entity which has spawn this feature
+    // This can be used to clean the owner object that this feature was operating on
+    virtual void OnFeatureUnselected(UObject& _OwnerObject) const;
+
+    // allow the feature to have a context per instance. This means that, for example, if we have 2 different Pawns
+    // using the same feature, each of them will have their own context class independent of each other
+    //(while the feature class itself is shared)
+    UE_NODISCARD virtual TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const;
 
     virtual void DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
     virtual void Render(const FKLDebugImGuiFeatureRenderInput_Selectable& _Input) const;
@@ -59,6 +76,19 @@ inline void IKLDebugImGuiFeatureInterface_Selectable::GetFilterPathHelper(TArray
     {
         _OutFilters.SwapMemory(i, Count - 1 - i);
     }
+}
+
+inline void IKLDebugImGuiFeatureInterface_Selectable::OnFeatureSelected([[maybe_unused]] UObject& _OwnerObject) const
+{
+}
+
+inline void IKLDebugImGuiFeatureInterface_Selectable::OnFeatureUnselected([[maybe_unused]] UObject& _OwnerObject) const
+{
+}
+
+inline TUniquePtr<FKLDebugImGuiFeatureContext_Base> IKLDebugImGuiFeatureInterface_Selectable::GetFeatureContext([[maybe_unused]] const FKLDebugImGuiFeatureContextInput& _Input) const
+{
+    return nullptr;
 }
 
 template <typename... FilterType>

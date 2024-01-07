@@ -21,10 +21,12 @@
 
 #include "KLDebugImGuiWorldSubsystem.generated.h"
 
+class APlayerController;
 class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTypesContainerManager;
-class IKLDebugImGuiFeatureInterfaceBase;
 class FKLDebugImGuiGatherFeatureInput;
+class IKLDebugImGuiFeatureInterfaceBase;
+class UCanvas;
 
 UCLASS(Transient)
 class KLDEBUGIMGUIFRAMEWORK_API UKLDebugImGuiWorldSubsystem final : public UWorldSubsystem
@@ -55,15 +57,20 @@ public:
     void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
 
 private:
-    void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, bool& _RequireCanvasUpdate);
+    void DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, bool& _RequireCanvasUpdate);
+    void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, bool& _RequireCanvasUpdate);
+
+    void RegisterCanvasCallback(const UWorld& _World);
+    void UnregisterCanvasCallback(const UWorld& _World);
+    void DrawOnCanvas(UCanvas* _Canvas, APlayerController* _PlayerController);
 
 private:
     FKLDebugImGuiFeatureVisualizer_Unique mUniqueFeaturesVisualizer;
     TArray<FKLDebugImGuiFeatureVisualizer_Selectable> mSelectedObjectsVisualizers;
     FString mImGuiTreeName;
     FInstancedStruct mImGuiWindow;
+    FDelegateHandle mImGuiCanvasDelegateHandle;
     FOnImGuiFeatureStateUpdated mOnFeaturesUpdatedDelegate;
     bool mShouldStoreDelta = false;
 };

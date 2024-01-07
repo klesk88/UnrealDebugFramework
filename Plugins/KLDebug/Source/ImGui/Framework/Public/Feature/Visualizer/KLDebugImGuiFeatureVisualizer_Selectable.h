@@ -34,7 +34,7 @@ public:
 private:
     // FKLDebugImGuiFeatureVisualizerBase
     void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
-    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
+    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD UMeshComponent* TryGetMeshComponent() const;

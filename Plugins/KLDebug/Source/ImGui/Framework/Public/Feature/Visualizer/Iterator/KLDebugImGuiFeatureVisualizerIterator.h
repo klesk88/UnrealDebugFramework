@@ -10,6 +10,8 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerConstIterator fina
 public:
     explicit FKLDebugImGuiFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesConstIterator::PoolType& _FeaturesPool);
 
+    UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry& GetEntryData() const;
+
 private:
     // FKLDebugImGuiFeaturesConstIterator
     UE_NODISCARD bool IsValid() const final;
@@ -23,6 +25,11 @@ inline FKLDebugImGuiFeatureVisualizerConstIterator::FKLDebugImGuiFeatureVisualiz
     : FKLDebugImGuiFeaturesConstIterator(_FeatureData, _FeaturesPool)
     , mFeaturesIndexes(_FeaturesIndexes)
 {
+}
+
+inline const FKLDebugImGuiFeatureVisualizerEntry& FKLDebugImGuiFeatureVisualizerConstIterator::GetEntryData() const
+{
+    return mFeaturesIndexes[mIndex];
 }
 
 inline bool FKLDebugImGuiFeatureVisualizerConstIterator::IsValid() const

@@ -29,22 +29,23 @@ void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiTree(const FKLDebugImGuiFea
     if (ImGui::TreeNode(this, TCHAR_TO_ANSI(*mTreeName)))
     {
         const FKLDebugImGuiFeatureContextInput ContextInput{ _Context.GetCurrentNetMode(), _Context.GetWorld() };
-        mTreeVisualizer.DrawImGuiTree(GetInterfaceType(), ContextInput, _Context, mSelectedFeaturesIndexes);
+        mTreeVisualizer.DrawImGuiTree(GetInterfaceType(), ContextInput, _Context, nullptr, mSelectedFeaturesIndexes);
 
         ImGui::TreePop();
     }
 }
 
-void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
+void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing)
 {
-    auto Callback = [&_Context](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
+    auto Callback = [&_Context, &_RequireCanvasDrawing](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Unique& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Unique>();
+        _RequireCanvasDrawing |= Interface.RequireCanvasUpdate();
         const FKLDebugImGuiFeatureImGuiInput_Unique FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef() };
         Interface.DrawImGui(FeatureContext);
         return _Entry.IsEnable();
     };
 
-    DrawImguiFeaturesEnabledCommon(_Context, _Context.GetWorld(), Callback);
+    DrawImguiFeaturesEnabledCommon(_Context, Callback, nullptr);
 }
 
 void FKLDebugImGuiFeatureVisualizer_Unique::Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const

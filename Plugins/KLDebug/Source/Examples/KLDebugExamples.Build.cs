@@ -29,6 +29,7 @@ public class KLDebugExamples : ModuleRules
                 //engine
                 "AIModule",
                 "Engine",
+                "GameplayDebugger",
                 "NavigationSystem"
             }
         );

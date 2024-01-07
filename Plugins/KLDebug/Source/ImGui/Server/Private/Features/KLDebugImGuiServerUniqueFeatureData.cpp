@@ -9,5 +9,4 @@ FKLDebugImGuiServerUniqueFeatureData::FKLDebugImGuiServerUniqueFeatureData(const
     : mServerFeatureIndex(_ServerFeatureIndex)
     , mClientFeatureIndex(_ClientFeatureIndex)
 {
-    mContext = _FeatureInterface.GetFeatureContext(_Input);
 }

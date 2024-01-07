@@ -14,7 +14,7 @@
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugImguiFeature_ClientSubsystem)
 
-bool FKLDebugImguiFeature_ClientSubsystem::DoesSupportObject(const UObject& _Object) const
+bool FKLDebugImguiFeature_ClientSubsystem::DoesSupportWorld(const UObject& _Object) const
 {
     return UKLDebugImGuiClientSubsystem_Engine::TryGet() != nullptr;
 }

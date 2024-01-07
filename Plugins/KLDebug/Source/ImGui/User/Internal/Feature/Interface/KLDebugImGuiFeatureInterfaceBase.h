@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceMacros.h"
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
@@ -14,9 +13,11 @@
 #include "Templates/UnrealTypeTraits.h"
 #include "UObject/NameTypes.h"
 
+class FKLDebugImGuiFeatureCanvasInput;
 class FKLDebugImGuiFeatureContextInput;
 class IKLDebugImGuiFilterInterface;
 class IKLDebugImGuiFeature_NetworkingInterface;
+class UObject;
 class UWorld;
 
 #define DERIVED_KL_DEBUG_FEATURE_CLASS(ItemType, ParentItemType)                                                                                \
@@ -106,10 +107,11 @@ public:
 
     // this is called once at game startup from the engine module to initialize the class
     virtual void Initialize();
-    // allow the feature to have a context per instance. This means that, for example, if we have 2 different Pawns
-    // using the same feature, each of them will have their own context class independent of each other
-    //(while the feature class itself is shared)
-    UE_NODISCARD virtual TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const;
+
+    // set to true if the feature uses the canvas tgo draw thigns on it
+    UE_NODISCARD virtual bool RequireCanvasUpdate() const;
+    // method that is called if RequireCanvasUpdate returns true which allow the user to draw things on the game viewport canvas
+    virtual void DrawOnCanvas(FKLDebugImGuiFeatureCanvasInput& _Input) const;
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable();
@@ -151,11 +153,6 @@ inline const FName& IKLDebugImGuiFeatureInterfaceBase::StaticItemType()
     return Interface;
 }
 
-inline TUniquePtr<FKLDebugImGuiFeatureContext_Base> IKLDebugImGuiFeatureInterfaceBase::GetFeatureContext([[maybe_unused]] const FKLDebugImGuiFeatureContextInput& _Input) const
-{
-    return nullptr;
-}
-
 inline IKLDebugImGuiFeature_NetworkingInterface* IKLDebugImGuiFeatureInterfaceBase::TryGetNetworkInterfaceMutable()
 {
     return nullptr;
@@ -169,4 +166,13 @@ inline const IKLDebugImGuiFeature_NetworkingInterface* IKLDebugImGuiFeatureInter
 inline const FName& IKLDebugImGuiFeatureInterfaceBase::GetFeatureNameID() const
 {
     return GetImGuiPath();
+}
+
+inline bool IKLDebugImGuiFeatureInterfaceBase::RequireCanvasUpdate() const
+{
+    return false;
+}
+
+inline void IKLDebugImGuiFeatureInterfaceBase::DrawOnCanvas([[maybe_unused]] FKLDebugImGuiFeatureCanvasInput& _Input) const
+{
 }
