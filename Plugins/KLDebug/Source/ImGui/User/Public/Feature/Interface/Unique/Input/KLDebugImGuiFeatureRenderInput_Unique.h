@@ -9,5 +9,5 @@ class UWorld;
 class KLDEBUGIMGUIUSER_API FKLDebugImGuiFeatureRenderInput_Unique final : public FKLDebugImGuiFeatureRenderInput_Base
 {
 public:
-    explicit FKLDebugImGuiFeatureRenderInput_Unique(const UWorld& _World);
+    explicit FKLDebugImGuiFeatureRenderInput_Unique(const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _Context);
 };

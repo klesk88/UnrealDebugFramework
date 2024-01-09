@@ -11,6 +11,7 @@
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
+#include "Rendering/KLDebugFrameworkRenderingDefinitions.h"
 
 // modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
@@ -23,10 +24,14 @@
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
-class FKLDebugImGuiFeatureCanvasInput;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiFeatureVisualizerRenderContext;
+class FKLDebugFeatureDrawCanvasInput_Base;
+class IKLDebugImGuiFeatureInterfaceBase;
+class UCanvas;
+class UFont;
 class UObject;
+class UPrimitiveComponent;
 class UWorld;
 
 class FKLDebugImGuiFeatureVisualizerBase : public FNoncopyable
@@ -36,27 +41,36 @@ public:
     explicit FKLDebugImGuiFeatureVisualizerBase(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     virtual ~FKLDebugImGuiFeatureVisualizerBase() = default;
 
+    virtual void TickFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem) = 0;
+    virtual void DrawOnCanvas(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UCanvas& _Canvas, UFont& _Font, UWorld& _World) const = 0;
+    virtual void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const = 0;
+    virtual void GatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) = 0;
+
+    UE_NODISCARD virtual bool IsValid() const;
+
     void Init(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     void Shutdown(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UObject* _OwnerObject);
 
-    UE_NODISCARD virtual bool IsValid() const;
-    virtual void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const = 0;
-
-    void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing);
+    void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context);
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeaturesIndexes() const;
 
     UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
-
     UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const;
-
-    void DrawCanvas(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UObject& _OwnerObject, FKLDebugImGuiFeatureCanvasInput& _Input) const;
 
 protected:
     virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
-    virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing) = 0;
+    virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
 
     template <typename CallbackType>
     void DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const CallbackType& _Callback, UObject* _OwnerObject);
+
+    template <typename CallbackType>
+    void IterateOnSelectedFeatures(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const CallbackType& _Callback) const;
+
+    template <typename CallbackType>
+    void IterateOnSelectedFeaturesMutable(const CallbackType& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
+
+    static void InitCommonCanvasInput(UWorld& _World, FKLDebugFeatureDrawCanvasInput_Base& _Input);
 
 protected:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;
@@ -82,6 +96,12 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
     FKLDebugImGuiFeatureVisualizerIterator Iterator = FeatureContainer.GetFeatureVisualizerIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
+        const IKLDebugImGuiFeatureInterfaceBase& InterfaceConst = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+        if (!InterfaceConst.RequireDrawImGui())
+        {
+            continue;
+        }
+
         if (!_Callback(Iterator, Iterator.GetEntryDataMutable()))
         {
             FeaturesToRemoveIdx.Emplace(Iterator.GetIteratorIndex());
@@ -110,6 +130,28 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
         }
 
         _Context.GetFeatureUpdateDelegate().Broadcast(DelegateData);
+    }
+}
+
+template <typename CallbackType>
+void FKLDebugImGuiFeatureVisualizerBase::IterateOnSelectedFeatures(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const CallbackType& _Callback) const
+{
+    const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainer(mInterfaceType);
+    FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
+    for (; Iterator; ++Iterator)
+    {
+        _Callback(Iterator, Iterator.GetEntryData());
+    }
+}
+
+template <typename CallbackType>
+void FKLDebugImGuiFeatureVisualizerBase::IterateOnSelectedFeaturesMutable(const CallbackType& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
+{
+    FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainerMutable(mInterfaceType);
+    FKLDebugImGuiFeatureVisualizerIterator Iterator = FeatureContainer.GetFeatureVisualizerIterator(mSelectedFeaturesIndexes);
+    for (; Iterator; ++Iterator)
+    {
+        _Callback(Iterator, Iterator.GetEntryDataMutable());
     }
 }
 

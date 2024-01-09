@@ -5,8 +5,9 @@
 // engine
 #include "Engine/World.h"
 
-FKLDebugImGuiFeatureImGuiInput_Base::FKLDebugImGuiFeatureImGuiInput_Base(const UWorld& _World, bool& _IsWindowOpen)
+FKLDebugImGuiFeatureImGuiInput_Base::FKLDebugImGuiFeatureImGuiInput_Base(const UWorld& _World, bool& _IsWindowOpen, FKLDebugImGuiFeatureContext_Base* _FeatureContext)
     : mWorld(_World)
     , mIsWindowOpen(_IsWindowOpen)
+    , mContextData(_FeatureContext)
 {
 }

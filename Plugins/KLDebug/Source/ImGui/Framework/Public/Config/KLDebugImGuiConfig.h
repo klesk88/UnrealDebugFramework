@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Config/KLDebugImGuiConfig_Networking.h"
+#include "Config/KLDebugImGuiConfig_Canvas.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -26,17 +26,17 @@ public:
 
     UE_NODISCARD const FInstancedStruct& GetImGuiWindow() const;
     UE_NODISCARD const TSoftObjectPtr<UMaterialInterface>& GeOverlayMaterial() const;
-    UE_NODISCARD const FKLDebugImGuiConfig_Networking& GetNetworkingConfig() const;
+    UE_NODISCARD const FKLDebugImGuiConfig_Canvas& GetCanvasConfig() const;
 
 private:
     UPROPERTY(EditDefaultsOnly, config, NoClear, meta = (BaseStruct = "/Script/KLDebugImGuiFramework.KLDebugImGuiWindow"))
     FInstancedStruct ImGuiWindowManager;
 
     UPROPERTY(EditDefaultsOnly, config)
-    TSoftObjectPtr<UMaterialInterface> OverlayMaterial;
+    FKLDebugImGuiConfig_Canvas CanvasConfig;
 
     UPROPERTY(EditDefaultsOnly, config)
-    FKLDebugImGuiConfig_Networking NetworkingSettings;
+    TSoftObjectPtr<UMaterialInterface> OverlayMaterial;
 };
 
 inline const UKLDebugImGuiConfig& UKLDebugImGuiConfig::Get()
@@ -56,7 +56,7 @@ inline const TSoftObjectPtr<UMaterialInterface>& UKLDebugImGuiConfig::GeOverlayM
     return OverlayMaterial;
 }
 
-inline const FKLDebugImGuiConfig_Networking& UKLDebugImGuiConfig::GetNetworkingConfig() const
+inline const FKLDebugImGuiConfig_Canvas& UKLDebugImGuiConfig::GetCanvasConfig() const
 {
-    return NetworkingSettings;
+    return CanvasConfig;
 }

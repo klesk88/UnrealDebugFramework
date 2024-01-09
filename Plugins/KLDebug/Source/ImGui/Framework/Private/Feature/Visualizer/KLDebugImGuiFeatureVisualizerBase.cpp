@@ -2,11 +2,12 @@
 
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerBase.h"
 
+#include "Config/KLDebugImGuiConfig.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Canvas/KLDebugImGuiFeatureCanvasInput.h"
+#include "ImGui/User/Internal/Feature/Interface/Input/KLDebugFeatureDrawCanvasInput_Base.h"
 
 FKLDebugImGuiFeatureVisualizerBase::FKLDebugImGuiFeatureVisualizerBase(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
     : mFeaturesIndexes(MoveTemp(_FeaturesIndexes))
@@ -47,35 +48,22 @@ void FKLDebugImGuiFeatureVisualizerBase::Shutdown(const UWorld& _World, FKLDebug
     }
 }
 
-void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing)
+void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
-    _RequireCanvasDrawing = false;
-
     if (_Context.GetShouldDrawTree())
     {
         DrawImGuiTree(_Context);
     }
 
-    DrawImGuiFeaturesEnabled(_Context, _RequireCanvasDrawing);
+    DrawImGuiFeaturesEnabled(_Context);
 }
 
-void FKLDebugImGuiFeatureVisualizerBase::DrawCanvas(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UObject& _OwnerObject, FKLDebugImGuiFeatureCanvasInput& _Input) const
+void FKLDebugImGuiFeatureVisualizerBase::InitCommonCanvasInput(UWorld& _World, FKLDebugFeatureDrawCanvasInput_Base& _Input)
 {
-    // not optimal. We could store the indices of just the features which require canvas update and iterate on them.
-    // However I think we should have really few windows open at any point in time so it should not be really a big deal.
-    // If in the future tough it becomes a problem tough revisit this
+    const UKLDebugImGuiConfig& Config = UKLDebugImGuiConfig::Get();
+    const FKLDebugImGuiConfig_Canvas& CanvasConfig = Config.GetCanvasConfig();
 
-    _Input.SetOwnerObject(_OwnerObject);
-
-    const FKLDebugImGuiFeatureContainerBase& FeatureContainer = _FeatureContainerManager.GetContainer(mInterfaceType);
-    FKLDebugImGuiFeatureVisualizerConstIterator Iterator = FeatureContainer.GetFeatureVisualizerConstIterator(mSelectedFeaturesIndexes);
-    for (; Iterator; ++Iterator)
-    {
-        const IKLDebugImGuiFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-        if (Interface.RequireCanvasUpdate())
-        {
-            _Input.SetContext(Iterator.GetEntryData().TryGetFeatureContextMutable());
-            Interface.DrawOnCanvas(_Input);
-        }
-    }
+    _Input.CursorX = _Input.DefaultX = CanvasConfig.GetBorderOffsetX();
+    _Input.CursorY = _Input.DefaultY = CanvasConfig.GetBorderOffsetY();
+    _Input.World = &_World;
 }

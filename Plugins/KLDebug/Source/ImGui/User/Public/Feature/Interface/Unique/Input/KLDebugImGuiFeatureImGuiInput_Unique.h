@@ -10,5 +10,5 @@ class UWorld;
 class KLDEBUGIMGUIUSER_API FKLDebugImGuiFeatureImGuiInput_Unique final : public FKLDebugImGuiFeatureImGuiInput_Base
 {
 public:
-    explicit FKLDebugImGuiFeatureImGuiInput_Unique(const UWorld& _World, bool& _IsWindowOpen);
+    explicit FKLDebugImGuiFeatureImGuiInput_Unique(const UWorld& _World, bool& _IsWindowOpen, FKLDebugImGuiFeatureContext_Base* _FeatureContext);
 };

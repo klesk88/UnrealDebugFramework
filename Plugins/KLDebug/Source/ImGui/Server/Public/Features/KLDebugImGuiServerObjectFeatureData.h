@@ -12,14 +12,14 @@
 #include "Templates/UniquePtr.h"
 #include "Templates/UnrealTemplate.h"
 
+class FKLDebugImGuiFeatureContextInput_Selectable;
 class FKLDebugImGuiFeatureContext_Base;
-class FKLDebugImGuiFeatureContextInput;
 class IKLDebugImGuiFeatureInterfaceBase;
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerObjectFeatureData final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiServerObjectFeatureData(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
+    explicit FKLDebugImGuiServerObjectFeatureData(const FKLDebugImGuiFeatureContextInput_Selectable& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
     ~FKLDebugImGuiServerObjectFeatureData();
     UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex) const;
 

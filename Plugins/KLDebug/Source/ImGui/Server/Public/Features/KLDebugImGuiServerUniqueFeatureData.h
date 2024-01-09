@@ -13,13 +13,13 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "Templates/UniquePtr.h"
 
-class FKLDebugImGuiFeatureContextInput;
+class FKLDebugImGuiFeatureContextInput_Unique;
 class IKLDebugImGuiFeatureInterfaceBase;
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerUniqueFeatureData final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiServerUniqueFeatureData(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
+    explicit FKLDebugImGuiServerUniqueFeatureData(const FKLDebugImGuiFeatureContextInput_Unique& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
     UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex) const;
 
     UE_NODISCARD const FKLDebugImGuiFeatureContext_Base* GetFeatureContext() const;

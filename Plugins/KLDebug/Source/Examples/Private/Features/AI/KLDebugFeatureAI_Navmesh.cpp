@@ -5,9 +5,7 @@
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Canvas/KLDebugImGuiFeatureCanvasInput.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/Input/KLDebugImGuiFeatureImGuiInput_Unique.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/Input/KLDebugImGuiFeatureRenderInput_Unique.h"
+#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureUniqueAllInputs.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
@@ -39,6 +37,19 @@ void FKLDebugFeatureAI_Navmesh::OnFeatureUnselected(const UWorld& _World)
 {
 }
 
+TUniquePtr<FDebugRenderSceneProxy> FKLDebugFeatureAI_Navmesh::CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Unique& _Input)
+{
+    TUniquePtr<FNavMeshSceneProxy> NavMeshSceneProxy = MakeUnique<FNavMeshSceneProxy>(&_Input.GetRenderingComponent(), &mNavmeshRenderData, true);
+
+#if WITH_RECAST && !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+    TUniquePtr<FNavMeshDebugDrawDelegateHelper> OutDelegateHelper2 = MakeUnique<FNavMeshDebugDrawDelegateHelper>(FNavMeshDebugDrawDelegateHelper());
+    OutDelegateHelper2->InitDelegateHelper(NavMeshSceneProxy.Get());
+    _Input.SetDrawDelegateHelper(MoveTemp(OutDelegateHelper2));
+#endif    // WITH_RECAST && !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+
+    return NavMeshSceneProxy;
+}
+
 const FString& FKLDebugFeatureAI_Navmesh::GetWindowName() const
 {
     static const FString Name(TEXT("Navmesh"));
@@ -49,26 +60,6 @@ const FName& FKLDebugFeatureAI_Navmesh::GetImGuiPath() const
 {
     static const FName Path(TEXT("AI.Navmesh"));
     return Path;
-}
-
-void FKLDebugFeatureAI_Navmesh::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
-{
-    const UWorld& World = _Input.GetWorld();
-    const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&World, 0);
-    if (!PlayerCamera)
-    {
-        return;
-    }
-
-    FVector Location;
-    FRotator CamRot;
-    PlayerCamera->GetCameraViewPoint(Location, CamRot);
-
-    const float DistSquare = FVector::DistSquared(mPlayerCameraLocation, Location);
-    if (DistSquare > FMath::Square(mMinDistanceForUpdate))
-    {
-        mPlayerCameraLocation = Location;
-    }
 }
 
 void FKLDebugFeatureAI_Navmesh::Render(const FKLDebugImGuiFeatureRenderInput_Unique& _Input) const
@@ -89,7 +80,30 @@ void FKLDebugFeatureAI_Navmesh::ReceiveData(const FKLDebugImGuiFeature_Networkin
 {
 }
 
-void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
+void FKLDebugFeatureAI_Navmesh::Tick(FKLDebugFeatureTickInput_Unique& _Input)
+{
+    const UWorld& World = _Input.GetWorld();
+    const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&World, 0);
+    if (!PlayerCamera)
+    {
+        return;
+    }
+
+    FVector Location = FVector::ZeroVector;
+    FRotator CamRot = FRotator::ZeroRotator;
+    PlayerCamera->GetCameraViewPoint(Location, CamRot);
+
+    const float DistSquare = FVector::DistSquared(mPlayerCameraLocation, Location);
+    if (DistSquare > FMath::Square(mMinDistanceForUpdate))
+    {
+        mPlayerCameraLocation = Location;
+        CollectNavmeshData(_Input);
+
+        _Input.SetUpdateSceneProxy();
+    }
+}
+
+void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const FKLDebugFeatureTickInput_Unique& _Input)
 {
     // based on FGameplayDebuggerCategory_Navmesh::CollectData
 
@@ -146,7 +160,7 @@ void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const FKLDebugImGuiFeatureImG
     }
 }
 
-void FKLDebugFeatureAI_Navmesh::DrawOnCanvas(FKLDebugImGuiFeatureCanvasInput& _Input) const
+void FKLDebugFeatureAI_Navmesh::DrawOnCanvas(FKLDebugFeatureDrawCanvasInput_Unique& _Input) const
 {
     _Input.Printf(TEXT("Num dirty areas: {%s}%d"), TEXT("red"), 1);
     _Input.Printf(TEXT("Tile jobs running/remaining: %d / %d"), 12, 23);

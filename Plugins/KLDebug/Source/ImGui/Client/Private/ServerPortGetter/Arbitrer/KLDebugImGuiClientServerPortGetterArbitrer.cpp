@@ -233,6 +233,12 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::OnReadArbitrerData(FArchive& _
             }
 
             const FKLDebugImGuiClientArbitrerCacheConnection& CacheData = mArbitrerConnections[Index];
+            if (CacheData.GetWorldObjKey().ResolveObjectPtr() == nullptr)
+            {
+                UE_LOG(LogKLDebug_Networking, Warning, TEXT("FKLDebugImGuiClientServerPortGetterArbitrer::OnReadArbitrerData>> Client is connecting to a non valid world anymore"));
+                break;
+            }
+
             OnArbitrerMessageRecv(CacheData, Settings, ServerData, _CachedConnections);
             break;
         }

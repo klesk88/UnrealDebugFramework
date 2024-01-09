@@ -5,7 +5,8 @@
 // engine
 #include "Engine/World.h"
 
-FKLDebugImGuiFeatureRenderInput_Base::FKLDebugImGuiFeatureRenderInput_Base(const UWorld& _World)
+FKLDebugImGuiFeatureRenderInput_Base::FKLDebugImGuiFeatureRenderInput_Base(const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _Context)
     : mWorld(_World)
+    , mContextData(_Context)
 {
 }

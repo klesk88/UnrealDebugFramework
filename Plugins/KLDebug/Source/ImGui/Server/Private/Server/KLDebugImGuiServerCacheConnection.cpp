@@ -12,7 +12,8 @@
 #include "ImGui/Networking/Public/Message/KLDebugImGuiNetworkingMessageTypes.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
+#include "ImGui/User/Public/Feature/Interface/Selectable/Input/KLDebugImGuiFeatureContextInput_Selectable.h"
+#include "ImGui/User/Public/Feature/Interface/Unique/Input/KLDebugImGuiFeatureContextInput_Unique.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
@@ -241,7 +242,7 @@ bool FKLDebugImGuiServerCacheConnection::Recv_SelectableUpdate(const UWorld& _Wo
         if (NewData.Server_IsAdded())
         {
             const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = _Container.GetFeature(FeatureRealIndex.GetValue());
-            const FKLDebugImGuiFeatureContextInput Input{ NetMode, *ServerObjectFeatureData.GetCachedObject() };
+            const FKLDebugImGuiFeatureContextInput_Selectable Input{ NetMode, *ServerObjectFeatureData.GetCachedObject() };
             ServerObjectFeatureData.AddFeature(Input, FeatureInterface, NewData.Server_GetFeatureIndex(), FeatureRealIndex.GetValue());
         }
         else
@@ -273,7 +274,7 @@ bool FKLDebugImGuiServerCacheConnection::Recv_UniqueUpdate(const UWorld& _World,
         if (NewData.Server_IsAdded())
         {
             const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = _Container.GetFeature(FeatureRealIndex.GetValue());
-            const FKLDebugImGuiFeatureContextInput Input{ NetMode, _World };
+            const FKLDebugImGuiFeatureContextInput_Unique Input{ NetMode, _World };
             mUniqueFeatures.AddFeature(Input, FeatureInterface, NewData.Server_GetFeatureIndex(), FeatureRealIndex.GetValue());
         }
         else

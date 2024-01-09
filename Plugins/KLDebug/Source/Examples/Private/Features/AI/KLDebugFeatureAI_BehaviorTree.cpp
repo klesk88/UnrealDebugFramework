@@ -2,11 +2,11 @@
 
 #include "Features/AI/KLDebugFeatureAI_BehaviorTree.h"
 
-#include "Feature/Interface/Context/KLDebugImGuiFeatureContextInput.h"
 #include "Features/AI/KLDebugFeatureAI_BehaviorTreeNetworkContext.h"
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 // modules
+#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureSelectableAllInputs.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
@@ -17,7 +17,7 @@
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_BehaviorTree)
 
-TUniquePtr<FKLDebugImGuiFeatureContext_Base> FKLDebugFeatureAI_BehaviorTree::GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const
+TUniquePtr<FKLDebugImGuiFeatureContext_Base> FKLDebugFeatureAI_BehaviorTree::GetFeatureContext(const FKLDebugImGuiFeatureContextInput_Selectable& _Input) const
 {
     switch (_Input.GetCurrentNetMode())
     {

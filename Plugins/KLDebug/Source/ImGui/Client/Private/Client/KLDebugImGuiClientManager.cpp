@@ -64,6 +64,7 @@ void FKLDebugImGuiClientManager::Init()
     mTempWriteDataBuffer.Reserve(Settings.Client_GetConnectionTempDataSize());
     mPendingFeaturesStatusUpdates.Reserve(30);
     mPendingMessages.Reserve(10);
+    mObjectToNetworkID.Reserve(20);
 }
 
 void FKLDebugImGuiClientManager::GameThread_TickReadData(const UWorld& _World)

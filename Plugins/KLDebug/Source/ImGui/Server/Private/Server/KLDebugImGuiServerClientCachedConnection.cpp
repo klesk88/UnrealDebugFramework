@@ -96,9 +96,10 @@ bool FKLDebugImGuiServerClientCachedConnection::TickOnGameThread(const TArray<FK
     {
         mCommandsManager.GameThread_Tick(_ClientsConnected, _World, *PlayerOwner);
     }
-    else
+    else if (mCommandsManager.HasPendingData())
     {
-        UE_LOG(LogKLDebug_Networking, Warning, TEXT("KLDebugImGuiServerClientCachedConnection::TickOnGameThread>> Could not find local player owner. Clear any comamnds left"));
+        // if we close a client this starts to spam until we disconnect the client. need to find a better way
+        // UE_LOG(LogKLDebug_Networking, Warning, TEXT("KLDebugImGuiServerClientCachedConnection::TickOnGameThread>> Could not find local player owner. Clear any commands left"));
         mCommandsManager.ClearMessages();
     }
 

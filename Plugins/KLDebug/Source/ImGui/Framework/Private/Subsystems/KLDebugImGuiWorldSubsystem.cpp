@@ -8,18 +8,17 @@
 #include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
 #include "Feature/Helpers/KLDebugFrameworkFeatureHelpers.h"
 #include "Feature/Input/KLDebugImGuiGatherFeatureInput.h"
-
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "KLDebugImGuiFrameworkModule.h"
+#include "Rendering/KLDebugFrameworkRenderingComponent.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "Window/KLDebugImGuiWindow.h"
 
 // modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
-#include "ImGui/User/Public/Feature/Interface/Canvas/KLDebugImGuiFeatureCanvasInput.h"
 #include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
 #include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
@@ -34,6 +33,15 @@
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Stats/Stats2.h"
+
+#if DO_ENSURE
+// engine
+#include "Misc/ScopeTryLock.h"
+#endif
+
+#define KLDEBUG_RENDER_LOCK_CHECK                                      \
+    FScopeTryLock EnsureRenderLock{ &mEnsureCriticalSectionRenderer }; \
+    ensureMsgf(EnsureRenderLock.IsLocked(), TEXT("MT issue with render cmp"));
 
 bool UKLDebugImGuiWorldSubsystem::ShouldCreateSubsystem(UObject* _Outer) const
 {
@@ -76,6 +84,17 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
         UObject* OwnedObject = SelectableFeature.GetObjectKey().ResolveObjectPtr();
         SelectableFeature.Shutdown(World, FeaturesContainerManager, OwnedObject);
     }
+
+    if (mOnFeatureUpdateDelegateHandle.IsValid())
+    {
+        mOnFeaturesUpdatedDelegate.Remove(mOnFeatureUpdateDelegateHandle);
+        mOnFeatureUpdateDelegateHandle.Reset();
+    }
+
+    if (RenderingCmp && RenderingCmp->IsRegistered())
+    {
+        RenderingCmp->UnregisterComponent();
+    }
 }
 
 void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
@@ -95,6 +114,12 @@ void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
         {
             mUniqueFeaturesVisualizer.Init(FeaturesContainer, TEXT("Systems"), MoveTemp(Features));
         }
+
+        RenderingCmp = NewObject<UKLDebugFrameworkRenderingComponent>(this, TEXT("KLDebugRenderingCmp"));
+        mOnFeatureUpdateDelegateHandle = mOnFeaturesUpdatedDelegate.AddUObject(this, &UKLDebugImGuiWorldSubsystem::OnFeatureStatusUpdate);
+        mUpdateSystems.Init(0, static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Count));
+
+        mShouldTick = true;
     }
 
     if (KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.IsBound())
@@ -183,9 +208,72 @@ void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGather
     _Input.SetFeatureData(Interface, FeatureContext);
 }
 
+void UKLDebugImGuiWorldSubsystem::TryGatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback)
+{
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiWorldSubsystem_TryGatherSceneProxies);
+
+#if DO_ENSURE
+    KLDEBUG_RENDER_LOCK_CHECK
+#endif
+
+    FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainerManager = UKLDebugImGuiEngineSubsystem::GetMutable()->GetContainerManagerMutable();
+    mUniqueFeaturesVisualizer.GatherSceneProxies(_RenderingComponent, _Callback, FeaturesContainerManager);
+
+    for (FKLDebugImGuiFeatureVisualizer_Selectable& SelectableFeature : mSelectedObjectsVisualizers)
+    {
+        SelectableFeature.GatherSceneProxies(_RenderingComponent, _Callback, FeaturesContainerManager);
+    }
+}
+
+void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+{
+    QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_Tick);
+
+#if DO_ENSURE
+    KLDEBUG_RENDER_LOCK_CHECK
+#endif
+
+    UpdateCanvasAndRenderStatus();
+    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Tick)] == 0)
+    {
+        mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 0;
+        return;
+    }
+
+    KL::Debug::ImGui::Features::Types::FeatureEnableSet SystemEnable;
+    if (mUniqueFeaturesVisualizer.IsValid())
+    {
+        mUniqueFeaturesVisualizer.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
+    }
+
+    for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
+    {
+        FKLDebugImGuiFeatureVisualizer_Selectable& SelectableFeature = mSelectedObjectsVisualizers[i];
+        if (!SelectableFeature.IsValid())
+        {
+            mSelectedObjectsVisualizers.RemoveAtSwap(i, 1, false);
+            continue;
+        }
+
+        SelectableFeature.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
+    }
+
+    const bool UpdateSceneProxy = SystemEnable[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] || mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] > 0;
+    if (RenderingCmp && RenderingCmp->IsRegistered() && UpdateSceneProxy)
+    {
+        RenderingCmp->MarkRenderStateDirty();
+    }
+
+    mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 0;
+}
+
 void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGui);
+
+#if DO_ENSURE
+    KLDEBUG_RENDER_LOCK_CHECK
+#endif
 
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
@@ -212,18 +300,8 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
     {
         ImGui::PushID(this);
 
-        bool RequireCanvasUpdate = false;
-        DrawImGuiVisualizers(_CurrentWorldUpdated, _ContainerManager, RequireCanvasUpdate);
-        DrawImguiSelectedObjects(_CurrentWorldUpdated, _ContainerManager, RequireCanvasUpdate);
-
-        if (RequireCanvasUpdate)
-        {
-            RegisterCanvasCallback(_CurrentWorldUpdated);
-        }
-        else
-        {
-            UnregisterCanvasCallback(_CurrentWorldUpdated);
-        }
+        DrawImGuiVisualizers(_CurrentWorldUpdated, _ContainerManager);
+        DrawImguiSelectedObjects(_CurrentWorldUpdated, _ContainerManager);
 
         ImGui::PopID();
 
@@ -237,6 +315,11 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
 void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_Render);
+
+    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Render)] == 0)
+    {
+        return;
+    }
 
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
@@ -258,7 +341,7 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, bool& _RequireCanvasUpdate)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGuiVisualizers);
 
@@ -268,10 +351,10 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKL
     }
 
     const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, mOnFeaturesUpdatedDelegate, _ContainerManager };
-    mUniqueFeaturesVisualizer.DrawImGui(Context, _RequireCanvasUpdate);
+    mUniqueFeaturesVisualizer.DrawImGui(Context);
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, bool& _RequireCanvasUpdate)
+void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImguiSelectedObjects);
 
@@ -282,16 +365,16 @@ void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World,
 
     if (ImGui::TreeNode("Selected_Objects"))
     {
-        DrawImGuiObjects(_World, true, _ContainerManager, _RequireCanvasUpdate);
+        DrawImGuiObjects(_World, true, _ContainerManager);
         ImGui::TreePop();
     }
     else
     {
-        DrawImGuiObjects(_World, false, _ContainerManager, _RequireCanvasUpdate);
+        DrawImGuiObjects(_World, false, _ContainerManager);
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, bool& _RequireCanvasUpdate)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
 {
     ImGui::Indent();
 
@@ -303,7 +386,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
             continue;
         }
 
-        ObjVisualizer.DrawImGui(Context, _RequireCanvasUpdate);
+        ObjVisualizer.DrawImGui(Context);
     }
 
     ImGui::Unindent();
@@ -379,26 +462,90 @@ void UKLDebugImGuiWorldSubsystem::UnregisterCanvasCallback(const UWorld& _World)
 
 void UKLDebugImGuiWorldSubsystem::DrawOnCanvas(UCanvas* _Canvas, [[maybe_unused]] APlayerController* _PlayerController)
 {
-    if (!_Canvas || !GEngine->GetSmallFont())
+    UFont* SmallFont = GEngine->GetSmallFont();
+    if (!_Canvas || !SmallFont)
     {
         return;
     }
 
-    const FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainerManager = UKLDebugImGuiEngineSubsystem::Get()->GetFeatureContainerManager();
-
     UWorld& _World = *GetWorld();
-
-    FKLDebugImGuiFeatureCanvasInput CanvasInput{ *_Canvas, *GEngine->GetSmallFont() };
-    CanvasInput.CursorX = CanvasInput.DefaultX = 10.f;
-    CanvasInput.CursorY = CanvasInput.DefaultY = 30.f;
-    CanvasInput.World = &_World;
-
-    mUniqueFeaturesVisualizer.DrawCanvas(FeaturesContainerManager, _World, CanvasInput);
+    const FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainerManager = UKLDebugImGuiEngineSubsystem::Get()->GetFeatureContainerManager();
+    mUniqueFeaturesVisualizer.DrawOnCanvas(FeaturesContainerManager, *_Canvas, *SmallFont, _World);
     for (const FKLDebugImGuiFeatureVisualizer_Selectable& SelectableFeature : mSelectedObjectsVisualizers)
     {
-        if (const UObject* OwnedObject = SelectableFeature.GetObjectKey().ResolveObjectPtr())
+        SelectableFeature.DrawOnCanvas(FeaturesContainerManager, *_Canvas, *SmallFont, _World);
+    }
+}
+
+void UKLDebugImGuiWorldSubsystem::RegisterRenderComponent() const
+{
+    if (!RenderingCmp->IsRegistered())
+    {
+        RenderingCmp->RegisterComponentWithWorld(GetWorld());
+    }
+}
+
+void UKLDebugImGuiWorldSubsystem::UnregisterRenderComponent() const
+{
+    RenderingCmp->UnregisterComponent();
+}
+
+void UKLDebugImGuiWorldSubsystem::UpdateCanvasAndRenderStatus()
+{
+    UWorld& World = *GetWorld();
+    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Canvas)] > 0)
+    {
+        RegisterCanvasCallback(World);
+    }
+    else
+    {
+        UnregisterCanvasCallback(World);
+    }
+
+    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::SceneProxy)] > 0)
+    {
+        RegisterRenderComponent();
+    }
+    else if (RenderingCmp->IsRegistered())
+    {
+        UnregisterRenderComponent();
+    }
+}
+
+void UKLDebugImGuiWorldSubsystem::OnFeatureStatusUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
+{
+    FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
+    const int32 Value = _FeatureUpdateData.IsFeatureAdded() ? 1 : -1;
+
+    for (; FeaturesIterator; ++FeaturesIterator)
+    {
+        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+        if (FeatureInterface.RequireCanvasUpdate())
         {
-            SelectableFeature.DrawCanvas(FeaturesContainerManager, *OwnedObject, CanvasInput);
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Canvas)] += Value;
+        }
+
+        if (FeatureInterface.RequireSceneProxy())
+        {
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::SceneProxy)] += Value;
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 1;
+        }
+
+        if (FeatureInterface.RequireTick())
+        {
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Tick)] += Value;
+        }
+
+        if (FeatureInterface.RequireRender())
+        {
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Render)] += Value;
         }
     }
+
+#if DO_ENSURE
+    for (const int32 SystemValue : mUpdateSystems)
+    {
+        ensureMsgf(SystemValue >= 0, TEXT("value must be positive"));
+    }
+#endif
 }

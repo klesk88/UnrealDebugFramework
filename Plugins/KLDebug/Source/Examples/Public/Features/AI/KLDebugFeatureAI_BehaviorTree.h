@@ -7,6 +7,7 @@
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 
 class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
+class FKLDebugFeatureSceneProxyInput_Selectable;
 class FKLDebugImGuiFeature_NetworkingGatherDataInput;
 class FKLDebugImGuiFeature_NetworkingReceiveDataInput;
 class UObject;
@@ -17,7 +18,7 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebug
 
 public:
     // IKLDebugImGuiFeatureInterface_Selectable
-    UE_NODISCARD TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const final;
+    UE_NODISCARD TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput_Selectable& _Input) const final;
     // IKLDebugImGuiFeatureInterface_Selectable
 
     // IKLDebugImGuiNetworing_FeatureInterface

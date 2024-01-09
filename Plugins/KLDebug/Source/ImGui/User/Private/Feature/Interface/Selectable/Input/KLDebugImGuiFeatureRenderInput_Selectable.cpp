@@ -6,8 +6,7 @@
 #include "UObject/Object.h"
 
 FKLDebugImGuiFeatureRenderInput_Selectable::FKLDebugImGuiFeatureRenderInput_Selectable(const UWorld& _World, const UObject& _Object, FKLDebugImGuiFeatureContext_Base* _Context)
-    : FKLDebugImGuiFeatureRenderInput_Base(_World)
+    : FKLDebugImGuiFeatureRenderInput_Base(_World, _Context)
     , mObject(_Object)
-    , mContextData(_Context)
 {
 }

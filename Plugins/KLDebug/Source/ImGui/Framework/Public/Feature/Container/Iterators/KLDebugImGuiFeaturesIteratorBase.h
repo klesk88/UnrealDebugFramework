@@ -31,6 +31,8 @@ public:
     explicit FKLDebugImGuiFeaturesIteratorBase(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, PoolType& _FeaturesPool);
     void operator++();
 
+    void ResetIndex();
+
     template <typename FeatureInterfaceType>
     UE_NODISCARD const FeatureInterfaceType& GetFeatureInterfaceCasted() const;
 
@@ -71,6 +73,12 @@ template <class Child, bool IsConst>
 inline void FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::operator++()
 {
     ++mIndex;
+}
+
+template <class Child, bool IsConst>
+inline void FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::ResetIndex()
+{
+    mIndex = 0;
 }
 
 template <class Child, bool IsConst>

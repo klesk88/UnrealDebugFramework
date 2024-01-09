@@ -8,7 +8,7 @@
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 
-class FKLDebugImGuiFeatureContextInput;
+class FKLDebugImGuiFeatureContextInput_Unique;
 class IKLDebugImGuiFeatureInterfaceBase;
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerUniqueFeatures final : public FNoncopyable
@@ -16,7 +16,7 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerUniqueFeatures final : public FN
 public:
     UE_NODISCARD const TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeatures() const;
     UE_NODISCARD TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeaturesMutable();
-    void AddFeature(const FKLDebugImGuiFeatureContextInput& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
+    void AddFeature(const FKLDebugImGuiFeatureContextInput_Unique& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
     void RemoveFeature(KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
     void Clear();
 

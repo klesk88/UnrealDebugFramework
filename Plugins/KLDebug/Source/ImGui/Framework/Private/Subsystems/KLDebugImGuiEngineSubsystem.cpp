@@ -93,11 +93,12 @@ void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
     }
 
     UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = _World.GetSubsystem<UKLDebugImGuiWorldSubsystem>();
-    if (!ImGuiWorldSubsystem)
+    if (!ImGuiWorldSubsystem || !ImGuiWorldSubsystem->GetShouldTick())
     {
         return;
     }
 
+    ImGuiWorldSubsystem->Tick(_World, mFeatureContainersManger);
     ImGuiWorldSubsystem->DrawImGui(_World, mFeatureContainersManger);
     ImGuiWorldSubsystem->Render(_World, mFeatureContainersManger);
 }

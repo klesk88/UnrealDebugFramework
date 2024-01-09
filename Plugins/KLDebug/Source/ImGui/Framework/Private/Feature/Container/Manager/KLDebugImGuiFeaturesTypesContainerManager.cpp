@@ -108,6 +108,7 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
         IKLDebugImGuiFeatureInterfaceBase& NewInterface = Container.AllocateNewEntry(*Entry, OffsetIndex, ImGuiPathTokens);
 #if DO_ENSURE
         ensureMsgf(EnsureWindowNamesID.Find(NewInterface.GetFeatureNameID()) == INDEX_NONE, TEXT("we found a feature with the same imgui path. Please change the imgui path value"));
+        ensureMsgf(NewInterface.RequiresAnyUpdate(), TEXT("Feature [%s] can not do anything, has all callable methods disable. Please remove it or implement some method"), *NewInterface.GetFeatureNameID().ToString());
         EnsureWindowNamesID.Emplace(NewInterface.GetFeatureNameID());
 #endif
         checkf(static_cast<uint64>(OffsetIndex) + static_cast<uint64>(Entry->GetSize()) < TNumericLimits<KL::Debug::ImGui::Features::Types::FeatureOffset>::Max(), TEXT("feature offset data type is not big enough"));

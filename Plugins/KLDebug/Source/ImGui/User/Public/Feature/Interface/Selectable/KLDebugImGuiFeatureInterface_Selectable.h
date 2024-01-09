@@ -9,7 +9,13 @@
 
 // engine
 #include "Containers/Array.h"
+#include "DebugRenderSceneProxy.h"
+#include "Templates/UniquePtr.h"
 
+class FKLDebugFeatureDrawCanvasInput_Selectable;
+class FKLDebugFeatureSceneProxyInput_Selectable;
+class FKLDebugFeatureTickInput_Selectable;
+class FKLDebugImGuiFeatureContextInput_Selectable;
 class UObject;
 
 /*
@@ -45,18 +51,25 @@ public:
     // This can be used to clean the owner object that this feature was operating on
     virtual void OnFeatureUnselected(UObject& _OwnerObject) const;
 
+    virtual void Tick(FKLDebugFeatureTickInput_Selectable& _Input);
+
     // allow the feature to have a context per instance. This means that, for example, if we have 2 different Pawns
     // using the same feature, each of them will have their own context class independent of each other
     //(while the feature class itself is shared)
-    UE_NODISCARD virtual TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput& _Input) const;
+    UE_NODISCARD virtual TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput_Selectable& _Input) const;
+
+    // method that is called if RequireCanvasUpdate returns true which allow the user to draw things on the game viewport canvas
+    virtual void DrawOnCanvas(FKLDebugFeatureDrawCanvasInput_Selectable& _Input) const;
+
+    UE_NODISCARD virtual TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Selectable& _Input) const;
 
     virtual void DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
     virtual void Render(const FKLDebugImGuiFeatureRenderInput_Selectable& _Input) const;
 
-    static UE_NODISCARD EImGuiInterfaceType GetInterfaceType();
+    static UE_NODISCARD constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
-    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) = 0;
+    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
 
     template <typename... FilterType>
     void GetFilterPathHelper(TArray<FName>& _OutFilters) const;
@@ -64,6 +77,8 @@ protected:
 private:
     template <typename... FilterType>
     void Dummy(FilterType&&...) const;
+
+    INTERNAL_KL_DEBUG_FEATURE_COMMON_FUNCTIONS(IKLDebugImGuiFeatureInterface_Selectable)
 };
 
 template <typename... FilterType>
@@ -86,7 +101,20 @@ inline void IKLDebugImGuiFeatureInterface_Selectable::OnFeatureUnselected([[mayb
 {
 }
 
-inline TUniquePtr<FKLDebugImGuiFeatureContext_Base> IKLDebugImGuiFeatureInterface_Selectable::GetFeatureContext([[maybe_unused]] const FKLDebugImGuiFeatureContextInput& _Input) const
+inline TUniquePtr<FKLDebugImGuiFeatureContext_Base> IKLDebugImGuiFeatureInterface_Selectable::GetFeatureContext([[maybe_unused]] const FKLDebugImGuiFeatureContextInput_Selectable& _Input) const
+{
+    return nullptr;
+}
+
+inline void IKLDebugImGuiFeatureInterface_Selectable::Tick(FKLDebugFeatureTickInput_Selectable& _Input)
+{
+}
+
+inline void IKLDebugImGuiFeatureInterface_Selectable::DrawOnCanvas([[maybe_unused]] FKLDebugFeatureDrawCanvasInput_Selectable& _Input) const
+{
+}
+
+inline TUniquePtr<FDebugRenderSceneProxy> IKLDebugImGuiFeatureInterface_Selectable::CreateDebugSceneProxy([[maybe_unused]] FKLDebugFeatureSceneProxyInput_Selectable& _Input) const
 {
     return nullptr;
 }
@@ -100,7 +128,11 @@ inline void IKLDebugImGuiFeatureInterface_Selectable::Render(const FKLDebugImGui
 {
 }
 
-inline EImGuiInterfaceType IKLDebugImGuiFeatureInterface_Selectable::GetInterfaceType()
+inline constexpr EImGuiInterfaceType IKLDebugImGuiFeatureInterface_Selectable::GetInterfaceType()
 {
     return EImGuiInterfaceType::SELECTABLE;
+}
+
+inline void IKLDebugImGuiFeatureInterface_Selectable::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+{
 }

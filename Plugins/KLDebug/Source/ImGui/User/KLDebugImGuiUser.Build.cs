@@ -22,6 +22,7 @@ public class KLDebugImGuiUser : ModuleRules
                 "KLDebugUtils",
 
                 //engine
+                "Engine", //for FDebugDrawDelegateHelper
                 "GameplayDebugger" //for FGameplayDebuggerCanvasContext
             }
         );

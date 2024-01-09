@@ -51,6 +51,8 @@ inline bool FKLDebugImGuiFeatureStatusUpdateData::IsFeatureAdded() const
 
 inline FKLDebugImGuiSubsetFeaturesConstIterator& FKLDebugImGuiFeatureStatusUpdateData::GetFeatureIterator() const
 {
+    // we need to reset the index in the case of multiple callbacks
+    mFeaturesIterator.ResetIndex();
     return mFeaturesIterator;
 }
 

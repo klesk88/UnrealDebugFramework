@@ -11,10 +11,15 @@
 #include "UObject/WeakObjectPtrTemplates.h"
 
 class FKLDebugImGuiFeaturesTypesContainerManager;
+class FKLDebugImGuiFeatureVisualizerEntry;
 class FKLDebugImGuiFeatureVisualizerImGuiContext;
 class FKLDebugImGuiFeatureVisualizerRenderContext;
+class IKLDebugImGuiFeatureInterfaceBase;
+class UCanvas;
+class UFont;
 class UMaterialInterface;
 class UMeshComponent;
+class UWorld;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizer_Selectable final : public FKLDebugImGuiFeatureVisualizerBase
 {
@@ -25,7 +30,10 @@ public:
 
     // FKLDebugImGuiFeatureVisualizerBase
     UE_NODISCARD bool IsValid() const final;
+    void TickFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem) final;
     void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const final;
+    void DrawOnCanvas(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UCanvas& _Canvas, UFont& _Font, UWorld& _World) const final;
+    void GatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD bool ShouldKeepAlive() const;
@@ -34,7 +42,7 @@ public:
 private:
     // FKLDebugImGuiFeatureVisualizerBase
     void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
-    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, bool& _RequireCanvasDrawing) final;
+    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD UMeshComponent* TryGetMeshComponent() const;

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
+#include "Feature/Interface/KLDebugImGuiFeatureInterfaceInternalMacros.h"
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceMacros.h"
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
 
@@ -13,6 +15,9 @@
 #include "Templates/UnrealTypeTraits.h"
 #include "UObject/NameTypes.h"
 
+// c++
+#include <type_traits>
+
 class FKLDebugImGuiFeatureCanvasInput;
 class FKLDebugImGuiFeatureContextInput;
 class IKLDebugImGuiFilterInterface;
@@ -21,6 +26,10 @@ class UObject;
 class UWorld;
 
 #define DERIVED_KL_DEBUG_FEATURE_CLASS(ItemType, ParentItemType)                                                                                \
+private:                                                                                                                                        \
+    friend class IKLDebugImGuiFeatureInterface_Selectable;                                                                                      \
+    friend class IKLDebugImGuiFeatureInterface_Unique;                                                                                          \
+                                                                                                                                                \
 public:                                                                                                                                         \
     UE_NODISCARD inline static const FName& StaticItemType()                                                                                    \
     {                                                                                                                                           \
@@ -75,6 +84,31 @@ public:                                                                         
         return ParentItemType::TryGetNetworkInterface();                                                                                        \
     }                                                                                                                                           \
                                                                                                                                                 \
+    UE_NODISCARD inline bool RequireCanvasUpdate() const override                                                                               \
+    {                                                                                                                                           \
+        return RequireCanvasUpdateInternal<ItemType>();                                                                                         \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD inline bool RequireSceneProxy() const override                                                                                 \
+    {                                                                                                                                           \
+        return RequireSceneProxyInternal<ItemType>();                                                                                           \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD inline bool RequireTick() const override                                                                                       \
+    {                                                                                                                                           \
+        return RequireTickInternal<ItemType>();                                                                                                 \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD inline bool RequireDrawImGui() const override                                                                                  \
+    {                                                                                                                                           \
+        return RequireDrawImGuiInternal<ItemType>();                                                                                            \
+    }                                                                                                                                           \
+                                                                                                                                                \
+    UE_NODISCARD inline bool RequireRender() const override                                                                                     \
+    {                                                                                                                                           \
+        return RequireRenderInternal<ItemType>();                                                                                               \
+    }                                                                                                                                           \
+                                                                                                                                                \
 protected:                                                                                                                                      \
     UE_NODISCARD inline bool IsDerivedInternal(const FName& _ItemTypeName) const override                                                       \
     {                                                                                                                                           \
@@ -97,25 +131,26 @@ private:    // finish macro that allow us to have a basic RTTI system
  *
  * KL_DEBUG_CREATE_WINDOW(FClassDebug)
  */
-class KLDEBUGIMGUIUSER_API IKLDebugImGuiFeatureInterfaceBase
+class IKLDebugImGuiFeatureInterfaceBase
 {
 public:
     virtual ~IKLDebugImGuiFeatureInterfaceBase();
 
     // get path that will be displayed inside the ImGui tree
-    UE_NODISCARD virtual const FName& GetImGuiPath() const = 0;
+    KLDEBUGIMGUIUSER_API UE_NODISCARD virtual const FName& GetImGuiPath() const = 0;
 
     // this is called once at game startup from the engine module to initialize the class
-    virtual void Initialize();
-
-    // set to true if the feature uses the canvas tgo draw thigns on it
-    UE_NODISCARD virtual bool RequireCanvasUpdate() const;
-    // method that is called if RequireCanvasUpdate returns true which allow the user to draw things on the game viewport canvas
-    virtual void DrawOnCanvas(FKLDebugImGuiFeatureCanvasInput& _Input) const;
+    KLDEBUGIMGUIUSER_API virtual void Initialize();
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterfaceMutable();
     UE_NODISCARD virtual const IKLDebugImGuiFeature_NetworkingInterface* TryGetNetworkInterface() const;
+
+    UE_NODISCARD virtual bool RequireCanvasUpdate() const;
+    UE_NODISCARD virtual bool RequireSceneProxy() const;
+    UE_NODISCARD virtual bool RequireTick() const;
+    UE_NODISCARD virtual bool RequireDrawImGui() const;
+    UE_NODISCARD virtual bool RequireRender() const;
     // DERIVED_KL_DEBUG_FEATURE_CLASS
 
     template <typename FeatureType>
@@ -123,8 +158,10 @@ public:
 
     UE_NODISCARD const FName& GetFeatureNameID() const;
 
+    UE_NODISCARD bool RequiresAnyUpdate() const;
+
 protected:
-    UE_NODISCARD virtual const FString& GetWindowName() const = 0;
+    KLDEBUGIMGUIUSER_API UE_NODISCARD virtual const FString& GetWindowName() const = 0;
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
     UE_NODISCARD virtual bool IsDerivedInternal(const FName& _ItemTypeName) const;
@@ -173,6 +210,27 @@ inline bool IKLDebugImGuiFeatureInterfaceBase::RequireCanvasUpdate() const
     return false;
 }
 
-inline void IKLDebugImGuiFeatureInterfaceBase::DrawOnCanvas([[maybe_unused]] FKLDebugImGuiFeatureCanvasInput& _Input) const
+inline bool IKLDebugImGuiFeatureInterfaceBase::RequireSceneProxy() const
 {
+    return false;
+}
+
+inline bool IKLDebugImGuiFeatureInterfaceBase::RequireTick() const
+{
+    return false;
+}
+
+inline bool IKLDebugImGuiFeatureInterfaceBase::RequireDrawImGui() const
+{
+    return false;
+}
+
+inline bool IKLDebugImGuiFeatureInterfaceBase::RequireRender() const
+{
+    return false;
+}
+
+inline bool IKLDebugImGuiFeatureInterfaceBase::RequiresAnyUpdate() const
+{
+    return RequireCanvasUpdate() || RequireSceneProxy() || RequireTick() || RequireDrawImGui() || RequireRender();
 }
