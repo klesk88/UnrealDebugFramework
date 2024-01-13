@@ -7,7 +7,7 @@
 // modules
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-void IKLDebugImGuiFeatureInterface_Unique::DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
+void IKLDebugImGuiFeatureInterface_Unique::DrawImGui(FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
 {
     auto Callback = [this, &_Input]() -> void {
         DrawImGuiChild(_Input);

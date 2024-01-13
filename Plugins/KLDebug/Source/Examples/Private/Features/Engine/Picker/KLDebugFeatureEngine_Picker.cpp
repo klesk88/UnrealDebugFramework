@@ -32,7 +32,7 @@ const FName& FKLDebugFeatureEngine_Picker::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureEngine_Picker::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
+void FKLDebugFeatureEngine_Picker::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Unique& _Input)
 {
     if (ImGui::Button("PerformPick"))
     {

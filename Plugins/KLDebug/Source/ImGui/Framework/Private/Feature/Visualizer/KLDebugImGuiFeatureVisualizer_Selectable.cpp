@@ -89,13 +89,13 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::TickFeatures(const UWorld& _Worl
         IKLDebugImGuiFeatureInterface_Selectable& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Selectable>();
         FKLDebugFeatureTickInput_Selectable Input{ _World, Object, _Entry.TryGetFeatureContextMutable() };
         Interface.Tick(Input);
-        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.ShouldUpdateSceneProxy(), _RequiredExternalSystem);
+        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.GetUpdateFlags().IsFlagSet(FKLDebugImGuiFeatureInputFlags::EFeatureUpdateFlags::SceneProxy), _RequiredExternalSystem);
     };
 
     IterateOnSelectedFeaturesMutable(Callback, _FeatureContainerManager);
 }
 
-void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
+void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
 #if DO_ENSURE
     if (!IsValid())
@@ -107,10 +107,11 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::DrawImGuiFeaturesEnabled(const F
 
     UObject& Object = *mObject.Get();
 
-    auto Callback = [&_Context, &Object](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
+    auto Callback = [&_Context, &Object, &_RequiredExternalSystem](FKLDebugImGuiFeatureVisualizerIterator& Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
         IKLDebugImGuiFeatureInterface_Selectable& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Selectable>();
-        const FKLDebugImGuiFeatureImGuiInput_Selectable FeatureContext{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable(), Object };
-        Interface.DrawImGui(FeatureContext);
+        FKLDebugImGuiFeatureImGuiInput_Selectable Input{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable(), Object };
+        Interface.DrawImGui(Input);
+        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.GetUpdateFlags().IsFlagSet(FKLDebugImGuiFeatureInputFlags::EFeatureUpdateFlags::SceneProxy), _RequiredExternalSystem);
         return _Entry.IsEnable();
     };
 
@@ -150,6 +151,21 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::GatherSceneProxies(const UPrimit
     };
 
     IterateOnSelectedFeatures(_FeatureContainerManager, Callback);
+}
+
+void FKLDebugImGuiFeatureVisualizer_Selectable::ApplyDelegateMutable(const SelectableDelegateCallback& _Delegate, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
+{
+    if (!IsValid())
+    {
+        return;
+    }
+
+    const UObject& Object = *mObject.Get();
+    auto Callback = [&Object, &_Delegate](FKLDebugImGuiFeatureVisualizerIterator& Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
+        _Delegate(Object, _Entry, Iterator);
+    };
+
+    IterateOnSelectedFeaturesMutable(Callback, _FeatureContainerManager);
 }
 
 UMeshComponent* FKLDebugImGuiFeatureVisualizer_Selectable::TryGetMeshComponent() const

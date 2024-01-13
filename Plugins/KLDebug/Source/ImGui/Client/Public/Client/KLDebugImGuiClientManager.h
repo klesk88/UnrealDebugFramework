@@ -3,6 +3,7 @@
 #pragma once
 
 // modules
+#include "ImGui/Networking/Public/Message/Feature/RequestUpdate/KLDebugImGuiNetworkingMessage_FeatureRequestUpdate.h"
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingMessage.h"
 
@@ -16,6 +17,7 @@
 
 class FArchive;
 class FKLDebugImGuiFeatureStatusUpdateData;
+class FKLDebugImGuiFeaturesTickInput;
 class FKLDebugNetworkingPendingMessage;
 class UWorld;
 
@@ -28,25 +30,30 @@ public:
 
     void AddPendingMessage(FKLDebugNetworkingPendingMessage&& _PendingMessage);
 
-    void GameThread_TickReadData(const UWorld& _World);
+    void GameThread_Tick(const UWorld& _World);
     void Parallel_TickWriteData(FArchive& _Writer);
 
     UE_NODISCARD bool RequiresGameThreadTick() const;
 
 private:
     void GameThread_ReadMessages(const UWorld& _World);
-    void GameThread_CopyPendingMessages();
-
-    void Parallel_WritePendingFeaturesStatusUpdate(TArray<uint8>& _TempData, FArchive& _Archive);
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
+    void OnFeaturesTick(const FKLDebugImGuiFeaturesTickInput& _Input);
+
+    void TickUniqueFeatures(const FKLDebugImGuiFeaturesTickInput& _Input);
+    void TickObjectFeatures(const FKLDebugImGuiFeaturesTickInput& _Input);
 
 private:
     TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate> mParallelPendingFeaturesStatusUpdates;
     TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate> mPendingFeaturesStatusUpdates;
     TArray<FKLDebugNetworkingPendingMessage> mPendingMessages;
+    TArray<FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate> mParallelPendingFeatureRequestUpdate;
+    TArray<FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate> mPendingFeatureRequestUpdate;
     TArray<uint8> mTempWriteDataBuffer;
+    TArray<uint8> mTempTickBuffer;
     TMap<FObjectKey, FNetworkGUID> mObjectToNetworkID;
+    int32 mFeaturesTicking = 0;
 
 #if DO_ENSURE
 public:
@@ -64,5 +71,5 @@ inline void FKLDebugImGuiClientManager::AddPendingMessage(FKLDebugNetworkingPend
 
 inline bool FKLDebugImGuiClientManager::RequiresGameThreadTick() const
 {
-    return !mPendingMessages.IsEmpty() || !mPendingFeaturesStatusUpdates.IsEmpty();
+    return !mPendingMessages.IsEmpty() || !mPendingFeaturesStatusUpdates.IsEmpty() || !mPendingFeatureRequestUpdate.IsEmpty();
 }

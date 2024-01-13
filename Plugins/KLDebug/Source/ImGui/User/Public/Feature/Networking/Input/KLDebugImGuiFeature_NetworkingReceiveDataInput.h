@@ -8,6 +8,7 @@
 #include "CoreMinimal.h"
 #include "Engine/World.h"
 #include "Serialization/Archive.h"
+#include "Templates/UnrealTemplate.h"
 
 class UWorld;
 

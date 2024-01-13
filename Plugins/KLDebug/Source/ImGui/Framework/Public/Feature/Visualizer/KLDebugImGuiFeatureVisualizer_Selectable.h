@@ -13,8 +13,10 @@
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiFeatureVisualizerEntry;
 class FKLDebugImGuiFeatureVisualizerImGuiContext;
+class FKLDebugImGuiFeatureVisualizerIterator;
 class FKLDebugImGuiFeatureVisualizerRenderContext;
 class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugImGuiFeatureInterface_Selectable;
 class UCanvas;
 class UFont;
 class UMaterialInterface;
@@ -23,6 +25,9 @@ class UWorld;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizer_Selectable final : public FKLDebugImGuiFeatureVisualizerBase
 {
+public:
+    using SelectableDelegateCallback = TFunctionRef<void(const UObject& _Owner, const FKLDebugImGuiFeatureVisualizerEntry& /*_FeatureData*/, FKLDebugImGuiFeatureVisualizerIterator& /*_FeatureIterator*/)>;
+
 public:
     explicit FKLDebugImGuiFeatureVisualizer_Selectable(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     ~FKLDebugImGuiFeatureVisualizer_Selectable();
@@ -39,10 +44,12 @@ public:
     UE_NODISCARD bool ShouldKeepAlive() const;
     UE_NODISCARD const FObjectKey& GetObjectKey() const;
 
+    void ApplyDelegateMutable(const SelectableDelegateCallback& _Delegate, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
+
 private:
     // FKLDebugImGuiFeatureVisualizerBase
     void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
-    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) final;
+    void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
     UE_NODISCARD UMeshComponent* TryGetMeshComponent() const;

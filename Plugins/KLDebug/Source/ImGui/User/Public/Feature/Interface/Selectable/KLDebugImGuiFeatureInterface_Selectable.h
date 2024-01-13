@@ -63,13 +63,13 @@ public:
 
     UE_NODISCARD virtual TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Selectable& _Input) const;
 
-    virtual void DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
+    virtual void DrawImGui(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
     virtual void Render(const FKLDebugImGuiFeatureRenderInput_Selectable& _Input) const;
 
     static UE_NODISCARD constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
-    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
+    virtual void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input);
 
     template <typename... FilterType>
     void GetFilterPathHelper(TArray<FName>& _OutFilters) const;
@@ -80,6 +80,11 @@ private:
 
     INTERNAL_KL_DEBUG_FEATURE_COMMON_FUNCTIONS(IKLDebugImGuiFeatureInterface_Selectable)
 };
+
+template <typename... FilterType>
+inline void IKLDebugImGuiFeatureInterface_Selectable::Dummy(FilterType&&...) const
+{
+}
 
 template <typename... FilterType>
 inline void IKLDebugImGuiFeatureInterface_Selectable::GetFilterPathHelper(TArray<FName>& _OutFilters) const
@@ -119,11 +124,6 @@ inline TUniquePtr<FDebugRenderSceneProxy> IKLDebugImGuiFeatureInterface_Selectab
     return nullptr;
 }
 
-template <typename... FilterType>
-inline void IKLDebugImGuiFeatureInterface_Selectable::Dummy(FilterType&&...) const
-{
-}
-
 inline void IKLDebugImGuiFeatureInterface_Selectable::Render(const FKLDebugImGuiFeatureRenderInput_Selectable& _Input) const
 {
 }
@@ -133,6 +133,6 @@ inline constexpr EImGuiInterfaceType IKLDebugImGuiFeatureInterface_Selectable::G
     return EImGuiInterfaceType::SELECTABLE;
 }
 
-inline void IKLDebugImGuiFeatureInterface_Selectable::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+inline void IKLDebugImGuiFeatureInterface_Selectable::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
 }

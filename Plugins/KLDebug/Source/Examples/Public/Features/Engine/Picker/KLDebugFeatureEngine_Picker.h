@@ -27,7 +27,7 @@ private:
     UE_NODISCARD bool DoesSupportWorld(const UWorld& _World) const final;
     UE_NODISCARD const FName& GetImGuiPath() const;
     UE_NODISCARD const FString& GetWindowName() const final;
-    void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input) final;
+    void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Unique& _Input) final;
     // IKLDebugImGuiFeatureInterface_EngineSubsystem
 
     void HandlePickerButton(const UWorld& _World);

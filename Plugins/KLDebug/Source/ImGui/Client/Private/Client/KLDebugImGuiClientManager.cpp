@@ -6,8 +6,11 @@
 
 // modules
 #include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesDelegates.h"
+#include "ImGui/Framework/Public/Feature/Delegates/KLDebugImGuiFeaturesTickInput.h"
 #include "ImGui/Framework/Public/Feature/Input/KLDebugImGuiGatherFeatureInput.h"
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
+#include "ImGui/Framework/Public/Feature/Visualizer/Iterator/KLDebugImGuiFeatureVisualizerIterator.h"
+#include "ImGui/Framework/Public/Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Unique.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiWorldSubsystem.h"
 #include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
@@ -15,7 +18,10 @@
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
+#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingTickInput.h"
 #include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
@@ -40,6 +46,66 @@
 #include "Containers/UnrealString.h"
 #endif
 
+namespace KL::Debug::Client
+{
+    template <typename PendingMessageType>
+    void CopyPendingMessage(TArray<PendingMessageType>& _GameThreadPendingFeatures, TArray<PendingMessageType>& _ParallelPendingFeatures)
+    {
+        if (_GameThreadPendingFeatures.IsEmpty())
+        {
+            return;
+        }
+
+        ON_SCOPE_EXIT
+        {
+            _GameThreadPendingFeatures.Reset();
+        };
+
+        if (_ParallelPendingFeatures.IsEmpty())
+        {
+            _ParallelPendingFeatures = _GameThreadPendingFeatures;
+            return;
+        }
+
+        const int32 Offset = _ParallelPendingFeatures.Max() - _ParallelPendingFeatures.Num();
+        if (Offset < _GameThreadPendingFeatures.Num())
+        {
+            _ParallelPendingFeatures.Reserve(_ParallelPendingFeatures.Max() + (_GameThreadPendingFeatures.Num() - Offset));
+        }
+
+        for (const PendingMessageType& NewDataUpdate : _GameThreadPendingFeatures)
+        {
+            _ParallelPendingFeatures.Emplace(NewDataUpdate);
+        }
+    }
+
+    template <typename PendingMessageType>
+    void ParallelSendMessage(TArray<uint8>& _TempData, FArchive& _Archive, TArray<PendingMessageType>& _ParallelPendingFeatures)
+    {
+        if (_ParallelPendingFeatures.IsEmpty())
+        {
+            return;
+        }
+
+        FMemoryWriter TempMemoryWriter{ _TempData };
+        for (PendingMessageType& PendingMessage : _ParallelPendingFeatures)
+        {
+            PendingMessage.Serialize(TempMemoryWriter);
+            if (_TempData.IsEmpty())
+            {
+                continue;
+            }
+
+            KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(PendingMessage, _TempData, _Archive);
+            _TempData.Reset();
+        }
+
+        _ParallelPendingFeatures.Reset();
+    }
+}    // namespace KL::Debug::Client
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 FKLDebugImGuiClientManager::FKLDebugImGuiClientManager(const UWorld& _World)
 {
     if (UKLDebugImGuiWorldSubsystem* ImGuiWorldSubsystem = UKLDebugImGuiWorldSubsystem::TryGetMutable(_World))
@@ -47,7 +113,11 @@ FKLDebugImGuiClientManager::FKLDebugImGuiClientManager(const UWorld& _World)
         // we will be bound for the lifetime of the subsystem
 
         FOnImGuiFeatureStateUpdated::FDelegate FeatureUpdateDelagate = FOnImGuiFeatureStateUpdated::FDelegate::CreateRaw(this, &FKLDebugImGuiClientManager::OnFeatureUpdate);
-        ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate);
+        FOnFeaturesTick::FDelegate FeatureRequestUpdate = FOnFeaturesTick::FDelegate::CreateRaw(this, &FKLDebugImGuiClientManager::OnFeaturesTick);
+
+        // we can bypass the NODISCARD because this class will leave until the world subsystem is alive
+        static_cast<void>(ImGuiWorldSubsystem->BindOnImGuiFeatureStateUpdated(FeatureUpdateDelagate));
+        static_cast<void>(ImGuiWorldSubsystem->BindOnFeatureRequestUpdate(FeatureRequestUpdate));
 #if DO_ENSURE
         mEnsureImguiSubsystemKey = ImGuiWorldSubsystem;
 #endif
@@ -62,54 +132,23 @@ void FKLDebugImGuiClientManager::Init()
 {
     const UKLDebugImGuiNetworkingSettings& Settings = UKLDebugImGuiNetworkingSettings::Get();
     mTempWriteDataBuffer.Reserve(Settings.Client_GetConnectionTempDataSize());
+    mTempTickBuffer.Reserve(300);
     mPendingFeaturesStatusUpdates.Reserve(30);
     mPendingMessages.Reserve(10);
     mObjectToNetworkID.Reserve(20);
 }
 
-void FKLDebugImGuiClientManager::GameThread_TickReadData(const UWorld& _World)
+void FKLDebugImGuiClientManager::GameThread_Tick(const UWorld& _World)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_TickReadData);
 
-    GameThread_CopyPendingMessages();
-    GameThread_ReadMessages(_World);
-}
-
-void FKLDebugImGuiClientManager::GameThread_CopyPendingMessages()
-{
-    // we need to perform this cpy. The mPendingFeaturesStatusUpdates is filled from the callback of the imgui subsystem
-    // mParallelPendingFeaturesStatusUpdates instead is accessed from our thread. To avoid locks we cpy the data here.
+    // we need to perform this cpy. The game thread buffers are filled from the callback of the imgui subsystem
+    // the update buffer instead is accessed from our thread. To avoid locks we cpy the data here.
     // at this point we are sure that the client thread is not ticking (we are locking it) and the imgui subsystem is not tickign as well
     //(we are on a different part of the frame)
-
-    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_CopyPendingMessages);
-
-    if (mPendingFeaturesStatusUpdates.IsEmpty())
-    {
-        return;
-    }
-
-    ON_SCOPE_EXIT
-    {
-        mPendingFeaturesStatusUpdates.Reset();
-    };
-
-    if (mParallelPendingFeaturesStatusUpdates.IsEmpty())
-    {
-        mParallelPendingFeaturesStatusUpdates = mPendingFeaturesStatusUpdates;
-        return;
-    }
-
-    const int32 Offset = mParallelPendingFeaturesStatusUpdates.Max() - mParallelPendingFeaturesStatusUpdates.Num();
-    if (Offset < mPendingFeaturesStatusUpdates.Num())
-    {
-        mParallelPendingFeaturesStatusUpdates.Reserve(mParallelPendingFeaturesStatusUpdates.Max() + (mPendingFeaturesStatusUpdates.Num() - Offset));
-    }
-
-    for (const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& NewDataUpdate : mPendingFeaturesStatusUpdates)
-    {
-        mParallelPendingFeaturesStatusUpdates.Emplace(NewDataUpdate);
-    }
+    KL::Debug::Client::CopyPendingMessage(mPendingFeaturesStatusUpdates, mParallelPendingFeaturesStatusUpdates);
+    KL::Debug::Client::CopyPendingMessage(mPendingFeatureRequestUpdate, mParallelPendingFeatureRequestUpdate);
+    GameThread_ReadMessages(_World);
 }
 
 void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
@@ -149,19 +188,9 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
 
             const EImGuiInterfaceType ImGuiInterfaceType = FeatureDataUpdate.Client_GetImGuiInterfaceType();
             const UObject* OwnerObject = FeatureDataUpdate.Client_GetObject(_World);
-            if (!OwnerObject)
-            {
-                break;
-            }
-
             FKLDebugImGuiGatherFeatureInput Input{ FeatureDataUpdate.Client_GetFeatureIndex(), FeatureDataUpdate.Client_GetImGuiInterfaceType(), OwnerObject, FeatureContainerManager };
             ImGuiWorldSubsystem->TryGatherFeatureAndContext(Input);
             IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
-            if (!FeatureInterface)
-            {
-                // we have received an update for a feature which is not selected anymore
-                continue;
-            }
             IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkInterfaceMutable() : nullptr;
             if (!NetworkInterface)
             {
@@ -172,7 +201,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
             const TArray<uint8>& FeatureDataRcv = FeatureDataUpdate.Client_GetDataArray();
             FMemoryReader MemoryReader{ FeatureDataRcv };
             const FKLDebugImGuiFeature_NetworkingReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
-            NetworkInterface->ReceiveData(RcvDataInput);
+            NetworkInterface->Client_ReceiveData(RcvDataInput);
             break;
         }
         default:
@@ -189,31 +218,9 @@ void FKLDebugImGuiClientManager::Parallel_TickWriteData(FArchive& _Writer)
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiClientManager_Parallel_TickWriteData);
 
     const int32 TempWriteBufferInitialSize = mTempWriteDataBuffer.Max();
-    Parallel_WritePendingFeaturesStatusUpdate(mTempWriteDataBuffer, _Writer);
+    KL::Debug::Client::ParallelSendMessage(mTempWriteDataBuffer, _Writer, mParallelPendingFeaturesStatusUpdates);
+    KL::Debug::Client::ParallelSendMessage(mTempWriteDataBuffer, _Writer, mParallelPendingFeatureRequestUpdate);
     mTempWriteDataBuffer.SetNum(TempWriteBufferInitialSize);
-}
-
-void FKLDebugImGuiClientManager::Parallel_WritePendingFeaturesStatusUpdate(TArray<uint8>& _TempData, FArchive& _Archive)
-{
-    if (mParallelPendingFeaturesStatusUpdates.IsEmpty())
-    {
-        return;
-    }
-
-    FMemoryWriter TempMemoryWriter{ _TempData };
-    for (FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& UpdateStatus : mParallelPendingFeaturesStatusUpdates)
-    {
-        UpdateStatus.Serialize(TempMemoryWriter);
-        if (_TempData.IsEmpty())
-        {
-            continue;
-        }
-
-        KL::Debug::Networking::Message::PrepareMessageToSend_Uncompressed(UpdateStatus, _TempData, _Archive);
-        _TempData.Reset();
-    }
-
-    mParallelPendingFeaturesStatusUpdates.Reset();
 }
 
 void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData)
@@ -229,28 +236,51 @@ void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatu
     }
 
     TArray<TPair<KL::Debug::ImGui::Features::Types::FeatureIndex, FName>> FeaturesIndexes;
-    FeaturesIndexes.Reserve(_FeatureUpdateData.GetFeatureIterator().GetFeaturesCount());
 
-    FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
-    for (; FeaturesIterator; ++FeaturesIterator)
+    if (_FeatureUpdateData.IsFullyRemoved())
     {
-        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-        const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
-        if (!NetworkInterface || !NetworkInterface->Client_InformServerWhenActive())
+        FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
+        for (; FeaturesIterator; ++FeaturesIterator)
         {
-            continue;
-        }
-
-        FeaturesIndexes.Emplace(FeaturesIterator.GetFeatureDataIndex(), FeaturesIterator.GetFeatureNameID());
-        if (_FeatureUpdateData.IsFullyRemoved())
-        {
-            break;
+            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+            const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+            if (NetworkInterface && NetworkInterface->RequireClientTick())
+            {
+                --mFeaturesTicking;
+            }
         }
     }
-
-    if (FeaturesIndexes.IsEmpty())
+    else
     {
-        return;
+        FeaturesIndexes.Reserve(_FeatureUpdateData.GetFeatureIterator().GetFeaturesCount());
+
+        FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
+        for (; FeaturesIterator; ++FeaturesIterator)
+        {
+            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+            const IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+            if (!NetworkInterface)
+            {
+                continue;
+            }
+
+            if (NetworkInterface->RequireClientTick())
+            {
+                ++mFeaturesTicking;
+            }
+
+            if (!NetworkInterface->RequireServerTick())
+            {
+                continue;
+            }
+
+            FeaturesIndexes.Emplace(FeaturesIterator.GetFeatureDataIndex(), FeaturesIterator.GetFeatureNameID());
+        }
+
+        if (FeaturesIndexes.IsEmpty())
+        {
+            return;
+        }
     }
 
     FNetworkGUID NetworkID;
@@ -314,6 +344,91 @@ void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatu
         {
             FeatureUpdate->Client_AddFeatureUpdate(FeatureIndexPair.Key, FeatureIndexPair.Value, _FeatureUpdateData.IsFeatureAdded());
         }
+    }
+}
+
+void FKLDebugImGuiClientManager::OnFeaturesTick(const FKLDebugImGuiFeaturesTickInput& _Input)
+{
+    if (mFeaturesTicking == 0)
+    {
+        return;
+    }
+
+    TickUniqueFeatures(_Input);
+    TickObjectFeatures(_Input);
+
+    mTempTickBuffer.Reset();
+}
+
+void FKLDebugImGuiClientManager::TickUniqueFeatures(const FKLDebugImGuiFeaturesTickInput& _Input)
+{
+    KL::Debug::ImGui::Features::Types::FeatureEnableSet& Flags = _Input.GetFeatureFlagsMutable();
+    const UWorld& CurrentWorld = _Input.GetOwnerWorld();
+
+    if (_Input.GetUniqueFeaturesMutable().IsValid())
+    {
+        auto TickUniqueLambda = [&CurrentWorld, &Flags, this](const FKLDebugImGuiFeatureVisualizerEntry& _FeatureData, FKLDebugImGuiFeatureVisualizerIterator& _Iterator) -> void {
+            IKLDebugImGuiFeatureInterface_Unique& Feature = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Unique>();
+            if (IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = Feature.TryGetNetworkInterfaceMutable())
+            {
+                mTempTickBuffer.Reset();
+                FMemoryWriter TempWriter{ mTempTickBuffer };
+                FKLDebugImGuiFeature_NetworkingTickInput TickInput{ CurrentWorld, TempWriter };
+                NetworkInterface->Client_Tick(TickInput);
+
+                if (TickInput.ShouldUpdateSceneProxy())
+                {
+                    Flags[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 1;
+                }
+
+                if (!mTempTickBuffer.IsEmpty())
+                {
+                    mPendingFeatureRequestUpdate.Emplace(Feature.GetFeatureNameID(), _Iterator.GetFeatureDataIndex(), EImGuiInterfaceType::UNIQUE, mTempTickBuffer);
+                }
+            }
+        };
+
+        _Input.GetUniqueFeaturesMutable().ApplyDelegateMutable(TickUniqueLambda, _Input.GetContainerManagerMutable());
+    }
+}
+
+void FKLDebugImGuiClientManager::TickObjectFeatures(const FKLDebugImGuiFeaturesTickInput& _Input)
+{
+    KL::Debug::ImGui::Features::Types::FeatureEnableSet& Flags = _Input.GetFeatureFlagsMutable();
+    const UWorld& CurrentWorld = _Input.GetOwnerWorld();
+
+    auto TickObjectLambda = [&CurrentWorld, &Flags, this](const UObject& _Owner, const FKLDebugImGuiFeatureVisualizerEntry& _FeatureData, FKLDebugImGuiFeatureVisualizerIterator& _Iterator) -> void {
+        IKLDebugImGuiFeatureInterface_Selectable& Feature = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Selectable>();
+        if (IKLDebugImGuiFeature_NetworkingInterface* NetworkInterface = Feature.TryGetNetworkInterfaceMutable())
+        {
+            mTempTickBuffer.Reset();
+            FMemoryWriter TempWriter{ mTempTickBuffer };
+            FKLDebugImGuiFeature_NetworkingTickInput TickInput{ CurrentWorld, TempWriter };
+            NetworkInterface->Client_Tick(TickInput);
+
+            if (TickInput.ShouldUpdateSceneProxy())
+            {
+                Flags[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 1;
+            }
+
+            if (!mTempTickBuffer.IsEmpty())
+            {
+                const FNetworkGUID* NetworkID = mObjectToNetworkID.Find(FObjectKey(&_Owner));
+                if (NetworkID && NetworkID->IsValid())
+                {
+                    mPendingFeatureRequestUpdate.Emplace(Feature.GetFeatureNameID(), _Iterator.GetFeatureDataIndex(), *NetworkID, EImGuiInterfaceType::SELECTABLE, mTempTickBuffer);
+                }
+                else
+                {
+                    ensureMsgf(false, TEXT("network id should be valid"));
+                }
+            }
+        }
+    };
+
+    for (FKLDebugImGuiFeatureVisualizer_Selectable& ObjectFeatures : _Input.GetObjectFeaturesMutable())
+    {
+        ObjectFeatures.ApplyDelegateMutable(TickObjectLambda, _Input.GetContainerManagerMutable());
     }
 }
 

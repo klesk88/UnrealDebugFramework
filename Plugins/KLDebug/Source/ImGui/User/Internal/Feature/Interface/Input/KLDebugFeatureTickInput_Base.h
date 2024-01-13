@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
+#include "Feature/Interface/Input/KLDebugImGuiFeatureInputFlags.h"
 
 // engine
 #include "Templates/UnrealTemplate.h"
@@ -17,8 +18,8 @@ public:
     explicit FKLDebugFeatureTickInput_Base(const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _Context);
     virtual ~FKLDebugFeatureTickInput_Base() = default;
 
-    void SetUpdateSceneProxy();
-    UE_NODISCARD bool ShouldUpdateSceneProxy() const;
+    UE_NODISCARD FKLDebugImGuiFeatureInputFlags& GetUpdateFlagsMutable();
+    UE_NODISCARD const FKLDebugImGuiFeatureInputFlags& GetUpdateFlags() const;
 
     UE_NODISCARD const UWorld& GetWorld() const;
 
@@ -35,7 +36,7 @@ public:
 private:
     const UWorld& mWorld;
     FKLDebugImGuiFeatureContext_Base* mContext = nullptr;
-    bool mUpdateSceneProxy = false;
+    FKLDebugImGuiFeatureInputFlags mUpdateFlags;
 };
 
 inline const UWorld& FKLDebugFeatureTickInput_Base::GetWorld() const
@@ -57,12 +58,12 @@ inline const ContextType& FKLDebugFeatureTickInput_Base::GetContext() const
     return GetContextMutable<ContextType>();
 }
 
-inline void FKLDebugFeatureTickInput_Base::SetUpdateSceneProxy()
+inline FKLDebugImGuiFeatureInputFlags& FKLDebugFeatureTickInput_Base::GetUpdateFlagsMutable()
 {
-    mUpdateSceneProxy = true;
+    return mUpdateFlags;
 }
 
-inline bool FKLDebugFeatureTickInput_Base::ShouldUpdateSceneProxy() const
+inline const FKLDebugImGuiFeatureInputFlags& FKLDebugFeatureTickInput_Base::GetUpdateFlags() const
 {
-    return mUpdateSceneProxy;
+    return mUpdateFlags;
 }

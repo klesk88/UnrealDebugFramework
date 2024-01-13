@@ -4,6 +4,7 @@
 
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
+#include "Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
 
 // engine
 #include "Templates/UnrealTypeTraits.h"
@@ -26,8 +27,14 @@ TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureMana
     : FKLDebugImGuiFeatureManagerEntryBase(sizeof(FeatureInterfaceType))
 {
     static_assert(TIsDerivedFrom<FeatureInterfaceType, IKLDebugImGuiFeatureInterfaceBase>::IsDerived, "Class passed must derived from IKLDebugImGuiFeatureInterfaceBase");
-    static_assert(FeatureInterfaceType::IsDerivedFromParent(), TEXT("feature has the DERIVED_KL_DEBUG_FEATURE_CLASS macro setup wrong has it doesnt derived from the passed parent"));
-    checkf(FeatureInterfaceType::StaticItemType() == _NameToCheck, TEXT("feature [%s] must define macro DERIVED_KL_DEBUG_FEATURE_CLASS in its .h file"), *_NameToCheck.ToString());
+    static_assert(FeatureInterfaceType::template IsSameFeatureTypeCheck<FeatureInterfaceType>(), "feature has a wrong class type passed to the macro KL_DERIVED_DEBUG_FEATURE_CLASS");
+    static_assert(FeatureInterfaceType::IsDerivedFromParent(), TEXT("feature has the KL_DERIVED_DEBUG_FEATURE_CLASS macro setup wrong has it doesnt derived from the passed parent"));
+    checkf(FeatureInterfaceType::StaticItemType() == _NameToCheck, TEXT("feature [%s] must define macro KL_DERIVED_DEBUG_FEATURE_CLASS in its .h file"), *_NameToCheck.ToString());
+
+    if constexpr (TIsDerivedFrom<FeatureInterfaceType, IKLDebugImGuiFeature_NetworkingInterface>::IsDerived)
+    {
+        IKLDebugImGuiFeature_NetworkingInterface::PerformStaticChecks<FeatureInterfaceType>();
+    }
 }
 
 template <typename FeatureInterfaceType>

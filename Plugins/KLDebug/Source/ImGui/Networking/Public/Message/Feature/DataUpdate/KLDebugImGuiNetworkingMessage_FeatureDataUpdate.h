@@ -49,7 +49,7 @@ private:
 
 inline bool FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::IsValid() const
 {
-    return TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate>::IsValid() && mOwnerObjectNetworkID.IsValid();
+    return TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate>::IsValid() && (mInterfaceType == EImGuiInterfaceType::UNIQUE || mOwnerObjectNetworkID.IsValid());
 }
 
 inline EImGuiInterfaceType FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetImGuiInterfaceType() const

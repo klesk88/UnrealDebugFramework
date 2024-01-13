@@ -110,6 +110,6 @@ bool FKLDebugImGuiClientServerCacheConnection::TickOnGameThread(UWorld& _World)
     TArray<uint8>& WriteBuffer = GetWriteBuffer();
 
     mCommandsManager.GameThread_Tick(_World);
-    mClientImGuiData.GameThread_TickReadData(_World);
+    mClientImGuiData.GameThread_Tick(_World);
     return RequiresGameThreadTick();
 }

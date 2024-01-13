@@ -6,6 +6,7 @@
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Feature/Delegates/KLDebugImGuiFeatureStatusUpdateData.h"
+#include "Feature/Delegates/KLDebugImGuiFeaturesTickInput.h"
 #include "Feature/Helpers/KLDebugFrameworkFeatureHelpers.h"
 #include "Feature/Input/KLDebugImGuiGatherFeatureInput.h"
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
@@ -258,6 +259,12 @@ void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDe
         SelectableFeature.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
     }
 
+    if (mOnFeaturesTick.IsBound())
+    {
+        const FKLDebugImGuiFeaturesTickInput Input{ _CurrentWorldUpdated, mUniqueFeaturesVisualizer, mSelectedObjectsVisualizers, _ContainerManager, SystemEnable };
+        mOnFeaturesTick.Broadcast(Input);
+    }
+
     const bool UpdateSceneProxy = SystemEnable[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] || mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] > 0;
     if (RenderingCmp && RenderingCmp->IsRegistered() && UpdateSceneProxy)
     {
@@ -300,8 +307,14 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
     {
         ImGui::PushID(this);
 
-        DrawImGuiVisualizers(_CurrentWorldUpdated, _ContainerManager);
-        DrawImguiSelectedObjects(_CurrentWorldUpdated, _ContainerManager);
+        KL::Debug::ImGui::Features::Types::FeatureEnableSet FeaturesData;
+        DrawImGuiVisualizers(_CurrentWorldUpdated, _ContainerManager, FeaturesData);
+        DrawImguiSelectedObjects(_CurrentWorldUpdated, _ContainerManager, FeaturesData);
+
+        if (FeaturesData[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)])
+        {
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 1;
+        }
 
         ImGui::PopID();
 
@@ -341,7 +354,7 @@ void UKLDebugImGuiWorldSubsystem::Render(const UWorld& _CurrentWorldUpdated, con
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGuiVisualizers);
 
@@ -351,10 +364,10 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiVisualizers(const UWorld& _World, FKL
     }
 
     const FKLDebugImGuiFeatureVisualizerImGuiContext Context{ _World, true, mOnFeaturesUpdatedDelegate, _ContainerManager };
-    mUniqueFeaturesVisualizer.DrawImGui(Context);
+    mUniqueFeaturesVisualizer.DrawImGui(Context, _RequiredExternalSystem);
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImguiSelectedObjects);
 
@@ -365,16 +378,16 @@ void UKLDebugImGuiWorldSubsystem::DrawImguiSelectedObjects(const UWorld& _World,
 
     if (ImGui::TreeNode("Selected_Objects"))
     {
-        DrawImGuiObjects(_World, true, _ContainerManager);
+        DrawImGuiObjects(_World, true, _ContainerManager, _RequiredExternalSystem);
         ImGui::TreePop();
     }
     else
     {
-        DrawImGuiObjects(_World, false, _ContainerManager);
+        DrawImGuiObjects(_World, false, _ContainerManager, _RequiredExternalSystem);
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
     ImGui::Indent();
 
@@ -386,7 +399,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
             continue;
         }
 
-        ObjVisualizer.DrawImGui(Context);
+        ObjVisualizer.DrawImGui(Context, _RequiredExternalSystem);
     }
 
     ImGui::Unindent();

@@ -57,10 +57,6 @@ inline void FKLDebugImGuiServerObjectFeatures::RemoveFeature(const KL::Debug::Im
     {
         mFeaturesEnable.RemoveAtSwap(Index, 1, false);
     }
-    else
-    {
-        ensureMsgf(false, TEXT("Feature not present"));
-    }
 }
 
 inline const TArray<FKLDebugImGuiServerObjectFeatureData>& FKLDebugImGuiServerObjectFeatures::GetEnableFetures() const

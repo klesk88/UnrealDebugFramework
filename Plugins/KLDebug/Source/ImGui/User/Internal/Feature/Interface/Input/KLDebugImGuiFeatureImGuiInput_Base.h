@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
+#include "Feature/Interface/Input/KLDebugImGuiFeatureInputFlags.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -19,6 +20,9 @@ public:
     UE_NODISCARD const UWorld& GetWorld() const;
     UE_NODISCARD bool& GetIsWindowOpen() const;
 
+    UE_NODISCARD FKLDebugImGuiFeatureInputFlags& GetUpdateFlagsMutable();
+    UE_NODISCARD const FKLDebugImGuiFeatureInputFlags& GetUpdateFlags() const;
+
     // the user is expected to know the type of the context the imgui spawns trough GetFeatureContext.
     // It is also responsible to know when is valid and when not (if spawn is guaranteed to be valid till the imgui feature is valid)
     template <typename ContextType>
@@ -33,6 +37,7 @@ private:
     const UWorld& mWorld;
     bool& mIsWindowOpen;
     FKLDebugImGuiFeatureContext_Base* mContextData = nullptr;
+    FKLDebugImGuiFeatureInputFlags mUpdateFlags;
 };
 
 inline const UWorld& FKLDebugImGuiFeatureImGuiInput_Base::GetWorld() const
@@ -57,4 +62,14 @@ template <typename ContextType>
 inline const ContextType& FKLDebugImGuiFeatureImGuiInput_Base::GetContext() const
 {
     return GetContextMutable<ContextType>();
+}
+
+inline FKLDebugImGuiFeatureInputFlags& FKLDebugImGuiFeatureImGuiInput_Base::GetUpdateFlagsMutable()
+{
+    return mUpdateFlags;
+}
+
+inline const FKLDebugImGuiFeatureInputFlags& FKLDebugImGuiFeatureImGuiInput_Base::GetUpdateFlags() const
+{
+    return mUpdateFlags;
 }

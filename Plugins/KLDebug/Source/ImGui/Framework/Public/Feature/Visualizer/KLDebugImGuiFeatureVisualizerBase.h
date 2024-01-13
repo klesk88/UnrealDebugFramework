@@ -20,6 +20,7 @@
 // engine
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
+#include "GenericPlatform/GenericPlatformProcess.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
@@ -51,7 +52,7 @@ public:
     void Init(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     void Shutdown(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UObject* _OwnerObject);
 
-    void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context);
+    void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeaturesIndexes() const;
 
     UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
@@ -59,7 +60,7 @@ public:
 
 protected:
     virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
-    virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;
+    virtual void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem) = 0;
 
     template <typename CallbackType>
     void DrawImguiFeaturesEnabledCommon(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, const CallbackType& _Callback, UObject* _OwnerObject);

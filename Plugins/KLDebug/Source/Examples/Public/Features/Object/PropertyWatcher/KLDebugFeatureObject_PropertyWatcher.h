@@ -23,7 +23,7 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureObject_PropertyWatcher : public IKLDebu
 
 private:
     // IKLDebugImGuiFeatureInterface_Selectable
-    void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
+    void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
     UE_NODISCARD const FString& GetWindowName() const final;
     void GetFilterPath(TArray<FName>& _OutFilters) const final;
     UE_NODISCARD const FName& GetImGuiPath() const final;

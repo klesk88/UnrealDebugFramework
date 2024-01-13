@@ -60,13 +60,13 @@ public:
 
     virtual void Tick(FKLDebugFeatureTickInput_Unique& _Input);
 
-    virtual void DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Unique& _Input);
+    virtual void DrawImGui(FKLDebugImGuiFeatureImGuiInput_Unique& _Input);
     virtual void Render(const FKLDebugImGuiFeatureRenderInput_Unique& _Input) const;
 
     static UE_NODISCARD constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
-    virtual void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Context);
+    virtual void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Unique& _Context);
 
     INTERNAL_KL_DEBUG_FEATURE_COMMON_FUNCTIONS(IKLDebugImGuiFeatureInterface_Unique)
 };
@@ -106,6 +106,6 @@ inline void IKLDebugImGuiFeatureInterface_Unique::Render([[maybe_unused]] const 
 {
 }
 
-inline void IKLDebugImGuiFeatureInterface_Unique::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Unique& _Context)
+inline void IKLDebugImGuiFeatureInterface_Unique::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Unique& _Context)
 {
 }

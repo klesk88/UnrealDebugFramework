@@ -59,7 +59,7 @@ const FName& FKLDebugFeatureAI_BehaviorTree::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
     if (_Input.HasAuthorityOnObject())
     {
@@ -135,20 +135,20 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBTInfo(const FKLDebugFeatureAI_Beh
     KL::Debug::ImGuiHelpers::DrawColoredText(FColor::Yellow, _Context.GetCurrentAITask());
 }
 
-bool FKLDebugFeatureAI_BehaviorTree::ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
+bool FKLDebugFeatureAI_BehaviorTree::Server_ShouldTick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
 {
     const FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContext<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
     return Context.ShouldGatherData(_GatherDataInput);
 }
 
-void FKLDebugFeatureAI_BehaviorTree::GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
+void FKLDebugFeatureAI_BehaviorTree::Server_Tick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput)
 {
     FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
     Context.UpdateData(_GatherDataInput.TryGetOwnerObject<FKLDebugFeatureAI_BehaviorTree>());
     Context.Network_GatherData(_GatherDataInput.GetArchiveMutable());
 }
 
-void FKLDebugFeatureAI_BehaviorTree::ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
+void FKLDebugFeatureAI_BehaviorTree::Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
 {
     FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
     Context.Network_GatherData(_Input.GetArchiveMutable());

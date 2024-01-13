@@ -31,7 +31,7 @@ const FName& FKLDebugFeatureObject_PropertyWatcher::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
     // Based on PropertyWatcher project
     // https://github.com/guitarfreak/PropertyWatcher/blob/main/PropertyWatcher.cpp#L2179

@@ -63,8 +63,10 @@ public:
     // to support editor selection
     void OnObjectSelected(UObject& _Object);
 
-    FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
+    UE_NODISCARD FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
     void UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle);
+    UE_NODISCARD FDelegateHandle BindOnFeatureRequestUpdate(const FOnFeaturesTick::FDelegate& _Delegate);
+    void UnbindOnFeatureRequestUpdate(FDelegateHandle& _Handle);
 
     void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
     void TryGatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback);
@@ -72,9 +74,9 @@ public:
     UE_NODISCARD bool GetShouldTick() const;
 
 private:
-    void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
+    void DrawImguiSelectedObjects(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
+    void DrawImGuiObjects(const UWorld& _World, const bool _DrawTree, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
 
     void RegisterCanvasCallback(const UWorld& _World);
     void UnregisterCanvasCallback(const UWorld& _World);
@@ -99,6 +101,7 @@ private:
     FDelegateHandle mImGuiCanvasDelegateHandle;
     FDelegateHandle mOnFeatureUpdateDelegateHandle;
     FOnImGuiFeatureStateUpdated mOnFeaturesUpdatedDelegate;
+    FOnFeaturesTick mOnFeaturesTick;
     bool mShouldStoreDelta = false;
     bool mShouldTick = false;
 
@@ -121,6 +124,17 @@ inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnImGuiFeatureStateUpdat
 inline void UKLDebugImGuiWorldSubsystem::UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle)
 {
     mOnFeaturesUpdatedDelegate.Remove(_Handle);
+    _Handle.Reset();
+}
+
+inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnFeatureRequestUpdate(const FOnFeaturesTick::FDelegate& _Delegate)
+{
+    return mOnFeaturesTick.Add(_Delegate);
+}
+
+inline void UKLDebugImGuiWorldSubsystem::UnbindOnFeatureRequestUpdate(FDelegateHandle& _Handle)
+{
+    mOnFeaturesTick.Remove(_Handle);
     _Handle.Reset();
 }
 

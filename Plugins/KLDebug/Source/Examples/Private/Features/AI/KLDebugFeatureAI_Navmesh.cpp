@@ -8,6 +8,8 @@
 #include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureUniqueAllInputs.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
 #include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingTickInput.h"
+#include "ImGui/User/Public/Feature/Networking/Input/KLDebugNetworkingFeature_RequestUpdateInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
@@ -62,26 +64,25 @@ const FName& FKLDebugFeatureAI_Navmesh::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureAI_Navmesh::Render(const FKLDebugImGuiFeatureRenderInput_Unique& _Input) const
+void FKLDebugFeatureAI_Navmesh::Server_FeatureUpdate(const FKLDebugNetworkingFeature_RequestUpdateInput& _Input) const
 {
-    // IKLDebugImGuiFeatureInterface_Selectable::Render(_Input);
+    FNavMeshSceneProxyData ProxyData;
+    FVector Location = FVector::ZeroVector;
+
+    _Input.GetReader() << Location;
+
+    CollectNavmeshData(_Input.GetWorld(), Location, ProxyData);
+    ProxyData.Serialize(_Input.GetWriter());
 }
 
-bool FKLDebugFeatureAI_Navmesh::ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
+void FKLDebugFeatureAI_Navmesh::Client_Tick(FKLDebugImGuiFeature_NetworkingTickInput& _Input)
 {
-    return false;
-}
+    if (mRenderData)
+    {
+        _Input.SetUpdateSceneProxy();
+        mRenderData = false;
+    }
 
-void FKLDebugFeatureAI_Navmesh::GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
-{
-}
-
-void FKLDebugFeatureAI_Navmesh::ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
-{
-}
-
-void FKLDebugFeatureAI_Navmesh::Tick(FKLDebugFeatureTickInput_Unique& _Input)
-{
     const UWorld& World = _Input.GetWorld();
     const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&World, 0);
     if (!PlayerCamera)
@@ -97,18 +98,45 @@ void FKLDebugFeatureAI_Navmesh::Tick(FKLDebugFeatureTickInput_Unique& _Input)
     if (DistSquare > FMath::Square(mMinDistanceForUpdate))
     {
         mPlayerCameraLocation = Location;
-        CollectNavmeshData(_Input);
-
-        _Input.SetUpdateSceneProxy();
+        FArchive& Writer = _Input.GetWriter();
+        Writer << mPlayerCameraLocation;
     }
 }
 
-void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const FKLDebugFeatureTickInput_Unique& _Input)
+void FKLDebugFeatureAI_Navmesh::Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
+{
+    mNavmeshRenderData.Serialize(_Input.GetArchiveMutable());
+    mRenderData = true;
+}
+
+void FKLDebugFeatureAI_Navmesh::Tick(FKLDebugFeatureTickInput_Unique& _Input)
+{
+    // const UWorld& World = _Input.GetWorld();
+    // const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&World, 0);
+    // if (!PlayerCamera)
+    //{
+    //     return;
+    // }
+
+    // FVector Location = FVector::ZeroVector;
+    // FRotator CamRot = FRotator::ZeroRotator;
+    // PlayerCamera->GetCameraViewPoint(Location, CamRot);
+
+    // const float DistSquare = FVector::DistSquared(mPlayerCameraLocation, Location);
+    // if (DistSquare > FMath::Square(mMinDistanceForUpdate))
+    //{
+    //     mPlayerCameraLocation = Location;
+    //     CollectNavmeshData(World, mPlayerCameraLocation, mNavmeshRenderData);
+
+    //    _Input.GetUpdateFlagsMutable().SetFag(FKLDebugImGuiFeatureInputFlags::EFeatureUpdateFlags::SceneProxy);
+    //}
+}
+
+void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const UWorld& _World, const FVector& _Location, FNavMeshSceneProxyData& _ProxyData) const
 {
     // based on FGameplayDebuggerCategory_Navmesh::CollectData
 
-    const UWorld& World = _Input.GetWorld();
-    const UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(&World);
+    const UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(&_World);
     const ANavigationData* NavData = NavSys ? NavSys->GetDefaultNavDataInstance() : nullptr;
     const ARecastNavMesh* RecastNavMesh = NavData ? Cast<const ARecastNavMesh>(NavData) : nullptr;
     if (!RecastNavMesh)
@@ -135,7 +163,7 @@ void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const FKLDebugFeatureTickInpu
 
     int32 TargetTileX = 0;
     int32 TargetTileY = 0;
-    RecastNavMesh->GetNavMeshTileXY(mPlayerCameraLocation, TargetTileX, TargetTileY);
+    RecastNavMesh->GetNavMeshTileXY(_Location, TargetTileX, TargetTileY);
 
     TArray<int32> TileSet;
     for (int32 Idx = 0; Idx < NumTilesToDisplay; Idx++)
@@ -152,11 +180,11 @@ void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const FKLDebugFeatureTickInpu
 
     if (TileSet.Num() == 0)
     {
-        mNavmeshRenderData.Reset();
+        _ProxyData.Reset();
     }
     else
     {
-        mNavmeshRenderData.GatherData(RecastNavMesh, DetailFlags, TileSet);
+        _ProxyData.GatherData(RecastNavMesh, DetailFlags, TileSet);
     }
 }
 

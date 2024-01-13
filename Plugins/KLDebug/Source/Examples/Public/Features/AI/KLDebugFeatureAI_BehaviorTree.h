@@ -15,6 +15,7 @@ class UObject;
 class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_Selectable, public IKLDebugImGuiFeature_NetworkingInterface
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_BehaviorTree, IKLDebugImGuiFeatureInterface_Selectable)
+    KL_DEBUG_FEATURE_NETWORK_CLASS(FKLDebugFeatureAI_BehaviorTree)
 
 public:
     // IKLDebugImGuiFeatureInterface_Selectable
@@ -22,15 +23,14 @@ public:
     // IKLDebugImGuiFeatureInterface_Selectable
 
     // IKLDebugImGuiNetworing_FeatureInterface
-    UE_NODISCARD bool Client_InformServerWhenActive() const final;
-    UE_NODISCARD bool ShouldGatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
-    void GatherData(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
-    void ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
+    UE_NODISCARD bool Server_ShouldTick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
+    void Server_Tick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) final;
+    void Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
     // IKLDebugImGuiNetworing_FeatureInterface
 
 private:
     // IKLDebugImGuiFeatureInterface_Selectable
-    void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
+    void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
     UE_NODISCARD const FString& GetWindowName() const final;
     void GetFilterPath(TArray<FName>& _OutFilters) const final;
     UE_NODISCARD const FName& GetImGuiPath() const final;
@@ -39,8 +39,3 @@ private:
     void ImGuiDrawBrainInfo(const FKLDebugFeatureAI_BehaviorTreeNetworkContext& _Context) const;
     void ImGuiDrawBTInfo(const FKLDebugFeatureAI_BehaviorTreeNetworkContext& _Context) const;
 };
-
-inline bool FKLDebugFeatureAI_BehaviorTree::Client_InformServerWhenActive() const
-{
-    return true;
-}

@@ -48,14 +48,14 @@ void FKLDebugImGuiFeatureVisualizerBase::Shutdown(const UWorld& _World, FKLDebug
     }
 }
 
-void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
+void FKLDebugImGuiFeatureVisualizerBase::DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
     if (_Context.GetShouldDrawTree())
     {
         DrawImGuiTree(_Context);
     }
 
-    DrawImGuiFeaturesEnabled(_Context);
+    DrawImGuiFeaturesEnabled(_Context, _RequiredExternalSystem);
 }
 
 void FKLDebugImGuiFeatureVisualizerBase::InitCommonCanvasInput(UWorld& _World, FKLDebugFeatureDrawCanvasInput_Base& _Input)

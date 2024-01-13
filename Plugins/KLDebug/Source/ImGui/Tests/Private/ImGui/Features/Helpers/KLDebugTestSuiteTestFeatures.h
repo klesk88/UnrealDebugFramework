@@ -10,7 +10,7 @@ class UObject;
 class FKLDebugTestFeatureBase : public IKLDebugImGuiFeatureInterface_Selectable
 {
 private:
-    void DrawImGuiChild(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
+    void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
     const FString& GetWindowName() const final;
 };
 

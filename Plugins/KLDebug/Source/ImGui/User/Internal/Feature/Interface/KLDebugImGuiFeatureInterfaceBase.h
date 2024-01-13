@@ -37,6 +37,12 @@ public:                                                                         
         return Interface;                                                                                                                       \
     }                                                                                                                                           \
                                                                                                                                                 \
+    template <typename FeatureType>                                                                                                             \
+    UE_NODISCARD static bool constexpr IsSameFeatureTypeCheck()                                                                                 \
+    {                                                                                                                                           \
+        return std::is_same_v<ItemType, FeatureType>;                                                                                           \
+    }                                                                                                                                           \
+                                                                                                                                                \
     UE_NODISCARD inline constexpr static bool IsDerivedFromParent()                                                                             \
     {                                                                                                                                           \
         return TIsDerivedFrom<ItemType, ParentItemType>::IsDerived;                                                                             \

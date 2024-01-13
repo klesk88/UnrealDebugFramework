@@ -105,15 +105,13 @@ bool FKLDebugImGuiServerClientCachedConnection::TickOnGameThread(const TArray<FK
 
     // NOTE: when we are inside this call, we are sure that no other operation is performed in this connection as we are locking
     // outside of it
-    const UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::Get();
-    const FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainer = ImGuiEngineSubsystem->GetFeatureContainerManager();
+    UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
+    FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainer = ImGuiEngineSubsystem->GetContainerManagerMutable();
 
     TArray<uint8>& WriteBuffer = GetWriteBuffer();
     FMemoryWriter Writer{ WriteBuffer };
 
-    mClientDataForConnection.ReadData(_World, FeaturesContainer);
-    mClientDataForConnection.WriteData(_World, FeaturesContainer, Writer);
-
+    mClientDataForConnection.GameThreadTick(_World, FeaturesContainer, Writer);
     return RequiresGameThreadTick();
 }
 

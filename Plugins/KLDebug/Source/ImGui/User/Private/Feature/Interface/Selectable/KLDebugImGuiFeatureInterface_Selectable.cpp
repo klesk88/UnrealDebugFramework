@@ -7,7 +7,7 @@
 // ImGuiThirdParty module
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 
-void IKLDebugImGuiFeatureInterface_Selectable::DrawImGui(const FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+void IKLDebugImGuiFeatureInterface_Selectable::DrawImGui(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
 {
     auto Callback = [this, &_Input]() -> void {
         DrawImGuiChild(_Input);
