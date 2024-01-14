@@ -4,7 +4,9 @@
 
 #include "Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
-#include "Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
+
+// modules
+#include "User/Networking/Internal/Feature/KLDebugUserNetworkingFeatureInterfaceBase.h"
 
 // engine
 #include "Templates/UnrealTypeTraits.h"
@@ -31,9 +33,9 @@ TKLDebugImGuiFeatureManagerEntry<FeatureInterfaceType>::TKLDebugImGuiFeatureMana
     static_assert(FeatureInterfaceType::IsDerivedFromParent(), TEXT("feature has the KL_DERIVED_DEBUG_FEATURE_CLASS macro setup wrong has it doesnt derived from the passed parent"));
     checkf(FeatureInterfaceType::StaticItemType() == _NameToCheck, TEXT("feature [%s] must define macro KL_DERIVED_DEBUG_FEATURE_CLASS in its .h file"), *_NameToCheck.ToString());
 
-    if constexpr (TIsDerivedFrom<FeatureInterfaceType, IKLDebugImGuiFeature_NetworkingInterface>::IsDerived)
+    if constexpr (TIsDerivedFrom<FeatureInterfaceType, IKLDebugUserNetworkingFeatureInterfaceBase>::IsDerived)
     {
-        IKLDebugImGuiFeature_NetworkingInterface::PerformStaticChecks<FeatureInterfaceType>();
+        FeatureInterfaceType::template PerformStaticChecks<FeatureInterfaceType>();
     }
 }
 

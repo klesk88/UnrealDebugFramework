@@ -160,9 +160,9 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::ApplyDelegateMutable(const Selec
         return;
     }
 
-    const UObject& Object = *mObject.Get();
+    UObject& Object = *mObject.Get();
     auto Callback = [&Object, &_Delegate](FKLDebugImGuiFeatureVisualizerIterator& Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
-        _Delegate(Object, _Entry, Iterator);
+        _Delegate(_Entry, Iterator, Object);
     };
 
     IterateOnSelectedFeaturesMutable(Callback, _FeatureContainerManager);

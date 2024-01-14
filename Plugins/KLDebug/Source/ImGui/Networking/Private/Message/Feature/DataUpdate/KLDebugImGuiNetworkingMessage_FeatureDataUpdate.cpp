@@ -54,7 +54,7 @@ void FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::SerializeChild(const FKLD
     }
 }
 
-const UObject* FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetObject(const UWorld& _World) const
+UObject* FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetObjectMutable(const UWorld& _World) const
 {
-    return mOwnerObjectNetworkID.IsValid() ? KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUID(_World, mOwnerObjectNetworkID) : nullptr;
+    return mOwnerObjectNetworkID.IsValid() ? KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUIDMutable(_World, mOwnerObjectNetworkID) : nullptr;
 }

@@ -15,6 +15,13 @@ public class KLDebugImGuiUser : ModuleRules
           }
         );
 
+        PublicIncludePathModuleNames.AddRange(
+            new string[]
+            {
+                "KLDebugUserNetworking"
+            }
+        );
+
         PublicDependencyModuleNames.AddRange(
             new string[]
             {

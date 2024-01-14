@@ -18,7 +18,10 @@
 class FArchive;
 class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTickInput;
+class FKLDebugImGuiFeaturesTypesContainerManager;
+class FKLDebugImGuiNetworkingMessage_FeatureDataUpdate;
 class FKLDebugNetworkingPendingMessage;
+class UKLDebugImGuiWorldSubsystem;
 class UWorld;
 
 class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientManager final : public FNoncopyable
@@ -37,6 +40,8 @@ public:
 
 private:
     void GameThread_ReadMessages(const UWorld& _World);
+
+    void GameThread_ReadFeatureUpdate(const UWorld& _World, const FKLDebugImGuiNetworkingMessage_FeatureDataUpdate& _Message, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, const UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem) const;
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
     void OnFeaturesTick(const FKLDebugImGuiFeaturesTickInput& _Input);

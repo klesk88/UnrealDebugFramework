@@ -7,10 +7,9 @@
 
 // modules
 #include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureSelectableAllInputs.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -135,20 +134,20 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBTInfo(const FKLDebugFeatureAI_Beh
     KL::Debug::ImGuiHelpers::DrawColoredText(FColor::Yellow, _Context.GetCurrentAITask());
 }
 
-bool FKLDebugFeatureAI_BehaviorTree::Server_ShouldTick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const
+bool FKLDebugFeatureAI_BehaviorTree::Server_ShouldTick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const
 {
-    const FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContext<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
-    return Context.ShouldGatherData(_GatherDataInput);
+    const FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContext<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+    return Context.ShouldGatherData(_Input);
 }
 
-void FKLDebugFeatureAI_BehaviorTree::Server_Tick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput)
+void FKLDebugFeatureAI_BehaviorTree::Server_Tick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input)
 {
-    FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _GatherDataInput.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
-    Context.UpdateData(_GatherDataInput.TryGetOwnerObject<FKLDebugFeatureAI_BehaviorTree>());
-    Context.Network_GatherData(_GatherDataInput.GetArchiveMutable());
+    FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
+    Context.UpdateData(_Input.GetObject());
+    Context.Network_GatherData(_Input.GetArchiveMutable());
 }
 
-void FKLDebugFeatureAI_BehaviorTree::Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
+void FKLDebugFeatureAI_BehaviorTree::Client_ReceiveData(const FKLDebugUserNetworkingFeatureSelectableReceiveDataInput& _Input)
 {
     FKLDebugFeatureAI_BehaviorTreeNetworkContext& Context = _Input.GetContextMutable<FKLDebugFeatureAI_BehaviorTreeNetworkContext>();
     Context.Network_GatherData(_Input.GetArchiveMutable());

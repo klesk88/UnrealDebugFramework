@@ -2,31 +2,27 @@
 
 #pragma once
 
-// imgui user module
+// modules
 #include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
+#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableInterface.h"
 
 class FKLDebugFeatureAI_BehaviorTreeNetworkContext;
-class FKLDebugFeatureSceneProxyInput_Selectable;
-class FKLDebugImGuiFeature_NetworkingGatherDataInput;
-class FKLDebugImGuiFeature_NetworkingReceiveDataInput;
-class UObject;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_Selectable, public IKLDebugImGuiFeature_NetworkingInterface
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebugImGuiFeatureInterface_Selectable, public IKLDebugUserNetworkingFeatureSelectableInterface
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_BehaviorTree, IKLDebugImGuiFeatureInterface_Selectable)
-    KL_DEBUG_FEATURE_NETWORK_CLASS(FKLDebugFeatureAI_BehaviorTree)
+    KL_DEBUG_FEATURE_NETWORK_SELECTABLE_CLASS(FKLDebugFeatureAI_BehaviorTree)
 
 public:
     // IKLDebugImGuiFeatureInterface_Selectable
     UE_NODISCARD TUniquePtr<FKLDebugImGuiFeatureContext_Base> GetFeatureContext(const FKLDebugImGuiFeatureContextInput_Selectable& _Input) const final;
     // IKLDebugImGuiFeatureInterface_Selectable
 
-    // IKLDebugImGuiNetworing_FeatureInterface
-    UE_NODISCARD bool Server_ShouldTick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) const final;
-    void Server_Tick(const FKLDebugImGuiFeature_NetworkingGatherDataInput& _GatherDataInput) final;
-    void Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
-    // IKLDebugImGuiNetworing_FeatureInterface
+    // IKLDebugUserNetworkingFeatureSelectableInterface
+    UE_NODISCARD bool Server_ShouldTick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const final;
+    void Server_Tick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) final;
+    void Client_ReceiveData(const FKLDebugUserNetworkingFeatureSelectableReceiveDataInput& _Input) final;
+    // IKLDebugUserNetworkingFeatureSelectableInterface
 
 private:
     // IKLDebugImGuiFeatureInterface_Selectable

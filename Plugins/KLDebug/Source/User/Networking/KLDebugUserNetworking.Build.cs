@@ -10,7 +10,8 @@ public class KLDebugUserNetworking : ModuleRules
         PublicIncludePaths.AddRange(
           new string[]
           {
-                Path.Combine(ModuleDirectory)
+                Path.Combine(ModuleDirectory),
+
           }
         );
 
@@ -19,6 +20,13 @@ public class KLDebugUserNetworking : ModuleRules
           {
                 Path.Combine(ModuleDirectory, "Private")
           }
+        );
+
+        PublicIncludePathModuleNames.AddRange(
+            new string[]
+            {
+                "KLDebugImGuiUser"
+            }
         );
 
         PublicDependencyModuleNames.AddRange(

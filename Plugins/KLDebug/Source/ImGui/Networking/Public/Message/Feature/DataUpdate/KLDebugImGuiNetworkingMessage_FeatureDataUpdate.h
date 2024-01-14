@@ -28,7 +28,7 @@ public:
     UE_NODISCARD bool IsValid() const final;
     // TKLDebugNetworkingMessage_Base
 
-    UE_NODISCARD const UObject* Client_GetObject(const UWorld& _World) const;
+    UE_NODISCARD UObject* Client_GetObjectMutable(const UWorld& _World) const;
     UE_NODISCARD EImGuiInterfaceType Client_GetImGuiInterfaceType() const;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex Client_GetFeatureIndex() const;
     UE_NODISCARD const FName& Client_GetFeatureNameID() const;

@@ -4,7 +4,7 @@
 
 // modules
 #include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
-#include "ImGui/User/Public/Feature/Networking/KLDebugImGuiFeature_NetworkingInterface.h"
+#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
 
 // engine
 #include "AITypes.h"
@@ -13,18 +13,13 @@
 
 class APlayerController;
 class FArchive;
-class FKLDebugFeatureDrawCanvasInput_Unique;
-class FKLDebugFeatureTickInput_Unique;
-class FKLDebugImGuiFeature_NetworkingGatherDataInput;
-class FKLDebugImGuiFeature_NetworkingReceiveDataInput;
-class FKLDebugImGuiFeatureImGuiInput_Selectable;
-class UCanvas;
 class UObject;
+class UWorld;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_Navmesh : public IKLDebugImGuiFeatureInterface_Unique, public IKLDebugImGuiFeature_NetworkingInterface
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_Navmesh : public IKLDebugImGuiFeatureInterface_Unique, public IKLDebugUserNetworkingFeatureUniqueInterface
 {
     DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_Navmesh, IKLDebugImGuiFeatureInterface_Unique)
-    KL_DEBUG_FEATURE_NETWORK_CLASS(FKLDebugFeatureAI_Navmesh)
+    KL_DEBUG_FEATURE_NETWORK_UNIQUE_CLASS(FKLDebugFeatureAI_Navmesh)
 
 public:
     // IKLDebugImGuiFeatureInterface_Unique
@@ -38,12 +33,12 @@ public:
     void Tick(FKLDebugFeatureTickInput_Unique& _Input) final;
     // IKLDebugImGuiFeatureInterface_Unique
 
-    // IKLDebugImGuiNetworing_FeatureInterface
-    void Server_FeatureUpdate(const FKLDebugNetworkingFeature_RequestUpdateInput& _Input) const final;
+    // IKLDebugUserNetworkingFeatureUniqueInterface
+    void Server_FeatureUpdate(const FKLDebugUserNetworkingFeatureUniqueRequestUpdateInput& _Input) const final;
 
-    void Client_Tick(FKLDebugImGuiFeature_NetworkingTickInput& _Input) final;
-    void Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input) final;
-    // IKLDebugImGuiNetworing_FeatureInterface
+    void Client_Tick(FKLDebugUserNetworkingFeatureUniqueClientTickInput& _Input) final;
+    void Client_ReceiveData(const FKLDebugUserNetworkingFeatureUniqueReceiveDataInput& _Input) final;
+    // IKLDebugUserNetworkingFeatureUniqueInterface
 
 private:
     // IKLDebugImGuiFeatureInterface_Selectable

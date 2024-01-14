@@ -6,12 +6,9 @@
 
 // modules
 #include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureUniqueAllInputs.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingGatherDataInput.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingReceiveDataInput.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugImGuiFeature_NetworkingTickInput.h"
-#include "ImGui/User/Public/Feature/Networking/Input/KLDebugNetworkingFeature_RequestUpdateInput.h"
 #include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"
@@ -64,7 +61,7 @@ const FName& FKLDebugFeatureAI_Navmesh::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureAI_Navmesh::Server_FeatureUpdate(const FKLDebugNetworkingFeature_RequestUpdateInput& _Input) const
+void FKLDebugFeatureAI_Navmesh::Server_FeatureUpdate(const FKLDebugUserNetworkingFeatureUniqueRequestUpdateInput& _Input) const
 {
     FNavMeshSceneProxyData ProxyData;
     FVector Location = FVector::ZeroVector;
@@ -75,7 +72,7 @@ void FKLDebugFeatureAI_Navmesh::Server_FeatureUpdate(const FKLDebugNetworkingFea
     ProxyData.Serialize(_Input.GetWriter());
 }
 
-void FKLDebugFeatureAI_Navmesh::Client_Tick(FKLDebugImGuiFeature_NetworkingTickInput& _Input)
+void FKLDebugFeatureAI_Navmesh::Client_Tick(FKLDebugUserNetworkingFeatureUniqueClientTickInput& _Input)
 {
     if (mRenderData)
     {
@@ -103,7 +100,7 @@ void FKLDebugFeatureAI_Navmesh::Client_Tick(FKLDebugImGuiFeature_NetworkingTickI
     }
 }
 
-void FKLDebugFeatureAI_Navmesh::Client_ReceiveData(const FKLDebugImGuiFeature_NetworkingReceiveDataInput& _Input)
+void FKLDebugFeatureAI_Navmesh::Client_ReceiveData(const FKLDebugUserNetworkingFeatureUniqueReceiveDataInput& _Input)
 {
     mNavmeshRenderData.Serialize(_Input.GetArchiveMutable());
     mRenderData = true;

@@ -26,7 +26,7 @@ class UWorld;
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizer_Selectable final : public FKLDebugImGuiFeatureVisualizerBase
 {
 public:
-    using SelectableDelegateCallback = TFunctionRef<void(const UObject& _Owner, const FKLDebugImGuiFeatureVisualizerEntry& /*_FeatureData*/, FKLDebugImGuiFeatureVisualizerIterator& /*_FeatureIterator*/)>;
+    using SelectableDelegateCallback = TFunctionRef<void(const FKLDebugImGuiFeatureVisualizerEntry& /*_FeatureData*/, FKLDebugImGuiFeatureVisualizerIterator& /*_FeatureIterator*/, UObject& /*_Owner*/)>;
 
 public:
     explicit FKLDebugImGuiFeatureVisualizer_Selectable(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
