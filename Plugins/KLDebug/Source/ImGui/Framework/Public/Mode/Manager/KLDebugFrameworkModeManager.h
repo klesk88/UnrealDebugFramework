@@ -21,7 +21,7 @@ public:
     void Initialize();
     void Shutdown();
 
-    void DrawImGui(const int32 _CurrentIndex, const UWorld& _World, IKLDebugContextInterface* _Context) const;
+    void DrawImGui(const int32 _CurrentIndex, const UWorld& _World, IKLDebugContextInterface* _Context, bool& _RenderWindow) const;
     void DrawCanvas(const int32 _CurrentIndex, UWorld& _World, UCanvas& _Canvas, UFont& _Font, IKLDebugContextInterface* _Context) const;
 
     UE_NODISCARD const TArray<FKLDebugFrameworkModeSortedData>& GetSortedModes() const;

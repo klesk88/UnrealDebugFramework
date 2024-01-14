@@ -106,6 +106,7 @@ private:
     FOnFeaturesTick mOnFeaturesTick;
     bool mShouldStoreDelta = false;
     bool mShouldTick = false;
+    bool mRenderModeWindow = true;
 
 #if DO_ENSURE
 private:

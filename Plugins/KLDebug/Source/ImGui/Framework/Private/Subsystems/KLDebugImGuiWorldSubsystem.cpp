@@ -294,7 +294,10 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
         }
     }
 
-    _ModeManager.DrawImGui(mImGuiWindow.GetCurrentModeIndex(), _CurrentWorldUpdated, mImGuiWindow.GetCurrentModeContext());
+    if (mImGuiWindow.GetCurrentModeIndex() != -1)
+    {
+        _ModeManager.DrawImGui(mImGuiWindow.GetCurrentModeIndex(), _CurrentWorldUpdated, mImGuiWindow.GetCurrentModeContext(), mRenderModeWindow);
+    }
 
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
     if (!ImGui::Begin(TCHAR_TO_ANSI(*mImGuiTreeName), nullptr, WindowFlags))
