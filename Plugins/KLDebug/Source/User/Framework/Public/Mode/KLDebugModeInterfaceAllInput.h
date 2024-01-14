@@ -3,5 +3,5 @@
 #pragma once
 
 #include "Context/Input/KLDebugContextGetterInput.h"
-#include "Mode/Interface/input/KLDebugModeDrawCanvasInput.h"
-#include "Mode/Interface/input/KLDebugModeDrawImGuiInput.h"
+#include "Mode/Input/KLDebugModeDrawCanvasInput.h"
+#include "Mode/Input/KLDebugModeDrawImGuiInput.h"

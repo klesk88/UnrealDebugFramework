@@ -1,3 +1,5 @@
+// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+
 #include "BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 
 // modules
@@ -32,28 +34,31 @@ void FKLDebugFrameworkBottomBarManager::Shutdown()
 {
 }
 
-void FKLDebugFrameworkBottomBarManager::UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _Index)
+TUniquePtr<IKLDebugContextInterface> FKLDebugFrameworkBottomBarManager::UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _PrevIndex, const int32 _NewIndex)
 {
-    if (_Index == mCurrentIndex)
+    checkf(_PrevIndex != _NewIndex, TEXT("index must be different"));
+
+    if (mSortedBars.IsValidIndex(_PrevIndex))
     {
-        return;
+        mSortedBars[_PrevIndex].GetInterfaceMutable().OnUnselect(_World);
     }
 
-    checkf(mSortedBars.IsValidIndex(_Index), TEXT("index must be valid"));
-    mCurrentIndex = _Index;
-    const FKLDebugFrameworkBottomBarSortedData& SelectedBottomBar = mSortedBars[_Index];
+    checkf(mSortedBars.IsValidIndex(_NewIndex), TEXT("index must be valid"));
+    const FKLDebugFrameworkBottomBarSortedData& SelectedBottomBar = mSortedBars[_NewIndex];
+    SelectedBottomBar.GetInterfaceMutable().OnSelect(_World);
+
     const FKLDebugContextGetterInput Input{ _World, _World.GetNetMode() };
-    mCurrentContext = SelectedBottomBar.GetInterface().GetContext(Input);
+    return SelectedBottomBar.GetInterface().GetContext(Input);
 }
 
-void FKLDebugFrameworkBottomBarManager::DrawBottomBar(const UWorld& _World) const
+void FKLDebugFrameworkBottomBarManager::DrawBottomBar(const int32 _CurrentBottomBar, const UWorld& _World, IKLDebugContextInterface* _Context) const
 {
-    if (!mSortedBars.IsValidIndex(mCurrentIndex))
+    if (!mSortedBars.IsValidIndex(_CurrentBottomBar))
     {
         return;
     }
 
-    const FKLDebugFrameworkBottomBarSortedData& SelectedBottomBar = mSortedBars[mCurrentIndex];
-    const FKLDebugBottomBarDrawInput Input{ _World, mCurrentContext.Get() };
+    const FKLDebugFrameworkBottomBarSortedData& SelectedBottomBar = mSortedBars[_CurrentBottomBar];
+    const FKLDebugBottomBarDrawInput Input{ _World, _Context };
     SelectedBottomBar.GetInterface().Draw(Input);
 }

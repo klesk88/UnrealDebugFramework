@@ -1,5 +1,7 @@
 // Distributed under the MIT License (MIT) (see accompanying LICENSE file)
 
+#pragma once
+
 // engine
 #include "Containers/Array.h"
 #include "Containers/Map.h"

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Internal/Mode/StaticMemory/KLDebugModeManager.h"
+#include "Internal/Mode/StaticMemory/KLDebugModeManagerEntry.h"
 
 // modules
 #include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryManager.h"

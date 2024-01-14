@@ -128,6 +128,11 @@ void FKLDebugImGuiFeatureVisualizer_Selectable::DrawOnCanvas(const FKLDebugImGui
     const UObject& Object = *mObject.Get();
     auto Callback = [&Object, &_Canvas, &_Font, &_World](FKLDebugImGuiFeatureVisualizerConstIterator& Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
         const IKLDebugImGuiFeatureInterface_Selectable& Interface = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Selectable>();
+        if (!Interface.RequireCanvasUpdate())
+        {
+            return;
+        }
+
         FKLDebugFeatureDrawCanvasInput_Selectable Input{ Object, _Canvas, _Font, _Entry.TryGetFeatureContextMutable() };
         InitCommonCanvasInput(_World, Input);
         Interface.DrawOnCanvas(Input);

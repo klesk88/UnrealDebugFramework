@@ -19,24 +19,14 @@ public:
     void Initialize();
     void Shutdown();
 
-    UE_NODISCARD const IKLDebugBottomBarInterface* TryGetBottomBar(const FName& _ID) const;
+    void DrawBottomBar(const int32 _CurrentBottomBar, const UWorld& _World, IKLDebugContextInterface* _Context) const;
 
     UE_NODISCARD const TArray<FKLDebugFrameworkBottomBarSortedData>& GetSortedBars() const;
-    void UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _Index);
-
-    void DrawBottomBar(const UWorld& _World) const;
+    UE_NODISCARD TUniquePtr<IKLDebugContextInterface> UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _PrevIndex, const int32 _NewIndex);
 
 private:
     TArray<FKLDebugFrameworkBottomBarSortedData> mSortedBars;
-    IKLDebugBottomBarInterface* mCurrentSelectedBottomBar = nullptr;
-    TUniquePtr<IKLDebugContextInterface> mCurrentContext;
-    int32 mCurrentIndex = -1;
 };
-
-inline const IKLDebugBottomBarInterface* FKLDebugFrameworkBottomBarManager::TryGetBottomBar(const FName& _ID) const
-{
-    return TryGetData(_ID);
-}
 
 inline const TArray<FKLDebugFrameworkBottomBarSortedData>& FKLDebugFrameworkBottomBarManager::GetSortedBars() const
 {

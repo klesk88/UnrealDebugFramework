@@ -61,6 +61,11 @@ void FKLDebugImGuiFeatureVisualizer_Unique::DrawOnCanvas(const FKLDebugImGuiFeat
 {
     auto Callback = [&_Canvas, &_Font, &_World](FKLDebugImGuiFeatureVisualizerConstIterator& _Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
         const IKLDebugImGuiFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Unique>();
+        if (!Interface.RequireCanvasUpdate())
+        {
+            return;
+        }
+
         FKLDebugFeatureDrawCanvasInput_Unique Input{ _Canvas, _Font, _Entry.TryGetFeatureContextMutable() };
         InitCommonCanvasInput(_World, Input);
         Interface.DrawOnCanvas(Input);

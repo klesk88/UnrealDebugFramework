@@ -5,6 +5,7 @@
 #include "BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Input/KLDebugImGuiInputManager.h"
+#include "Mode/Manager/KLDebugFrameworkModeManager.h"
 
 // engine
 #include "Containers/Array.h"
@@ -35,6 +36,7 @@ public:
     UE_NODISCARD static const UKLDebugImGuiEngineSubsystem* Get();
     UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetFeatureContainerManager() const;
     UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable();
+    UE_NODISCARD const FKLDebugFrameworkModeManager& GetModeManager() const;
 
     void ToogleImGuiSystemState();
     void ToogleImGuiInput();
@@ -58,6 +60,7 @@ private:
     FKLDebugImGuiFeaturesTypesContainerManager mFeatureContainersManger;
     FKLDebugImGuiInputManager mInputManager;
     FKLDebugFrameworkBottomBarManager mBottomBarManager;
+    FKLDebugFrameworkModeManager mModeManager;
 };
 
 inline const UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()
@@ -88,4 +91,9 @@ inline const FKLDebugImGuiFeaturesTypesContainerManager& UKLDebugImGuiEngineSubs
 inline FKLDebugImGuiFeaturesTypesContainerManager& UKLDebugImGuiEngineSubsystem::GetContainerManagerMutable()
 {
     return mFeatureContainersManger;
+}
+
+inline const FKLDebugFrameworkModeManager& UKLDebugImGuiEngineSubsystem::GetModeManager() const
+{
+    return mModeManager;
 }

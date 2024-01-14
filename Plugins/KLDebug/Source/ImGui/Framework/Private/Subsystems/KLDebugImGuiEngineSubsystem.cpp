@@ -50,6 +50,7 @@ void UKLDebugImGuiEngineSubsystem::Initialize(FSubsystemCollectionBase& _Collect
     RegisterCallbacks();
     mInputManager.Init();
     mBottomBarManager.Initialize();
+    mModeManager.Initialize();
 }
 
 void UKLDebugImGuiEngineSubsystem::InitFromConfig()
@@ -67,6 +68,7 @@ void UKLDebugImGuiEngineSubsystem::RegisterCallbacks()
 
 void UKLDebugImGuiEngineSubsystem::Deinitialize()
 {
+    mModeManager.Shutdown();
     mBottomBarManager.Shutdown();
     mInputManager.Shutdown();
     UnreagisterCallbacks();
@@ -101,6 +103,6 @@ void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
     }
 
     ImGuiWorldSubsystem->Tick(_World, mFeatureContainersManger);
-    ImGuiWorldSubsystem->DrawImGui(_World, mFeatureContainersManger, mBottomBarManager);
+    ImGuiWorldSubsystem->DrawImGui(_World, mFeatureContainersManger, mBottomBarManager, mModeManager);
     ImGuiWorldSubsystem->Render(_World, mFeatureContainersManger);
 }

@@ -4,6 +4,7 @@
 
 #include "BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 #include "Commands/ImUnrealCommand.h"
+#include "Mode/Manager/KLDebugFrameworkModeManager.h"
 
 // modules
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
@@ -45,9 +46,9 @@ void FKLDebugImGuiWindow::Shutdown()
 #endif
 }
 
-void FKLDebugImGuiWindow::Update(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager)
+void FKLDebugImGuiWindow::Update(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager)
 {
-    DrawImGuiTopBar(_World, _BottomBarManager);
+    DrawImGuiTopBar(_World, _BottomBarManager, _ModeManager);
     DrawImGuiBottomBar(_World, _BottomBarManager);
 
 #if IMGUI_UNREAL_COMMAND_ENABLED
@@ -55,7 +56,7 @@ void FKLDebugImGuiWindow::Update(const UWorld& _World, FKLDebugFrameworkBottomBa
 #endif
 }
 
-void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager) const
+void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager)
 {
     if (!ImGui::BeginMainMenuBar())
     {
@@ -66,11 +67,74 @@ void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World, FKLDebugFramewor
     DrawCommandsMenu();
 #endif
 
-    DrawImGuiBottomBarsSelection(_World, _BottomBarManager);
+    if (ImGui::BeginMenu("Tools"))
+    {
+        DrawImGuiBottomBarsSelection(_World, _BottomBarManager);
+        DrawImGuiModeSelection(_World, _ModeManager);
+        ImGui::EndMenu();
+    }
 
     KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.Broadcast(_World);
 
     ImGui::EndMainMenuBar();
+}
+
+void FKLDebugImGuiWindow::DrawImGuiBottomBarsSelection(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager)
+{
+    if (!ImGui::BeginMenu("BottomBars"))
+    {
+        return;
+    }
+
+    int32 IndexSelected = -1;
+    for (int32 i = 0; i < _BottomBarManager.GetSortedBars().Num(); i++)
+    {
+        const FKLDebugFrameworkBottomBarSortedData& BarID = _BottomBarManager.GetSortedBars()[i];
+        if (ImGui::MenuItem(TCHAR_TO_ANSI(*BarID.GetName())))
+        {
+            IndexSelected = i;
+        }
+    }
+
+    if (IndexSelected != -1 && mBottomBarInterface != IndexSelected)
+    {
+        mBottomBarContext = _BottomBarManager.UpdateBottomBarIfNeeded(_World, mBottomBarInterface, IndexSelected);
+        mBottomBarInterface = IndexSelected;
+    }
+
+    ImGui::EndMenu();
+}
+
+void FKLDebugImGuiWindow::DrawImGuiModeSelection(const UWorld& _World, FKLDebugFrameworkModeManager& _ModeManager)
+{
+    if (!ImGui::BeginMenu("Modes"))
+    {
+        return;
+    }
+
+    if (ImGui::Button("Clear Current Mode"))
+    {
+        mModeInterface = -1;
+        mModeContext = nullptr;
+    }
+
+    int32 IndexSelected = -1;
+    for (int32 i = 0; i < _ModeManager.GetSortedModes().Num(); i++)
+    {
+        const FKLDebugFrameworkModeSortedData& BarID = _ModeManager.GetSortedModes()[i];
+        if (ImGui::MenuItem(TCHAR_TO_ANSI(*BarID.GetName())))
+        {
+            IndexSelected = i;
+        }
+    }
+
+    if (IndexSelected != -1 && mModeInterface != IndexSelected)
+    {
+        mModeContext = _ModeManager.UpdateBottomBarIfNeeded(_World, mBottomBarInterface, IndexSelected);
+        mModeInterface = IndexSelected;
+    }
+
+    ImGui::EndMenu();
 }
 
 void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World, const FKLDebugFrameworkBottomBarManager& _BottomBarManager) const
@@ -92,39 +156,9 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World, const FKLDebu
         return;
     }
 
-    _BottomBarManager.DrawBottomBar(_World);
+    _BottomBarManager.DrawBottomBar(mBottomBarInterface, _World, mBottomBarContext.Get());
     ImGui::EndMenuBar();
     ImGui::End();
-}
-
-void FKLDebugImGuiWindow::DrawImGuiBottomBarsSelection(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager) const
-{
-    if (!ImGui::BeginMenu("Tools"))
-    {
-        return;
-    }
-
-    if (ImGui::BeginMenu("BottomBars"))
-    {
-        int32 IndexSelected = -1;
-        for (int32 i = 0; i < _BottomBarManager.GetSortedBars().Num(); i++)
-        {
-            const FKLDebugFrameworkBottomBarSortedData& BarID = _BottomBarManager.GetSortedBars()[i];
-            if (ImGui::MenuItem(TCHAR_TO_ANSI(*BarID.GetName())))
-            {
-                IndexSelected = i;
-            }
-        }
-
-        if (IndexSelected != -1)
-        {
-            _BottomBarManager.UpdateBottomBarIfNeeded(_World, IndexSelected);
-        }
-
-        ImGui::EndMenu();
-    }
-
-    ImGui::EndMenu();
 }
 
 #if IMGUI_UNREAL_COMMAND_ENABLED

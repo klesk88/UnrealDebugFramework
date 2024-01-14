@@ -9,15 +9,26 @@
 #include "Utils/Public/RTTI/KLDebugRTTIInterface.h"
 
 // engine
+#include "Containers/UnrealString.h"
 #include "Templates/UnrealTypeTraits.h"
 #include "UObject/NameTypes.h"
+
+// c++
+#include <type_traits>
 
 class FKLDebugModeDrawCanvasInput;
 class FKLDebugModeDrawImGuiInput;
 class UWorld;
 
-#define KL_DEBUG_DERIVED_MODE(ItemType, ParentItemType) \
-    KL_DEBUG_RTTI(ItemType, ParentItemType)
+#define KL_DEBUG_DERIVED_MODE(ItemType, ParentItemType)                                                        \
+    KL_DEBUG_RTTI(ItemType, ParentItemType)                                                                    \
+                                                                                                               \
+    UE_NODISCARD inline bool RequiresDrawCanvas() const override                                               \
+    {                                                                                                          \
+        return !std::is_same_v<decltype(&IKLDebugModeInterface::DrawCanvas), decltype(&ItemType::DrawCanvas)>; \
+    }                                                                                                          \
+                                                                                                               \
+private:
 
 /*
  * Base class for any bottom bar to extend
@@ -38,11 +49,17 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugModeInterface : public IKLDebugRTTIInterf
 public:
     virtual ~IKLDebugModeInterface();
 
+    UE_NODISCARD virtual const FString& GetFriendlyName() const = 0;
+
     virtual void DrawImGui(const FKLDebugModeDrawImGuiInput& _Input);
-    virtual void DrawCanvas(const FKLDebugModeDrawCanvasInput& _Input);
+    virtual void DrawCanvas(FKLDebugModeDrawCanvasInput& _Input) const;
 
     virtual void OnSelect(const UWorld& _World);
     virtual void OnUnselect(const UWorld& _World);
+
+    // implemented by KL_DEBUG_DERIVED_MODE macro
+    UE_NODISCARD virtual bool RequiresDrawCanvas() const;
+    // KL_DEBUG_DERIVED_MODE
 };
 
 inline void IKLDebugModeInterface::OnSelect([[maybe_unused]] const UWorld& _World)
@@ -57,6 +74,12 @@ inline void IKLDebugModeInterface::DrawImGui([[maybe_unused]] const FKLDebugMode
 {
 }
 
-inline void IKLDebugModeInterface::DrawCanvas([[maybe_unused]] const FKLDebugModeDrawCanvasInput& _Input)
+inline void IKLDebugModeInterface::DrawCanvas([[maybe_unused]] FKLDebugModeDrawCanvasInput& _Input) const
 {
+    checkNoEntry();
+}
+
+inline bool IKLDebugModeInterface::RequiresDrawCanvas() const
+{
+    return false;
 }

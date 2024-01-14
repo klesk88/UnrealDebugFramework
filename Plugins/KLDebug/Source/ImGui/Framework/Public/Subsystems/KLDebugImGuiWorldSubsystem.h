@@ -32,6 +32,7 @@
 class APlayerController;
 class FDebugRenderSceneProxy;
 class FKLDebugFrameworkBottomBarManager;
+class FKLDebugFrameworkModeManager;
 class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiGatherFeatureInput;
@@ -57,7 +58,7 @@ public:
     UE_NODISCARD static const UKLDebugImGuiWorldSubsystem* TryGet(const UObject& _Object);
 
     void Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager);
+    void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
     void Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
 
     // this can be called externally when an object is selected. For example from the editor module of the imgui

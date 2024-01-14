@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Internal/Mode/StaticMemory/KLDebugModeManagerEntryBase.h"
+#include "Mode/KLDebugModeInterface.h"
 
 // modules
 #include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryDefines.h"
@@ -11,31 +12,30 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "UObject/NameTypes.h"
 
-class IKLDebugModeInterface;
-
 template <typename ModeInterfaceType>
 class TKLDebugModeManagerEntry final : public FKLDebugModeManagerEntryBase
 {
 public:
-    TKLDebugModeManagerEntry();
+    TKLDebugModeManagerEntry(const FName& _NameToCheck);
 
-    // FKLDebugImGuiFilterManagerEntryBase
+    // FKLDebugModeManagerEntryBase
     UE_NODISCARD IKLDebugModeInterface& AllocateInPlace(void* _PoolStartAddress) const final;
     UE_NODISCARD SIZE_T GetSize() const final;
-    // FKLDebugImGuiFilterManagerEntryBase
+    // FKLDebugModeManagerEntryBase
 };
 
 template <typename ModeInterfaceType>
-TKLDebugModeManagerEntry<ModeInterfaceType>::TKLDebugModeManagerEntry()
+TKLDebugModeManagerEntry<ModeInterfaceType>::TKLDebugModeManagerEntry(const FName& _NameToCheck)
     : FKLDebugModeManagerEntryBase(sizeof(ModeInterfaceType))
 {
     static_assert(TIsDerivedFrom<ModeInterfaceType, ModeInterfaceType>::IsDerived, "Class passed must derived from IKLDebugModeInterfaceBase");
+    checkf(ModeInterfaceType::StaticItemType() == _NameToCheck, TEXT("bottom bar [%s] must define macro KL_DEBUG_DERIVED_MODE in its .h file"), *_NameToCheck.ToString());
 }
 
 template <typename ModeInterfaceType>
 inline IKLDebugModeInterface& TKLDebugModeManagerEntry<ModeInterfaceType>::AllocateInPlace(void* _PoolStartAddress) const
 {
-    return *reinterpret_cast<ModeInterfaceType*>(new (_PoolStartAddress) ModeInterfaceType());
+    return *reinterpret_cast<IKLDebugModeInterface*>(new (_PoolStartAddress) ModeInterfaceType());
 }
 
 template <typename ModeInterfaceType>

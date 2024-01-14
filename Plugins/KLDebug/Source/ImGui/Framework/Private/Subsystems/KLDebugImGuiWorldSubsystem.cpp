@@ -14,6 +14,7 @@
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerRenderContext.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 #include "KLDebugImGuiFrameworkModule.h"
+#include "Mode/Manager/KLDebugFrameworkModeManager.h"
 #include "Rendering/KLDebugFrameworkRenderingComponent.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
@@ -267,7 +268,7 @@ void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDe
     mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 0;
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGui);
 
@@ -277,7 +278,23 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
 
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
-    mImGuiWindow.Update(_CurrentWorldUpdated, _BottomBarManager);
+    const int32 CurrentMode = mImGuiWindow.GetCurrentModeIndex();
+    const bool CurentModeRequireCanvasDraw = _ModeManager.RequireCanvasDraw(mImGuiWindow.GetCurrentModeIndex());
+    mImGuiWindow.Update(_CurrentWorldUpdated, _BottomBarManager, _ModeManager);
+    if (CurrentMode != mImGuiWindow.GetCurrentModeIndex())
+    {
+        if (CurentModeRequireCanvasDraw)
+        {
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Canvas)]--;
+        }
+
+        if (_ModeManager.RequireCanvasDraw(mImGuiWindow.GetCurrentModeIndex()))
+        {
+            mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Canvas)]++;
+        }
+    }
+
+    _ModeManager.DrawImGui(mImGuiWindow.GetCurrentModeIndex(), _CurrentWorldUpdated, mImGuiWindow.GetCurrentModeContext());
 
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
     if (!ImGui::Begin(TCHAR_TO_ANSI(*mImGuiTreeName), nullptr, WindowFlags))
@@ -480,6 +497,9 @@ void UKLDebugImGuiWorldSubsystem::DrawOnCanvas(UCanvas* _Canvas, [[maybe_unused]
     {
         SelectableFeature.DrawOnCanvas(FeaturesContainerManager, *_Canvas, *SmallFont, _World);
     }
+
+    const FKLDebugFrameworkModeManager& ModeManager = UKLDebugImGuiEngineSubsystem::Get()->GetModeManager();
+    ModeManager.DrawCanvas(mImGuiWindow.GetCurrentModeIndex(), _World, *_Canvas, *SmallFont, mImGuiWindow.GetCurrentModeContext());
 }
 
 void UKLDebugImGuiWorldSubsystem::RegisterRenderComponent() const
