@@ -3,7 +3,7 @@
 #include "Subsystem/Engine/KLDebugGameplaySubsystem_Engine.h"
 
 // modules
-#include "User/Gameplay/Public/Input/Delegates/KLDebugUserInputDelegates.h"
+#include "User/Framework/Public/Input/Delegates/KLDebugUserInputDelegates.h"
 
 // engine
 #include "Engine/Engine.h"

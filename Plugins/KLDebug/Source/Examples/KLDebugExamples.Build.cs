@@ -22,7 +22,7 @@ public class KLDebugExamples : ModuleRules
                 "ImPlotThirdParty",
                 "KLDebugImGuiFramework",
                 "KLDebugImGuiUser",
-                "KLDebugUserGameplay",
+                "KLDebugUserFramework",
                 "KLDebugUserNetworking",
                 "KLDebugUtils",
 

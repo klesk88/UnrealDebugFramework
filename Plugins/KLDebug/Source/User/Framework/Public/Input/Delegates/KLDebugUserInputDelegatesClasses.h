@@ -6,7 +6,7 @@ class UWorld;
 
 namespace KL::Debug::User::Gameplay::Input
 {
-    class KLDEBUGUSERGAMEPLAY_API FOnInputTriggerData final
+    class KLDEBUGUSERFRAMEWORK_API FOnInputTriggerData final
     {
     public:
         explicit FOnInputTriggerData(const UWorld& _World);

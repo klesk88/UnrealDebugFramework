@@ -19,8 +19,8 @@ DECLARE_DELEGATE_RetVal_OneParam(EKLDebugInputReply, FOnKLDebugInputTrigger, con
 
 namespace KL::Debug::User::Gameplay::Input
 {
-    KLDEBUGUSERGAMEPLAY_API void BindOnInputPressedPressed(const EKLDebugGameplayInputType _Input, const FOnKLDebugInputTrigger& _Delegate);
-    KLDEBUGUSERGAMEPLAY_API void UnbindOnInputPressedPressed(const EKLDebugGameplayInputType _Input);
-    KLDEBUGUSERGAMEPLAY_API UE_NODISCARD EKLDebugInputReply BroadcastOnInputPressed(const EKLDebugGameplayInputType _Input, const FOnInputTriggerData& _Data);
+    KLDEBUGUSERFRAMEWORK_API void BindOnInputPressedPressed(const EKLDebugGameplayInputType _Input, const FOnKLDebugInputTrigger& _Delegate);
+    KLDEBUGUSERFRAMEWORK_API void UnbindOnInputPressedPressed(const EKLDebugGameplayInputType _Input);
+    KLDEBUGUSERFRAMEWORK_API UE_NODISCARD EKLDebugInputReply BroadcastOnInputPressed(const EKLDebugGameplayInputType _Input, const FOnInputTriggerData& _Data);
 
 }    // namespace KL::Debug::User::Gameplay::Input

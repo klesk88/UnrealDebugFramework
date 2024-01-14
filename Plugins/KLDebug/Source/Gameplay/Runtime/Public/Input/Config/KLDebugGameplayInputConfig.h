@@ -3,7 +3,7 @@
 #pragma once
 
 // modules
-#include "User/Gameplay/Public/Input/Definitions/KLDebugUserInputDefinitions.h"
+#include "User/Framework/Public/Input/Definitions/KLDebugUserInputDefinitions.h"
 
 // engine
 #include "Containers/Array.h"

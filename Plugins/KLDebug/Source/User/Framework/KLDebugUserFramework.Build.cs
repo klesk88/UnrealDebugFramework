@@ -1,9 +1,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class KLDebugUserGameplay : ModuleRules
+public class KLDebugUserFramework : ModuleRules
 {
-    public KLDebugUserGameplay(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugUserFramework(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
