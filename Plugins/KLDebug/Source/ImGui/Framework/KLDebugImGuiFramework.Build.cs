@@ -20,6 +20,7 @@ public class KLDebugImGuiFramework : ModuleRules
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
                 "KLDebugImGuiUser",
+                "KLDebugUserFramework",
                 "KLDebugUtils",
                 "KLUnrealImGui",
                 "NetImGuiThirdParty",
@@ -28,8 +29,7 @@ public class KLDebugImGuiFramework : ModuleRules
                 //engine
                 "DeveloperSettings",
                 "Engine",
-                "InputCore",
-                "StructUtils"
+                "InputCore"
             }
         );
 

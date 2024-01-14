@@ -4,7 +4,6 @@
 
 #include "Extender/KLDebugEditorMenuExtender.h"
 #include "Picker/KLDebugEditorPicker.h"
-#include "Windows/KLDebugEditorMainWindow.h"
 
 // engine
 #include "CoreMinimal.h"
@@ -22,7 +21,6 @@ public:
     UE_NODISCARD static FKLDebugImGuiEditorModule& Get();
 
 private:
-    FKLDebugEditorMainWindow mMainImGuiWindow;
     FKLDebugEditorPicker mEditorPicker;
     FKLDebugEditorMenuExtender mMenuExtender;
 };

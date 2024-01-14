@@ -18,7 +18,6 @@ namespace KL::Debug::ImGuiEditor::Module
 
 void FKLDebugImGuiEditorModule::StartupModule()
 {
-    mMainImGuiWindow.Init();
     mEditorPicker.Init();
     mMenuExtender.Init();
 }
@@ -26,7 +25,6 @@ void FKLDebugImGuiEditorModule::StartupModule()
 void FKLDebugImGuiEditorModule::ShutdownModule()
 {
     mMenuExtender.Shutdown();
-    mMainImGuiWindow.Shutdown();
     mEditorPicker.Shutdown();
 }
 

@@ -2,6 +2,7 @@
 
 #include "Subsystems/KLDebugImGuiWorldSubsystem.h"
 
+#include "BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 #include "Config/KLDebugImGuiConfig.h"
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
@@ -15,7 +16,6 @@
 #include "KLDebugImGuiFrameworkModule.h"
 #include "Rendering/KLDebugFrameworkRenderingComponent.h"
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
-#include "Window/KLDebugImGuiWindow.h"
 
 // modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
@@ -54,21 +54,14 @@ void UKLDebugImGuiWorldSubsystem::Initialize(FSubsystemCollectionBase& _Collecti
     Super::Initialize(_Collection);
 
     const UKLDebugImGuiConfig& ImGuiConfig = UKLDebugImGuiConfig::Get();
-    mImGuiWindow = ImGuiConfig.GetImGuiWindow();
-
-    if (mImGuiWindow.IsValid())
-    {
-        FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
-        ImGuiWindow.Init();
-    }
+    mImGuiWindow.Init();
 }
 
 void UKLDebugImGuiWorldSubsystem::Deinitialize()
 {
     Super::Deinitialize();
 
-    FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
-    ImGuiWindow.Shutdown();
+    mImGuiWindow.Shutdown();
 
     if (KL::Debug::ImGui::Framework::OnImGuiWorldSusbsytemStateChange.IsBound())
     {
@@ -274,7 +267,7 @@ void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDe
     mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 0;
 }
 
-void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_DrawImGui);
 
@@ -284,8 +277,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
 
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
-    FKLDebugImGuiWindow& ImGuiWindow = mImGuiWindow.GetMutable<FKLDebugImGuiWindow>();
-    ImGuiWindow.Update(_CurrentWorldUpdated);
+    mImGuiWindow.Update(_CurrentWorldUpdated, _BottomBarManager);
 
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
     if (!ImGui::Begin(TCHAR_TO_ANSI(*mImGuiTreeName), nullptr, WindowFlags))

@@ -17,14 +17,6 @@
 #include "Math/NumericLimits.h"
 #include "UObject/NameTypes.h"
 
-FKLDebugImGuiFeaturesTypesContainerManager::FKLDebugImGuiFeaturesTypesContainerManager()
-{
-}
-
-FKLDebugImGuiFeaturesTypesContainerManager::~FKLDebugImGuiFeaturesTypesContainerManager()
-{
-}
-
 void FKLDebugImGuiFeaturesTypesContainerManager::Initialize()
 {
     CreateContainers();

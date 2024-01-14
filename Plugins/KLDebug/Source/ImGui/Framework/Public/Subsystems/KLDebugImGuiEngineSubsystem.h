@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 #include "Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
 #include "Input/KLDebugImGuiInputManager.h"
 
@@ -56,6 +57,7 @@ private:
 
     FKLDebugImGuiFeaturesTypesContainerManager mFeatureContainersManger;
     FKLDebugImGuiInputManager mInputManager;
+    FKLDebugFrameworkBottomBarManager mBottomBarManager;
 };
 
 inline const UKLDebugImGuiEngineSubsystem* UKLDebugImGuiEngineSubsystem::Get()

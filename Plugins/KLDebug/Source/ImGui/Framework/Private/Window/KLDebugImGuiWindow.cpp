@@ -2,13 +2,13 @@
 
 #include "Window/KLDebugImGuiWindow.h"
 
+#include "BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 #include "Commands/ImUnrealCommand.h"
-#include "Window/KLDebugImGuiWindowDelegates.h"
 
-// ImGuiThirdParty module
+// modules
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-// https://github.com/ocornut/imgui/issues/3518
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui_internal.h"
+#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui_internal.h"    // https://github.com/ocornut/imgui/issues/3518
+#include "User/Framework/Public/Window/KLDebugWindowDelegates.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"
@@ -45,18 +45,17 @@ void FKLDebugImGuiWindow::Shutdown()
 #endif
 }
 
-void FKLDebugImGuiWindow::Update(const UWorld& _World)
+void FKLDebugImGuiWindow::Update(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager)
 {
-    DrawImGuiTopBar(_World);
-    DrawImGuiBottomBar(_World);
-    // DrawImGuiBar();
+    DrawImGuiTopBar(_World, _BottomBarManager);
+    DrawImGuiBottomBar(_World, _BottomBarManager);
 
 #if IMGUI_UNREAL_COMMAND_ENABLED
     DrawCommands();
 #endif
 }
 
-void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World) const
+void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager) const
 {
     if (!ImGui::BeginMainMenuBar())
     {
@@ -67,18 +66,15 @@ void FKLDebugImGuiWindow::DrawImGuiTopBar(const UWorld& _World) const
     DrawCommandsMenu();
 #endif
 
+    DrawImGuiBottomBarsSelection(_World, _BottomBarManager);
+
     KL::Debug::ImGui::MainWindow::Delegate::OnDrawTopBarDelegate.Broadcast(_World);
 
     ImGui::EndMainMenuBar();
 }
 
-void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
+void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World, const FKLDebugFrameworkBottomBarManager& _BottomBarManager) const
 {
-    if (!mDrawBottomBar)
-    {
-        return;
-    }
-
     ImGuiViewportP* Viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
     const float Height = ImGui::GetFrameHeight();
@@ -96,60 +92,39 @@ void FKLDebugImGuiWindow::DrawImGuiBottomBar(const UWorld& _World) const
         return;
     }
 
-    ImGui::Text("Frame: [%llu]", UKismetSystemLibrary::GetFrameCount());
-    ImGui::SameLine();
-    ImGui::Text(" Time: [%.3f]", _World.GetTimeSeconds());
-
-    const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(&_World, 0);
-    const ACharacter* PlayerCharacter = PlayerController ? PlayerController->GetCharacter() : nullptr;
-    if (!PlayerCharacter)
-    {
-        const ADebugCameraController* DebugCamera = Cast<const ADebugCameraController>(PlayerController);
-        if (DebugCamera && DebugCamera->OriginalControllerRef)
-        {
-            PlayerCharacter = DebugCamera->OriginalControllerRef->GetCharacter();
-        }
-    }
-
-    if (PlayerCharacter)
-    {
-        ImGui::SameLine();
-        ImGui::Text(" Player: [%ls]", *PlayerCharacter->GetActorLocation().ToString());
-    }
-
-    ImGui::SameLine();
-    ImGui::Text(" FPS: [%.2f]", _World.GetDeltaSeconds() != 0.f ? 1.f / _World.GetDeltaSeconds() : 0.f);
-
-    KL::Debug::ImGui::MainWindow::Delegate::OnDrawBottomBarDelegate.Broadcast(_World);
-
+    _BottomBarManager.DrawBottomBar(_World);
     ImGui::EndMenuBar();
     ImGui::End();
 }
 
-void FKLDebugImGuiWindow::DrawImGuiBar() const
+void FKLDebugImGuiWindow::DrawImGuiBottomBarsSelection(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager) const
 {
-    const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoSavedSettings;
-    if (!ImGui::Begin("MainWindow", nullptr, WindowFlags))
+    if (!ImGui::BeginMenu("Tools"))
     {
         return;
     }
 
-    if (ImGui::BeginTabBar("Selection", ImGuiTabBarFlags_::ImGuiTabBarFlags_None))
+    if (ImGui::BeginMenu("BottomBars"))
     {
-        DrawImGuiEngine();
+        int32 IndexSelected = -1;
+        for (int32 i = 0; i < _BottomBarManager.GetSortedBars().Num(); i++)
+        {
+            const FKLDebugFrameworkBottomBarSortedData& BarID = _BottomBarManager.GetSortedBars()[i];
+            if (ImGui::MenuItem(TCHAR_TO_ANSI(*BarID.GetName())))
+            {
+                IndexSelected = i;
+            }
+        }
 
-        ImGui::EndTabBar();
+        if (IndexSelected != -1)
+        {
+            _BottomBarManager.UpdateBottomBarIfNeeded(_World, IndexSelected);
+        }
+
+        ImGui::EndMenu();
     }
 
-    ImGui::End();
-}
-
-void FKLDebugImGuiWindow::DrawImGuiEngine() const
-{
-    // if (ImGui::BeginTabItem("Engine"))
-    //{
-    //     ImGui::EndTabItem();
-    // }
+    ImGui::EndMenu();
 }
 
 #if IMGUI_UNREAL_COMMAND_ENABLED

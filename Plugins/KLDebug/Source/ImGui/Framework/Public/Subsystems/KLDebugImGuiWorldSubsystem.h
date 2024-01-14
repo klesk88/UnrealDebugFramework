@@ -7,6 +7,7 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Selectable.h"
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizer_Unique.h"
 #include "Rendering/KLDebugFrameworkRenderingDefinitions.h"
+#include "Window/KLDebugImGuiWindow.h"
 
 // modules
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
@@ -17,7 +18,6 @@
 #include "CoreMinimal.h"
 #include "Delegates/IDelegateInstance.h"
 #include "GenericPlatform/GenericPlatformProcess.h"
-#include "InstancedStruct.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Templates/UniquePtr.h"
 #include "UObject/ObjectPtr.h"
@@ -31,6 +31,7 @@
 
 class APlayerController;
 class FDebugRenderSceneProxy;
+class FKLDebugFrameworkBottomBarManager;
 class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiGatherFeatureInput;
@@ -56,7 +57,7 @@ public:
     UE_NODISCARD static const UKLDebugImGuiWorldSubsystem* TryGet(const UObject& _Object);
 
     void Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
-    void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager);
     void Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
 
     // this can be called externally when an object is selected. For example from the editor module of the imgui
@@ -97,7 +98,7 @@ private:
     TArray<FKLDebugImGuiFeatureVisualizer_Selectable> mSelectedObjectsVisualizers;
     TArray<int32> mUpdateSystems;
     FString mImGuiTreeName;
-    FInstancedStruct mImGuiWindow;
+    FKLDebugImGuiWindow mImGuiWindow;
     FDelegateHandle mImGuiCanvasDelegateHandle;
     FDelegateHandle mOnFeatureUpdateDelegateHandle;
     FOnImGuiFeatureStateUpdated mOnFeaturesUpdatedDelegate;

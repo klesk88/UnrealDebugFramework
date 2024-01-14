@@ -3,35 +3,23 @@
 #pragma once
 
 // engine
-#include "CoreMinimal.h"
 #include "Templates/UnrealTemplate.h"
-#include "UObject/Class.h"
 
-#include "KLDebugImGuiWindow.generated.h"
-
+class FKLDebugFrameworkBottomBarManager;
 class UWorld;
 
-USTRUCT()
-struct KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiWindow
+class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiWindow final : public FNoncopyable
 {
-    GENERATED_BODY()
-
 public:
-    virtual ~FKLDebugImGuiWindow() = default;
-
-    virtual void Init();
-    virtual void Shutdown();
-    virtual void Update(const UWorld& _World);
-
-protected:
-    virtual void DrawImGuiTopBar(const UWorld& _World) const;
-    virtual void DrawImGuiBar() const;
-    virtual void DrawImGuiBottomBar(const UWorld& _World) const;
-
-    void DrawImGuiEngine() const;
+    void Init();
+    void Shutdown();
+    void Update(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager);
 
 private:
-    bool mDrawBottomBar = true;
+    void DrawImGuiTopBar(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager) const;
+    void DrawImGuiBottomBar(const UWorld& _World, const FKLDebugFrameworkBottomBarManager& _BottomBarManager) const;
+
+    void DrawImGuiBottomBarsSelection(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager) const;
 
 #if IMGUI_UNREAL_COMMAND_ENABLED
 private:

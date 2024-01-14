@@ -18,9 +18,6 @@ class IKLDebugImGuiFeatureInterfaceBase;
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeaturesTypesContainerManager final : public FNoncopyable
 {
 public:
-    FKLDebugImGuiFeaturesTypesContainerManager();
-    ~FKLDebugImGuiFeaturesTypesContainerManager();
-
     void Initialize();
     void Shutdown();
 

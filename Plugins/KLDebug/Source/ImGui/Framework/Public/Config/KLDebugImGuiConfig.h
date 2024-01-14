@@ -7,7 +7,6 @@
 // engine
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "InstancedStruct.h"
 #include "UObject/SoftObjectPtr.h"
 
 #include "KLDebugImGuiConfig.generated.h"
@@ -24,14 +23,10 @@ public:
 
     UE_NODISCARD static const UKLDebugImGuiConfig& Get();
 
-    UE_NODISCARD const FInstancedStruct& GetImGuiWindow() const;
     UE_NODISCARD const TSoftObjectPtr<UMaterialInterface>& GeOverlayMaterial() const;
     UE_NODISCARD const FKLDebugImGuiConfig_Canvas& GetCanvasConfig() const;
 
 private:
-    UPROPERTY(EditDefaultsOnly, config, NoClear, meta = (BaseStruct = "/Script/KLDebugImGuiFramework.KLDebugImGuiWindow"))
-    FInstancedStruct ImGuiWindowManager;
-
     UPROPERTY(EditDefaultsOnly, config)
     FKLDebugImGuiConfig_Canvas CanvasConfig;
 
@@ -44,11 +39,6 @@ inline const UKLDebugImGuiConfig& UKLDebugImGuiConfig::Get()
     const UKLDebugImGuiConfig* Config = GetDefault<UKLDebugImGuiConfig>();
     checkf(Config != nullptr, TEXT("config should be valid"));
     return *Config;
-}
-
-inline const FInstancedStruct& UKLDebugImGuiConfig::GetImGuiWindow() const
-{
-    return ImGuiWindowManager;
 }
 
 inline const TSoftObjectPtr<UMaterialInterface>& UKLDebugImGuiConfig::GeOverlayMaterial() const

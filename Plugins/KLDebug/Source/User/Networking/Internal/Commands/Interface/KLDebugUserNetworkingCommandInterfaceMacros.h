@@ -86,7 +86,7 @@ public:                                                                         
         return CommandID;                                                                                                          \
     }                                                                                                                              \
                                                                                                                                    \
-    UE_NODISCARD inline const FName& GetCommandID() const override                                                                 \
+    UE_NODISCARD inline const FName& GetID() const override                                                                        \
     {                                                                                                                              \
         return StaticGetCommandID();                                                                                               \
     }                                                                                                                              \

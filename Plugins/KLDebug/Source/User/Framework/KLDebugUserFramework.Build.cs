@@ -24,6 +24,10 @@ public class KLDebugUserFramework : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
+                "KLDebugUtils",
+            
+                //engine
+                "GameplayDebugger" //for FGameplayDebuggerCanvasContext
             }
         );
 

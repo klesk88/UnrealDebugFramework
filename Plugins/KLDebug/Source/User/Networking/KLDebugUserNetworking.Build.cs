@@ -11,7 +11,6 @@ public class KLDebugUserNetworking : ModuleRules
           new string[]
           {
                 Path.Combine(ModuleDirectory),
-
           }
         );
 
