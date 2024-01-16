@@ -92,5 +92,5 @@ template <typename FeatureClass>
 void constexpr IKLDebugUserNetworkingFeatureUniqueInterface::PerformStaticChecks()
 {
     static_assert(TIsDerivedFrom<FeatureClass, IKLDebugImGuiFeatureInterface_Unique>::Value, "IKLDebugUserNetworkingFeatureUniqueInterface can be used only with IKLDebugImGuiFeatureInterface_Unique");
-    PerformStaticChecksInternal<FeatureClass, IKLDebugUserNetworkingFeatureUniqueInterface>();
+    NetworkPerformStaticChecksInternal<FeatureClass, IKLDebugUserNetworkingFeatureUniqueInterface>();
 }

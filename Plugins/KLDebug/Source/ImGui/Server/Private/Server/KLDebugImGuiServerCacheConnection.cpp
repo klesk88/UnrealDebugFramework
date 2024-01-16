@@ -5,13 +5,18 @@
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
 // modules
+#include "ImGui/Framework/Public/BottomBar/Manager/KLDebugFrameworkBottomBarManager.h"
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 #include "ImGui/Framework/Public/Feature/Container/Manager/KLDebugImGuiFeaturesTypesContainerManager.h"
+#include "ImGui/Framework/Public/Mode/Manager/KLDebugFrameworkModeManager.h"
 #include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "ImGui/Networking/Public/Message/Feature/DataUpdate/KLDebugImGuiNetworkingMessage_FeatureDataUpdate.h"
 #include "ImGui/Networking/Public/Message/Feature/RequestUpdate/KLDebugImGuiNetworkingMessage_FeatureRequestUpdate.h"
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "ImGui/Networking/Public/Message/KLDebugImGuiNetworkingMessageTypes.h"
+#include "ImGui/Networking/Public/Message/Window/DataUpdate/KLDebugNetworkingMessage_WindowDataUpdate.h"
+#include "ImGui/Networking/Public/Message/Window/RequestUpdate/KLDebugNetworkingMessage_WindowRequestUpdate.h"
+#include "ImGui/Networking/Public/Message/Window/Toogle/KLDebugNetworkingMessage_WindowToogle.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
 #include "ImGui/User/Public/Feature/Interface/Selectable/Input/KLDebugImGuiFeatureContextInput_Selectable.h"
@@ -21,10 +26,15 @@
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 #include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingSplittedMessage.h"
+#include "User/Framework/Public/Context/Input/KLDebugContextGetterInput.h"
+#include "User/Framework/Public/Mode/KLDebugModeInterface.h"
+#include "User/Framework/Public/Window/BottomBar/KLDebugBottomBarInterface.h"
 #include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
 #include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableInterface.h"
 #include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
 #include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
+#include "User/Networking/Public/Window/KLDebugNetworkingWindowAllInputs.h"
+#include "User/Networking/Public/Window/KLDebugNetworkingWindowInterface.h"
 
 // engine
 #include "Containers/ArrayView.h"
@@ -143,18 +153,19 @@ TOptional<KL::Debug::ImGui::Features::Types::FeatureIndex> FKLDebugImGuiServerCa
 #endif
 }
 
-void FKLDebugImGuiServerCacheConnection::GameThreadTick(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _ArchiveWriter)
+void FKLDebugImGuiServerCacheConnection::GameThreadTick(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FKLDebugFrameworkModeManager& _ModeManager, FKLDebugFrameworkBottomBarManager& _BarManager, FArchive& _ArchiveWriter)
 {
     const int32 InitializeTempSize = mTempData.Max();
 
-    GameThread_TickPendingMessages(_World, _FeatureContainer, _ArchiveWriter);
+    GameThread_TickPendingMessages(_World, _FeatureContainer, _ModeManager, _BarManager, _ArchiveWriter);
     GameThread_TickFeatures(_World, _FeatureContainer, _ArchiveWriter);
+    GameThread_TickWindow(_World, _ModeManager, _BarManager, _ArchiveWriter);
 
     mTempData.SetNum(InitializeTempSize);
     mTempCompressedData.SetNum(InitializeTempSize);
 }
 
-void FKLDebugImGuiServerCacheConnection::GameThread_TickPendingMessages(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _ArchiveWriter)
+void FKLDebugImGuiServerCacheConnection::GameThread_TickPendingMessages(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FKLDebugFrameworkModeManager& _ModeManager, FKLDebugFrameworkBottomBarManager& _BarManager, FArchive& _ArchiveWriter)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerCacheConnection_ReadData);
 
@@ -179,6 +190,18 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickPendingMessages(const UW
         {
             FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate FeatureRequestUpdate{ MessageDataReader };
             static_cast<void>(Rcv_HandleClientFeatureRequestUpdate(_FeatureContainer, _World, FeatureRequestUpdate, _ArchiveWriter));
+            break;
+        }
+        case EKLDebugImGuiNetworkMessage::Client_WindowToogle:
+        {
+            FKLDebugNetworkingMessage_WindowToogle WindowToogle{ MessageDataReader };
+            static_cast<void>(Rcv_WindowToogle(WindowToogle, _World, _ModeManager, _BarManager, _ArchiveWriter));
+            break;
+        }
+        case EKLDebugImGuiNetworkMessage::Client_WindowRequestUpdate:
+        {
+            FKLDebugNetworkingMessage_WindowRequestUpdate WindowRequestUpdate{ MessageDataReader };
+            static_cast<void>(Rcv_WindowRequestUpdate(_World, WindowRequestUpdate, _ModeManager, _BarManager, _ArchiveWriter));
             break;
         }
         default:
@@ -389,6 +412,147 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureRequestUpdate(co
     return false;
 }
 
+bool FKLDebugImGuiServerCacheConnection::Rcv_WindowToogle(const FKLDebugNetworkingMessage_WindowToogle& _Message, const UWorld& _World, FKLDebugFrameworkModeManager& _ModeManager, FKLDebugFrameworkBottomBarManager& _BarManager, FArchive& _Archive)
+{
+    if (!_Message.Server_GetHasElement())
+    {
+        switch (_Message.GetWindowType())
+        {
+        case EKLDebugWindowTypes::Mode:
+            mCurrentMode = -1;
+            mModeContext.Reset();
+            break;
+        case EKLDebugWindowTypes::BottomBar:
+            mCurrentBottomBar = -1;
+            mBottomBarContext.Reset();
+            break;
+        default:
+            ensureMsgf(false, TEXT("not handled"));
+            break;
+        }
+    }
+
+    FKLDebugContextGetterInput Input{ _World, _World.GetNetMode() };
+    const IKLDebugNetworkingWindowInterface* PrevInterface = nullptr;
+    const IKLDebugNetworkingWindowInterface* NewInterface = nullptr;
+
+    switch (_Message.GetWindowType())
+    {
+    case EKLDebugWindowTypes::Mode:
+    {
+        if (mCurrentMode != -1)
+        {
+            PrevInterface = _ModeManager.TryGetCurrentInterface(mCurrentMode)->TryGetNetworkInterface();
+        }
+
+        mCurrentMode = _Message.GetIndex();
+        const IKLDebugModeInterface* Interface = _ModeManager.TryGetCurrentInterface(mCurrentMode);
+        if (Interface)
+        {
+            mModeContext = Interface->GetContext(Input);
+            NewInterface = Interface->TryGetNetworkInterface();
+        }
+        else
+        {
+            mCurrentMode = -1;
+        }
+        break;
+    }
+    case EKLDebugWindowTypes::BottomBar:
+    {
+        if (mCurrentBottomBar != -1)
+        {
+            PrevInterface = _BarManager.TryGetCurrentInterface(mCurrentBottomBar)->TryGetNetworkInterface();
+        }
+
+        mCurrentBottomBar = _Message.GetIndex();
+        const IKLDebugBottomBarInterface* Interface = _BarManager.TryGetCurrentInterface(mCurrentBottomBar);
+        if (Interface)
+        {
+            mBottomBarContext = Interface->GetContext(Input);
+            NewInterface = Interface->TryGetNetworkInterface();
+        }
+        else
+        {
+            mCurrentBottomBar = -1;
+        }
+        break;
+    }
+    default:
+        ensureMsgf(false, TEXT("not handled"));
+        break;
+    }
+
+    if (PrevInterface && PrevInterface->RequireServerTick())
+    {
+        mWindowsTick--;
+    }
+
+    if (NewInterface && NewInterface->RequireServerTick())
+    {
+        mWindowsTick++;
+    }
+
+    return false;
+}
+
+bool FKLDebugImGuiServerCacheConnection::Rcv_WindowRequestUpdate(const UWorld& _World, FKLDebugNetworkingMessage_WindowRequestUpdate& _Message, FKLDebugFrameworkModeManager& _ModeManager, FKLDebugFrameworkBottomBarManager& _BarManager, FArchive& _Archive)
+{
+    if (_Message.GetIndex() == -1)
+    {
+        ensureMsgf(false, TEXT("invalid index"));
+        return true;
+    }
+
+    mTempFeatureData.Reset();
+    FMemoryWriter TempFeatureWriter{ mTempFeatureData };
+    FMemoryReader MessageDataReader{ _Message.Server_GetBufferDataMutable() };
+    const IKLDebugNetworkingWindowInterface* WindowInterface = nullptr;
+    IKLDebugContextInterface* Context = nullptr;
+    switch (_Message.GetWindowType())
+    {
+    case EKLDebugWindowTypes::BottomBar:
+    {
+        const IKLDebugBottomBarInterface* Interface = _BarManager.TryGetCurrentInterface(_Message.GetIndex());
+        WindowInterface = Interface ? Interface->TryGetNetworkInterface() : nullptr;
+        break;
+    }
+    case EKLDebugWindowTypes::Mode:
+    {
+        const IKLDebugModeInterface* Interface = _ModeManager.TryGetCurrentInterface(_Message.GetIndex());
+        WindowInterface = Interface ? Interface->TryGetNetworkInterface() : nullptr;
+        break;
+    }
+    case EKLDebugWindowTypes::Count:
+        UE_LOG(LogKLDebug_Networking, Error, TEXT("KLDebugImGuiServerCacheConnection::Rcv_WindowRequestUpdate>> invalid wiundow type"));
+        return false;
+    }
+
+    if (!WindowInterface)
+    {
+        return false;
+    }
+
+    FKLDebugNetworkingWindowRequestUpdateInput Input{ _World, Context, MessageDataReader, TempFeatureWriter };
+    WindowInterface->Server_FeatureUpdate(Input);
+
+    UE_CLOG(mTempFeatureData.IsEmpty(), LogKLDebug_Networking, Warning, TEXT("KLDebugImGuiServerCacheConnection::Rcv_WindowRequestUpdate>> feature [%s] could not found network interface"), *_Message.GetID().ToString());
+
+    if (mTempFeatureData.IsEmpty())
+    {
+        return false;
+    }
+
+    mTempCompressedData.Reset();
+    mTempData.Reset();
+    FMemoryWriter FinalData{ mTempData };
+    FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugImGuiNetworkReceiveMessageType::RequestUpdate, _Message.GetIndex(), _Message.GetID(), _Message.GetWindowType(), mTempFeatureData };
+    Message.Serialize(FinalData);
+    KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _Archive);
+
+    return false;
+}
+
 void FKLDebugImGuiServerCacheConnection::GameThread_TickFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive)
 {
     QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerCacheConnection_GameThread_TickFeatures);
@@ -499,6 +663,59 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickObjectFeatures(const UWo
                 FeatureInterface);
 
             FeatureData.SetLastSendCRC(CRC);
+        }
+    }
+}
+
+void FKLDebugImGuiServerCacheConnection::GameThread_TickWindow(const UWorld& _World, FKLDebugFrameworkModeManager& _ModeManager, FKLDebugFrameworkBottomBarManager& _BarManager, FArchive& _Archive)
+{
+    QUICK_SCOPE_CYCLE_COUNTER(KLDebugImGuiServerCacheConnection_GameThread_TickWindow);
+
+    if (mCurrentMode != -1)
+    {
+        IKLDebugModeInterface* Interface = _ModeManager.TryGetCurrentInterfaceMutable(mCurrentMode);
+        IKLDebugNetworkingWindowInterface* NetworkInterface = Interface ? Interface->TryGetNetworkInterfaceMutable() : nullptr;
+        if (NetworkInterface)
+        {
+            mTempFeatureData.Reset();
+            FMemoryWriter FeatureWriter{ mTempFeatureData };
+            FKLDebugNetworkingWindowServerTickInput Input{ _World, mModeContext.Get(), FeatureWriter };
+            NetworkInterface->Server_Tick(Input);
+
+            if (!mTempFeatureData.IsEmpty())
+            {
+                mTempCompressedData.Reset();
+                mTempData.Reset();
+                FMemoryWriter FinalData{ mTempData };
+
+                FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugImGuiNetworkReceiveMessageType::ServerTick, static_cast<uint16>(mCurrentMode), Interface->GetID(), EKLDebugWindowTypes::Mode, mTempFeatureData };
+                Message.Serialize(FinalData);
+                KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _Archive);
+            }
+        }
+    }
+
+    if (mCurrentBottomBar != -1)
+    {
+        IKLDebugBottomBarInterface* Interface = _BarManager.TryGetCurrentInterfaceMutable(mCurrentBottomBar);
+        IKLDebugNetworkingWindowInterface* NetworkInterface = Interface ? Interface->TryGetNetworkInterfaceMutable() : nullptr;
+        if (NetworkInterface)
+        {
+            mTempFeatureData.Reset();
+            FMemoryWriter FeatureWriter{ mTempFeatureData };
+            FKLDebugNetworkingWindowServerTickInput Input{ _World, mBottomBarContext.Get(), FeatureWriter };
+            NetworkInterface->Server_Tick(Input);
+
+            if (!mTempFeatureData.IsEmpty())
+            {
+                mTempCompressedData.Reset();
+                mTempData.Reset();
+                FMemoryWriter FinalData{ mTempData };
+
+                FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugImGuiNetworkReceiveMessageType::ServerTick, static_cast<uint16>(mCurrentBottomBar), Interface->GetID(), EKLDebugWindowTypes::BottomBar, mTempFeatureData };
+                Message.Serialize(FinalData);
+                KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _Archive);
+            }
         }
     }
 }

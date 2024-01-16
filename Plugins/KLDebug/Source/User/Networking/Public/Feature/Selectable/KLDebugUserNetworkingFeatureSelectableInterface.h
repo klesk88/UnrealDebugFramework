@@ -110,5 +110,5 @@ template <typename FeatureClass>
 inline void constexpr IKLDebugUserNetworkingFeatureSelectableInterface::PerformStaticChecks()
 {
     static_assert(TIsDerivedFrom<FeatureClass, IKLDebugImGuiFeatureInterface_Selectable>::Value, "IKLDebugUserNetworkingFeatureSelectableInterface can be used only with IKLDebugImGuiFeatureInterface_Selectable");
-    PerformStaticChecksInternal<FeatureClass, IKLDebugUserNetworkingFeatureSelectableInterface>();
+    NetworkPerformStaticChecksInternal<FeatureClass, IKLDebugUserNetworkingFeatureSelectableInterface>();
 }

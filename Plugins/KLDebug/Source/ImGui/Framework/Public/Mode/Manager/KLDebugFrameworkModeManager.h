@@ -27,6 +27,8 @@ public:
     UE_NODISCARD const TArray<FKLDebugFrameworkModeSortedData>& GetSortedModes() const;
     UE_NODISCARD TUniquePtr<IKLDebugContextInterface> UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _PrevIndex, const int32 _NewIndex);
     UE_NODISCARD bool RequireCanvasDraw(const int32 _CurrentIndex) const;
+    UE_NODISCARD const IKLDebugModeInterface* TryGetCurrentInterface(const int32 _Index) const;
+    UE_NODISCARD IKLDebugModeInterface* TryGetCurrentInterfaceMutable(const int32 _Index);
 
 private:
     TArray<FKLDebugFrameworkModeSortedData> mSortedModes;

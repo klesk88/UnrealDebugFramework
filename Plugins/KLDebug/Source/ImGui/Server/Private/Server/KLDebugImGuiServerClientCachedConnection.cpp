@@ -107,11 +107,12 @@ bool FKLDebugImGuiServerClientCachedConnection::TickOnGameThread(const TArray<FK
     // outside of it
     UKLDebugImGuiEngineSubsystem* ImGuiEngineSubsystem = UKLDebugImGuiEngineSubsystem::GetMutable();
     FKLDebugImGuiFeaturesTypesContainerManager& FeaturesContainer = ImGuiEngineSubsystem->GetContainerManagerMutable();
-
+    FKLDebugFrameworkModeManager& ModeManager = ImGuiEngineSubsystem->GetModeManagerMutable();
+    FKLDebugFrameworkBottomBarManager& BottomManager = ImGuiEngineSubsystem->GetBottomWindowManagerMutable();
     TArray<uint8>& WriteBuffer = GetWriteBuffer();
     FMemoryWriter Writer{ WriteBuffer };
 
-    mClientDataForConnection.GameThreadTick(_World, FeaturesContainer, Writer);
+    mClientDataForConnection.GameThreadTick(_World, FeaturesContainer, ModeManager, BottomManager, Writer);
     return RequiresGameThreadTick();
 }
 

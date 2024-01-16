@@ -4,6 +4,6 @@
 
 FKLDebugFrameworkModeSortedData::FKLDebugFrameworkModeSortedData(const FString& _Name, IKLDebugModeInterface& _Interface)
     : mName(_Name)
-    , mInterface(_Interface)
+    , mInterface(&_Interface)
 {
 }

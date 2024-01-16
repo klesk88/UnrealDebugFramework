@@ -20,7 +20,7 @@ public:
 
 private:
     const FString& mName;
-    IKLDebugModeInterface& mInterface;
+    IKLDebugModeInterface* mInterface = nullptr;
 };
 
 inline const FString& FKLDebugFrameworkModeSortedData::GetName() const
@@ -35,5 +35,6 @@ inline const IKLDebugModeInterface& FKLDebugFrameworkModeSortedData::GetInterfac
 
 inline IKLDebugModeInterface& FKLDebugFrameworkModeSortedData::GetInterfaceMutable() const
 {
-    return mInterface;
+    checkf(mInterface != nullptr, TEXT("must be valid"));
+    return *mInterface;
 }

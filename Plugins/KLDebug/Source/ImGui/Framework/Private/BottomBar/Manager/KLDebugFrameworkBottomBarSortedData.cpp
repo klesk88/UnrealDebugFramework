@@ -4,6 +4,6 @@
 
 FKLDebugFrameworkBottomBarSortedData::FKLDebugFrameworkBottomBarSortedData(const FString& _Name, IKLDebugBottomBarInterface& _Interface)
     : mName(_Name)
-    , mInterface(_Interface)
+    , mInterface(&_Interface)
 {
 }

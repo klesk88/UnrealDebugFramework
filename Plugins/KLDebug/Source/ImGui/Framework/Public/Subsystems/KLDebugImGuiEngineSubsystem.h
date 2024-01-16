@@ -37,6 +37,9 @@ public:
     UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetFeatureContainerManager() const;
     UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable();
     UE_NODISCARD const FKLDebugFrameworkModeManager& GetModeManager() const;
+    UE_NODISCARD FKLDebugFrameworkModeManager& GetModeManagerMutable();
+    UE_NODISCARD const FKLDebugFrameworkBottomBarManager& GetBottomWindowManager() const;
+    UE_NODISCARD FKLDebugFrameworkBottomBarManager& GetBottomWindowManagerMutable();
 
     void ToogleImGuiSystemState();
     void ToogleImGuiInput();
@@ -96,4 +99,19 @@ inline FKLDebugImGuiFeaturesTypesContainerManager& UKLDebugImGuiEngineSubsystem:
 inline const FKLDebugFrameworkModeManager& UKLDebugImGuiEngineSubsystem::GetModeManager() const
 {
     return mModeManager;
+}
+
+inline FKLDebugFrameworkModeManager& UKLDebugImGuiEngineSubsystem::GetModeManagerMutable()
+{
+    return mModeManager;
+}
+
+inline const FKLDebugFrameworkBottomBarManager& UKLDebugImGuiEngineSubsystem::GetBottomWindowManager() const
+{
+    return mBottomBarManager;
+}
+
+inline FKLDebugFrameworkBottomBarManager& UKLDebugImGuiEngineSubsystem::GetBottomWindowManagerMutable()
+{
+    return mBottomBarManager;
 }

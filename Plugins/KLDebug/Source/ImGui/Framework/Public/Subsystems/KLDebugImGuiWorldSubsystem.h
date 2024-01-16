@@ -57,7 +57,7 @@ public:
     UE_NODISCARD static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
     UE_NODISCARD static const UKLDebugImGuiWorldSubsystem* TryGet(const UObject& _Object);
 
-    void Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager);
+    void Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
     void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
     void Render(const UWorld& _CurrentWorldUpdated, const FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager) const;
 
@@ -69,11 +69,17 @@ public:
     void UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle);
     UE_NODISCARD FDelegateHandle BindOnFeatureRequestUpdate(const FOnFeaturesTick::FDelegate& _Delegate);
     void UnbindOnFeatureRequestUpdate(FDelegateHandle& _Handle);
+    UE_NODISCARD FDelegateHandle BindOnWindowsStatusChange(const FOnWindowStatusChange::FDelegate& _Delegate);
+    void UnbindOnWindowsStatusChange(FDelegateHandle& _Handle);
+    UE_NODISCARD FDelegateHandle BindOnShouldTickDelegate(const FOnShouldTickDelegate::FDelegate& _Delegate);
+    void UnbindOnShouldTickDelegate(FDelegateHandle& _Handle);
 
     void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
     void TryGatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback);
 
     UE_NODISCARD bool GetShouldTick() const;
+
+    UE_NODISCARD IKLDebugContextInterface* GetCurrentWindowData(const EKLDebugWindowTypes _WindowType, int32& _Index) const;
 
 private:
     void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
@@ -103,7 +109,9 @@ private:
     FDelegateHandle mImGuiCanvasDelegateHandle;
     FDelegateHandle mOnFeatureUpdateDelegateHandle;
     FOnImGuiFeatureStateUpdated mOnFeaturesUpdatedDelegate;
+    FOnWindowStatusChange mOnWindowStatusChange;
     FOnFeaturesTick mOnFeaturesTick;
+    FOnShouldTickDelegate mOnShouldTickDelegate;
     bool mShouldStoreDelta = false;
     bool mShouldTick = false;
     bool mRenderModeWindow = true;
@@ -138,6 +146,28 @@ inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnFeatureRequestUpdate(c
 inline void UKLDebugImGuiWorldSubsystem::UnbindOnFeatureRequestUpdate(FDelegateHandle& _Handle)
 {
     mOnFeaturesTick.Remove(_Handle);
+    _Handle.Reset();
+}
+
+inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnWindowsStatusChange(const FOnWindowStatusChange::FDelegate& _Delegate)
+{
+    return mOnWindowStatusChange.Add(_Delegate);
+}
+
+inline void UKLDebugImGuiWorldSubsystem::UnbindOnWindowsStatusChange(FDelegateHandle& _Handle)
+{
+    mOnWindowStatusChange.Remove(_Handle);
+    _Handle.Reset();
+}
+
+inline FDelegateHandle UKLDebugImGuiWorldSubsystem::BindOnShouldTickDelegate(const FOnShouldTickDelegate::FDelegate& _Delegate)
+{
+    return mOnShouldTickDelegate.Add(_Delegate);
+}
+
+inline void UKLDebugImGuiWorldSubsystem::UnbindOnShouldTickDelegate(FDelegateHandle& _Handle)
+{
+    mOnShouldTickDelegate.Remove(_Handle);
     _Handle.Reset();
 }
 

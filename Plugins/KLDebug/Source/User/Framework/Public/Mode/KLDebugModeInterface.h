@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Internal/Context/User/KLDebugContextUserInterface.h"
+#include "Internal/Networking/KLDebugNetworkCheckerInterface.h"
 #include "Mode/KLDebugModeInterfaceMacros.h"
 
 // modules
@@ -22,6 +23,7 @@ class UWorld;
 
 #define KL_DEBUG_DERIVED_MODE(ItemType, ParentItemType)                                                        \
     KL_DEBUG_RTTI(ItemType, ParentItemType)                                                                    \
+    KL_DEBUG_NETWORK_CHECKER(ItemType, ParentItemType)                                                         \
                                                                                                                \
     UE_NODISCARD inline bool RequiresDrawCanvas() const override                                               \
     {                                                                                                          \
@@ -44,7 +46,7 @@ private:
  *
  * KL_DEBUG_CREATE_MODE(FClassBottomBar)
  */
-class KLDEBUGUSERFRAMEWORK_API IKLDebugModeInterface : public IKLDebugRTTIInterface, public IKLDebugContextUserInterface
+class KLDEBUGUSERFRAMEWORK_API IKLDebugModeInterface : public IKLDebugRTTIInterface, public IKLDebugContextUserInterface, public IKLDebugNetworkCheckerInterface
 {
 public:
     virtual ~IKLDebugModeInterface();

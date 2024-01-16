@@ -20,9 +20,18 @@ enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkMessage : uint8
 {
     Client_FeatureStatusUpdate = 0,
     Client_FeatureRequestUpdate,
+    Client_WindowToogle,
+    Client_WindowRequestUpdate,
 
     Server_InitClientConnection,
     Server_FeatureDataUpdate,
+    Server_WindowDataUpdate,
 
     Count
+};
+
+enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkReceiveMessageType : uint8
+{
+    ServerTick = 0,
+    RequestUpdate
 };

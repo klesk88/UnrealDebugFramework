@@ -20,7 +20,7 @@ public:
 
 private:
     const FString& mName;
-    IKLDebugBottomBarInterface& mInterface;
+    IKLDebugBottomBarInterface* mInterface;
 };
 
 inline const FString& FKLDebugFrameworkBottomBarSortedData::GetName() const
@@ -35,5 +35,6 @@ inline const IKLDebugBottomBarInterface& FKLDebugFrameworkBottomBarSortedData::G
 
 inline IKLDebugBottomBarInterface& FKLDebugFrameworkBottomBarSortedData::GetInterfaceMutable() const
 {
-    return mInterface;
+    checkf(mInterface != nullptr, TEXT("must be valid"));
+    return *mInterface;
 }

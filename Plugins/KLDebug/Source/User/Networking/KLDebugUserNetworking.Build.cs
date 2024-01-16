@@ -24,7 +24,9 @@ public class KLDebugUserNetworking : ModuleRules
         PublicIncludePathModuleNames.AddRange(
             new string[]
             {
-                "KLDebugImGuiUser"
+                "KLDebugImGuiNetworking",
+                "KLDebugImGuiUser",
+                "KLDebugUserFramework"
             }
         );
 

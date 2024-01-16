@@ -220,7 +220,29 @@ void UKLDebugImGuiWorldSubsystem::TryGatherSceneProxies(const UPrimitiveComponen
     }
 }
 
-void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager)
+IKLDebugContextInterface* UKLDebugImGuiWorldSubsystem::GetCurrentWindowData(const EKLDebugWindowTypes _WindowType, int32& _Index) const
+{
+    _Index = -1;
+
+    switch (_WindowType)
+    {
+    case EKLDebugWindowTypes::BottomBar:
+        _Index = mImGuiWindow.GetCurrentBottomBarIndex();
+        return mImGuiWindow.GetCurrentBottomBarContext();
+        break;
+    case EKLDebugWindowTypes::Mode:
+        _Index = mImGuiWindow.GetCurrentModeIndex();
+        return mImGuiWindow.GetCurrentModeContext();
+        break;
+    default:
+        ensureMsgf(false, TEXT("not supported"));
+        break;
+    }
+
+    return nullptr;
+}
+
+void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager)
 {
     QUICK_SCOPE_CYCLE_COUNTER(STAT_KLDebugImGuiWorldSubsystem_Tick);
 
@@ -229,33 +251,57 @@ void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDe
 #endif
 
     UpdateCanvasAndRenderStatus();
-    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Tick)] == 0)
+    bool ShouldTickDelegates = false;
+    if (mOnShouldTickDelegate.IsBound())
+    {
+        mOnShouldTickDelegate.Broadcast(ShouldTickDelegates);
+    }
+
+    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Tick)] == 0 && !ShouldTickDelegates)
     {
         mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy)] = 0;
         return;
     }
 
     KL::Debug::ImGui::Features::Types::FeatureEnableSet SystemEnable;
-    if (mUniqueFeaturesVisualizer.IsValid())
-    {
-        mUniqueFeaturesVisualizer.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
-    }
 
-    for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
+    if (mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Tick)] != 0)
     {
-        FKLDebugImGuiFeatureVisualizer_Selectable& SelectableFeature = mSelectedObjectsVisualizers[i];
-        if (!SelectableFeature.IsValid())
+        if (mUniqueFeaturesVisualizer.IsValid())
         {
-            mSelectedObjectsVisualizers.RemoveAtSwap(i, 1, false);
-            continue;
+            mUniqueFeaturesVisualizer.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
         }
 
-        SelectableFeature.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
+        for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
+        {
+            FKLDebugImGuiFeatureVisualizer_Selectable& SelectableFeature = mSelectedObjectsVisualizers[i];
+            if (!SelectableFeature.IsValid())
+            {
+                mSelectedObjectsVisualizers.RemoveAtSwap(i, 1, false);
+                continue;
+            }
+
+            SelectableFeature.TickFeatures(_CurrentWorldUpdated, _ContainerManager, SystemEnable);
+        }
     }
 
-    if (mOnFeaturesTick.IsBound())
+    if (ShouldTickDelegates)
     {
-        const FKLDebugImGuiFeaturesTickInput Input{ _CurrentWorldUpdated, mUniqueFeaturesVisualizer, mSelectedObjectsVisualizers, _ContainerManager, SystemEnable };
+        IKLDebugBottomBarInterface* BottomBarInterface = _BottomBarManager.TryGetCurrentInterfaceMutable(mImGuiWindow.GetCurrentBottomBarIndex());
+        IKLDebugModeInterface* ModeInterface = _ModeManager.TryGetCurrentInterfaceMutable(mImGuiWindow.GetCurrentModeIndex());
+
+        const FKLDebugImGuiFeaturesTickInput Input{ _CurrentWorldUpdated,
+            mImGuiWindow.GetCurrentModeIndex(),
+            mImGuiWindow.GetCurrentBottomBarIndex(),
+            mUniqueFeaturesVisualizer,
+            mSelectedObjectsVisualizers,
+            _ContainerManager,
+            SystemEnable,
+            ModeInterface,
+            mImGuiWindow.GetCurrentModeContext(),
+            BottomBarInterface,
+            mImGuiWindow.GetCurrentBottomBarContext() };
+
         mOnFeaturesTick.Broadcast(Input);
     }
 
@@ -278,9 +324,30 @@ void UKLDebugImGuiWorldSubsystem::DrawImGui(const UWorld& _CurrentWorldUpdated, 
 
     ensureMsgf(&_CurrentWorldUpdated == GetWorld(), TEXT("we are updating the wrong world"));
 
+    const int32 CurrentBottomBar = mImGuiWindow.GetCurrentBottomBarIndex();
     const int32 CurrentMode = mImGuiWindow.GetCurrentModeIndex();
+    const IKLDebugBottomBarInterface* BottomBarInterface = _BottomBarManager.TryGetCurrentInterface(CurrentBottomBar);
+    const IKLDebugModeInterface* CurrentModeInterface = _ModeManager.TryGetCurrentInterface(CurrentMode);
     const bool CurentModeRequireCanvasDraw = _ModeManager.RequireCanvasDraw(mImGuiWindow.GetCurrentModeIndex());
     mImGuiWindow.Update(_CurrentWorldUpdated, _BottomBarManager, _ModeManager);
+
+    if (mOnWindowStatusChange.IsBound())
+    {
+        if (CurrentBottomBar != mImGuiWindow.GetCurrentBottomBarIndex())
+        {
+            const IKLDebugBottomBarInterface* NewBottomBarInterface = _BottomBarManager.TryGetCurrentInterface(mImGuiWindow.GetCurrentBottomBarIndex());
+            const FName ID = NewBottomBarInterface ? NewBottomBarInterface->GetID() : NAME_None;
+            mOnWindowStatusChange.Broadcast(mImGuiWindow.GetCurrentBottomBarIndex(), EKLDebugWindowTypes::BottomBar, ID, BottomBarInterface, NewBottomBarInterface);
+        }
+
+        if (CurrentMode != mImGuiWindow.GetCurrentModeIndex())
+        {
+            const IKLDebugModeInterface* NewModeInterface = _ModeManager.TryGetCurrentInterface(mImGuiWindow.GetCurrentModeIndex());
+            const FName ID = NewModeInterface ? NewModeInterface->GetID() : NAME_None;
+            mOnWindowStatusChange.Broadcast(mImGuiWindow.GetCurrentModeIndex(), EKLDebugWindowTypes::Mode, ID, CurrentModeInterface, NewModeInterface);
+        }
+    }
+
     if (CurrentMode != mImGuiWindow.GetCurrentModeIndex())
     {
         if (CurentModeRequireCanvasDraw)

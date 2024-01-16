@@ -51,6 +51,26 @@ TUniquePtr<IKLDebugContextInterface> FKLDebugFrameworkBottomBarManager::UpdateBo
     return SelectedBottomBar.GetInterface().GetContext(Input);
 }
 
+const IKLDebugBottomBarInterface* FKLDebugFrameworkBottomBarManager::TryGetCurrentInterface(const int32 _Index) const
+{
+    if (mSortedBars.IsValidIndex(_Index))
+    {
+        return &mSortedBars[_Index].GetInterface();
+    }
+
+    return nullptr;
+}
+
+IKLDebugBottomBarInterface* FKLDebugFrameworkBottomBarManager::TryGetCurrentInterfaceMutable(const int32 _Index)
+{
+    if (mSortedBars.IsValidIndex(_Index))
+    {
+        return &mSortedBars[_Index].GetInterfaceMutable();
+    }
+
+    return nullptr;
+}
+
 void FKLDebugFrameworkBottomBarManager::DrawBottomBar(const int32 _CurrentBottomBar, const UWorld& _World, IKLDebugContextInterface* _Context) const
 {
     if (!mSortedBars.IsValidIndex(_CurrentBottomBar))

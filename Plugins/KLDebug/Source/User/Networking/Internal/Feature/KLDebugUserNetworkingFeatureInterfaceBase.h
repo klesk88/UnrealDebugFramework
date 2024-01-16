@@ -27,7 +27,7 @@ public:
 
 protected:
     template <typename FeatureClass, typename InterfaceType>
-    static void constexpr PerformStaticChecksInternal();
+    static void constexpr NetworkPerformStaticChecksInternal();
 };
 
 inline bool IKLDebugUserNetworkingFeatureInterfaceBase::Server_ShouldVerifyCRCBeforeSendData() const
@@ -48,11 +48,10 @@ inline bool IKLDebugUserNetworkingFeatureInterfaceBase::RequireClientTick() cons
 }
 
 template <typename FeatureClass, typename InterfaceType>
-void constexpr IKLDebugUserNetworkingFeatureInterfaceBase::PerformStaticChecksInternal()
+void constexpr IKLDebugUserNetworkingFeatureInterfaceBase::NetworkPerformStaticChecksInternal()
 {
-    static_assert(!std::is_same_v<decltype(&InterfaceType::RequireServerTick), decltype(&FeatureClass::RequireServerTick)>, "feature that extends NetworkingFeatureInterface must also use the macro KL_DEBUG_FEATURE_NETWORK_CLASS in its.h file. Look at comment in the class NetworkingFeatureInterface");
-    static_assert(FeatureClass::template NetworkIsSameFeatureType<FeatureClass>(), "feature that extends NetworkingFeatureInterface has a wrong class type passed to the macro KL_DEBUG_FEATURE_NETWORK_CLASS");
-    static_assert(std::is_same_v<decltype(&InterfaceType::Server_Tick), decltype(&FeatureClass::Server_Tick)> || !std::is_same_v<decltype(&InterfaceType::Server_ShouldTick), decltype(&FeatureClass::Server_ShouldTick)>, "feature that extends NetworkingFeatureInterface and implements Server_Tick must also implement Server_ShouldTick");
+    static_assert(!std::is_same_v<decltype(&InterfaceType::RequireServerTick), decltype(&FeatureClass::RequireServerTick)>, "feature that extends NetworkingFeatureInterface must also use the appropriate macro in its.h file. Look at comment in the class NetworkingFeatureInterface");
+    static_assert(FeatureClass::template NetworkIsSameFeatureType<FeatureClass>(), "feature that extends NetworkingFeatureInterface has a wrong class type passed to the appropriate macro");
     static_assert((std::is_same_v<decltype(&InterfaceType::Server_Tick), decltype(&FeatureClass::Server_Tick)> && std::is_same_v<decltype(&InterfaceType::Server_FeatureUpdate), decltype(&FeatureClass::Server_FeatureUpdate)>) || !std::is_same_v<decltype(&InterfaceType::Client_ReceiveData), decltype(&FeatureClass::Client_ReceiveData)>,
         "feature that extends NetworkingFeatureInterface and implements Server_Tick or Server_FeatureUpdate must also implement Client_ReceiveData so the client can read the data sent by the server");
 }

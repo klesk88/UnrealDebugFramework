@@ -12,6 +12,8 @@
 #include "GenericPlatform/GenericPlatform.h"
 #include "UObject/NameTypes.h"
 
+class IKLDebugNetworkCheckerInterface;
+
 template <typename BottomBarType>
 class TKLDebugBottomBarManagerEntry final : public FKLDebugBottomBarManagerEntryBase
 {
@@ -29,6 +31,11 @@ TKLDebugBottomBarManagerEntry<BottomBarType>::TKLDebugBottomBarManagerEntry(cons
     : FKLDebugBottomBarManagerEntryBase(sizeof(BottomBarType))
 {
     static_assert(TIsDerivedFrom<BottomBarType, IKLDebugBottomBarInterface>::IsDerived, "Class passed must derived from IKLDebugBottomBarInterface");
+    if constexpr (TIsDerivedFrom<BottomBarType, IKLDebugNetworkCheckerInterface>::IsDerived)
+    {
+        BottomBarType::template NetworkPerformStaticChecks<BottomBarType>();
+    }
+
     checkf(BottomBarType::StaticItemType() == _NameToCheck, TEXT("bottom bar [%s] must define macro KL_DEBUG_DERIVED_BOTTOMBAR in its .h file"), *_NameToCheck.ToString());
 }
 

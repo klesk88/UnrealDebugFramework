@@ -26,6 +26,7 @@ public class KLDebugImGuiServer : ModuleRules
                 "KLDebugImGuiUser",
                 "KLDebugNetworkingArbitrer",
                 "KLDebugNetworkingRuntime",
+                "KLDebugUserFramework",
                 "KLDebugUserNetworking",
                 "KLDebugUtils",
 

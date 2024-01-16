@@ -23,6 +23,8 @@ public:
 
     UE_NODISCARD const TArray<FKLDebugFrameworkBottomBarSortedData>& GetSortedBars() const;
     UE_NODISCARD TUniquePtr<IKLDebugContextInterface> UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _PrevIndex, const int32 _NewIndex);
+    UE_NODISCARD const IKLDebugBottomBarInterface* TryGetCurrentInterface(const int32 _Index) const;
+    UE_NODISCARD IKLDebugBottomBarInterface* TryGetCurrentInterfaceMutable(const int32 _Index);
 
 private:
     TArray<FKLDebugFrameworkBottomBarSortedData> mSortedBars;

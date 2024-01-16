@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Internal/Context/User/KLDebugContextUserInterface.h"
+#include "Internal/Networking/KLDebugNetworkCheckerInterface.h"
 #include "Window/BottomBar/KLDebugBottomBarInterfaceMacros.h"
 
 // modules
@@ -20,7 +21,8 @@ class FKLDebugBottomBarDrawInput;
 class UWorld;
 
 #define KL_DEBUG_DERIVED_BOTTOMBAR(ItemType, ParentItemType) \
-    KL_DEBUG_RTTI(ItemType, ParentItemType)
+    KL_DEBUG_RTTI(ItemType, ParentItemType)                  \
+    KL_DEBUG_NETWORK_CHECKER(ItemType, ParentItemType)
 
 /*
  * Base class for any bottom bar to extend
@@ -36,7 +38,7 @@ class UWorld;
  *
  * KL_DEBUG_CREATE_BOTTOMBAR(FClassBottomBar)
  */
-class KLDEBUGUSERFRAMEWORK_API IKLDebugBottomBarInterface : public IKLDebugRTTIInterface, public IKLDebugContextUserInterface
+class KLDEBUGUSERFRAMEWORK_API IKLDebugBottomBarInterface : public IKLDebugRTTIInterface, public IKLDebugContextUserInterface, public IKLDebugNetworkCheckerInterface
 {
 public:
     virtual ~IKLDebugBottomBarInterface();

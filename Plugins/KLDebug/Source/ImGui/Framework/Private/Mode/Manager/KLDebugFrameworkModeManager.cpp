@@ -64,6 +64,26 @@ bool FKLDebugFrameworkModeManager::RequireCanvasDraw(const int32 _CurrentIndex) 
     return SelectedMode.GetInterface().RequiresDrawCanvas();
 }
 
+const IKLDebugModeInterface* FKLDebugFrameworkModeManager::TryGetCurrentInterface(const int32 _Index) const
+{
+    if (mSortedModes.IsValidIndex(_Index))
+    {
+        return &mSortedModes[_Index].GetInterface();
+    }
+
+    return nullptr;
+}
+
+IKLDebugModeInterface* FKLDebugFrameworkModeManager::TryGetCurrentInterfaceMutable(const int32 _Index)
+{
+    if (mSortedModes.IsValidIndex(_Index))
+    {
+        return &mSortedModes[_Index].GetInterfaceMutable();
+    }
+
+    return nullptr;
+}
+
 void FKLDebugFrameworkModeManager::DrawImGui(const int32 _CurrentIndex, const UWorld& _World, IKLDebugContextInterface* _Context, bool& _RenderWindow) const
 {
     if (!mSortedModes.IsValidIndex(_CurrentIndex))

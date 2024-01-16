@@ -22,8 +22,10 @@ public:
     void Shutdown();
     void Update(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
 
+    UE_NODISCARD int32 GetCurrentBottomBarIndex() const;
     UE_NODISCARD int32 GetCurrentModeIndex() const;
     UE_NODISCARD IKLDebugContextInterface* GetCurrentModeContext() const;
+    UE_NODISCARD IKLDebugContextInterface* GetCurrentBottomBarContext() const;
 
 private:
     void DrawImGuiTopBar(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
@@ -53,4 +55,14 @@ inline int32 FKLDebugImGuiWindow::GetCurrentModeIndex() const
 inline IKLDebugContextInterface* FKLDebugImGuiWindow::GetCurrentModeContext() const
 {
     return mModeContext.Get();
+}
+
+inline int32 FKLDebugImGuiWindow::GetCurrentBottomBarIndex() const
+{
+    return mBottomBarInterface;
+}
+
+inline IKLDebugContextInterface* FKLDebugImGuiWindow::GetCurrentBottomBarContext() const
+{
+    return mBottomBarContext.Get();
 }

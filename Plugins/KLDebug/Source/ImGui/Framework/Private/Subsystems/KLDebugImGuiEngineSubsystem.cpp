@@ -102,7 +102,7 @@ void UKLDebugImGuiEngineSubsystem::Update(const UWorld& _World)
         return;
     }
 
-    ImGuiWorldSubsystem->Tick(_World, mFeatureContainersManger);
+    ImGuiWorldSubsystem->Tick(_World, mFeatureContainersManger, mBottomBarManager, mModeManager);
     ImGuiWorldSubsystem->DrawImGui(_World, mFeatureContainersManger, mBottomBarManager, mModeManager);
     ImGuiWorldSubsystem->Render(_World, mFeatureContainersManger);
 }
