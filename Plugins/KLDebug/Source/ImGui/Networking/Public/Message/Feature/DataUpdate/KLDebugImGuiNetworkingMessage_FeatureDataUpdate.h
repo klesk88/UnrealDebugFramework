@@ -22,8 +22,8 @@ class UWorld;
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureDataUpdate final : public TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate>
 {
 public:
+    explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate() = default;
     explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const EKLDebugNetworkReceiveMessageType _ReceiveType, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
-    explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(FArchive& _Archive);
 
     // TKLDebugNetworkingMessage_Base
     UE_NODISCARD bool IsValid() const final;

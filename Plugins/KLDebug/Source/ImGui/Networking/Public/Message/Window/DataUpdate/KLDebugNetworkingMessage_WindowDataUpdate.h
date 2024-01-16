@@ -17,8 +17,8 @@ class FKLDebugNetworkingMessageSerializeInput;
 class KLDEBUGIMGUINETWORKING_API FKLDebugNetworkingMessage_WindowDataUpdate final : public TKLDebugNetworkingMessage_WindowBase<EKLDebugImGuiNetworkMessage::Server_WindowDataUpdate>
 {
 public:
+    explicit FKLDebugNetworkingMessage_WindowDataUpdate() = default;
     explicit FKLDebugNetworkingMessage_WindowDataUpdate(const EKLDebugNetworkReceiveMessageType _ReceiveType, const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType, const TArray<uint8>& _Buffer);
-    explicit FKLDebugNetworkingMessage_WindowDataUpdate(FArchive& _Archive);
 
     UE_NODISCARD TArray<uint8>& Client_GetBufferDataMutable();
     UE_NODISCARD EKLDebugNetworkReceiveMessageType GetReceiveType() const;

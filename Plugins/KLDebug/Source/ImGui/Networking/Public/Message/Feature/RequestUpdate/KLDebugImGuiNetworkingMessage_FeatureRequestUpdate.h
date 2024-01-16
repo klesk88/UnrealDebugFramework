@@ -20,9 +20,9 @@ class FKLDebugNetworkingMessageSerializeInput;
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate final : public TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Client_FeatureRequestUpdate>
 {
 public:
+    explicit FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate() = default;
     explicit FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate(const FName& _FeatureName, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const EImGuiInterfaceType _ContainerType, const TArray<uint8>& _BufferData);
     explicit FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate(const FName& _FeatureName, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType, const TArray<uint8>& _BufferData);
-    explicit FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate(FArchive& _Archive);
 
     UE_NODISCARD const FName& Server_GetFeatureNameID() const;
     UE_NODISCARD const FNetworkGUID& Server_GetFeatureObject() const;

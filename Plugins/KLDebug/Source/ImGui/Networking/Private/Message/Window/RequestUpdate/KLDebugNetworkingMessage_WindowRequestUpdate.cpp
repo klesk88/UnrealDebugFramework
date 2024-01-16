@@ -8,11 +8,6 @@ FKLDebugNetworkingMessage_WindowRequestUpdate::FKLDebugNetworkingMessage_WindowR
 {
 }
 
-FKLDebugNetworkingMessage_WindowRequestUpdate::FKLDebugNetworkingMessage_WindowRequestUpdate(FArchive& _Archive)
-{
-    Serialize(_Archive);
-}
-
 void FKLDebugNetworkingMessage_WindowRequestUpdate::SerializeChild(const FKLDebugNetworkingMessageSerializeInput& _Input)
 {
     TKLDebugNetworkingMessage_WindowBase<EKLDebugImGuiNetworkMessage::Client_WindowRequestUpdate>::SerializeChild(_Input);

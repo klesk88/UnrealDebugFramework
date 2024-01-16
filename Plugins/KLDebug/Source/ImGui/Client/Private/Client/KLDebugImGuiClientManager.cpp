@@ -204,7 +204,8 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
         {
         case EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate:
         {
-            const FKLDebugImGuiNetworkingMessage_FeatureDataUpdate FeatureDataUpdate{ MessageDataReader };
+            FKLDebugImGuiNetworkingMessage_FeatureDataUpdate FeatureDataUpdate;
+            FeatureDataUpdate.Serialize(MessageDataReader);
             if (FeatureDataUpdate.IsValid())
             {
                 GameThread_ReadFeatureUpdate(_World, FeatureDataUpdate, FeatureContainerManager, *ImGuiWorldSubsystem);
@@ -214,7 +215,9 @@ void FKLDebugImGuiClientManager::GameThread_ReadMessages(const UWorld& _World)
         }
         case EKLDebugImGuiNetworkMessage::Server_WindowDataUpdate:
         {
-            FKLDebugNetworkingMessage_WindowDataUpdate FeatureDataUpdate{ MessageDataReader };
+            FKLDebugNetworkingMessage_WindowDataUpdate FeatureDataUpdate;
+            FeatureDataUpdate.Serialize(MessageDataReader);
+
             if (FeatureDataUpdate.IsValid())
             {
                 GameThread_ReadWindowUpdate(_World, *ImGuiWorldSubsystem, FeatureDataUpdate, BottomBarManager, ModeManager);

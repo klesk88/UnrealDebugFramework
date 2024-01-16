@@ -21,7 +21,6 @@ class TKLDebugNetworkingMessage_WindowBase : public TKLDebugImGuiNetworkingMessa
 public:
     explicit TKLDebugNetworkingMessage_WindowBase() = default;
     explicit TKLDebugNetworkingMessage_WindowBase(const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType);
-    explicit TKLDebugNetworkingMessage_WindowBase(FArchive& _Archive);
 
     UE_NODISCARD const FName& GetID() const;
     UE_NODISCARD uint16 GetIndex() const;
@@ -44,12 +43,6 @@ TKLDebugNetworkingMessage_WindowBase<MessageType>::TKLDebugNetworkingMessage_Win
     , mIndex(_NewSelection)
     , mWindowType(_WindowType)
 {
-}
-
-template <EKLDebugImGuiNetworkMessage MessageType>
-TKLDebugNetworkingMessage_WindowBase<MessageType>::TKLDebugNetworkingMessage_WindowBase(FArchive& _Archive)
-{
-    this->Serialize(_Archive);
 }
 
 template <EKLDebugImGuiNetworkMessage MessageType>

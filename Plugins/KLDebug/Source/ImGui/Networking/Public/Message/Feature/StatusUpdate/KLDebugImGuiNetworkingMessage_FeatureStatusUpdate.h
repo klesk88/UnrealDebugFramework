@@ -18,8 +18,8 @@ class FKLDebugNetworkingMessageSerializeInput;
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate final : public TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Client_FeatureStatusUpdate>
 {
 public:
+    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate() = default;
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType);
-    explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(FArchive& _Archive);
 
     // client
     UE_NODISCARD bool Client_IsEqual(const EImGuiInterfaceType _ContainerType, const FNetworkGUID& _NetworkID) const;

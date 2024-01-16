@@ -15,11 +15,6 @@ FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::FKLDebugImGuiNetworkingMessage
 {
 }
 
-FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(FArchive& _Archive)
-{
-    Serialize(_Archive);
-}
-
 void FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::SerializeChild(const FKLDebugNetworkingMessageSerializeInput& _Input)
 {
     FArchive& Archive = _Input.GetArchive();

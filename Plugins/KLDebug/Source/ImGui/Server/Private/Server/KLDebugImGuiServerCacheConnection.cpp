@@ -188,19 +188,22 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickPendingMessages(const UW
         }
         case EKLDebugImGuiNetworkMessage::Client_FeatureRequestUpdate:
         {
-            FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate FeatureRequestUpdate{ MessageDataReader };
+            FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate FeatureRequestUpdate;
+            FeatureRequestUpdate.Serialize(MessageDataReader);
             static_cast<void>(Rcv_HandleClientFeatureRequestUpdate(_FeatureContainer, _World, FeatureRequestUpdate, _ArchiveWriter));
             break;
         }
         case EKLDebugImGuiNetworkMessage::Client_WindowToogle:
         {
-            FKLDebugNetworkingMessage_WindowToogle WindowToogle{ MessageDataReader };
+            FKLDebugNetworkingMessage_WindowToogle WindowToogle;
+            WindowToogle.Serialize(MessageDataReader);
             static_cast<void>(Rcv_WindowToogle(WindowToogle, _World, _ModeManager, _BarManager, _ArchiveWriter));
             break;
         }
         case EKLDebugImGuiNetworkMessage::Client_WindowRequestUpdate:
         {
-            FKLDebugNetworkingMessage_WindowRequestUpdate WindowRequestUpdate{ MessageDataReader };
+            FKLDebugNetworkingMessage_WindowRequestUpdate WindowRequestUpdate;
+            WindowRequestUpdate.Serialize(MessageDataReader);
             static_cast<void>(Rcv_WindowRequestUpdate(_World, WindowRequestUpdate, _ModeManager, _BarManager, _ArchiveWriter));
             break;
         }
@@ -215,7 +218,9 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickPendingMessages(const UW
 
 bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureStatusUpdate(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, const UWorld& _World, FArchive& _Archive)
 {
-    FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate{ _Archive };
+    FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate FeatureStatusUpdate;
+    FeatureStatusUpdate.Serialize(_Archive);
+
     const ENetMode NetMode = _World.GetNetMode();
     if (FeatureStatusUpdate.Server_IsFullyRemoved())
     {

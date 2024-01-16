@@ -13,14 +13,10 @@ FKLDebugNetworkingMessage_WindowToogle::FKLDebugNetworkingMessage_WindowToogle(c
     mWindowType = _WindowType;
 }
 
-FKLDebugNetworkingMessage_WindowToogle::FKLDebugNetworkingMessage_WindowToogle(FArchive& _Archive)
-{
-    // skip the parent call on purpose here as we deal us with the serialization
-    Serialize(_Archive);
-}
-
 void FKLDebugNetworkingMessage_WindowToogle::SerializeChild(const FKLDebugNetworkingMessageSerializeInput& _Input)
 {
+    // skip the parent call on purpose here as we deal us with the serialization
+
     FArchive& Archive = _Input.GetArchive();
 
     Archive << mHasElement;

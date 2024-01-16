@@ -9,9 +9,9 @@ class FArchive;
 class KLDEBUGIMGUINETWORKING_API FKLDebugNetworkingMessage_WindowToogle final : public TKLDebugNetworkingMessage_WindowBase<EKLDebugImGuiNetworkMessage::Client_WindowToogle>
 {
 public:
+    explicit FKLDebugNetworkingMessage_WindowToogle() = default;
     explicit FKLDebugNetworkingMessage_WindowToogle(const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType);
     explicit FKLDebugNetworkingMessage_WindowToogle(const EKLDebugWindowTypes _WindowType);
-    explicit FKLDebugNetworkingMessage_WindowToogle(FArchive& _Archive);
 
     UE_NODISCARD bool Server_GetHasElement() const;
 
