@@ -253,7 +253,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadFeatureUpdate(const UWorld& _Wor
             break;
         }
 
-        const FKLDebugUserNetworkingFeatureSelectableReceiveDataInput RcvDataInput{ _World, *OwnerObject, Input.TryGetFeatureContext(), MemoryReader };
+        const FKLDebugUserNetworkingFeatureSelectableReceiveDataInput RcvDataInput{ _Message.Client_GetReceiveType(), _World, *OwnerObject, Input.TryGetFeatureContext(), MemoryReader };
         NetworkInterface->Client_ReceiveData(RcvDataInput);
         break;
     }
@@ -266,7 +266,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadFeatureUpdate(const UWorld& _Wor
             break;
         }
 
-        const FKLDebugUserNetworkingFeatureUniqueReceiveDataInput RcvDataInput{ _World, Input.TryGetFeatureContext(), MemoryReader };
+        const FKLDebugUserNetworkingFeatureUniqueReceiveDataInput RcvDataInput{ _Message.Client_GetReceiveType(), _World, Input.TryGetFeatureContext(), MemoryReader };
         NetworkInterface->Client_ReceiveData(RcvDataInput);
         break;
     }

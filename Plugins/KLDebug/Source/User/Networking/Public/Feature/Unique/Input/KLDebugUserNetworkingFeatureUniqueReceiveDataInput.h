@@ -9,5 +9,5 @@
 class KLDEBUGUSERNETWORKING_API FKLDebugUserNetworkingFeatureUniqueReceiveDataInput final : public FKLDebugUserNetworkingFeatureReceiveDataInputBase
 {
 public:
-    explicit FKLDebugUserNetworkingFeatureUniqueReceiveDataInput(const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _FeatureContext, FArchive& _Archive);
+    explicit FKLDebugUserNetworkingFeatureUniqueReceiveDataInput(const EKLDebugNetworkReceiveMessageType _ReceiveType, const UWorld& _World, FKLDebugImGuiFeatureContext_Base* _FeatureContext, FArchive& _Archive);
 };

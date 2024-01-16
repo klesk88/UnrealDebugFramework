@@ -7,6 +7,7 @@
 // modules
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 #include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Networking/Public/Message/KLDebugNetworkingMessageTypes.h"
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
@@ -21,7 +22,7 @@ class UWorld;
 class KLDEBUGIMGUINETWORKING_API FKLDebugImGuiNetworkingMessage_FeatureDataUpdate final : public TKLDebugImGuiNetworkingMessage_Base<EKLDebugImGuiNetworkMessage::Server_FeatureDataUpdate>
 {
 public:
-    explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
+    explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const EKLDebugNetworkReceiveMessageType _ReceiveType, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
     explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(FArchive& _Archive);
 
     // TKLDebugNetworkingMessage_Base
@@ -33,6 +34,7 @@ public:
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex Client_GetFeatureIndex() const;
     UE_NODISCARD const FName& Client_GetFeatureNameID() const;
     UE_NODISCARD const TArray<uint8>& Client_GetDataArray() const;
+    UE_NODISCARD EKLDebugNetworkReceiveMessageType Client_GetReceiveType() const;
 
 private:
     // TKLDebugNetworkingMessage_Base
@@ -45,6 +47,7 @@ private:
     FName mFeatureNameID;
     KL::Debug::ImGui::Features::Types::FeatureIndex mFeatureIndex;
     EImGuiInterfaceType mInterfaceType = EImGuiInterfaceType::COUNT;
+    EKLDebugNetworkReceiveMessageType mReceiveType = EKLDebugNetworkReceiveMessageType::RequestUpdate;
 };
 
 inline bool FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::IsValid() const
@@ -70,4 +73,9 @@ inline const FName& FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_Get
 inline const TArray<uint8>& FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetDataArray() const
 {
     return mFeatureData;
+}
+
+inline EKLDebugNetworkReceiveMessageType FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::Client_GetReceiveType() const
+{
+    return mReceiveType;
 }

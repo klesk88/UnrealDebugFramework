@@ -6,11 +6,12 @@
 #include "ImGui/Networking/Public/Helpers/KLDebugImGuiNetworkingHelpers.h"
 #include "Networking/Runtime/Public/Message/KLDebugNetworkingMessageSerializeInput.h"
 
-FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
+FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const EKLDebugNetworkReceiveMessageType _ReceiveType, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
     : mOwnerObjectNetworkID(_NetworkID)
     , mFeatureNameID(_FeatureNameID)
     , mFeatureIndex(_FeatureIndex)
     , mInterfaceType(_InterfaceType)
+    , mReceiveType(_ReceiveType)
 {
 }
 
@@ -23,6 +24,8 @@ void FKLDebugImGuiNetworkingMessage_FeatureDataUpdate::SerializeChild(const FKLD
 {
     FArchive& Archive = _Input.GetArchive();
     Archive << mInterfaceType;
+    Archive << mReceiveType;
+
     switch (mInterfaceType)
     {
     case EImGuiInterfaceType::SELECTABLE:

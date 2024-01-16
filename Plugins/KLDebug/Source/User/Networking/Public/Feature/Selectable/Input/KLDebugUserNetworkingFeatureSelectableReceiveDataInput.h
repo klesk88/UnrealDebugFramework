@@ -11,7 +11,7 @@ class UObject;
 class KLDEBUGUSERNETWORKING_API FKLDebugUserNetworkingFeatureSelectableReceiveDataInput final : public FKLDebugUserNetworkingFeatureReceiveDataInputBase
 {
 public:
-    explicit FKLDebugUserNetworkingFeatureSelectableReceiveDataInput(const UWorld& _World, UObject& _Object, FKLDebugImGuiFeatureContext_Base* _FeatureContext, FArchive& _Archive);
+    explicit FKLDebugUserNetworkingFeatureSelectableReceiveDataInput(const EKLDebugNetworkReceiveMessageType _ReceiveType, const UWorld& _World, UObject& _Object, FKLDebugImGuiFeatureContext_Base* _FeatureContext, FArchive& _Archive);
 
     UE_NODISCARD UObject& GetObjectMutable() const;
     UE_NODISCARD const UObject& GetObject() const;

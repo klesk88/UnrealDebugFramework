@@ -84,7 +84,7 @@ namespace KL::Debug::Networking::ImGuiServer
         _CompressFeatureData.Reset();
         _Data.Reset();
         FMemoryWriter FinalData{ _Data };
-        FKLDebugImGuiNetworkingMessage_FeatureDataUpdate Message{ _NetworkID, _InterfaceType, _FeatureInterface.GetFeatureNameID(), _ClientFeatureIndex };
+        FKLDebugImGuiNetworkingMessage_FeatureDataUpdate Message{ EKLDebugNetworkReceiveMessageType::ServerTick, _NetworkID, _InterfaceType, _FeatureInterface.GetFeatureNameID(), _ClientFeatureIndex };
         Message.Serialize(FinalData);
         FinalData.Serialize(_TempFeatureData.GetData(), _TempFeatureData.Num());
 
@@ -404,7 +404,7 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureRequestUpdate(co
     mTempCompressedData.Reset();
     mTempData.Reset();
     FMemoryWriter FinalData{ mTempData };
-    FKLDebugImGuiNetworkingMessage_FeatureDataUpdate Message{ NetworkID, _Message.Server_GetContainerType(), _Message.Server_GetFeatureNameID(), _Message.Server_GetFeatureIndex() };
+    FKLDebugImGuiNetworkingMessage_FeatureDataUpdate Message{ EKLDebugNetworkReceiveMessageType::RequestUpdate, NetworkID, _Message.Server_GetContainerType(), _Message.Server_GetFeatureNameID(), _Message.Server_GetFeatureIndex() };
     Message.Serialize(FinalData);
     FinalData.Serialize(mTempFeatureData.GetData(), mTempFeatureData.Num());
     KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _ArchiveWriter);
