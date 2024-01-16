@@ -2,25 +2,23 @@
 
 #pragma once
 
+#include "Message/KLDebugNetworkingMessageTypes.h"
 #include "Window/Input/KLDebugNetworkingWindowInputBase.h"
-
-// modules
-#include "ImGui/Networking/Public/Message/KLDebugImGuiNetworkingMessageTypes.h"
 
 /*
  */
 class KLDEBUGUSERNETWORKING_API FKLDebugNetworkingWindowReceiveDataInput final : public FKLDebugNetworkingWindowInputBase
 {
 public:
-    explicit FKLDebugNetworkingWindowReceiveDataInput(const EKLDebugImGuiNetworkReceiveMessageType _ReceiveMessageType, const UWorld& _World, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive);
+    explicit FKLDebugNetworkingWindowReceiveDataInput(const EKLDebugNetworkReceiveMessageType _ReceiveMessageType, const UWorld& _World, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive);
 
-    UE_NODISCARD EKLDebugImGuiNetworkReceiveMessageType GetReceiveMessageType() const;
+    UE_NODISCARD EKLDebugNetworkReceiveMessageType GetReceiveMessageType() const;
 
 private:
-    EKLDebugImGuiNetworkReceiveMessageType mReceiveMessageType = EKLDebugImGuiNetworkReceiveMessageType::RequestUpdate;
+    EKLDebugNetworkReceiveMessageType mReceiveMessageType = EKLDebugNetworkReceiveMessageType::RequestUpdate;
 };
 
-inline EKLDebugImGuiNetworkReceiveMessageType FKLDebugNetworkingWindowReceiveDataInput::GetReceiveMessageType() const
+inline EKLDebugNetworkReceiveMessageType FKLDebugNetworkingWindowReceiveDataInput::GetReceiveMessageType() const
 {
     return mReceiveMessageType;
 }

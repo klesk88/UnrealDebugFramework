@@ -2,7 +2,7 @@
 
 #include "Window/Input/KLDebugNetworkingWindowReceiveDataInput.h"
 
-FKLDebugNetworkingWindowReceiveDataInput::FKLDebugNetworkingWindowReceiveDataInput(const EKLDebugImGuiNetworkReceiveMessageType _ReceiveMessageType, const UWorld& _World, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive)
+FKLDebugNetworkingWindowReceiveDataInput::FKLDebugNetworkingWindowReceiveDataInput(const EKLDebugNetworkReceiveMessageType _ReceiveMessageType, const UWorld& _World, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive)
     : FKLDebugNetworkingWindowInputBase(_World, _FeatureContext, _Archive)
     , mReceiveMessageType(_ReceiveMessageType)
 {

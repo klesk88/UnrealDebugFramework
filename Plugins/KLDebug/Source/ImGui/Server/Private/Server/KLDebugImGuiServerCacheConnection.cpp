@@ -546,7 +546,7 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_WindowRequestUpdate(const UWorld& _
     mTempCompressedData.Reset();
     mTempData.Reset();
     FMemoryWriter FinalData{ mTempData };
-    FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugImGuiNetworkReceiveMessageType::RequestUpdate, _Message.GetIndex(), _Message.GetID(), _Message.GetWindowType(), mTempFeatureData };
+    FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugNetworkReceiveMessageType::RequestUpdate, _Message.GetIndex(), _Message.GetID(), _Message.GetWindowType(), mTempFeatureData };
     Message.Serialize(FinalData);
     KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _Archive);
 
@@ -688,7 +688,7 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickWindow(const UWorld& _Wo
                 mTempData.Reset();
                 FMemoryWriter FinalData{ mTempData };
 
-                FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugImGuiNetworkReceiveMessageType::ServerTick, static_cast<uint16>(mCurrentMode), Interface->GetID(), EKLDebugWindowTypes::Mode, mTempFeatureData };
+                FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugNetworkReceiveMessageType::ServerTick, static_cast<uint16>(mCurrentMode), Interface->GetID(), EKLDebugWindowTypes::Mode, mTempFeatureData };
                 Message.Serialize(FinalData);
                 KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _Archive);
             }
@@ -712,7 +712,7 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickWindow(const UWorld& _Wo
                 mTempData.Reset();
                 FMemoryWriter FinalData{ mTempData };
 
-                FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugImGuiNetworkReceiveMessageType::ServerTick, static_cast<uint16>(mCurrentBottomBar), Interface->GetID(), EKLDebugWindowTypes::BottomBar, mTempFeatureData };
+                FKLDebugNetworkingMessage_WindowDataUpdate Message{ EKLDebugNetworkReceiveMessageType::ServerTick, static_cast<uint16>(mCurrentBottomBar), Interface->GetID(), EKLDebugWindowTypes::BottomBar, mTempFeatureData };
                 Message.Serialize(FinalData);
                 KL::Debug::Networking::Message::PrepareMessageToSend_SplitIfRequired(Message, mTempData, mTempCompressedData, _Archive);
             }

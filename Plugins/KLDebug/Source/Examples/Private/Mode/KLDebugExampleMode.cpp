@@ -174,10 +174,10 @@ void FKLDebugExampleMode::Client_ReceiveData(const FKLDebugNetworkingWindowRecei
     FDebugExampleModeClientContext& Context = _Input.GetContextMutable<FDebugExampleModeClientContext>();
     switch (_Input.GetReceiveMessageType())
     {
-    case EKLDebugImGuiNetworkReceiveMessageType::RequestUpdate:
+    case EKLDebugNetworkReceiveMessageType::RequestUpdate:
         _Input.GetArchiveMutable() << Context.mRequestServerTileCount;
         break;
-    case EKLDebugImGuiNetworkReceiveMessageType::ServerTick:
+    case EKLDebugNetworkReceiveMessageType::ServerTick:
         _Input.GetArchiveMutable() << Context.mSyncedCurrentTileX;
         _Input.GetArchiveMutable() << Context.mSyncedCurrentTileY;
         break;

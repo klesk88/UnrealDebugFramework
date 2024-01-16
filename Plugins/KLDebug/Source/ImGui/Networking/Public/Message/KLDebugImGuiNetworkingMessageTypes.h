@@ -3,7 +3,7 @@
 #pragma once
 
 // modules
-#include "Networking/runtime/Public/Message/KLDebugNetworkingMessageDefinitions.h"
+#include "Networking/Runtime/Public/Message/KLDebugNetworkingMessageDefinitions.h"
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
@@ -28,10 +28,4 @@ enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkMessage : uint8
     Server_WindowDataUpdate,
 
     Count
-};
-
-enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkReceiveMessageType : uint8
-{
-    ServerTick = 0,
-    RequestUpdate
 };
