@@ -240,6 +240,11 @@ void FKLDebugImGuiClientManager::GameThread_ReadFeatureUpdate(const UWorld& _Wor
     FKLDebugImGuiGatherFeatureInput Input{ _Message.Client_GetFeatureIndex(), ImGuiInterfaceType, OwnerObject, _FeatureContainer };
     _ImGuiSubsystem.TryGatherFeatureAndContext(Input);
     IKLDebugFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
+    if (!FeatureInterface)
+    {
+        // client has close the feature
+        return;
+    }
 
     const TArray<uint8>& FeatureDataRcv = _Message.Client_GetDataArray();
     FMemoryReader MemoryReader{ FeatureDataRcv };
