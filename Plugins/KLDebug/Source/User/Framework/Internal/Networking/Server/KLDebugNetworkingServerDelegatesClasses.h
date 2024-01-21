@@ -1,16 +1,14 @@
 #pragma once
 
 // engine
-#include "Delegates/DelegateCombinations.h"
 #include "GenericPlatform/GenericPlatform.h"
-#include "Misc/Optional.h"
 
 namespace KL::Debug::Server::Delegates
 {
     //////////////////////////////////////////////////////
     /// classes
 
-    class KLDEBUGIMGUISERVER_API FServerSocketPortRangeDelegateData
+    class KLDEBUGUSERFRAMEWORK_API FServerSocketPortRangeDelegateData
     {
     public:
         explicit FServerSocketPortRangeDelegateData(const uint32 _StartRange, const uint32 _EndRange);
@@ -32,15 +30,5 @@ namespace KL::Debug::Server::Delegates
     {
         return mEndRange;
     }
-
-    //////////////////////////////////////////////////////
-    /// methods
-
-    DECLARE_DELEGATE_RetVal(FServerSocketPortRangeDelegateData, FOnGetDebugServerSocketPortRange);
-
-    KLDEBUGIMGUISERVER_API void BindOnGetDebugServerSocketPortRange(const FOnGetDebugServerSocketPortRange& _Delegate);
-    KLDEBUGIMGUISERVER_API void UnbindOnGetDebugServerSocketPortRange();
-    // without _API on purpose as it should be called just internally this module
-    UE_NODISCARD TOptional<FServerSocketPortRangeDelegateData> BroadcastOnGetDebugServerSocketPortRange();
 
 }    // namespace KL::Debug::Server::Delegates

@@ -4,7 +4,7 @@
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
 #include "Client/KLDebugImGuiClientWorldCacheConnection.h"
-#include "Delegates/KLDebugImGuiClientDelegates.h"
+#include "Networking/Client/KLDebugNetworkingClientDelegates.h"
 
 // modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
@@ -75,7 +75,7 @@ void FKLDebugImGuiClientServerPortGetterUser::ParallelTick(TArray<FKLDebugImGuiC
         return;
     }
 
-    const TOptional<uint32> Result = KL::Debug::Client::Delegates::BroadcastGetDebugServerSocketPort();
+    const TOptional<uint32> Result = KL::Debug::Client::Delegates::Internal::BroadcastGetDebugServerSocketPort();
     if (!Result.IsSet())
     {
         // the user can do its own logic to pass us the port which can take time (for example communicating with a remote

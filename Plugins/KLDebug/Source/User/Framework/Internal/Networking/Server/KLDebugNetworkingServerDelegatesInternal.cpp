@@ -1,6 +1,8 @@
-#include "Delegates/KLDebugImGuiServerDelegates.h"
+#include "Internal/Networking/Server/KLDebugNetworkingServerDelegatesInternal.h"
 
-namespace KL::Debug::Server::Delegates
+#include "Networking/Server/KLDebugNetworkingServerDelegates.h"
+
+namespace KL::Debug::Server::Delegates::Internal
 {
     /////////////////////////////////////////////////////////////////////////
     /// private
@@ -22,9 +24,6 @@ namespace KL::Debug::Server::Delegates
         OnGetDebugServerSocketPortRangeDelegate.Unbind();
     }
 
-    // without _API on purpose as it should be called just internally this module
-    void BroadcastOnGetDebugServerSocketPortRange(uint32& /*_StartRange*/, uint32& /*_EndRange*/);
-
     TOptional<FServerSocketPortRangeDelegateData> BroadcastOnGetDebugServerSocketPortRange()
     {
         if (OnGetDebugServerSocketPortRangeDelegate.IsBound())
@@ -35,10 +34,4 @@ namespace KL::Debug::Server::Delegates
         return TOptional<FServerSocketPortRangeDelegateData>();
     }
 
-    FServerSocketPortRangeDelegateData::FServerSocketPortRangeDelegateData(const uint32 _StartRange, const uint32 _EndRange)
-        : mStartRange(_StartRange)
-        , mEndRange(_EndRange)
-    {
-    }
-
-}    // namespace KL::Debug::Server::Delegates
+}    // namespace KL::Debug::Server::Delegates::Internal

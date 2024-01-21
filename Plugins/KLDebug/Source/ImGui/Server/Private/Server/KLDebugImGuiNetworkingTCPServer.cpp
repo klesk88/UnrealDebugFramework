@@ -2,13 +2,14 @@
 
 #include "Server/KLDebugImGuiNetworkingTCPServer.h"
 
-#include "Delegates/KLDebugImGuiServerDelegates.h"
 #include "Server/KLDebugImGuiTCPServerGameThreadContext.h"
 #include "Subsystem/Engine/KLDebugImGuiServerSubsystem_Engine.h"
 
 // modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
+#include "User/Framework/Internal/Networking/Server/KLDebugNetworkingServerDelegatesInternal.h"
+#include "User/Framework/Public/Networking/Server/KLDebugNetworkingServerDelegates.h"
 
 // engine
 #include "Common/TcpSocketBuilder.h"
@@ -131,7 +132,7 @@ void FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds(const FKLDebugImG
 
     uint32 StartWorldPort = Settings.Server_GetStartPortRange();
     uint32 EndWorldPort = Settings.Server_GetEndPortRange();
-    const TOptional<KL::Debug::Server::Delegates::FServerSocketPortRangeDelegateData> OverridePortsData = KL::Debug::Server::Delegates::BroadcastOnGetDebugServerSocketPortRange();
+    const TOptional<KL::Debug::Server::Delegates::FServerSocketPortRangeDelegateData> OverridePortsData = KL::Debug::Server::Delegates::Internal::BroadcastOnGetDebugServerSocketPortRange();
     if (OverridePortsData.IsSet())
     {
         UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiNetworkingTCPServer::GameThread_AddNewWorlds>> Overriding debug ports range new start [%u] new end [%u]"), StartWorldPort, EndWorldPort);
@@ -200,10 +201,10 @@ FSocket* FKLDebugImGuiNetworkingTCPServer::GetNewWorldSocket(const uint32 _Start
         _DebugPort = CurrentPort++;
         const FIPv4Endpoint Endpoint(FIPv4Address::Any, static_cast<int32>(_DebugPort));
         NewSocket = FTcpSocketBuilder(TEXT("ClientListenerSocket"))
-                    .AsNonBlocking()
-                    .BoundToEndpoint(Endpoint)
-                    .Listening(static_cast<int32>(_Settings.Server_GetMaxConnectionBacklog()))
-                    .Build();
+                        .AsNonBlocking()
+                        .BoundToEndpoint(Endpoint)
+                        .Listening(static_cast<int32>(_Settings.Server_GetMaxConnectionBacklog()))
+                        .Build();
     }
 
     if (!NewSocket)

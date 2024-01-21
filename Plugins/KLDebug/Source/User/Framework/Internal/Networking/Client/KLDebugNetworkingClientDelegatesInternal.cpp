@@ -1,8 +1,6 @@
-// Distributed under the MIT License (MIT) (see accompanying LICENSE file)
+#include "Internal/Networking/Client/KLDebugNetworkingClientDelegatesInternal.h"
 
-#include "Delegates/KLDebugImGuiClientDelegates.h"
-
-namespace KL::Debug::Client::Delegates
+namespace KL::Debug::Client::Delegates::Internal
 {
     //////////////////////////////////////////////////////
     /// private
@@ -39,4 +37,4 @@ namespace KL::Debug::Client::Delegates
         return GetServerSocketPortDelegate.IsBound();
     }
 
-}    // namespace KL::Debug::Client::Delegates
+}    // namespace KL::Debug::Client::Delegates::Internal

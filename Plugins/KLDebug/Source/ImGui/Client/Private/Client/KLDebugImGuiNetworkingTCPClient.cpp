@@ -3,7 +3,6 @@
 #include "Client/KLDebugImGuiNetworkingTCPClient.h"
 
 #include "Client/KLDebugImGuiClientGameThreadContext.h"
-#include "Delegates/KLDebugImGuiClientDelegates.h"
 #include "ServerPortGetter/Arbitrer/KLDebugImGuiClientServerPortGetterArbitrer.h"
 #include "ServerPortGetter/User/KLDebugImGuiClientServerPortGetterUser.h"
 #include "Subsystem/Engine/KLDebugImGuiClientSubsystem_Engine.h"
@@ -11,6 +10,8 @@
 // modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
+#include "User/Framework/Internal/Networking/Client/KLDebugNetworkingClientDelegatesInternal.h"
+#include "User/Framework/Public/Networking/Client/KLDebugNetworkingClientDelegates.h"
 
 // engine
 #include "Common/TcpSocketBuilder.h"
@@ -124,7 +125,7 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter(const FKL
         return;
     }
 
-    if (KL::Debug::Client::Delegates::IsGetDebugServerSocketPortBound())
+    if (KL::Debug::Client::Delegates::Internal::IsGetDebugServerSocketPortBound())
     {
         UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiNetworkingTCPClient::GameThread_InitServerPortGetter>> using user server port getter"));
         mServerPortGetter = MakeUnique<FKLDebugImGuiClientServerPortGetterUser>();
