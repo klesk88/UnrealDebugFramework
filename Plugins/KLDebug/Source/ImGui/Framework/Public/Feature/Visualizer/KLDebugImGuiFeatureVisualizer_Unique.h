@@ -8,12 +8,12 @@
 #include "Containers/UnrealString.h"
 
 class FKLDebugImGuiFeatureContainerBase;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiFeatureVisualizerImGuiContext;
 class FKLDebugImGuiFeatureVisualizerRenderContext;
 class FKLDebugImGuiFeatureVisualizerIterator;
-class IKLDebugImGuiFeatureInterface_Unique;
+class IKLDebugFeatureInterface_Unique;
 class UCanvas;
 class UFont;
 class UPrimitiveComponent;

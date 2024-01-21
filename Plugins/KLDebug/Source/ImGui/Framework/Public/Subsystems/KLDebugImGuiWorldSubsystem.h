@@ -10,7 +10,7 @@
 #include "Window/KLDebugImGuiWindow.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -36,7 +36,7 @@ class FKLDebugFrameworkModeManager;
 class FKLDebugImGuiFeatureStatusUpdateData;
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiGatherFeatureInput;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 class UCanvas;
 class UKLDebugFrameworkRenderingComponent;
 class UPrimitiveComponent;

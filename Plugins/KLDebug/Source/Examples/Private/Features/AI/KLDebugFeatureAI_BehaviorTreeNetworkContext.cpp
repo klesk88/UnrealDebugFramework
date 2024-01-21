@@ -3,7 +3,7 @@
 #include "Features/AI/KLDebugFeatureAI_BehaviorTreeNetworkContext.h"
 
 // modules
-#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
 
 // engine
 #include "AIController.h"

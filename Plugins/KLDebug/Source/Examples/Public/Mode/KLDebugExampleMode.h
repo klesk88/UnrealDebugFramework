@@ -5,7 +5,7 @@
 // modules
 #include "User/Framework/Public/Context/KLDebugContextInterface.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterface.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowInterface.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowInterface.h"
 
 // engine
 #include "Containers/Array.h"
@@ -24,6 +24,7 @@ public:
 class KLDEBUGEXAMPLES_API FDebugExampleModeServerContext final : public IKLDebugContextInterface, public IKLDebugNetworkingWindowInterface
 {
     KL_DEBUG_DERIVED_CONTEXT(FDebugExampleModeServerContext, IKLDebugContextInterface)
+    KL_DEBUG_NETWORK_INTERFACE_WINDOW(FKLDebugExampleBottomBar)
 
 public:
     int32 mSyncedCurrentTileX = 0;
@@ -33,7 +34,7 @@ public:
 class KLDEBUGEXAMPLES_API FKLDebugExampleMode final : public IKLDebugModeInterface, public IKLDebugNetworkingWindowInterface
 {
     KL_DEBUG_DERIVED_MODE(FKLDebugExampleMode, IKLDebugModeInterface)
-    KL_DEBUG_NETWORK_WINDOW_CLASS(FKLDebugExampleMode)
+    KL_DEBUG_NETWORK_INTERFACE_WINDOW(FKLDebugExampleMode)
 
 public:
     // IKLDebugModeInterface

@@ -3,16 +3,13 @@
 #pragma once
 
 #include "Internal/BottomBar/StaticMemory/KLDebugBottomBarManagerEntryBase.h"
+#include "Internal/Networking/KLDebugNetworkingBaseInterface.h"
+#include "Internal/StaticMemory/KLDebugUtilsStaticMemoryDefines.h"
 #include "Window/BottomBar/KLDebugBottomBarInterface.h"
-
-// modules
-#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryDefines.h"
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
 #include "UObject/NameTypes.h"
-
-class IKLDebugNetworkCheckerInterface;
 
 template <typename BottomBarType>
 class TKLDebugBottomBarManagerEntry final : public FKLDebugBottomBarManagerEntryBase
@@ -31,9 +28,9 @@ TKLDebugBottomBarManagerEntry<BottomBarType>::TKLDebugBottomBarManagerEntry(cons
     : FKLDebugBottomBarManagerEntryBase(sizeof(BottomBarType))
 {
     static_assert(TIsDerivedFrom<BottomBarType, IKLDebugBottomBarInterface>::IsDerived, "Class passed must derived from IKLDebugBottomBarInterface");
-    if constexpr (TIsDerivedFrom<BottomBarType, IKLDebugNetworkCheckerInterface>::IsDerived)
+    if constexpr (TIsDerivedFrom<BottomBarType, IKLDebugNetworkingBaseInterface>::IsDerived)
     {
-        BottomBarType::template NetworkPerformStaticChecks<BottomBarType>();
+        BottomBarType::template NetworkStaticChecks<BottomBarType>();
     }
 
     checkf(BottomBarType::StaticItemType() == _NameToCheck, TEXT("bottom bar [%s] must define macro KL_DEBUG_DERIVED_BOTTOMBAR in its .h file"), *_NameToCheck.ToString());

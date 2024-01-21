@@ -9,13 +9,13 @@
 #include "CoreMinimal.h"
 #include "Templates/UniquePtr.h"
 
-class FKLDebugImGuiFeatureContext_Base;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugContextInterface;
+class IKLDebugFeatureInterfaceBase;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerEntry
 {
 public:
-    explicit FKLDebugImGuiFeatureVisualizerEntry(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeaturesIndex, const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID, TUniquePtr<FKLDebugImGuiFeatureContext_Base>&& _FeatureContext);
+    explicit FKLDebugImGuiFeatureVisualizerEntry(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeaturesIndex, const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID, TUniquePtr<IKLDebugContextInterface>&& _FeatureContext);
     ~FKLDebugImGuiFeatureVisualizerEntry();
 
     UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
@@ -26,10 +26,10 @@ public:
     UE_NODISCARD bool& GetIsEnableRef();
     UE_NODISCARD bool IsEnable() const;
 
-    UE_NODISCARD FKLDebugImGuiFeatureContext_Base* TryGetFeatureContextMutable() const;
+    UE_NODISCARD IKLDebugContextInterface* TryGetFeatureContextMutable() const;
 
 protected:
-    TUniquePtr<FKLDebugImGuiFeatureContext_Base> mFeatureContext;
+    TUniquePtr<IKLDebugContextInterface> mFeatureContext;
     KL::Debug::ImGui::Features::Types::FeatureIndex mFeatureIndex;
     KL::Debug::ImGui::Features::VisualizerTree::NodeDataID mNodeDataID = 0;
     bool mIsEnable = true;

@@ -3,9 +3,7 @@
 #pragma once
 
 #include "BottomBar/StaticMemory/KLDebugBottomBarManagerEntryBase.h"
-
-// modules
-#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryManager.h"
+#include "Internal/StaticMemory/KLDebugUtilsStaticMemoryManager.h"
 
 class KLDEBUGUSERFRAMEWORK_API FKLDebugBottomBarManager final : public TKLDebugUtilsStaticMemoryManager<FKLDebugBottomBarManager, FKLDebugBottomBarManagerEntryBase>
 {

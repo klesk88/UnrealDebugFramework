@@ -3,7 +3,7 @@
 #pragma once
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
+#include "User/Framework/Public/Context/KLDebugContextInterface.h"
 
 // engine
 #include "Containers/Array.h"
@@ -17,10 +17,10 @@ class UBehaviorTreeComponent;
 class UBrainComponent;
 class UObject;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTreeNetworkContext final : public FKLDebugImGuiFeatureContext_Base
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTreeNetworkContext final : public IKLDebugContextInterface
 {
-    DERIVED_KL_DEBUG_FEATURE_CONTEXT_CLASS(FKLDebugFeatureAI_BehaviorTreeNetworkContext, FKLDebugImGuiFeatureContext_Base)
-
+    KL_DEBUG_DERIVED_CONTEXT(FKLDebugFeatureAI_BehaviorTreeNetworkContext, IKLDebugContextInterface)
+    
 public:
     UE_NODISCARD bool ShouldGatherData(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const;
 

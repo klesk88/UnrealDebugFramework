@@ -2,11 +2,11 @@
 
 #include "Feature/Container/Selectable/KLDebugImGuiFeatureContainer_Selectable.h"
 
-#include "Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
+#include "Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
 
-bool FKLDebugImGuiFeatureContainer_Selectable::IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const
+bool FKLDebugImGuiFeatureContainer_Selectable::IsCorrectContainerForFeature(const IKLDebugFeatureInterfaceBase& _Feature) const
 {
-    return _Feature.IsDerivedFrom<IKLDebugImGuiFeatureInterface_Selectable>();
+    return _Feature.IsDerivedFrom<IKLDebugFeatureInterface_Selectable>();
 }
 
 void FKLDebugImGuiFeatureContainer_Selectable::FinishGenerateFeatureChild()

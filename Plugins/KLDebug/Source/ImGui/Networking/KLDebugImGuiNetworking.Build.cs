@@ -18,9 +18,7 @@ public class KLDebugImGuiNetworking : ModuleRules
             new string[]
             {
                 "KLDebugImGuiFramework",
-                "KLDebugImGuiUser",
                 "KLDebugNetworkingRuntime",
-                "KLDebugUserNetworking",
                 "KLDebugUserFramework",
                 "KLDebugUtils",
 

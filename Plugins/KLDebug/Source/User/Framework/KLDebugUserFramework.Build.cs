@@ -25,8 +25,10 @@ public class KLDebugUserFramework : ModuleRules
             new string[]
             {
                 "KLDebugUtils",
-            
+                "ImGuiThirdParty",
+
                 //engine
+                "Engine", //for FDebugDrawDelegateHelper
                 "GameplayDebugger" //for FGameplayDebuggerCanvasContext
             }
         );

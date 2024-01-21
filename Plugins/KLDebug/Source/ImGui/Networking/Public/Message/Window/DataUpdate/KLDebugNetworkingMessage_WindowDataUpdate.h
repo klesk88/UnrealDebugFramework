@@ -5,7 +5,7 @@
 #include "Message/Window/KLDebugNetworkingMessage_WindowBase.h"
 
 // modules
-#include "User/Networking/Public/Message/KLDebugNetworkingMessageTypes.h"
+#include "User/Framework/Public/Networking/Message/KLDebugNetworkingMessageTypes.h"
 
 // engine
 #include "Containers/Array.h"

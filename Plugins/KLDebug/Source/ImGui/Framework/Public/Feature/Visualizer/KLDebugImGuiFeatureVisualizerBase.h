@@ -14,8 +14,8 @@
 #include "Rendering/KLDebugFrameworkRenderingDefinitions.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -28,7 +28,7 @@
 class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiFeatureVisualizerRenderContext;
 class FKLDebugFeatureDrawCanvasInput_Base;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 class UCanvas;
 class UFont;
 class UObject;
@@ -97,7 +97,7 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
     FKLDebugImGuiFeatureVisualizerIterator Iterator = FeatureContainer.GetFeatureVisualizerIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
-        const IKLDebugImGuiFeatureInterfaceBase& InterfaceConst = Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+        const IKLDebugFeatureInterfaceBase& InterfaceConst = Iterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterfaceBase>();
         if (!InterfaceConst.RequireDrawImGui())
         {
             continue;
@@ -108,7 +108,7 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
             FeaturesToRemoveIdx.Emplace(Iterator.GetIteratorIndex());
             FeaturesToRemove.Emplace(Iterator.GetFeatureDataIndex());
 
-            IKLDebugImGuiFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterfaceBase>();
+            IKLDebugFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterfaceBase>();
             KL::Debug::Feature::Helpers::OnFeatureUnselected(_Context.GetWorld(), _OwnerObject, Interface);
         }
     }

@@ -10,8 +10,8 @@
 #include "ImGui/Framework/Public/Subsystems/KLDebugImGuiEngineSubsystem.h"
 #include "ImGui/Networking/Public/Commands/Manager/KLDebugNetworkingCommandManager.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 #include "Networking/Arbitrer/Public/Luncher/KLDebugNetworkingArbitrerLuncher.h"
 
 // engine
@@ -129,7 +129,7 @@ void UKLDebugImGuiServerSubsystem_Engine::CookedOnly_InitFeatureMapIfNeeded()
         FKLDebugImGuiFeaturesConstIterator FeatureIterator = Container.GetFeaturesConstIterator();
         for (; FeatureIterator; ++FeatureIterator)
         {
-            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeatureIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+            const IKLDebugFeatureInterfaceBase& FeatureInterface = FeatureIterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterfaceBase>();
             ensureMsgf(mCookOnly_FeatureToContainerIndex.Find(FeatureInterface.GetImGuiPath()) == nullptr, TEXT("colliding key found"));
             mCookOnly_FeatureToContainerIndex.Emplace(FeatureInterface.GetImGuiPath(), FeatureIterator.GetFeatureDataIndex());
         }

@@ -2,11 +2,9 @@
 
 #pragma once
 
+#include "Context/KLDebugContextInterface.h"
+#include "Internal/StaticMemory/KLDebugUtilsStaticMemoryFactory.h"
 #include "Mode/Manager/KLDebugFrameworkModeSortedData.h"
-
-// modules
-#include "User/Framework/Public/Context/KLDebugContextInterface.h"
-#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryFactory.h"
 
 // engine
 #include "Templates/UniquePtr.h"

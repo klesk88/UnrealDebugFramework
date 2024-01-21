@@ -5,7 +5,7 @@
 #include "Features/Engine/Picker/KLDebugUtilsPicker.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 
 // engine
 #include "UObject/WeakObjectPtr.h"
@@ -14,10 +14,10 @@
 class AActor;
 class UWorld;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureEngine_Picker : public IKLDebugImGuiFeatureInterface_Unique
+class KLDEBUGEXAMPLES_API FKLDebugFeatureEngine_Picker : public IKLDebugFeatureInterface_Unique
 {
 public:
-    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureEngine_Picker, IKLDebugImGuiFeatureInterface_Unique)
+    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureEngine_Picker, IKLDebugFeatureInterface_Unique)
 
 public:
     FKLDebugFeatureEngine_Picker();
@@ -27,7 +27,7 @@ private:
     UE_NODISCARD bool DoesSupportWorld(const UWorld& _World) const final;
     UE_NODISCARD const FName& GetImGuiPath() const;
     UE_NODISCARD const FString& GetWindowName() const final;
-    void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Unique& _Input) final;
+    void DrawImGuiChild(FKLDebugFeatureImGuiInput_Unique& _Input) final;
     // IKLDebugImGuiFeatureInterface_EngineSubsystem
 
     void HandlePickerButton(const UWorld& _World);

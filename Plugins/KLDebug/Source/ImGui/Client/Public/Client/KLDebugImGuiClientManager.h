@@ -27,7 +27,7 @@ class FKLDebugImGuiFeaturesTypesContainerManager;
 class FKLDebugImGuiNetworkingMessage_FeatureDataUpdate;
 class FKLDebugNetworkingMessage_WindowDataUpdate;
 class FKLDebugNetworkingPendingMessage;
-class IKLDebugNetworkCheckerInterface;
+class IKLDebugNetworkingGetterInterface;
 class UKLDebugImGuiWorldSubsystem;
 class UWorld;
 
@@ -53,7 +53,7 @@ private:
 
     void OnFeatureUpdate(const FKLDebugImGuiFeatureStatusUpdateData& _FeatureUpdateData);
     void OnFeaturesTick(const FKLDebugImGuiFeaturesTickInput& _Input);
-    void OnWindowStatusChange(const int32 _WindowIndex, const EKLDebugWindowTypes _WindowType, const FName& _WindowID, const IKLDebugNetworkCheckerInterface* _PrevNetworkInterfaceChecker, const IKLDebugNetworkCheckerInterface* _NetworkInterfaceChecker);
+    void OnWindowStatusChange(const int32 _WindowIndex, const EKLDebugWindowTypes _WindowType, const FName& _WindowID, const IKLDebugNetworkingGetterInterface* _PrevNetworkInterfaceChecker, const IKLDebugNetworkingGetterInterface* _NetworkInterfaceChecker);
     void OnShouldTick(bool& _ShouldTick) const;
 
     void TickUniqueFeatures(const FKLDebugImGuiFeaturesTickInput& _Input);

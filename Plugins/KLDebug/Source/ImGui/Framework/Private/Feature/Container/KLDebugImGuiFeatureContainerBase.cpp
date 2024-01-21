@@ -2,32 +2,31 @@
 
 #include "Feature/Container/KLDebugImGuiFeatureContainerBase.h"
 
-#include "Feature/Manager/KLDebugImGuiFeatureManager.h"
-#include "Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
-
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Manager/KLDebugFeatureManager.h"
+#include "User/Framework/Internal/Feature/Manager/KLDebugFeatureManagerEntryBase.h"
 #include "Utils/Public/KLDebugLog.h"
 
-const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
+const IKLDebugFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const
 {
     checkf(mFeaturesData.IsValidIndex(_FeatureIndex), TEXT("mFeaturesData Out of bounds"));
     const FKLDebugImGuiFeatureData& FeatureData = mFeaturesData[_FeatureIndex];
     checkf(mFeaturesPool.IsValidIndex(FeatureData.GetFeatureOffset()), TEXT("mFeaturesPool Out of bounds"));
-    return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureData.GetFeatureOffset()]);
+    return *reinterpret_cast<const IKLDebugFeatureInterfaceBase*>(&mFeaturesPool[FeatureData.GetFeatureOffset()]);
 }
 
-IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
+IKLDebugFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex)
 {
     checkf(mFeaturesData.IsValidIndex(_FeatureIndex), TEXT("mFeaturesData Out of bounds"));
     const FKLDebugImGuiFeatureData& FeatureData = mFeaturesData[_FeatureIndex];
     checkf(mFeaturesPool.IsValidIndex(FeatureData.GetFeatureOffset()), TEXT("mFeaturesPool Out of bounds"));
-    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureData.GetFeatureOffset()]);
+    return *reinterpret_cast<IKLDebugFeatureInterfaceBase*>(&mFeaturesPool[FeatureData.GetFeatureOffset()]);
 }
 
-IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString)
+IKLDebugFeatureInterfaceBase& FKLDebugImGuiFeatureContainerBase::AllocateNewEntry(const FKLDebugFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString)
 {
-    IKLDebugImGuiFeatureInterfaceBase& DebugWindow = _Entry.AllocateInPlace(static_cast<void*>(&mFeaturesPool[_OffsetIndex]));
+    IKLDebugFeatureInterfaceBase& DebugWindow = _Entry.AllocateInPlace(static_cast<void*>(&mFeaturesPool[_OffsetIndex]));
     FKLDebugImGuiFeatureData& NewFeatureData = mFeaturesData.Emplace_GetRef(_OffsetIndex);
     NewFeatureData.Init(DebugWindow, _PathString);
 
@@ -55,6 +54,6 @@ TOptional<FName> FKLDebugImGuiFeatureContainerBase::TryGetFeatureNameID(const KL
         return TOptional<FName>();
     }
 
-    const IKLDebugImGuiFeatureInterfaceBase& Feature = GetFeature(_FeatureIndex);
+    const IKLDebugFeatureInterfaceBase& Feature = GetFeature(_FeatureIndex);
     return TOptional<FName>(Feature.GetFeatureNameID());
 }

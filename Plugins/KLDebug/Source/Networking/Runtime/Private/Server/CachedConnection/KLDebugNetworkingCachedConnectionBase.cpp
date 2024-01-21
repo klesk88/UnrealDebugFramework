@@ -12,6 +12,7 @@
 
 // engine
 #include "Containers/ArrayView.h"
+#include "HAL/Platform.h"
 #include "HAL/UnrealMemory.h"
 #include "Math/UnrealMathUtility.h"
 #include "Serialization/MemoryReader.h"

@@ -20,11 +20,8 @@ public class KLDebugExamples : ModuleRules
             {
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
-                "KLDebugImGuiFramework",
-                "KLDebugImGuiUser",
+                "KLDebugImGuiFramework", //for picker
                 "KLDebugUserFramework",
-                "KLDebugUserNetworking",
-                "KLDebugUtils",
 
                 //engine
                 "AIModule",

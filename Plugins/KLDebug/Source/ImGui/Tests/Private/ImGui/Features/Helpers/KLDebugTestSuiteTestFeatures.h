@@ -2,15 +2,15 @@
 
 #pragma once
 
-// imgui user module
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
+// modules
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
 
 class UObject;
 
-class FKLDebugTestFeatureBase : public IKLDebugImGuiFeatureInterface_Selectable
+class FKLDebugTestFeatureBase : public IKLDebugFeatureInterface_Selectable
 {
 private:
-    void DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input) final;
+    void DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input) final;
     const FString& GetWindowName() const final;
 };
 

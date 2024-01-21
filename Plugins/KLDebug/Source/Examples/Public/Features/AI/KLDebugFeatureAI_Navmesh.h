@@ -3,8 +3,8 @@
 #pragma once
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
-#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
+#include "User/Framework/Public/Networking/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
 
 // engine
 #include "AITypes.h"
@@ -16,13 +16,13 @@ class FArchive;
 class UObject;
 class UWorld;
 
-class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_Navmesh : public IKLDebugImGuiFeatureInterface_Unique, public IKLDebugUserNetworkingFeatureUniqueInterface
+class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_Navmesh : public IKLDebugFeatureInterface_Unique, public IKLDebugUserNetworkingFeatureUniqueInterface
 {
-    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_Navmesh, IKLDebugImGuiFeatureInterface_Unique)
-    KL_DEBUG_FEATURE_NETWORK_UNIQUE_CLASS(FKLDebugFeatureAI_Navmesh)
+    DERIVED_KL_DEBUG_FEATURE_CLASS(FKLDebugFeatureAI_Navmesh, IKLDebugFeatureInterface_Unique)
+    KL_DEBUG_NETWORK_INTERFACE_FEATURE_UNIQUE(FKLDebugFeatureAI_Navmesh)
 
 public:
-    // IKLDebugImGuiFeatureInterface_Unique
+    // IKLDebugFeatureInterface_Unique
     UE_NODISCARD bool DoesSupportWorld(const UWorld& _Object) const final;
     void DrawOnCanvas(FKLDebugFeatureDrawCanvasInput_Unique& _Input) const final;
 
@@ -31,7 +31,7 @@ public:
     TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Unique& _Input) final;
 
     void Tick(FKLDebugFeatureTickInput_Unique& _Input) final;
-    // IKLDebugImGuiFeatureInterface_Unique
+    // IKLDebugFeatureInterface_Unique
 
     // IKLDebugUserNetworkingFeatureUniqueInterface
     void Server_FeatureUpdate(const FKLDebugUserNetworkingFeatureUniqueRequestUpdateInput& _Input) const final;
@@ -41,10 +41,10 @@ public:
     // IKLDebugUserNetworkingFeatureUniqueInterface
 
 private:
-    // IKLDebugImGuiFeatureInterface_Selectable
+    // IKLDebugFeatureInterface_Selectable
     UE_NODISCARD const FString& GetWindowName() const final;
     UE_NODISCARD const FName& GetImGuiPath() const final;
-    // IKLDebugImGuiFeatureInterface_Selectable
+    // IKLDebugFeatureInterface_Selectable
 
     void CollectNavmeshData(const UWorld& _World, const FVector& _Location, FNavMeshSceneProxyData& _ProxyData) const;
 

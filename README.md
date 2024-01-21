@@ -16,13 +16,13 @@ The user can currently create FEATURES and FILTERS.
 
 A FILTER is a statically allocated CPP class which allows the user to select a FEATURE only when the object selected in debug mode passes its conditions.
 For example, if the user defines a Filter that returns true only if the object selected is an AI (has an AIController), then if a FEATURE makes use of this, it will only show up in the Debug Selectable Tree when the object selected is an AI (has an AIController).
-To create a new Filter the user needs to extend the IKLDebugImGuiFilterInterface (found in KLDebugImGuiUser module) and use the appropriate setup detailed in the .h file. 
+To create a new Filter the user needs to extend the IKLDebugFilterInterface (found in KLDebugImGuiUser module) and use the appropriate setup detailed in the .h file. 
 Here an example:
 
 ```
 .h
 
-class FClassFilter final : public IKLDebugImGuiFilterInterface
+class FClassFilter final : public IKLDebugFilterInterface
 {
    ...
 };
@@ -37,17 +37,17 @@ Features have a path (which needs to respect this format Root.Branch.Branch.Leaf
 Here is where the user can define what to display on the ImGui Window that will be created when the Feature is selected.
 Features can also make use of FILTERS (by overriding GetFilterPath).
 There are 2 types of Interfaces classes that can be extended by the user currently:
-  - IKLDebugImGuiFeatureInterface_Selectable: this can be used for objects that can be selected in game (i.e s objects that extend the Actor class).
-  - IKLDebugImGuiFeatureInterface_Unique: this can be used for classes which represent managers and have a unique instance during the lifetime of the game. For example this can be used to debug Subsystems.
+  - IKLDebugFeatureInterface_Selectable: this can be used for objects that can be selected in game (i.e s objects that extend the Actor class).
+  - IKLDebugFeatureInterface_Unique: this can be used for classes which represent managers and have a unique instance during the lifetime of the game. For example this can be used to debug Subsystems.
   - 
-To create a new Feature the user needs to extend, for example, the IKLDebugImGuiFeatureInterface_Selectable (found in KLDebugImGuiUser module) and use the appropriate setup detailed in the .h file. Here an example:
+To create a new Feature the user needs to extend, for example, the IKLDebugFeatureInterface_Selectable (found in KLDebugImGuiUser module) and use the appropriate setup detailed in the .h file. Here an example:
 
 ```
 .h
 
-   class FClassDebug final : public IKLDebugImGuiFeatureInterface_Selectable
+   class FClassDebug final : public IKLDebugFeatureInterface_Selectable
    {
-      DERIVED_KL_DEBUG_FEATURE_CLASS(FClassDebug, IKLDebugImGuiFeatureInterface_Selectable)
+      DERIVED_KL_DEBUG_FEATURE_CLASS(FClassDebug, IKLDebugFeatureInterface_Selectable)
      ...
    };
 

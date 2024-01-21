@@ -15,13 +15,13 @@
 #include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureSelectableAllInputs.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureUniqueAllInputs.h"
-#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
+#include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -40,7 +40,7 @@ void FKLDebugImGuiFeatureVisualizerTree::CreateTree(FKLDebugImGuiFeaturesConstIt
     GenerateTree(SortedFeatures);
 }
 
-void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType _ContainerType, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, UObject* _ObjectOwner, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
+void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType _ContainerType, const FKLDebugImGuiFeatureVisualizerImGuiContext& _ImguiContext, const bool _HasAuthorityOnObj, UObject* _ObjectOwner, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexesSelected)
 {
     static constexpr ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     static constexpr ImGuiTreeNodeFlags LeafFlags = BaseFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
@@ -53,7 +53,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
         FeaturesUpdated.Reserve(30);
     }
 
-    auto KeepTraversingTreeLambda = [this, &_FeaturesIndexesSelected, &FeatureContainer, &_ImguiContext, &FeaturesUpdated, &_ObjectOwner, _ContainerType](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
+    auto KeepTraversingTreeLambda = [this, &_FeaturesIndexesSelected, &FeatureContainer, &_ImguiContext, &FeaturesUpdated, &_ObjectOwner, _HasAuthorityOnObj, _ContainerType](const FKLDebugImGuiFeatureVisualizerTreeNode& _TreeNode) -> bool {
         const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
         if (!NodeDataIndex.IsSet())
         {
@@ -100,23 +100,23 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
                 for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : _TreeNode.GetFeatureIndexes())
                 {
                     ensureMsgf(_FeaturesIndexesSelected.IndexOfByKey(FeatureIndex) == INDEX_NONE, TEXT("adding same feature multiple times"));
-                    IKLDebugImGuiFeatureInterfaceBase& NewFeatureInterface = FeatureContainer.GetFeatureMutable(FeatureIndex);
-                    TUniquePtr<FKLDebugImGuiFeatureContext_Base> Context = nullptr;
-                    if (NewFeatureInterface.IsDerivedFrom<IKLDebugImGuiFeatureInterface_Unique>())
+                    IKLDebugFeatureInterfaceBase& NewFeatureInterface = FeatureContainer.GetFeatureMutable(FeatureIndex);
+                    TUniquePtr<IKLDebugContextInterface> Context = nullptr;
+                    if (NewFeatureInterface.IsDerivedFrom<IKLDebugFeatureInterface_Unique>())
                     {
-                        IKLDebugImGuiFeatureInterface_Unique& NewUniqueInterface = static_cast<IKLDebugImGuiFeatureInterface_Unique&>(NewFeatureInterface);
+                        IKLDebugFeatureInterface_Unique& NewUniqueInterface = static_cast<IKLDebugFeatureInterface_Unique&>(NewFeatureInterface);
                         NewUniqueInterface.OnFeatureSelected(_ImguiContext.GetWorld());
-                        const FKLDebugImGuiFeatureContextInput_Unique ContextInput{ _ImguiContext.GetCurrentNetMode(), _ImguiContext.GetWorld() };
-                        Context = NewUniqueInterface.GetFeatureContext(ContextInput);
+                        const FKLDebugContextGetterInput ContextInput{ _ImguiContext.GetWorld(), _ImguiContext.GetCurrentNetMode() };
+                        Context = NewUniqueInterface.GetContext(ContextInput);
                     }
                     else
                     {
                         check(_ObjectOwner != nullptr);
 
-                        IKLDebugImGuiFeatureInterface_Selectable& NewSelectableInterface = static_cast<IKLDebugImGuiFeatureInterface_Selectable&>(NewFeatureInterface);
+                        IKLDebugFeatureInterface_Selectable& NewSelectableInterface = static_cast<IKLDebugFeatureInterface_Selectable&>(NewFeatureInterface);
                         NewSelectableInterface.OnFeatureSelected(*_ObjectOwner);
-                        const FKLDebugImGuiFeatureContextInput_Selectable ContextInput{ _ImguiContext.GetCurrentNetMode(), *_ObjectOwner };
-                        Context = NewSelectableInterface.GetFeatureContext(ContextInput);
+                        const FKLDebugContextGetterInput_Selectable ContextInput{ *_ObjectOwner, _HasAuthorityOnObj, _ImguiContext.GetWorld(), _ImguiContext.GetCurrentNetMode() };
+                        Context = NewSelectableInterface.GetContext(ContextInput);
                     }
 
                     _FeaturesIndexesSelected.Emplace(FeatureIndex, NodeData.GetID(), MoveTemp(Context));
@@ -128,8 +128,8 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
             {
                 for (const KL::Debug::ImGui::Features::Types::FeatureIndex FeatureIndex : _TreeNode.GetFeatureIndexes())
                 {
-                    IKLDebugImGuiFeatureInterfaceBase& RemovedFeature = FeatureContainer.GetFeatureMutable(FeatureIndex);
-                    check(!RemovedFeature.IsDerivedFrom<IKLDebugImGuiFeatureInterface_Selectable>() || _ObjectOwner != nullptr);
+                    IKLDebugFeatureInterfaceBase& RemovedFeature = FeatureContainer.GetFeatureMutable(FeatureIndex);
+                    check(!RemovedFeature.IsDerivedFrom<IKLDebugFeatureInterface_Selectable>() || _ObjectOwner != nullptr);
                     KL::Debug::Feature::Helpers::OnFeatureUnselected(_ImguiContext.GetWorld(), _ObjectOwner, RemovedFeature);
 
                     const int32 Index = _FeaturesIndexesSelected.IndexOfByKey(FeatureIndex);
@@ -194,7 +194,7 @@ void FKLDebugImGuiFeatureVisualizerTree::GatherAndSortFeatures(FKLDebugImGuiFeat
 
     for (; _Iterator; ++_Iterator)
     {
-        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+        const IKLDebugFeatureInterfaceBase& FeatureInterface = _Iterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterfaceBase>();
         _FeaturesSorted.Emplace(_Iterator.GetFeatureDataIndex(), _Iterator.GetFeatureData(), FeatureInterface.GetImGuiPath());
     }
 

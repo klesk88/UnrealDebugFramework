@@ -5,9 +5,9 @@
 // modules
 #include "ImGui/Networking/Public/Commands/Manager/KLDebugNetworkingCommandManager.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
-#include "User/Networking/Internal/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
-#include "User/Networking/Public/Commands/Interface/Input/KLDebugUserNetworkingCommandExecuteInput_Client.h"
-#include "User/Networking/Public/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
+#include "User/Framework/Internal/Networking/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
+#include "User/Framework/Public/Networking/Commands/Interface/Input/KLDebugUserNetworkingCommandExecuteInput_Client.h"
+#include "User/Framework/Public/Networking/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
 
 // engine
 #include "Serialization/MemoryReader.h"

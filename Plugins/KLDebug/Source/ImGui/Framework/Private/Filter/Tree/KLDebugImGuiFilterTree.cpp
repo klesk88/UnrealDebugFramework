@@ -9,10 +9,10 @@
 #include "TreeBuilder/KLDebugImGuiTreeBuilderHelpers.h"
 
 // modules
-#include "ImGui/User/Internal/Filter/Manager/KLDebugImGuiFilterManager.h"
-#include "ImGui/User/Internal/Filter/Manager/KLDebugImGuiFilterManagerEntryBase.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
+#include "User/Framework/Internal/Filter/Manager/KLDebugFilterManager.h"
+#include "User/Framework/Internal/Filter/Manager/KLDebugFilterManagerEntryBase.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
+#include "User/Framework/Public/Filter/Interface/KLDebugFilterInterface.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine
@@ -51,7 +51,7 @@ void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Deb
     auto KeepTraversingTreeLambda = [this, &_Obj](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> bool {
         const uint16 FilterIndex = _TreeNode.GetFilterIndex();
         checkf(mFiltersPool.IsValidIndex(FilterIndex), TEXT("index must be valid"));
-        const IKLDebugImGuiFilterInterface& FilterInterface = *reinterpret_cast<const IKLDebugImGuiFilterInterface*>(&mFiltersPool[FilterIndex]);
+        const IKLDebugFilterInterface& FilterInterface = *reinterpret_cast<const IKLDebugFilterInterface*>(&mFiltersPool[FilterIndex]);
         const bool IsValid = FilterInterface.IsObjectValid(_Obj);
         return IsValid;
     };
@@ -82,11 +82,11 @@ void FKLDebugImGuiFilterTree::GatherFeatures(const UObject& _Obj, TArray<KL::Deb
 
 void FKLDebugImGuiFilterTree::GenerateFilters()
 {
-    const FKLDebugImGuiFilterManager& FilterManager = FKLDebugImGuiFilterManager::Get();
+    const FKLDebugFilterManager& FilterManager = FKLDebugFilterManager::Get();
     mFiltersOffset.Reserve(FilterManager.GetEntryCount());
     mFiltersPool.AddZeroed(FilterManager.GetTotalSizeRequired());
 
-    FKLDebugImGuiFilterManagerEntryBase* Entry = FilterManager.GetStartEntry();
+    FKLDebugFilterManagerEntryBase* Entry = FilterManager.GetStartEntry();
     uint32 OffsetIndex = 0;
 
     TArray<FName> NamesSet;
@@ -94,7 +94,7 @@ void FKLDebugImGuiFilterTree::GenerateFilters()
 
     while (Entry)
     {
-        IKLDebugImGuiFilterInterface& FilterInterface = Entry->AllocateInPlace(static_cast<void*>(&mFiltersPool[OffsetIndex]));
+        IKLDebugFilterInterface& FilterInterface = Entry->AllocateInPlace(static_cast<void*>(&mFiltersPool[OffsetIndex]));
         mFiltersOffset.Emplace(OffsetIndex);
 
         const FName& ID = FilterInterface.GetFilterID();
@@ -133,7 +133,7 @@ void FKLDebugImGuiFilterTree::SortFeatures(FKLDebugImGuiFeaturesIterator& _Itera
     int32 Index = 0;
     for (; _Iterator; ++_Iterator)
     {
-        const IKLDebugImGuiFeatureInterface_Selectable& Feature = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Selectable>();
+        const IKLDebugFeatureInterface_Selectable& Feature = _Iterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterface_Selectable>();
         FiltersNames.Reset();
         Feature.GetFilterPath(FiltersNames);
         if (FiltersNames.IsEmpty())
@@ -183,7 +183,7 @@ void FKLDebugImGuiFilterTree::GenerateTree(const TArray<FKLDebugImGuiTreeSortedF
     };
 
     auto AllocateTreeNodeLeaf = [this](const FName& _FilterToken, const FKLDebugImGuiTreeSortedFeatures& _SortedFeature) -> FKLDebugImGuiFilterTreeNode& {
-        const IKLDebugImGuiFeatureInterface_Selectable& Feature = _SortedFeature.GetFeature();
+        const IKLDebugFeatureInterface_Selectable& Feature = _SortedFeature.GetFeature();
         const uint16 FilterIdx = GetFilterIndexFromID(_FilterToken, Feature.StaticItemType());
 
         mTreeNodesData.Emplace(mFilterFeaturesIndexes.Num());
@@ -201,7 +201,7 @@ KL::Debug::ImGui::Features::Types::FilterIndex FKLDebugImGuiFilterTree::GetFilte
 {
     for (const uint32 FilterIdx : mFiltersOffset)
     {
-        const IKLDebugImGuiFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugImGuiFilterInterface*>(&mFiltersPool[FilterIdx]);
+        const IKLDebugFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugFilterInterface*>(&mFiltersPool[FilterIdx]);
         if (FilterInterface->GetFilterID() == _FilterID)
         {
             checkf(FilterIdx < TNumericLimits<uint16>::Max(), TEXT("too many filters"));

@@ -3,10 +3,9 @@
 #pragma once
 
 #include "Internal/Mode/StaticMemory/KLDebugModeManagerEntryBase.h"
+#include "Internal/Networking/KLDebugNetworkingBaseInterface.h"
+#include "Internal/StaticMemory/KLDebugUtilsStaticMemoryDefines.h"
 #include "Mode/KLDebugModeInterface.h"
-
-// modules
-#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryDefines.h"
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
@@ -30,6 +29,10 @@ TKLDebugModeManagerEntry<ModeInterfaceType>::TKLDebugModeManagerEntry(const FNam
 {
     static_assert(TIsDerivedFrom<ModeInterfaceType, ModeInterfaceType>::IsDerived, "Class passed must derived from IKLDebugModeInterfaceBase");
     checkf(ModeInterfaceType::StaticItemType() == _NameToCheck, TEXT("bottom bar [%s] must define macro KL_DEBUG_DERIVED_MODE in its .h file"), *_NameToCheck.ToString());
+    if constexpr (TIsDerivedFrom<ModeInterfaceType, IKLDebugNetworkingBaseInterface>::IsDerived)
+    {
+        ModeInterfaceType::template NetworkStaticChecks<ModeInterfaceType>();
+    }
 }
 
 template <typename ModeInterfaceType>

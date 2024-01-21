@@ -9,9 +9,9 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureUniqueAllInputs.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -27,7 +27,7 @@ void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiTree(const FKLDebugImGuiFea
 {
     if (ImGui::TreeNode(this, TCHAR_TO_ANSI(*mTreeName)))
     {
-        mTreeVisualizer.DrawImGuiTree(GetInterfaceType(), _Context, nullptr, mSelectedFeaturesIndexes);
+        mTreeVisualizer.DrawImGuiTree(GetInterfaceType(), _Context, true, nullptr, mSelectedFeaturesIndexes);
 
         ImGui::TreePop();
     }
@@ -36,10 +36,10 @@ void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiTree(const FKLDebugImGuiFea
 void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
     auto Callback = [&_Context, &_RequiredExternalSystem](FKLDebugImGuiFeatureVisualizerIterator& _Iterator, FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> bool {
-        IKLDebugImGuiFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Unique>();
-        FKLDebugImGuiFeatureImGuiInput_Unique Input{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable() };
+        IKLDebugFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterface_Unique>();
+        FKLDebugFeatureImGuiInput_Unique Input{ _Context.GetWorld(), _Entry.GetIsEnableRef(), _Entry.TryGetFeatureContextMutable() };
         Interface.DrawImGui(Input);
-        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.GetUpdateFlags().IsFlagSet(FKLDebugImGuiFeatureInputFlags::EFeatureUpdateFlags::SceneProxy), _RequiredExternalSystem);
+        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.GetUpdateFlags().IsFlagSet(FKLDebugFeatureInputFlags::EFeatureUpdateFlags::SceneProxy), _RequiredExternalSystem);
         return _Entry.IsEnable();
     };
 
@@ -49,8 +49,8 @@ void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiFeaturesEnabled(const FKLDe
 void FKLDebugImGuiFeatureVisualizer_Unique::Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const
 {
     auto Callback = [&_Context](FKLDebugImGuiFeatureVisualizerConstIterator& _Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
-        FKLDebugImGuiFeatureRenderInput_Unique FeatureContext{ _Context.GetWorld(), _Entry.TryGetFeatureContextMutable() };
-        const IKLDebugImGuiFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Unique>();
+        FKLDebugFeatureRenderInput_Unique FeatureContext{ _Context.GetWorld(), _Entry.TryGetFeatureContextMutable() };
+        const IKLDebugFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterface_Unique>();
         Interface.Render(FeatureContext);
     };
 
@@ -60,7 +60,7 @@ void FKLDebugImGuiFeatureVisualizer_Unique::Render(const FKLDebugImGuiFeatureVis
 void FKLDebugImGuiFeatureVisualizer_Unique::DrawOnCanvas(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UCanvas& _Canvas, UFont& _Font, UWorld& _World) const
 {
     auto Callback = [&_Canvas, &_Font, &_World](FKLDebugImGuiFeatureVisualizerConstIterator& _Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
-        const IKLDebugImGuiFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterface_Unique>();
+        const IKLDebugFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterface_Unique>();
         if (!Interface.RequireCanvasUpdate())
         {
             return;
@@ -77,7 +77,7 @@ void FKLDebugImGuiFeatureVisualizer_Unique::DrawOnCanvas(const FKLDebugImGuiFeat
 void FKLDebugImGuiFeatureVisualizer_Unique::GatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager)
 {
     auto Callback = [&_Callback, &_RenderingComponent](FKLDebugImGuiFeatureVisualizerIterator& _Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
-        IKLDebugImGuiFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Unique>();
+        IKLDebugFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterface_Unique>();
         FKLDebugFeatureSceneProxyInput_Unique Input{ _RenderingComponent, _Entry.TryGetFeatureContextMutable() };
         TUniquePtr<FDebugRenderSceneProxy> SceneProxy = Interface.CreateDebugSceneProxy(Input);
         _Callback(MoveTemp(SceneProxy), Input.GetDrawDelegateHelper());
@@ -98,10 +98,10 @@ void FKLDebugImGuiFeatureVisualizer_Unique::ApplyDelegateMutable(const UniqueDel
 void FKLDebugImGuiFeatureVisualizer_Unique::TickFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem)
 {
     auto Callback = [&_World, &_RequiredExternalSystem](FKLDebugImGuiFeatureVisualizerIterator& _Iterator, const FKLDebugImGuiFeatureVisualizerEntry& _Entry) -> void {
-        IKLDebugImGuiFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Unique>();
+        IKLDebugFeatureInterface_Unique& Interface = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterface_Unique>();
         FKLDebugFeatureTickInput_Unique Input{ _World, _Entry.TryGetFeatureContextMutable() };
         Interface.Tick(Input);
-        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.GetUpdateFlags().IsFlagSet(FKLDebugImGuiFeatureInputFlags::EFeatureUpdateFlags::SceneProxy), _RequiredExternalSystem);
+        KL::Debug::ImGui::Features::Types::UpdateFeatureEnableSet(KL::Debug::ImGui::Features::Types::EFeatureEnableType::UpdateSceneProxy, Input.GetUpdateFlags().IsFlagSet(FKLDebugFeatureInputFlags::EFeatureUpdateFlags::SceneProxy), _RequiredExternalSystem);
     };
 
     IterateOnSelectedFeaturesMutable(Callback, _FeatureContainerManager);

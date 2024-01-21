@@ -12,14 +12,14 @@
 #include "Templates/UniquePtr.h"
 #include "Templates/UnrealTemplate.h"
 
-class FKLDebugImGuiFeatureContextInput_Selectable;
-class FKLDebugImGuiFeatureContext_Base;
-class IKLDebugImGuiFeatureInterfaceBase;
+class FKLDebugContextGetterInput_Selectable;
+class IKLDebugContextInterface;
+class IKLDebugFeatureInterfaceBase;
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerObjectFeatureData final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiServerObjectFeatureData(const FKLDebugImGuiFeatureContextInput_Selectable& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
+    explicit FKLDebugImGuiServerObjectFeatureData(const FKLDebugContextGetterInput_Selectable& _Input, const IKLDebugFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
     ~FKLDebugImGuiServerObjectFeatureData();
     UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex) const;
 
@@ -28,11 +28,11 @@ public:
     UE_NODISCARD uint32 GetLastSentCRC() const;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetServerFeatureIndex() const;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetClientFeatureIndex() const;
-    UE_NODISCARD FKLDebugImGuiFeatureContext_Base* GetContextMutable() const;
-    UE_NODISCARD const FKLDebugImGuiFeatureContext_Base* GetContext() const;
+    UE_NODISCARD IKLDebugContextInterface* GetContextMutable() const;
+    UE_NODISCARD const IKLDebugContextInterface* GetContext() const;
 
 private:
-    TUniquePtr<FKLDebugImGuiFeatureContext_Base> mContext;
+    TUniquePtr<IKLDebugContextInterface> mContext;
     // server and  client can be out of sync in terms of features indexes. So store both of the separately
     KL::Debug::ImGui::Features::Types::FeatureIndex mServerFeatureIndex = KL::Debug::ImGui::Features::Types::InvalidFeatureIndex;
     // the client will be used for when we write back to it
@@ -65,7 +65,7 @@ inline KL::Debug::ImGui::Features::Types::FeatureIndex FKLDebugImGuiServerObject
     return mClientFeatureIndex;
 }
 
-inline const FKLDebugImGuiFeatureContext_Base* FKLDebugImGuiServerObjectFeatureData::GetContext() const
+inline const IKLDebugContextInterface* FKLDebugImGuiServerObjectFeatureData::GetContext() const
 {
     return GetContextMutable();
 }

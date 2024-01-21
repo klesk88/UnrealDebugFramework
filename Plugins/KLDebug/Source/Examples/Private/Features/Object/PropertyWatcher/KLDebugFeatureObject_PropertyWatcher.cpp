@@ -2,11 +2,9 @@
 
 #include "Features/Object/PropertyWatcher/KLDebugFeatureObject_PropertyWatcher.h"
 
-// imgui user module
-#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
-
-// ImGuiThirdParty module
+// modules
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
 // engine
 #include "Engine/World.h"
@@ -31,7 +29,7 @@ const FName& FKLDebugFeatureObject_PropertyWatcher::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+void FKLDebugFeatureObject_PropertyWatcher::DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input)
 {
     // Based on PropertyWatcher project
     // https://github.com/guitarfreak/PropertyWatcher/blob/main/PropertyWatcher.cpp#L2179

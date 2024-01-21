@@ -2,7 +2,7 @@
 
 #include "Features/KLDebugImGuiServerUniqueFeatures.h"
 
-void FKLDebugImGuiServerUniqueFeatures::AddFeature(const FKLDebugImGuiFeatureContextInput_Unique& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature)
+void FKLDebugImGuiServerUniqueFeatures::AddFeature(const FKLDebugContextGetterInput& _Input, const IKLDebugFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature)
 {
     if (mFeatures.FindByKey(_ServerFeature) != nullptr)
     {

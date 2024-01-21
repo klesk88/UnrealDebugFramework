@@ -2,9 +2,10 @@
 
 #pragma once
 
+#include "Commands/Message/KLDebugNetworkingMessage_Command.h"
+
 // modules
-#include "Networking/Runtime/Public/Commands/Message/KLDebugNetworkingMessage_Command.h"
-#include "User/Networking/Internal/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
+#include "User/Framework/Internal/Networking/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
 
 // engine
 #include "Containers/Array.h"

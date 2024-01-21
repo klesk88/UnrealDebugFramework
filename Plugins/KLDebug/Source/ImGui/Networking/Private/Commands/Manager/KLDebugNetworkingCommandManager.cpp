@@ -1,11 +1,11 @@
 // Distributed under the MIT License (MIT) (see accompanying LICENSE file)
 
 #include "Commands/Manager/KLDebugNetworkingCommandManager.h"
+#include "Commands/Factory/KLDebugNetworkingCommandFactory.h"
 #include "Log/KLDebugNetworkingLog.h"
 
 // modules
-#include "Networking/Runtime/Public/Commands/Factory/KLDebugNetworkingCommandFactory.h"
-#include "User/Networking/Internal/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
+#include "User/Framework/Internal/Networking/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
 
 // engine
 #include "Containers/Array.h"

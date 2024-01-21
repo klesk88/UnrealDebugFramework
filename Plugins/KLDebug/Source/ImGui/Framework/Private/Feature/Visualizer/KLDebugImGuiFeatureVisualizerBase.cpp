@@ -7,7 +7,7 @@
 #include "Feature/Visualizer/Context/KLDebugImGuiFeatureVisualizerImGuiContext.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/Input/KLDebugFeatureDrawCanvasInput_Base.h"
+#include "User/Framework/Internal/Feature/Interface/Input/KLDebugFeatureDrawCanvasInput_Base.h"
 
 FKLDebugImGuiFeatureVisualizerBase::FKLDebugImGuiFeatureVisualizerBase(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes)
     : mFeaturesIndexes(MoveTemp(_FeaturesIndexes))
@@ -43,7 +43,7 @@ void FKLDebugImGuiFeatureVisualizerBase::Shutdown(const UWorld& _World, FKLDebug
     FKLDebugImGuiFeatureVisualizerIterator Iterator = FeatureContainer.GetFeatureVisualizerIterator(mSelectedFeaturesIndexes);
     for (; Iterator; ++Iterator)
     {
-        IKLDebugImGuiFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterfaceBase>();
+        IKLDebugFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterfaceBase>();
         KL::Debug::Feature::Helpers::OnFeatureUnselected(_World, _OwnerObject, Interface);
     }
 }

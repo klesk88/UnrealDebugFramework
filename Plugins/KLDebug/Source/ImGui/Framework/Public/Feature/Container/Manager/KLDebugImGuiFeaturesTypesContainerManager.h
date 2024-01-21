@@ -3,7 +3,7 @@
 #pragma once
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -11,9 +11,9 @@
 #include "Templates/UniquePtr.h"
 #include "Templates/UnrealTemplate.h"
 
-class FKLDebugImGuiFeatureManager;
+class FKLDebugFeatureManager;
 class FKLDebugImGuiFeatureContainerBase;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeaturesTypesContainerManager final : public FNoncopyable
 {

@@ -3,6 +3,7 @@
 #include "Rendering/KLDebugFrameworkRenderingCompositeSceneProxy.h"
 
 // engine
+#include "HAL/Platform.h"
 #include "SceneManagement.h"
 #include "SceneView.h"
 

@@ -5,8 +5,8 @@
 // modules
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 #include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingMessage.h"
-#include "User/Networking/Internal/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
-#include "User/Networking/Public/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
+#include "User/Framework/Internal/Networking/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
+#include "User/Framework/Public/Networking/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
 
 // engine
 #include "Serialization/MemoryReader.h"

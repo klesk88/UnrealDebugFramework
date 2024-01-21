@@ -3,11 +3,11 @@
 #include "Mode/KLDebugExampleMode.h"
 
 // modules
-#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
+#include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterfaceAllInput.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowAllInputs.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowAllInputs.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"

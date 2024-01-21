@@ -2,12 +2,12 @@
 
 #pragma once
 
-// imgui user module
-#include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
+// modules
+#include "User/Framework/Public/Filter/Interface/KLDebugFilterInterface.h"
 
 class UObject;
 
-class KLDEBUGEXAMPLES_API KLDebugImGuiFilterAI final : public IKLDebugImGuiFilterInterface
+class KLDEBUGEXAMPLES_API KLDebugImGuiFilterAI final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(AI)
 

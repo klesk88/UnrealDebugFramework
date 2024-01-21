@@ -6,7 +6,7 @@
 #include "Message/KLDebugImGuiNetworkingMessage_Base.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"

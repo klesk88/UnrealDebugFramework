@@ -6,31 +6,31 @@
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Context/KLDebugImGuiFeatureContext_Base.h"
+#include "User/Framework/Public/Context/KLDebugContextInterface.h"
 
 // engine
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "Templates/UniquePtr.h"
 
-class FKLDebugImGuiFeatureContextInput_Unique;
-class IKLDebugImGuiFeatureInterfaceBase;
+class FKLDebugContextGetterInput;
+class IKLDebugFeatureInterfaceBase;
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerUniqueFeatureData final : public FNoncopyable
 {
 public:
-    explicit FKLDebugImGuiServerUniqueFeatureData(const FKLDebugImGuiFeatureContextInput_Unique& _Input, const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
+    explicit FKLDebugImGuiServerUniqueFeatureData(const FKLDebugContextGetterInput& _Input, const IKLDebugFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
     UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex) const;
 
-    UE_NODISCARD const FKLDebugImGuiFeatureContext_Base* GetFeatureContext() const;
-    UE_NODISCARD FKLDebugImGuiFeatureContext_Base* GetFeatureContextMutable() const;
+    UE_NODISCARD const IKLDebugContextInterface* GetContext() const;
+    UE_NODISCARD IKLDebugContextInterface* GetFeatureContextMutable() const;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetServerFeatureIndex() const;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetClientFeatureIndex() const;
     UE_NODISCARD uint32 GetCRC() const;
     void SetCRC(const uint32 _CRC);
 
 private:
-    TUniquePtr<FKLDebugImGuiFeatureContext_Base> mContext;
+    TUniquePtr<IKLDebugContextInterface> mContext;
     KL::Debug::ImGui::Features::Types::FeatureIndex mServerFeatureIndex = KL::Debug::ImGui::Features::Types::InvalidFeatureIndex;
     KL::Debug::ImGui::Features::Types::FeatureIndex mClientFeatureIndex = KL::Debug::ImGui::Features::Types::InvalidFeatureIndex;
     uint32 mCRC = 0;
@@ -61,12 +61,12 @@ inline void FKLDebugImGuiServerUniqueFeatureData::SetCRC(const uint32 _CRC)
     mCRC = _CRC;
 }
 
-const FKLDebugImGuiFeatureContext_Base* FKLDebugImGuiServerUniqueFeatureData::GetFeatureContext() const
+const IKLDebugContextInterface* FKLDebugImGuiServerUniqueFeatureData::GetContext() const
 {
     return GetFeatureContextMutable();
 }
 
-FKLDebugImGuiFeatureContext_Base* FKLDebugImGuiServerUniqueFeatureData::GetFeatureContextMutable() const
+IKLDebugContextInterface* FKLDebugImGuiServerUniqueFeatureData::GetFeatureContextMutable() const
 {
     return mContext.Get();
 }

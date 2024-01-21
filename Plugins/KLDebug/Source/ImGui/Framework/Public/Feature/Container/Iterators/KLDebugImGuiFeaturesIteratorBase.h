@@ -6,7 +6,7 @@
 #include "Feature/KLDebugImGuiFeatureTypes.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
 
 // engine
 #include "Containers/Array.h"
@@ -19,7 +19,7 @@
 #include "UObject/NameTypes.h"
 
 class FKLDebugImGuiFeatureData;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 
 template <class Child, bool IsConst>
 class FKLDebugImGuiFeaturesIteratorBase : public FNoncopyable
@@ -47,8 +47,8 @@ public:
 
 protected:
     template <bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& GetFeatureMutable() const;
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature() const;
+    UE_NODISCARD IKLDebugFeatureInterfaceBase& GetFeatureMutable() const;
+    UE_NODISCARD const IKLDebugFeatureInterfaceBase& GetFeature() const;
 
 protected:
     // the data contains the offset between features so that we can retrieve them correctly from the pool. Each entry is the
@@ -99,19 +99,19 @@ inline const FeatureInterfaceType& FKLDebugImGuiFeaturesIteratorBase<Child, IsCo
 
 template <class Child, bool IsConst>
 template <bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
-inline IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureMutable() const
+inline IKLDebugFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureMutable() const
 {
     const FKLDebugImGuiFeatureData& FeatureData = GetFeatureData();
     const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = FeatureData.GetFeatureOffset();
-    return *reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
+    return *reinterpret_cast<IKLDebugFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
 }
 
 template <class Child, bool IsConst>
-inline const IKLDebugImGuiFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeature() const
+inline const IKLDebugFeatureInterfaceBase& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeature() const
 {
     const FKLDebugImGuiFeatureData& FeatureData = GetFeatureData();
     const KL::Debug::ImGui::Features::Types::FeatureOffset FeatureOffset = FeatureData.GetFeatureOffset();
-    return *reinterpret_cast<const IKLDebugImGuiFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
+    return *reinterpret_cast<const IKLDebugFeatureInterfaceBase*>(&mFeaturesPool[FeatureOffset]);
 }
 
 template <class Child, bool IsConst>
@@ -137,7 +137,7 @@ inline const FKLDebugImGuiFeatureData& FKLDebugImGuiFeaturesIteratorBase<Child, 
 template <class Child, bool IsConst>
 inline const FName& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureNameID() const
 {
-    const IKLDebugImGuiFeatureInterfaceBase& FeatureInterfaceBase = GetFeature();
+    const IKLDebugFeatureInterfaceBase& FeatureInterfaceBase = GetFeature();
     return FeatureInterfaceBase.GetFeatureNameID();
 }
 

@@ -4,8 +4,8 @@
 
 // modules
 #include "User/Framework/Public/Context/KLDebugContextInterface.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowInterface.h"
 #include "User/Framework/Public/Window/BottomBar/KLDebugBottomBarInterface.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowInterface.h"
 
 class KLDEBUGEXAMPLES_API FDebugExampleBottombarClientContext final : public IKLDebugContextInterface
 {
@@ -30,7 +30,7 @@ public:
 class KLDEBUGEXAMPLES_API FKLDebugExampleBottomBar final : public IKLDebugBottomBarInterface, public IKLDebugNetworkingWindowInterface
 {
     KL_DEBUG_DERIVED_BOTTOMBAR(FKLDebugExampleBottomBar, IKLDebugBottomBarInterface)
-    KL_DEBUG_NETWORK_WINDOW_CLASS(FKLDebugExampleBottomBar)
+    KL_DEBUG_NETWORK_INTERFACE_WINDOW(FKLDebugExampleBottomBar)
 
 public:
     // IKLDebugBottomBarInterface

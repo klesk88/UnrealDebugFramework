@@ -18,23 +18,23 @@
 #include "ImGui/Networking/Public/Message/Window/RequestUpdate/KLDebugNetworkingMessage_WindowRequestUpdate.h"
 #include "ImGui/Networking/Public/Message/Window/Toogle/KLDebugNetworkingMessage_WindowToogle.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/Input/KLDebugImGuiFeatureContextInput_Selectable.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/Input/KLDebugImGuiFeatureContextInput_Unique.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 #include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingSplittedMessage.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
 #include "User/Framework/Public/Context/Input/KLDebugContextGetterInput.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterface.h"
+#include "User/Framework/Public/Networking/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableInterface.h"
+#include "User/Framework/Public/Networking/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowAllInputs.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowInterface.h"
 #include "User/Framework/Public/Window/BottomBar/KLDebugBottomBarInterface.h"
-#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
-#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableInterface.h"
-#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
-#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowAllInputs.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowInterface.h"
 
 // engine
 #include "Containers/ArrayView.h"
@@ -59,9 +59,9 @@ namespace KL::Debug::Networking::ImGuiServer
     /// private
 
     template <typename Callback>
-    void Write_FeatureUpdateCommon(const Callback& _Callback, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, UObject* _Owner, FKLDebugImGuiFeatureContext_Base* _Context, TArray<uint8>& _Data, TArray<uint8>& _TempFeatureData, TArray<uint8>& _CompressFeatureData, uint32& _DataCRC, FArchive& _Archive, IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface)
+    void Write_FeatureUpdateCommon(const Callback& _Callback, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, UObject* _Owner, IKLDebugContextInterface* _Context, TArray<uint8>& _Data, TArray<uint8>& _TempFeatureData, TArray<uint8>& _CompressFeatureData, uint32& _DataCRC, FArchive& _Archive, IKLDebugFeatureInterfaceBase& _FeatureInterface)
     {
-        const IKLDebugUserNetworkingFeatureInterfaceBase* NetworkInterface = _FeatureInterface.TryGetNetworkInterface();
+        const IKLDebugNetworkingBaseInterface* NetworkInterface = _FeatureInterface.TryCastToNetworkInterface<IKLDebugNetworkingBaseInterface>();
 
         checkf(NetworkInterface != nullptr, TEXT("we should have check the interface in CanAddFeatureToTickList"));
 
@@ -280,13 +280,19 @@ bool FKLDebugImGuiServerCacheConnection::Recv_SelectableUpdate(const UWorld& _Wo
 
         if (NewData.Server_IsAdded())
         {
-            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = _Container.GetFeature(FeatureRealIndex.GetValue());
+            const IKLDebugFeatureInterfaceBase& FeatureInterface = _Container.GetFeature(FeatureRealIndex.GetValue());
             if (!CanAddFeatureToTickList(FeatureInterface))
             {
                 continue;
             }
 
-            const FKLDebugImGuiFeatureContextInput_Selectable Input{ NetMode, *ServerObjectFeatureData.GetCachedObject() };
+            bool HasAuthority = true;
+            if (const AActor* ObjectAsActor = Cast<const AActor>(ServerObjectFeatureData.GetCachedObject()))
+            {
+                HasAuthority = ObjectAsActor->HasAuthority();
+            }
+
+            const FKLDebugContextGetterInput_Selectable Input{ *ServerObjectFeatureData.GetCachedObject(), HasAuthority, _World, _World.GetNetMode() };
             ServerObjectFeatureData.AddFeature(Input, FeatureInterface, NewData.Server_GetFeatureIndex(), FeatureRealIndex.GetValue());
         }
         else
@@ -317,13 +323,13 @@ bool FKLDebugImGuiServerCacheConnection::Recv_UniqueUpdate(const UWorld& _World,
 
         if (NewData.Server_IsAdded())
         {
-            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = _Container.GetFeature(FeatureRealIndex.GetValue());
+            const IKLDebugFeatureInterfaceBase& FeatureInterface = _Container.GetFeature(FeatureRealIndex.GetValue());
             if (!CanAddFeatureToTickList(FeatureInterface))
             {
                 continue;
             }
 
-            const FKLDebugImGuiFeatureContextInput_Unique Input{ NetMode, _World };
+            const FKLDebugContextGetterInput Input{ _World, NetMode };
             mUniqueFeatures.AddFeature(Input, FeatureInterface, NewData.Server_GetFeatureIndex(), FeatureRealIndex.GetValue());
         }
         else
@@ -335,9 +341,9 @@ bool FKLDebugImGuiServerCacheConnection::Recv_UniqueUpdate(const UWorld& _World,
     return true;
 }
 
-bool FKLDebugImGuiServerCacheConnection::CanAddFeatureToTickList(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const
+bool FKLDebugImGuiServerCacheConnection::CanAddFeatureToTickList(const IKLDebugFeatureInterfaceBase& _Feature) const
 {
-    const IKLDebugUserNetworkingFeatureInterfaceBase* NetworkInterface = _Feature.TryGetNetworkInterface();
+    const IKLDebugNetworkingBaseInterface* NetworkInterface = _Feature.TryCastToNetworkInterface<IKLDebugNetworkingBaseInterface>();
     if (!NetworkInterface || !NetworkInterface->RequireServerTick())
     {
         UE_LOG(LogKLDebug_Networking, Error, TEXT("FKLDebugImGuiServerCacheConnection::CanAddFeatureToTickList>> feature [%s] doesnt support server tick. Will not be added"), *_Feature.GetFeatureNameID().ToString());
@@ -371,8 +377,8 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureRequestUpdate(co
     {
     case EImGuiInterfaceType::SELECTABLE:
     {
-        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureRealIndex.GetValue());
-        const IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = FeatureInterface.TryGetNetworkSelectableInterface();
+        const IKLDebugFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureRealIndex.GetValue());
+        const IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = FeatureInterface.TryCastToNetworkInterface<IKLDebugUserNetworkingFeatureSelectableInterface>();
         const UObject* Object = KL::Debug::ImGuiNetworking::Helpers::TryGetObjectFromNetworkGUID(_World, NetworkID);
         if (NetworkInterface && Object)
         {
@@ -385,8 +391,8 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_HandleClientFeatureRequestUpdate(co
     }
     case EImGuiInterfaceType::UNIQUE:
     {
-        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureRealIndex.GetValue());
-        if (const IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = FeatureInterface.TryGetNetworkUniqueInterface())
+        const IKLDebugFeatureInterfaceBase& FeatureInterface = Container.GetFeature(FeatureRealIndex.GetValue());
+        if (const IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = FeatureInterface.TryCastToNetworkInterface<IKLDebugUserNetworkingFeatureUniqueInterface>())
         {
             FKLDebugUserNetworkingFeatureUniqueRequestUpdateInput Input{ _World, MessageDataReader, TempFeatureWriter };
             NetworkInterface->Server_FeatureUpdate(Input);
@@ -447,7 +453,7 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_WindowToogle(const FKLDebugNetworki
     {
         if (mCurrentMode != -1)
         {
-            PrevInterface = _ModeManager.TryGetCurrentInterface(mCurrentMode)->TryGetNetworkInterface();
+            PrevInterface = _ModeManager.TryGetCurrentInterface(mCurrentMode)->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>();
         }
 
         mCurrentMode = _Message.GetIndex();
@@ -455,7 +461,7 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_WindowToogle(const FKLDebugNetworki
         if (Interface)
         {
             mModeContext = Interface->GetContext(Input);
-            NewInterface = Interface->TryGetNetworkInterface();
+            NewInterface = Interface->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>();
         }
         else
         {
@@ -467,7 +473,7 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_WindowToogle(const FKLDebugNetworki
     {
         if (mCurrentBottomBar != -1)
         {
-            PrevInterface = _BarManager.TryGetCurrentInterface(mCurrentBottomBar)->TryGetNetworkInterface();
+            PrevInterface = _BarManager.TryGetCurrentInterface(mCurrentBottomBar)->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>();
         }
 
         mCurrentBottomBar = _Message.GetIndex();
@@ -475,7 +481,7 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_WindowToogle(const FKLDebugNetworki
         if (Interface)
         {
             mBottomBarContext = Interface->GetContext(Input);
-            NewInterface = Interface->TryGetNetworkInterface();
+            NewInterface = Interface->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>();
         }
         else
         {
@@ -519,13 +525,13 @@ bool FKLDebugImGuiServerCacheConnection::Rcv_WindowRequestUpdate(const UWorld& _
     case EKLDebugWindowTypes::BottomBar:
     {
         const IKLDebugBottomBarInterface* Interface = _BarManager.TryGetCurrentInterface(_Message.GetIndex());
-        WindowInterface = Interface ? Interface->TryGetNetworkInterface() : nullptr;
+        WindowInterface = Interface ? Interface->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>() : nullptr;
         break;
     }
     case EKLDebugWindowTypes::Mode:
     {
         const IKLDebugModeInterface* Interface = _ModeManager.TryGetCurrentInterface(_Message.GetIndex());
-        WindowInterface = Interface ? Interface->TryGetNetworkInterface() : nullptr;
+        WindowInterface = Interface ? Interface->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>() : nullptr;
         break;
     }
     case EKLDebugWindowTypes::Count:
@@ -574,8 +580,8 @@ void FKLDebugImGuiServerCacheConnection::GameThead_TickUniqueFeatures(const UWor
     TArray<FKLDebugImGuiServerUniqueFeatureData>& UniqueFeatures = mUniqueFeatures.GetFeaturesMutable();
     FNetworkGUID FakeGuid;
 
-    auto Lambda = [&_World](IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, FKLDebugImGuiFeatureContext_Base* _Context, UObject* _Object, FArchive& _Writer) -> void {
-        IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = _FeatureInterface.TryGetNetworkUniqueInterfaceMutable();
+    auto Lambda = [&_World](IKLDebugFeatureInterfaceBase& _FeatureInterface, IKLDebugContextInterface* _Context, UObject* _Object, FArchive& _Writer) -> void {
+        IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = _FeatureInterface.TryCastToNetworkInterfaceMutable<IKLDebugUserNetworkingFeatureUniqueInterface>();
         checkf(NetworkInterface != nullptr, TEXT("we should have check the interface in CanAddFeatureToTickList"));
         const FKLDebugUserNetworkingFeatureUniqueServerTickInput Input{ _World, _Context, _Writer };
         if (!NetworkInterface->Server_ShouldTick(Input))
@@ -588,7 +594,7 @@ void FKLDebugImGuiServerCacheConnection::GameThead_TickUniqueFeatures(const UWor
 
     for (FKLDebugImGuiServerUniqueFeatureData& FeatureData : UniqueFeatures)
     {
-        IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeatureMutable(FeatureData.GetServerFeatureIndex());
+        IKLDebugFeatureInterfaceBase& FeatureInterface = Container.GetFeatureMutable(FeatureData.GetServerFeatureIndex());
         uint32 CRC = FeatureData.GetCRC();
         KL::Debug::Networking::ImGuiServer::Write_FeatureUpdateCommon(
             Lambda,
@@ -614,8 +620,8 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickObjectFeatures(const UWo
     const EImGuiInterfaceType InterfaceType = EImGuiInterfaceType::SELECTABLE;
     FKLDebugImGuiFeatureContainerBase& Container = _FeatureContainer.GetContainerMutable(InterfaceType);
 
-    auto Lambda = [&_World](IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, FKLDebugImGuiFeatureContext_Base* _Context, UObject* _Object, FArchive& _Writer) -> void {
-        IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = _FeatureInterface.TryGetNetworkSelectableInterfaceMutable();
+    auto Lambda = [&_World](IKLDebugFeatureInterfaceBase& _FeatureInterface, IKLDebugContextInterface* _Context, UObject* _Object, FArchive& _Writer) -> void {
+        IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = _FeatureInterface.TryCastToNetworkInterfaceMutable<IKLDebugUserNetworkingFeatureSelectableInterface>();
         checkf(NetworkInterface != nullptr, TEXT("we should have check the interface in CanAddFeatureToTickList"));
         checkf(_Object != nullptr, TEXT("object must be valid"));
 
@@ -650,7 +656,7 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickObjectFeatures(const UWo
 
         for (FKLDebugImGuiServerObjectFeatureData& FeatureData : FeaturesList)
         {
-            IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = Container.GetFeatureMutable(FeatureData.GetServerFeatureIndex());
+            IKLDebugFeatureInterfaceBase& FeatureInterface = Container.GetFeatureMutable(FeatureData.GetServerFeatureIndex());
             uint32 CRC = FeatureData.GetLastSentCRC();
             KL::Debug::Networking::ImGuiServer::Write_FeatureUpdateCommon(
                 Lambda,
@@ -679,7 +685,7 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickWindow(const UWorld& _Wo
     if (mCurrentMode != -1)
     {
         IKLDebugModeInterface* Interface = _ModeManager.TryGetCurrentInterfaceMutable(mCurrentMode);
-        IKLDebugNetworkingWindowInterface* NetworkInterface = Interface ? Interface->TryGetNetworkInterfaceMutable() : nullptr;
+        IKLDebugNetworkingWindowInterface* NetworkInterface = Interface ? Interface->TryCastToNetworkInterfaceMutable<IKLDebugNetworkingWindowInterface>() : nullptr;
         if (NetworkInterface)
         {
             mTempFeatureData.Reset();
@@ -703,7 +709,7 @@ void FKLDebugImGuiServerCacheConnection::GameThread_TickWindow(const UWorld& _Wo
     if (mCurrentBottomBar != -1)
     {
         IKLDebugBottomBarInterface* Interface = _BarManager.TryGetCurrentInterfaceMutable(mCurrentBottomBar);
-        IKLDebugNetworkingWindowInterface* NetworkInterface = Interface ? Interface->TryGetNetworkInterfaceMutable() : nullptr;
+        IKLDebugNetworkingWindowInterface* NetworkInterface = Interface ? Interface->TryCastToNetworkInterfaceMutable<IKLDebugNetworkingWindowInterface>() : nullptr;
         if (NetworkInterface)
         {
             mTempFeatureData.Reset();

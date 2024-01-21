@@ -19,11 +19,9 @@ public class KLDebugImGuiClient : ModuleRules
             {
                 "KLDebugImGuiFramework",
                 "KLDebugImGuiNetworking",
-                "KLDebugImGuiUser",
                 "KLDebugNetworkingArbitrer",
                 "KLDebugNetworkingRuntime",
                 "KLDebugUserFramework",
-                "KLDebugUserNetworking",
                 "KLDebugUtils",
 
                 //engine

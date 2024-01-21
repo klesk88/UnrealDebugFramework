@@ -5,11 +5,11 @@
 // modules
 #include "ImGui/Networking/Public/Commands/Manager/KLDebugNetworkingCommandManager.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "Networking/Runtime/Public/Commands/Message/KLDebugNetworkingMessage_Command.h"
+#include "ImGui/Networking/Public/Commands/Message/KLDebugNetworkingMessage_Command.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Header/KLDebugNetworkingMessageHeaderDefinitions.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
-#include "User/Networking/Internal/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
+#include "User/Framework/Internal/Networking/Commands/Helpers/KLDebugUserNetworkingCommandsRequester.h"
 
 // engine
 #include "Containers/UnrealString.h"

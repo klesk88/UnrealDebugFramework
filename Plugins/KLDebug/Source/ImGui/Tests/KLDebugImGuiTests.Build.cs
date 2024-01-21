@@ -13,7 +13,6 @@ public class KLDebugImGuiTests : ModuleRules
             {
                 Path.Combine(ModuleDirectory, "Private"),
                 Path.Combine(ModuleDirectory, "../Framework/Private"),
-                Path.Combine(ModuleDirectory, "../User/Private"),
             }
         );
 
@@ -21,7 +20,7 @@ public class KLDebugImGuiTests : ModuleRules
             new string[]
             {
                 "KLDebugImGuiFramework",
-                "KLDebugImGuiUser",
+                "KLDebugUserFramework",
                 "ImGuiThirdParty",
 
                 //engine

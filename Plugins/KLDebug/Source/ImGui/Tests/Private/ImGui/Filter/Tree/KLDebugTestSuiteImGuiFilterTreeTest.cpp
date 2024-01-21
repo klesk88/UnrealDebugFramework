@@ -14,7 +14,7 @@
 #include "ImGui/Framework/Public/Feature/Container/Iterators/KLDebugImGuiFeaturesIterator.h"
 #include "ImGui/Framework/Public/Feature/Container/KLDebugImGuiFeatureData.h"
 #include "ImGui/Framework/Public/Feature/KLDebugImGuiFeatureTypes.h"
-#include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
+#include "User/Framework/Public/Filter/Interface/KLDebugFilterInterface.h"
 
 // engine
 #include "AITestsCommon.h"
@@ -104,7 +104,7 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestPreorderTraversal(const FKLDebugI
     };
 
     auto EvaluateNodeLambda = [&TreeNodesData, &Index, &_ExpetectedElements, &FilterPool, &Success](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> void {
-        const IKLDebugImGuiFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugImGuiFilterInterface*>(&FilterPool[_TreeNode.GetFilterIndex()]);
+        const IKLDebugFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugFilterInterface*>(&FilterPool[_TreeNode.GetFilterIndex()]);
 
         const FName& ExpectedTreeNodeName = _ExpetectedElements[Index++];
         if (FilterInterface->GetFilterID() != ExpectedTreeNodeName)
@@ -148,7 +148,7 @@ bool FKLDebugTestSuiteImGuiFilterTreeTest::TestFeaturesIndexesSet(const FKLDebug
     };
 
     auto EvaluateNodeLambda = [&TreeNodesData, &Index, &_ExpetectedElements, &FilterPool, &Success](const FKLDebugImGuiFilterTreeNode& _TreeNode) -> void {
-        const IKLDebugImGuiFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugImGuiFilterInterface*>(&FilterPool[_TreeNode.GetFilterIndex()]);
+        const IKLDebugFilterInterface* FilterInterface = reinterpret_cast<const IKLDebugFilterInterface*>(&FilterPool[_TreeNode.GetFilterIndex()]);
         const TOptional<uint16> NodeDataIndex = _TreeNode.GetNodeDataIndex();
         if (!NodeDataIndex.IsSet())
         {

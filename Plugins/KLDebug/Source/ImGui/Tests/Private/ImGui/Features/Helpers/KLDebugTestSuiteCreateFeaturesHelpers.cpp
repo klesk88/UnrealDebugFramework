@@ -34,40 +34,40 @@ namespace KL::Debug::TestSuite::Feature::Helpers
         for (int32 i = 0; i < 8; ++i)
         {
             uint32 Size = 0;
-            IKLDebugImGuiFeatureInterfaceBase* DebugWindow = nullptr;
+            IKLDebugFeatureInterfaceBase* DebugWindow = nullptr;
             FKLDebugImGuiFeatureData& NewFeatureData = _FeatureData.Emplace_GetRef(FeatureOffset);
             switch (i)
             {
             case 0:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverFeature);
                 break;
             case 1:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverChildFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverChildFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverChildFeature);
                 break;
             case 2:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverSecondChildFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverSecondChildFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverSecondChildFeature);
                 break;
             case 3:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverThirdChildFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverThirdChildFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverThirdChildFeature);
                 break;
             case 4:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverThirdChildChildFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverThirdChildChildFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverThirdChildChildFeature);
                 break;
             case 5:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverChildChildFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverChildChildFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverChildChildFeature);
                 break;
             case 6:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverChildChildChildFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestCoverChildChildChildFeature());
                 FeatureOffset += sizeof(FKLDebugTestCoverChildChildChildFeature);
                 break;
             case 7:
-                DebugWindow = reinterpret_cast<IKLDebugImGuiFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestPerceptionFeature());
+                DebugWindow = reinterpret_cast<IKLDebugFeatureInterfaceBase*>(new (static_cast<void*>(&_FeaturePool[FeatureOffset])) FKLDebugTestPerceptionFeature());
                 FeatureOffset += sizeof(FKLDebugTestPerceptionFeature);
                 break;
             default:

@@ -130,7 +130,7 @@ void FKLDebugImGuiWindow::DrawImGuiModeSelection(const UWorld& _World, FKLDebugF
 
     if (IndexSelected != -1 && mModeInterface != IndexSelected)
     {
-        mModeContext = _ModeManager.UpdateBottomBarIfNeeded(_World, mBottomBarInterface, IndexSelected);
+        mModeContext = _ModeManager.UpdateBottomBarIfNeeded(_World, mModeInterface, IndexSelected);
         mModeInterface = IndexSelected;
     }
 

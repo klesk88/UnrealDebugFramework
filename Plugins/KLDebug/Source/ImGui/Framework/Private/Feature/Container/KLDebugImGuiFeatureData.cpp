@@ -3,7 +3,7 @@
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -13,7 +13,7 @@ FKLDebugImGuiFeatureData::FKLDebugImGuiFeatureData(const KL::Debug::ImGui::Featu
 {
 }
 
-void FKLDebugImGuiFeatureData::Init(const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, TArray<FString>& _PathString)
+void FKLDebugImGuiFeatureData::Init(const IKLDebugFeatureInterfaceBase& _FeatureInterface, TArray<FString>& _PathString)
 {
     _PathString.Reset();
     const FString ImGuiPathAsString = _FeatureInterface.GetImGuiPath().ToString();

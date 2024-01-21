@@ -6,17 +6,17 @@
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureSelectableAllInputs.h"
-#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
 // engine
 #include "Containers/UnrealString.h"
 
 KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_BehaviorTree)
 
-TUniquePtr<FKLDebugImGuiFeatureContext_Base> FKLDebugFeatureAI_BehaviorTree::GetFeatureContext(const FKLDebugImGuiFeatureContextInput_Selectable& _Input) const
+TUniquePtr<IKLDebugContextInterface> FKLDebugFeatureAI_BehaviorTree::GetContext(const FKLDebugContextGetterInput_Selectable& _Input) const
 {
     switch (_Input.GetCurrentNetMode())
     {
@@ -58,7 +58,7 @@ const FName& FKLDebugFeatureAI_BehaviorTree::GetImGuiPath() const
     return Path;
 }
 
-void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+void FKLDebugFeatureAI_BehaviorTree::DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input)
 {
     if (_Input.HasAuthorityOnObject())
     {

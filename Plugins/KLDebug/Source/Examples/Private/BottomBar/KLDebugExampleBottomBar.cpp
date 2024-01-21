@@ -5,7 +5,7 @@
 // modules
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "User/Framework/Public/Window/BottomBar/KLDebugModeInterfaceAllInput.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowAllInputs.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowAllInputs.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"

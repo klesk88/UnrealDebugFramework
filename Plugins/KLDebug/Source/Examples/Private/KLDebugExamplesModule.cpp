@@ -5,7 +5,7 @@
 #include "Commands/KLDebugCommand_Pause.h"
 
 // modules
-#include "User/Networking/Public/Commands/Helpers/KLDebugUserNetworkingCommandHelpers.h"
+#include "User/Framework/Public/Networking/Commands/Helpers/KLDebugUserNetworkingCommandHelpers.h"
 
 // engine
 #include "Kismet/KismetSystemLibrary.h"

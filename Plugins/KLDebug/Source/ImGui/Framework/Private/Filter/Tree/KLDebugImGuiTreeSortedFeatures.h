@@ -7,21 +7,21 @@
 // engine
 #include "Containers/Array.h"
 
-class IKLDebugImGuiFeatureInterface_Selectable;
+class IKLDebugFeatureInterface_Selectable;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiTreeSortedFeatures final : public FKLDebugImGuiTreeBuilderData
 {
 public:
-    explicit FKLDebugImGuiTreeSortedFeatures(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset, const FName& _FeaturePath, const TArray<FName>& _Filters, const IKLDebugImGuiFeatureInterface_Selectable& _Feature);
+    explicit FKLDebugImGuiTreeSortedFeatures(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset, const FName& _FeaturePath, const TArray<FName>& _Filters, const IKLDebugFeatureInterface_Selectable& _Feature);
 
     // FKLDebugImGuiTreeBuilderData
     UE_NODISCARD const TArray<FName>& GetPathTokens() const final;
     // FKLDebugImGuiTreeBuilderData
 
-    UE_NODISCARD const IKLDebugImGuiFeatureInterface_Selectable& GetFeature() const;
+    UE_NODISCARD const IKLDebugFeatureInterface_Selectable& GetFeature() const;
 
 private:
-    const IKLDebugImGuiFeatureInterface_Selectable* mFeature = nullptr;
+    const IKLDebugFeatureInterface_Selectable* mFeature = nullptr;
     TArray<FName> mFilters;
 };
 
@@ -30,7 +30,7 @@ inline const TArray<FName>& FKLDebugImGuiTreeSortedFeatures::GetPathTokens() con
     return mFilters;
 }
 
-inline const IKLDebugImGuiFeatureInterface_Selectable& FKLDebugImGuiTreeSortedFeatures::GetFeature() const
+inline const IKLDebugFeatureInterface_Selectable& FKLDebugImGuiTreeSortedFeatures::GetFeature() const
 {
     check(mFeature != nullptr);
     return *mFeature;

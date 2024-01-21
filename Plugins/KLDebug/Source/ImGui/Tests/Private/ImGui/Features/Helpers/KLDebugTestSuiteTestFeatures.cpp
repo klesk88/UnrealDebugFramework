@@ -4,7 +4,7 @@
 
 #include "ImGui/Filter/Helpers/KLDebugTestSuiteTestFilters.h"
 
-void FKLDebugTestFeatureBase::DrawImGuiChild(FKLDebugImGuiFeatureImGuiInput_Selectable& _Input)
+void FKLDebugTestFeatureBase::DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input)
 {
 }
 

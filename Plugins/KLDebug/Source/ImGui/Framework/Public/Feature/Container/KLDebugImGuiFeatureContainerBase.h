@@ -9,7 +9,7 @@
 #include "Feature/Visualizer/Iterator/KLDebugImGuiFeatureVisualizerIterator.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 
 // engine
 #include "Containers/Array.h"
@@ -20,11 +20,11 @@
 #include "Misc/Optional.h"
 #include "Templates/UnrealTemplate.h"
 
-class FKLDebugImGuiFeatureManager;
-class FKLDebugImGuiFeatureManagerEntryBase;
+class FKLDebugFeatureManager;
+class FKLDebugFeatureManagerEntryBase;
 class FKLDebugImGuiFeatureVisualizerEntry;
 class FString;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 class UObject;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureContainerBase : public FNoncopyable
@@ -32,7 +32,7 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureContainerBase : public FNonc
 public:
     virtual ~FKLDebugImGuiFeatureContainerBase() = default;
 
-    UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const = 0;
+    UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugFeatureInterfaceBase& _Feature) const = 0;
     UE_NODISCARD virtual EImGuiInterfaceType GetContainerType() const = 0;
 
     UE_NODISCARD bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const;
@@ -40,7 +40,7 @@ public:
     UE_NODISCARD TOptional<FName> TryGetFeatureNameID(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
     void InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount);
-    IKLDebugImGuiFeatureInterfaceBase& AllocateNewEntry(const FKLDebugImGuiFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
+    IKLDebugFeatureInterfaceBase& AllocateNewEntry(const FKLDebugFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
     void FinishGenerateFeatures();
 
     void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
@@ -54,8 +54,8 @@ public:
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
     UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const;
 
-    UE_NODISCARD const IKLDebugImGuiFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
-    UE_NODISCARD IKLDebugImGuiFeatureInterfaceBase& GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
+    UE_NODISCARD const IKLDebugFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+    UE_NODISCARD IKLDebugFeatureInterfaceBase& GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
 protected:
     virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;

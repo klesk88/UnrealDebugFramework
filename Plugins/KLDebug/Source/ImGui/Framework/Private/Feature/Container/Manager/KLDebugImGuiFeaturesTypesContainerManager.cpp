@@ -7,9 +7,9 @@
 #include "Feature/Container/Unique/KLDebugImGuiFeatureContainer_Unique.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Internal/Feature/Manager/KLDebugImGuiFeatureManager.h"
-#include "ImGui/User/Internal/Feature/Manager/KLDebugImGuiFeatureManagerEntryBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Manager/KLDebugFeatureManager.h"
+#include "User/Framework/Internal/Feature/Manager/KLDebugFeatureManagerEntryBase.h"
 #include "Utils/Public/KLDebugLog.h"
 
 // engine
@@ -68,14 +68,14 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
     TArray<KL::Debug::ImGui::Features::Types::FeatureOffset> ContainersOffset;
     ContainersOffset.AddZeroed(mContainers.Num());
 
-    const FKLDebugImGuiFeatureManager& FeatureManager = FKLDebugImGuiFeatureManager::Get();
+    const FKLDebugFeatureManager& FeatureManager = FKLDebugFeatureManager::Get();
 
     for (const TUniquePtr<FKLDebugImGuiFeatureContainerBase>& FeatureContainer : mContainers)
     {
         FeatureContainer->InitGenerateFeatures(FeatureManager.GetTotalSizeRequired(), FeatureManager.GetEntryCount());
     }
 
-    FKLDebugImGuiFeatureManagerEntryBase* Entry = FeatureManager.GetStartEntry();
+    FKLDebugFeatureManagerEntryBase* Entry = FeatureManager.GetStartEntry();
 
     TArray<FString> ImGuiPathTokens;
     ImGuiPathTokens.Reserve(20);
@@ -97,7 +97,7 @@ void FKLDebugImGuiFeaturesTypesContainerManager::GatherFeatures() const
         FKLDebugImGuiFeatureContainerBase& Container = *mContainers[ContainerIndex].Get();
         const KL::Debug::ImGui::Features::Types::FeatureOffset OffsetIndex = ContainersOffset[ContainerIndex];
 
-        IKLDebugImGuiFeatureInterfaceBase& NewInterface = Container.AllocateNewEntry(*Entry, OffsetIndex, ImGuiPathTokens);
+        IKLDebugFeatureInterfaceBase& NewInterface = Container.AllocateNewEntry(*Entry, OffsetIndex, ImGuiPathTokens);
 #if DO_ENSURE
         ensureMsgf(EnsureWindowNamesID.Find(NewInterface.GetFeatureNameID()) == INDEX_NONE, TEXT("we found a feature with the same imgui path. Please change the imgui path value"));
         ensureMsgf(NewInterface.RequiresAnyUpdate(), TEXT("Feature [%s] can not do anything, has all callable methods disable. Please remove it or implement some method"), *NewInterface.GetFeatureNameID().ToString());

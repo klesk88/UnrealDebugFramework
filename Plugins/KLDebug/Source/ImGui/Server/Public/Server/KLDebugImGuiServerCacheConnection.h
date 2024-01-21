@@ -32,7 +32,7 @@ class FKLDebugNetworkingMessage_WindowRequestUpdate;
 class FKLDebugNetworkingMessage_WindowToogle;
 class FKLDebugNetworkingPendingMessage;
 class FNetworkGUID;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 class UWorld;
 
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerCacheConnection final : public FNoncopyable
@@ -62,7 +62,7 @@ private:
     UE_NODISCARD bool Recv_SelectableUpdate(const UWorld& _World, const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update);
     UE_NODISCARD bool Recv_UniqueUpdate(const UWorld& _World, const FKLDebugImGuiFeatureContainerBase& _Container, const FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate& _Update);
 
-    UE_NODISCARD bool CanAddFeatureToTickList(const IKLDebugImGuiFeatureInterfaceBase& _Feature) const;
+    UE_NODISCARD bool CanAddFeatureToTickList(const IKLDebugFeatureInterfaceBase& _Feature) const;
 
     void GameThead_TickUniqueFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);
     void GameThread_TickObjectFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainer, FArchive& _Archive);

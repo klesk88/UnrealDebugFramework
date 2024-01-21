@@ -3,9 +3,9 @@
 #pragma once
 
 // imgui user module
-#include "ImGui/User/Public/Filter/Interface/KLDebugImGuiFilterInterface.h"
+#include "User/Framework/Public/Filter/Interface/KLDebugFilterInterface.h"
 
-class KLDebugImGuiTestFilterOne final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterOne final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestOne)
 
@@ -15,7 +15,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterTwo final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterTwo final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestTwo)
 
@@ -25,7 +25,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterThree final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterThree final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestThree)
 
@@ -35,7 +35,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterFour final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterFour final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestFour)
 
@@ -45,7 +45,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterFive final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterFive final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestFive)
 
@@ -55,7 +55,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterSix final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterSix final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestSix)
 
@@ -65,7 +65,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterSeven final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterSeven final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestSeven)
 
@@ -75,7 +75,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterHeight final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterHeight final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestHeight)
 
@@ -85,7 +85,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterNine final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterNine final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestNine)
 
@@ -95,7 +95,7 @@ public:
 
 ///////////////////////////////////////////////////////
 
-class KLDebugImGuiTestFilterTen final : public IKLDebugImGuiFilterInterface
+class KLDebugImGuiTestFilterTen final : public IKLDebugFilterInterface
 {
     KL_DEBUG_FILTER_GENERATE(TestTen)
 

@@ -3,10 +3,10 @@
 #pragma once
 
 #include "BottomBar/Manager/KLDebugFrameworkBottomBarSortedData.h"
+#include "Context/KLDebugContextInterface.h"
 
 // modules
-#include "User/Framework/Public/Context/KLDebugContextInterface.h"
-#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryFactory.h"
+#include "User/Framework/Internal/StaticMemory/KLDebugUtilsStaticMemoryFactory.h"
 
 // engine
 #include "Templates/UniquePtr.h"

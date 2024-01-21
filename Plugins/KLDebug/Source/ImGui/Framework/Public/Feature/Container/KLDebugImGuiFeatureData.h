@@ -11,14 +11,14 @@
 #include "UObject/NameTypes.h"
 
 class FString;
-class IKLDebugImGuiFeatureInterfaceBase;
+class IKLDebugFeatureInterfaceBase;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureData final : public FNoncopyable
 {
 public:
     explicit FKLDebugImGuiFeatureData(const KL::Debug::ImGui::Features::Types::FeatureOffset _FeatureOffset);
 
-    void Init(const IKLDebugImGuiFeatureInterfaceBase& _FeatureInterface, TArray<FString>& _PathString);
+    void Init(const IKLDebugFeatureInterfaceBase& _FeatureInterface, TArray<FString>& _PathString);
 
     UE_NODISCARD const TArray<FName>& GetImGuiPathTokens() const;
     UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureOffset GetFeatureOffset() const;

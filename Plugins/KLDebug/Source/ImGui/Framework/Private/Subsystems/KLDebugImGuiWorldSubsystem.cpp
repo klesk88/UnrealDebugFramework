@@ -19,11 +19,11 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceTypes.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -89,6 +89,15 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
     if (RenderingCmp && RenderingCmp->IsRegistered())
     {
         RenderingCmp->UnregisterComponent();
+    }
+
+    UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::GetMutable();
+    if (EngineSusbsytem->IsImGuiSystemEnabled())
+    {
+        // if we are destroying a world then disable the debugger by default when we enter in the new one
+        // the user will need to enable it again. TRhis can be usefull noramlly and when going from PIE to
+        // editor mode
+        EngineSusbsytem->ToogleImGuiSystemState();
     }
 }
 
@@ -160,8 +169,8 @@ void UKLDebugImGuiWorldSubsystem::OnObjectSelected(UObject& _Object)
 
 void UKLDebugImGuiWorldSubsystem::TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const
 {
-    FKLDebugImGuiFeatureContext_Base* FeatureContext = nullptr;
-    IKLDebugImGuiFeatureInterfaceBase* Interface = nullptr;
+    IKLDebugContextInterface* FeatureContext = nullptr;
+    IKLDebugFeatureInterfaceBase* Interface = nullptr;
     bool IsFeatureStillValid = false;
 
     switch (_Input.GetContainerType())
@@ -494,7 +503,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
             if (mOnFeaturesUpdatedDelegate.IsBound() && !ObjVisualizer.GetFeaturesIndexes().IsEmpty())
             {
                 FKLDebugImGuiSubsetFeaturesIterator Iterator = SelectableObjectsContainer.GetFeaturesSubsetIterator(ObjVisualizer.GetFeaturesIndexes());
-                IKLDebugImGuiFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterfaceBase>();
+                IKLDebugFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterfaceBase>();
                 KL::Debug::Feature::Helpers::OnFeatureUnselected(_World, ObjVisualizer.GetObjectKey().ResolveObjectPtr(), Interface);
 
                 FKLDebugImGuiSubsetFeaturesConstIterator ConstIter = SelectableObjectsContainer.GetFeaturesSubsetConstIterator(ObjVisualizer.GetFeaturesIndexes());
@@ -614,7 +623,7 @@ void UKLDebugImGuiWorldSubsystem::OnFeatureStatusUpdate(const FKLDebugImGuiFeatu
 
     for (; FeaturesIterator; ++FeaturesIterator)
     {
-        const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
+        const IKLDebugFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterfaceBase>();
         if (FeatureInterface.RequireCanvasUpdate())
         {
             mUpdateSystems[static_cast<int32>(KL::Debug::ImGui::Features::Types::EFeatureEnableType::Canvas)] += Value;

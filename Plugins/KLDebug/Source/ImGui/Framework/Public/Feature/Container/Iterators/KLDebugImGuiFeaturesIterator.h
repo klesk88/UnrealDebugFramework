@@ -6,7 +6,7 @@
 #include "Feature/Container/KLDebugImGuiFeatureData.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeaturesConstIterator : public FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>
 {

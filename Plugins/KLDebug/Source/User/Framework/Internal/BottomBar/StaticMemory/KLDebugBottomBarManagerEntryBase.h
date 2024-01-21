@@ -2,8 +2,7 @@
 
 #pragma once
 
-// modules
-#include "Utils/Public/StaticMemory/KLDebugUtilsStaticMemoryEntryBase.h"
+#include "Internal/StaticMemory/KLDebugUtilsStaticMemoryEntryBase.h"
 
 class IKLDebugBottomBarInterface;
 

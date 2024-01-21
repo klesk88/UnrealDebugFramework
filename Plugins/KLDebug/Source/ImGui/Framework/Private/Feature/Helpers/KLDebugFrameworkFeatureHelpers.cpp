@@ -1,25 +1,25 @@
 #include "Feature/Helpers/KLDebugFrameworkFeatureHelpers.h"
 
 // modules
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
+#include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 
 namespace KL::Debug::Feature::Helpers
 {
     /////////////////////////////////////////////////////////////////////////////////////
     /// public
 
-    void OnFeatureUnselected(const UWorld& _World, UObject* _OwnerObject, IKLDebugImGuiFeatureInterfaceBase& _RemovedFeature)
+    void OnFeatureUnselected(const UWorld& _World, UObject* _OwnerObject, IKLDebugFeatureInterfaceBase& _RemovedFeature)
     {
-        if (_RemovedFeature.IsDerivedFrom<IKLDebugImGuiFeatureInterface_Unique>())
+        if (_RemovedFeature.IsDerivedFrom<IKLDebugFeatureInterface_Unique>())
         {
-            IKLDebugImGuiFeatureInterface_Unique& RemovedUniqueInterface = static_cast<IKLDebugImGuiFeatureInterface_Unique&>(_RemovedFeature);
+            IKLDebugFeatureInterface_Unique& RemovedUniqueInterface = static_cast<IKLDebugFeatureInterface_Unique&>(_RemovedFeature);
             RemovedUniqueInterface.OnFeatureUnselected(_World);
         }
         else
         {
-            IKLDebugImGuiFeatureInterface_Selectable& RemovedSelectableInterface = static_cast<IKLDebugImGuiFeatureInterface_Selectable&>(_RemovedFeature);
+            IKLDebugFeatureInterface_Selectable& RemovedSelectableInterface = static_cast<IKLDebugFeatureInterface_Selectable&>(_RemovedFeature);
             if (_OwnerObject)
             {
                 RemovedSelectableInterface.OnFeatureUnselected(*_OwnerObject);

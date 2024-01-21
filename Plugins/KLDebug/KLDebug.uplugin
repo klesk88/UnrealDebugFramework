@@ -35,11 +35,6 @@
             "LoadingPhase": "Default"
         },
         {
-            "Name": "KLDebugImGuiUser",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-        },
-        {
             "Name": "KLDebugImGuiNetworking",
             "Type": "Runtime",
             "LoadingPhase": "Default"
@@ -56,11 +51,6 @@
         },
         {
             "Name": "KLDebugUserFramework",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-        }, 
-        {
-            "Name": "KLDebugUserNetworking",
             "Type": "Runtime",
             "LoadingPhase": "Default"
         },

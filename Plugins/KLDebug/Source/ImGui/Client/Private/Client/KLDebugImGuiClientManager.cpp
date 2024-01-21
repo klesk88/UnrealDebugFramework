@@ -18,20 +18,19 @@
 #include "ImGui/Networking/Public/Message/Feature/StatusUpdate/KLDebugImGuiNetworkingMessage_FeatureStatusUpdate.h"
 #include "ImGui/Networking/Public/Message/Window/DataUpdate/KLDebugNetworkingMessage_WindowDataUpdate.h"
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
-#include "ImGui/User/Internal/Feature/Interface/KLDebugImGuiFeatureInterfaceBase.h"
-#include "ImGui/User/Public/Feature/Interface/Selectable/KLDebugImGuiFeatureInterface_Selectable.h"
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureInterface_Unique.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
 #include "Networking/Runtime/Public/Message/Helpers/KLDebugNetworkingMessageHelpers.h"
 #include "Networking/Runtime/Public/Server/CachedConnection/KLDebugNetworkingPendingSplittedMessage.h"
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterface.h"
+#include "User/Framework/Public/Networking/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableInterface.h"
+#include "User/Framework/Public/Networking/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowAllInputs.h"
+#include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowInterface.h"
 #include "User/Framework/Public/Window/BottomBar/KLDebugBottomBarInterface.h"
-#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableAllInputs.h"
-#include "User/Networking/Public/Feature/Selectable/KLDebugUserNetworkingFeatureSelectableInterface.h"
-#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
-#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueInterface.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowAllInputs.h"
-#include "User/Networking/Public/Window/KLDebugNetworkingWindowInterface.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -240,7 +239,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadFeatureUpdate(const UWorld& _Wor
     UObject* OwnerObject = _Message.Client_GetObjectMutable(_World);
     FKLDebugImGuiGatherFeatureInput Input{ _Message.Client_GetFeatureIndex(), ImGuiInterfaceType, OwnerObject, _FeatureContainer };
     _ImGuiSubsystem.TryGatherFeatureAndContext(Input);
-    IKLDebugImGuiFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
+    IKLDebugFeatureInterfaceBase* FeatureInterface = Input.TryGetFeatureInterface();
 
     const TArray<uint8>& FeatureDataRcv = _Message.Client_GetDataArray();
     FMemoryReader MemoryReader{ FeatureDataRcv };
@@ -249,7 +248,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadFeatureUpdate(const UWorld& _Wor
     {
     case EImGuiInterfaceType::SELECTABLE:
     {
-        IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkSelectableInterfaceMutable() : nullptr;
+        IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryCastToNetworkInterfaceMutable<IKLDebugUserNetworkingFeatureSelectableInterface>() : nullptr;
         if (!NetworkInterface)
         {
             ensureMsgf(false, TEXT("we should have a valid network interface"));
@@ -262,7 +261,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadFeatureUpdate(const UWorld& _Wor
     }
     case EImGuiInterfaceType::UNIQUE:
     {
-        IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryGetNetworkUniqueInterfaceMutable() : nullptr;
+        IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = FeatureInterface ? FeatureInterface->TryCastToNetworkInterfaceMutable<IKLDebugUserNetworkingFeatureUniqueInterface>() : nullptr;
         if (!NetworkInterface)
         {
             ensureMsgf(false, TEXT("we should have a valid network interface"));
@@ -299,7 +298,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadWindowUpdate(const UWorld& _Worl
             return;
         }
 
-        NetworkInterface = Interface ? Interface->TryGetNetworkInterfaceMutable() : nullptr;
+        NetworkInterface = Interface ? Interface->TryCastToNetworkInterfaceMutable<IKLDebugNetworkingWindowInterface>() : nullptr;
         break;
     }
     case EKLDebugWindowTypes::Mode:
@@ -310,7 +309,7 @@ void FKLDebugImGuiClientManager::GameThread_ReadWindowUpdate(const UWorld& _Worl
             return;
         }
 
-        NetworkInterface = Interface ? Interface->TryGetNetworkInterfaceMutable() : nullptr;
+        NetworkInterface = Interface ? Interface->TryCastToNetworkInterfaceMutable<IKLDebugNetworkingWindowInterface>() : nullptr;
         break;
     }
     default:
@@ -359,8 +358,8 @@ void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatu
         FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
         for (; FeaturesIterator; ++FeaturesIterator)
         {
-            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-            const IKLDebugUserNetworkingFeatureInterfaceBase* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+            const IKLDebugFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterfaceBase>();
+            const IKLDebugNetworkingBaseInterface* NetworkInterface = FeatureInterface.TryCastToNetworkInterface<IKLDebugNetworkingBaseInterface>();
             if (NetworkInterface && NetworkInterface->RequireClientTick())
             {
                 --mFeaturesTicking;
@@ -374,8 +373,8 @@ void FKLDebugImGuiClientManager::OnFeatureUpdate(const FKLDebugImGuiFeatureStatu
         FKLDebugImGuiSubsetFeaturesConstIterator& FeaturesIterator = _FeatureUpdateData.GetFeatureIterator();
         for (; FeaturesIterator; ++FeaturesIterator)
         {
-            const IKLDebugImGuiFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugImGuiFeatureInterfaceBase>();
-            const IKLDebugUserNetworkingFeatureInterfaceBase* NetworkInterface = FeatureInterface.TryGetNetworkInterface();
+            const IKLDebugFeatureInterfaceBase& FeatureInterface = FeaturesIterator.GetFeatureInterfaceCasted<IKLDebugFeatureInterfaceBase>();
+            const IKLDebugNetworkingBaseInterface* NetworkInterface = FeatureInterface.TryCastToNetworkInterface<IKLDebugNetworkingBaseInterface>();
             if (!NetworkInterface)
             {
                 continue;
@@ -478,15 +477,15 @@ void FKLDebugImGuiClientManager::OnFeaturesTick(const FKLDebugImGuiFeaturesTickI
     mTempTickBuffer.Reset();
 }
 
-void FKLDebugImGuiClientManager::OnWindowStatusChange(const int32 _WindowIndex, const EKLDebugWindowTypes _WindowType, const FName& _WindowID, const IKLDebugNetworkCheckerInterface* _PrevNetworkInterfaceChecker, const IKLDebugNetworkCheckerInterface* _NewNetworkInterfaceChecker)
+void FKLDebugImGuiClientManager::OnWindowStatusChange(const int32 _WindowIndex, const EKLDebugWindowTypes _WindowType, const FName& _WindowID, const IKLDebugNetworkingGetterInterface* _PrevNetworkInterfaceChecker, const IKLDebugNetworkingGetterInterface* _NewNetworkInterfaceChecker)
 {
-    const IKLDebugNetworkingWindowInterface* NetworkInterface = _PrevNetworkInterfaceChecker ? _PrevNetworkInterfaceChecker->TryGetNetworkInterface() : nullptr;
+    const IKLDebugNetworkingWindowInterface* NetworkInterface = _PrevNetworkInterfaceChecker ? _PrevNetworkInterfaceChecker->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>() : nullptr;
     if (NetworkInterface && NetworkInterface->RequireClientTick())
     {
         mFeaturesTicking--;
     }
 
-    NetworkInterface = _NewNetworkInterfaceChecker ? _NewNetworkInterfaceChecker->TryGetNetworkInterface() : nullptr;
+    NetworkInterface = _NewNetworkInterfaceChecker ? _NewNetworkInterfaceChecker->TryCastToNetworkInterface<IKLDebugNetworkingWindowInterface>() : nullptr;
     if (NetworkInterface && NetworkInterface->RequireClientTick())
     {
         mFeaturesTicking++;
@@ -512,8 +511,8 @@ void FKLDebugImGuiClientManager::TickUniqueFeatures(const FKLDebugImGuiFeaturesT
     if (_Input.GetUniqueFeaturesMutable().IsValid())
     {
         auto TickUniqueLambda = [&CurrentWorld, &Flags, this](const FKLDebugImGuiFeatureVisualizerEntry& _FeatureData, FKLDebugImGuiFeatureVisualizerIterator& _Iterator) -> void {
-            IKLDebugImGuiFeatureInterface_Unique& Feature = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Unique>();
-            IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = Feature.TryGetNetworkUniqueInterfaceMutable();
+            IKLDebugFeatureInterface_Unique& Feature = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterface_Unique>();
+            IKLDebugUserNetworkingFeatureUniqueInterface* NetworkInterface = Feature.TryCastToNetworkInterfaceMutable<IKLDebugUserNetworkingFeatureUniqueInterface>();
             const bool ShouldTick = NetworkInterface && NetworkInterface->RequireClientTick();
             if (ShouldTick)
             {
@@ -544,8 +543,8 @@ void FKLDebugImGuiClientManager::TickObjectFeatures(const FKLDebugImGuiFeaturesT
     const UWorld& CurrentWorld = _Input.GetOwnerWorld();
 
     auto TickObjectLambda = [&CurrentWorld, &Flags, this](const FKLDebugImGuiFeatureVisualizerEntry& _FeatureData, FKLDebugImGuiFeatureVisualizerIterator& _Iterator, UObject& _Owner) -> void {
-        IKLDebugImGuiFeatureInterface_Selectable& Feature = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugImGuiFeatureInterface_Selectable>();
-        IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = Feature.TryGetNetworkSelectableInterfaceMutable();
+        IKLDebugFeatureInterface_Selectable& Feature = _Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterface_Selectable>();
+        IKLDebugUserNetworkingFeatureSelectableInterface* NetworkInterface = Feature.TryCastToNetworkInterfaceMutable<IKLDebugUserNetworkingFeatureSelectableInterface>();
         const bool ShouldTick = NetworkInterface && NetworkInterface->RequireClientTick();
         if (ShouldTick)
         {
@@ -586,14 +585,14 @@ void FKLDebugImGuiClientManager::TickWindow(const FKLDebugImGuiFeaturesTickInput
 
     if (IKLDebugBottomBarInterface* BottomBarInterface = _Input.TryGetCurrentBottomBar())
     {
-        if (IKLDebugNetworkingWindowInterface* NetworkInterface = BottomBarInterface->TryGetNetworkInterfaceMutable())
+        if (IKLDebugNetworkingWindowInterface* WindowNetworkInterface = BottomBarInterface->TryCastToNetworkInterfaceMutable<IKLDebugNetworkingWindowInterface>())
         {
-            if (NetworkInterface->RequireClientTick())
+            if (WindowNetworkInterface->RequireClientTick())
             {
                 mTempTickBuffer.Reset();
                 FMemoryWriter TempWriter{ mTempTickBuffer };
                 FKLDebugNetworkingWindowClientTickInput Input{ CurrentWorld, _Input.TryGetCurrentBottomBarContext(), TempWriter };
-                NetworkInterface->Client_Tick(Input);
+                WindowNetworkInterface->Client_Tick(Input);
 
                 if (!mTempTickBuffer.IsEmpty())
                 {
@@ -606,7 +605,7 @@ void FKLDebugImGuiClientManager::TickWindow(const FKLDebugImGuiFeaturesTickInput
 
     if (IKLDebugModeInterface* ModeInterface = _Input.TryGetCurrentMode())
     {
-        if (IKLDebugNetworkingWindowInterface* NetworkInterface = ModeInterface->TryGetNetworkInterfaceMutable())
+        if (IKLDebugNetworkingWindowInterface* NetworkInterface = ModeInterface->TryCastToNetworkInterfaceMutable<IKLDebugNetworkingWindowInterface>())
         {
             if (NetworkInterface->RequireClientTick())
             {

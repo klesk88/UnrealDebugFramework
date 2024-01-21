@@ -11,7 +11,7 @@
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
-class IKLDebugImGuiFeatureInterface_Selectable;
+class IKLDebugFeatureInterface_Selectable;
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiVisualizerTreeSortedFeatures final : public FKLDebugImGuiTreeBuilderData
 {

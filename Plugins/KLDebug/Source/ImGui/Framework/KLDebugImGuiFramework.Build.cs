@@ -19,7 +19,6 @@ public class KLDebugImGuiFramework : ModuleRules
             {
                 "ImGuiThirdParty",
                 "ImPlotThirdParty",
-                "KLDebugImGuiUser",
                 "KLDebugUserFramework",
                 "KLDebugUtils",
                 "KLUnrealImGui",

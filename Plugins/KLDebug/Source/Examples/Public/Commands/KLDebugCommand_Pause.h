@@ -3,7 +3,7 @@
 #pragma once
 
 // modules
-#include "User/Networking/Public/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
+#include "User/Framework/Public/Networking/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
 
 class FKLDebugUserNetworkingCommandExecuteInput_Client;
 class FKLDebugUserNetworkingCommandExecuteInput_Server;

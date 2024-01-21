@@ -3,14 +3,14 @@
 #include "Commands/KLDebugCommand_Pause.h"
 
 // modules
-#include "User/Networking/Public/Commands/Interface/Input/KLDebugUserNetworkingCommandExecuteInput_Client.h"
-#include "User/Networking/Public/Commands/Interface/Input/KLDebugUserNetworkingCommandExecuteInput_Server.h"
+#include "User/Framework/Public/Networking/Commands/Interface/Input/KLDebugUserNetworkingCommandExecuteInput_Client.h"
+#include "User/Framework/Public/Networking/Commands/Interface/Input/KLDebugUserNetworkingCommandExecuteInput_Server.h"
 
 // engine
 #include "Engine/World.h"
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "User/Networking/Public/Commands/Helpers/KLDebugUserNetworkingCommandHelpers.h"
+#include "User/Framework/Public/Networking/Commands/Helpers/KLDebugUserNetworkingCommandHelpers.h"
 
 KL_DEBUG_CREATE_COMMAND(FKLDebugCommand_Pause)
 

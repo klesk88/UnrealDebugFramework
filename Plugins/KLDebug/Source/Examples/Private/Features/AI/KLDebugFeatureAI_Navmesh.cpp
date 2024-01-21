@@ -5,10 +5,10 @@
 #include "Filters/KLDebugImGuiFilterAI.h"
 
 // modules
-#include "ImGui/User/Public/Feature/Interface/Unique/KLDebugImGuiFeatureUniqueAllInputs.h"
-#include "ImGui/User/Public/Helpers/KLDebugImGuiHelpers.h"
 #include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-#include "User/Networking/Public/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
+#include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
+#include "User/Framework/Public/Networking/Feature/Unique/KLDebugUserNetworkingFeatureUniqueAllInputs.h"
+#include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"
@@ -125,7 +125,7 @@ void FKLDebugFeatureAI_Navmesh::Tick(FKLDebugFeatureTickInput_Unique& _Input)
     //     mPlayerCameraLocation = Location;
     //     CollectNavmeshData(World, mPlayerCameraLocation, mNavmeshRenderData);
 
-    //    _Input.GetUpdateFlagsMutable().SetFag(FKLDebugImGuiFeatureInputFlags::EFeatureUpdateFlags::SceneProxy);
+    //    _Input.GetUpdateFlagsMutable().SetFag(FKLDebugFeatureInputFlags::EFeatureUpdateFlags::SceneProxy);
     //}
 }
 
