@@ -2,12 +2,10 @@
 
 #include "Font/KLUnrealImGuiFontManager.h"
 
-// ImPlotThirdParty module
-#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
-// NetImGuiThirdParty module
+// modules
 #include "ThirdParty/NetImGuiThirdParty/Public/Library/NetImgui_Api.h"
-// UnrealImGui module
 #include "ThirdParty/UnrealImGui/Public/ImGuiContextManager.h"
+#include "User/ThirdParty/ImPlot/Public/Library/implot.h"
 
 // engine
 #include "Math/UnrealMathUtility.h"
@@ -23,7 +21,7 @@
 #include "ThirdParty/NetImGuiThirdParty/Public/Fonts/Roboto_Medium.cpp"
 
 #if NETIMGUI_FREETYPE_ENABLED
-#include "ThirdParty/ImGuiThirdParty/Public/Library/misc/freetype/imgui_freetype.h"
+#include "User/ThirdParty/ImGui/Public/Library/misc/freetype/imgui_freetype.h"
 #endif
 
 #if NETIMGUI_FONT_ICON_GAMEKENNEY

@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class IMGUITHIRDPARTY_API FImGuiThirdPartyModule : public IModuleInterface
+class KLDEBUGUSERTHIRDPARTYIMGUI_API FKLDebugUserThirdPartyImGuiModule : public IModuleInterface
 {
 public:
     /** IModuleInterface implementation */

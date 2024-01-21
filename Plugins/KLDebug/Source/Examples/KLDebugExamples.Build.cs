@@ -18,8 +18,8 @@ public class KLDebugExamples : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "ImGuiThirdParty",
-                "ImPlotThirdParty",
+                "KLDebugUserThirdPartyImGui",
+                "KLDebugUserThirdPartyImPlot",
                 "KLDebugImGuiFramework", //for picker
                 "KLDebugUserFramework",
 

@@ -21,7 +21,7 @@ public class KLDebugImGuiTests : ModuleRules
             {
                 "KLDebugImGuiFramework",
                 "KLDebugUserFramework",
-                "ImGuiThirdParty",
+                "KLDebugUserThirdPartyImGui",
 
                 //engine
                 "AITestSuite",

@@ -4,8 +4,8 @@
 
 #include "Font/KLUnrealImGuiFontDefines.h"
 
-// ImGuiThirdParty module
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+// modules
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Containers/UnrealString.h"

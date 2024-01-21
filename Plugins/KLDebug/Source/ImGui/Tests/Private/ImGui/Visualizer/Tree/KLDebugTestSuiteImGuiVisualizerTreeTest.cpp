@@ -12,7 +12,7 @@
 #include "ImGui/Framework/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerNodeData.h"
 #include "ImGui/Framework/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTree.h"
 #include "ImGui/Framework/Public/Feature/Visualizer/Tree/KLDebugImGuiFeatureVisualizerTreeNode.h"
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "AITestsCommon.h"

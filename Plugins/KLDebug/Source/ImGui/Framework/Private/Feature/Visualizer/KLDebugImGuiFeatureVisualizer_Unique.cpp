@@ -9,7 +9,7 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
 

@@ -1,7 +1,7 @@
 #include "NetImGuiThirdPartyModule.h"
 
-// ImGuiThirdParty module
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+// modules
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 #define LOCTEXT_NAMESPACE "NetImGuiThirdPartyModule"
 

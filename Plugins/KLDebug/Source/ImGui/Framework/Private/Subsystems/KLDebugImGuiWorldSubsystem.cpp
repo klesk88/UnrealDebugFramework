@@ -19,11 +19,11 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
 #include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceTypes.h"
 #include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Containers/UnrealString.h"

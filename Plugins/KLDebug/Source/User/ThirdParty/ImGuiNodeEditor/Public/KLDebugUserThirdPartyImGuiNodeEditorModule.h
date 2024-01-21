@@ -1,10 +1,10 @@
 #pragma once
 
-//engine
+// engine
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class IMGUINODEEDITOR_API FImGuiNodeEditorModule : public IModuleInterface
+class KLDEBUGUSERTHIRDPARTYIMGUINODEEDITOR_API FKLDebugUserThirdPartyImGuiNodeEditorModule : public IModuleInterface
 {
 public:
     /** IModuleInterface implementation */

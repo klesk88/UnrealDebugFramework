@@ -25,7 +25,7 @@ public class KLDebugUserFramework : ModuleRules
             new string[]
             {
                 "KLDebugUtils",
-                "ImGuiThirdParty",
+                "KLDebugUserThirdPartyImGui",
 
                 //engine
                 "Engine", //for FDebugDrawDelegateHelper

@@ -3,9 +3,9 @@
 #include "BottomBar/KLDebugExampleBottomBar.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-#include "User/Framework/Public/Window/BottomBar/KLDebugModeInterfaceAllInput.h"
 #include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowAllInputs.h"
+#include "User/Framework/Public/Window/BottomBar/KLDebugModeInterfaceAllInput.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Camera/PlayerCameraManager.h"

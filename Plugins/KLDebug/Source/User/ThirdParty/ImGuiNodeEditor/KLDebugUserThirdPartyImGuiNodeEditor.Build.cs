@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
-public class ImGuiNodeEditor : ModuleRules
+public class KLDebugUserThirdPartyImGuiNodeEditor : ModuleRules
 {
-    public ImGuiNodeEditor(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugUserThirdPartyImGuiNodeEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.NoSharedPCHs; // Prevents problem with Dear ImGui sources not including the right first header
-        PrivatePCHHeaderFile = "Public/ImGuiNodeEditorModule.h";
+        PrivatePCHHeaderFile = "Public/KLDebugUserThirdPartyImGuiNodeEditorModule.h";
 
         string PrivateFolder = Path.Combine(ModuleDirectory, "Private");
         string PublicLibraryFolder = Path.Combine(ModuleDirectory, "Public/Library");
-        string PublicImGuiLibraryFolder = Path.Combine(ModuleDirectory, "../ImGuiThirdParty/Public/Library");
+        string PublicImGuiLibraryFolder = Path.Combine(ModuleDirectory, "../ImGui/Public/Library");
 
         PrivateIncludePaths.AddRange(
             new string[] {
@@ -24,9 +24,9 @@ public class ImGuiNodeEditor : ModuleRules
         PublicDependencyModuleNames.AddRange(
            new string[]
            {
-               "Core",
-               "ImGuiThirdParty"
-               // ... add other public dependencies that you statically link with here ...
+               "KLDebugUserThirdPartyImGui",
+
+               "Core"
            }
        );
     }

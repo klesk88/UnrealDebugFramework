@@ -18,9 +18,9 @@ public class KLDebugImGuiEditor : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "ImGuiNodeEditor",
-                "ImGuiThirdParty",
-                "ImPlotThirdParty",
+                "KLDebugUserThirdPartyImGui",
+                "KLDebugUserThirdPartyImGuiNodeEditor",
+                "KLDebugUserThirdPartyImPlot",
                 "KLDebugImGuiFramework",
                 "KLDebugUtils",
                 "KLUnrealImGui",

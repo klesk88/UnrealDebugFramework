@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
-public class ImPlotThirdParty : ModuleRules
+public class KLDebugUserThirdPartyImPlot : ModuleRules
 {
-    public ImPlotThirdParty(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugUserThirdPartyImPlot(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.NoSharedPCHs; // Prevents problem with Dear ImGui/NetImgui sources not including the right first header
-        PrivatePCHHeaderFile = "Public/ImPlotThirdPartyModule.h";
+        PrivatePCHHeaderFile = "Public/KLDebugUserThirdPartyImPlotModule.h";
 
         string PrivateFolder = Path.Combine(ModuleDirectory, "Private");
         string PublicLibraryFolder = Path.Combine(ModuleDirectory, "Public/Library");
-        string PublicImGuiLibraryFolder = Path.Combine(ModuleDirectory, "../ImGuiThirdParty/Public/Library");
+        string PublicImGuiLibraryFolder = Path.Combine(ModuleDirectory, "../ImGui/Public/Library");
 
         PrivateIncludePaths.AddRange(
             new string[] {
@@ -24,12 +24,13 @@ public class ImPlotThirdParty : ModuleRules
         PublicDependencyModuleNames.AddRange(
            new string[]
            {
-                "Core",
-                "ImGuiThirdParty"
+                "KLDebugUserThirdPartyImGui",
+
+                "Core"
                // ... add other public dependencies that you statically link with here ...
            }
        );
 
-       PublicDefinitions.Add("IMGUI_DEFINE_MATH_OPERATORS");
+        PublicDefinitions.Add("IMGUI_DEFINE_MATH_OPERATORS");
     }
 }

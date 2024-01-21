@@ -2,16 +2,13 @@
 
 #include "KLUnrealImGuiModule.h"
 
-// ImGuiThirdParty module
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-// ImPlotThirdParty module
-#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
-// KLDebugUtils module
-#include "Utils/Public/KLDebugLog.h"
-// UnrealImGui module
+// modules
 #include "ThirdParty/UnrealImGui/Public/ImGuiContextManager.h"
 #include "ThirdParty/UnrealImGui/Public/ImGuiModuleManager.h"
 #include "ThirdParty/UnrealImGui/Public/ThirdPartyBuildNetImgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
+#include "User/ThirdParty/ImPlot/Public/Library/implot.h"
+#include "Utils/Public/KLDebugLog.h"
 
 // engine
 #include "Modules/ModuleManager.h"

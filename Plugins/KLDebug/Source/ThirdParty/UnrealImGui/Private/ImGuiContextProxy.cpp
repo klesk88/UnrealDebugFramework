@@ -12,7 +12,7 @@
 // Include ImPlot here so we can call `ImPlot::CreateContext`
 //@Begin KLMod point ot the correct path
 // #include <implot.h>
-#include "ThirdParty/ImPlotThirdParty/Public/Library/implot.h"
+#include "User/ThirdParty/ImPlot/Public/Library/implot.h"
 // End KLMod
 
 #include <GenericPlatform/GenericPlatformFile.h>

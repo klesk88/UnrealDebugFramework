@@ -6,7 +6,7 @@
 #include "ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 void IKLDebugFeatureInterface_Unique::DrawImGui(FKLDebugFeatureImGuiInput_Unique& _Input)
 {

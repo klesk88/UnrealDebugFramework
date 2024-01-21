@@ -4,11 +4,11 @@
 #include "Config/KLDebugImGuiConfig.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
 #include "User/Framework/Internal/Mode/StaticMemory/KLDebugModeManager.h"
 #include "User/Framework/Internal/Mode/StaticMemory/KLDebugModeManagerEntryBase.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterface.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterfaceAllInput.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Engine/World.h"

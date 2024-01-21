@@ -2,8 +2,8 @@
 
 #include "ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
-// ImGuiThirdParty module
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+// modules
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 namespace KL::Debug::ImGuiHelpers
 {

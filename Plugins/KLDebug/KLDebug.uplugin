@@ -55,22 +55,22 @@
             "LoadingPhase": "Default"
         },
         {
+            "Name": "KLDebugUserThirdPartyImGui",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
+        {
+            "Name": "KLDebugUserThirdPartyImGuiNodeEditor",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
+        {
+            "Name": "KLDebugUserThirdPartyImPlot",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
+        {
             "Name": "KLDebugUtils",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-        },
-        {
-            "Name": "ImGuiNodeEditor",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-        },
-        {
-            "Name": "ImGuiThirdParty",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-        },
-        {
-            "Name": "ImPlotThirdParty",
             "Type": "Runtime",
             "LoadingPhase": "Default"
         },

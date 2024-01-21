@@ -6,7 +6,7 @@
 #include "Subsystems/KLDebugImGuiWorldSubsystem.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 #include "ThirdParty/UnrealImGui/Public/ImGuiDelegates.h"
 #include "ThirdParty/UnrealImGui/Public/UnrealImGuiModule.h"
 #include "UnrealImGui/Public/KLUnrealImGuiModule.h"

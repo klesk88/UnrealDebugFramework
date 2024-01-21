@@ -21,8 +21,8 @@ public class KLUnrealImGui : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "ImGuiThirdParty",
-                "ImPlotThirdParty",
+                "KLDebugUserThirdPartyImGui",
+                "KLDebugUserThirdPartyImPlot",
                 "KLDebugUtils",
                 "NetImGuiThirdParty",
                 "UnrealImGui",

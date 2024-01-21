@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using UnrealBuildTool;
 
-public class ImGuiThirdParty : ModuleRules
+public class KLDebugUserThirdPartyImGui : ModuleRules
 {
-    public ImGuiThirdParty(ReadOnlyTargetRules Target) : base(Target)
+    public KLDebugUserThirdPartyImGui(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.NoSharedPCHs; // Prevents problem with Dear ImGui sources not including the right first header
-        PrivatePCHHeaderFile = "Public/ImGuiThirdPartyModule.h";
+        PrivatePCHHeaderFile = "Public/KLDebugUserThirdPartyImGuiModule.h";
 
         string PrivateFolder = Path.Combine(ModuleDirectory, "Private");
         string PrivateImguiFolder = Path.Combine(ModuleDirectory, "Private/Library");

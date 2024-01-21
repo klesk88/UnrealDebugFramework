@@ -7,9 +7,9 @@
 #include "Mode/Manager/KLDebugFrameworkModeManager.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui_internal.h"    // https://github.com/ocornut/imgui/issues/3518
 #include "User/Framework/Public/Window/KLDebugWindowDelegates.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui_internal.h"    // https://github.com/ocornut/imgui/issues/3518
 
 // engine
 #include "Camera/PlayerCameraManager.h"

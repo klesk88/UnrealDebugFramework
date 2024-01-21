@@ -14,16 +14,15 @@
 
 // Default value is 'Active' when nto specified
 #ifndef IMGUI_UNREAL_COMMAND_ENABLED
-	#define IMGUI_UNREAL_COMMAND_ENABLED 1 
+#define IMGUI_UNREAL_COMMAND_ENABLED 1
 #endif
 
 // When Dear Imgui is not detected, remove Imgui UnrealCommand support
-//@Begin KLMod: use the correct _API for imgui which is IMGUITHIRDPARTY_API
-#ifndef IMGUITHIRDPARTY_API
-	#undef IMGUI_UNREAL_COMMAND_ENABLED
-	#define IMGUI_UNREAL_COMMAND_ENABLED 0
+//@Begin KLMod: use the correct _API for imgui which is KLDEBUGUSERTHIRDPARTYIMGUI_API
+#ifndef KLDEBUGUSERTHIRDPARTYIMGUI_API
+#undef IMGUI_UNREAL_COMMAND_ENABLED
+#define IMGUI_UNREAL_COMMAND_ENABLED 0
 #endif
-
 
 #if IMGUI_UNREAL_COMMAND_ENABLED
 
@@ -31,29 +30,29 @@
 
 namespace ImUnrealCommand
 {
-	struct			CommandContext;
+    struct CommandContext;
 
-	// @brief		Initialize the Context
-	// @oaram		[addDefaultPresets] Fill the Preset list, with commonly used value
-	CommandContext*	Create(bool addDefaultPresets = true);
-	
-	// @brief		Release the created Context
-	void			Destroy(CommandContext*& pCmdContext);
-	
-	// @brief		Display the 'UE Command' Window, using Dear ImGui
-	void			Show(CommandContext* pCmdContext);
-	
-	// @brief		True if the Window should be displayed
-	// @note		Returned value can be modified to change the Window visibility
-	bool&			IsVisible(CommandContext* pCmdContext);
-	
-	// @brief		Add new 'Commands' to the specified Preset commands list. 
-	//				Commanda are executed as is
-	void			AddPresetCommands(CommandContext* pCmdContext, const FString& presetName, const TArray<FString>& commands);
+    // @brief		Initialize the Context
+    // @oaram		[addDefaultPresets] Fill the Preset list, with commonly used value
+    CommandContext* Create(bool addDefaultPresets = true);
 
-	// @brief		Add new 'Filters' to the specified Preset commands list. 
-	//				Filters are used to find all 'Unreal Commands' starting with this string, and add them to the Preset
-	void			AddPresetFilters(CommandContext* pCmdContext, const FString& presetName, const TArray<FString>& filters);
-}
+    // @brief		Release the created Context
+    void Destroy(CommandContext*& pCmdContext);
 
-#endif // IMGUI_UNREAL_COMMAND_ENABLED
+    // @brief		Display the 'UE Command' Window, using Dear ImGui
+    void Show(CommandContext* pCmdContext);
+
+    // @brief		True if the Window should be displayed
+    // @note		Returned value can be modified to change the Window visibility
+    bool& IsVisible(CommandContext* pCmdContext);
+
+    // @brief		Add new 'Commands' to the specified Preset commands list.
+    //				Commanda are executed as is
+    void AddPresetCommands(CommandContext* pCmdContext, const FString& presetName, const TArray<FString>& commands);
+
+    // @brief		Add new 'Filters' to the specified Preset commands list.
+    //				Filters are used to find all 'Unreal Commands' starting with this string, and add them to the Preset
+    void AddPresetFilters(CommandContext* pCmdContext, const FString& presetName, const TArray<FString>& filters);
+}    // namespace ImUnrealCommand
+
+#endif    // IMGUI_UNREAL_COMMAND_ENABLED

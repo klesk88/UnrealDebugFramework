@@ -10,7 +10,7 @@
 #include "Subsystems/KLDebugImGuiEngineSubsystem.h"
 
 // modules
-#include "ThirdParty/ImGuiThirdParty/Public/Library/imgui.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 #include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
 #include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureSelectableAllInputs.h"
 
