@@ -67,7 +67,7 @@ void FKLDebugExampleBottomBar::Draw(const FKLDebugBottomBarDrawInput& _Input) co
     if (PlayerCharacter)
     {
         ImGui::SameLine();
-        ImGui::Text(" Player: [%ls]", *PlayerCharacter->GetActorLocation().ToString());
+        ImGui::Text(" Player: [%s]", TCHAR_TO_ANSI(*PlayerCharacter->GetActorLocation().ToString()));
     }
 
     const APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(&World, 0);
@@ -78,7 +78,7 @@ void FKLDebugExampleBottomBar::Draw(const FKLDebugBottomBarDrawInput& _Input) co
         PlayerCamera->GetCameraViewPoint(CameraLocation, CamRot);
 
         ImGui::SameLine();
-        ImGui::Text(" Camera: [%ls]", *CameraLocation.ToString());
+        ImGui::Text(" Camera: [%s]", TCHAR_TO_ANSI(*CameraLocation.ToString()));
     }
 
     ImGui::SameLine();

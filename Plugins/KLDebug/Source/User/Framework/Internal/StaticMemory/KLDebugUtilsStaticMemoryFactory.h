@@ -29,7 +29,7 @@ protected:
 };
 
 template <typename DataInterface>
-typename const DataInterface* TKLDebugUtilsStaticMemoryFactory<DataInterface>::TryGetData(const FName& _DataID) const
+const DataInterface* TKLDebugUtilsStaticMemoryFactory<DataInterface>::TryGetData(const FName& _DataID) const
 {
     if (const uint32* Offset = mIDToData.Find(_DataID))
     {
@@ -40,7 +40,7 @@ typename const DataInterface* TKLDebugUtilsStaticMemoryFactory<DataInterface>::T
 }
 
 template <typename DataInterface>
-typename DataInterface* TKLDebugUtilsStaticMemoryFactory<DataInterface>::TryGetDataMutable(const FName& _DataID)
+DataInterface* TKLDebugUtilsStaticMemoryFactory<DataInterface>::TryGetDataMutable(const FName& _DataID)
 {
     if (const uint32* Offset = mIDToData.Find(_DataID))
     {
@@ -51,14 +51,14 @@ typename DataInterface* TKLDebugUtilsStaticMemoryFactory<DataInterface>::TryGetD
 }
 
 template <typename DataInterface>
-typename const DataInterface& TKLDebugUtilsStaticMemoryFactory<DataInterface>::GetData(const uint32 _Index) const
+const DataInterface& TKLDebugUtilsStaticMemoryFactory<DataInterface>::GetData(const uint32 _Index) const
 {
     checkf(mDataPool.IsValidIndex(_Index), TEXT("index must be valid"));
     return reinterpret_cast<const DataInterface&>(mDataPool[_Index]);
 }
 
 template <typename DataInterface>
-typename DataInterface& TKLDebugUtilsStaticMemoryFactory<DataInterface>::GetDataMutable(const uint32 _Index)
+DataInterface& TKLDebugUtilsStaticMemoryFactory<DataInterface>::GetDataMutable(const uint32 _Index)
 {
     checkf(mDataPool.IsValidIndex(_Index), TEXT("index must be valid"));
     return reinterpret_cast<DataInterface&>(mDataPool[_Index]);

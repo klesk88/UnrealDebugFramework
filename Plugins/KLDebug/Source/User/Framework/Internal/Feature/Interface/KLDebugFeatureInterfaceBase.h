@@ -106,10 +106,10 @@ private:    // finish macro that allow us to have a basic RTTI system
 class IKLDebugFeatureInterfaceBase : public IKLDebugRTTIInterface, public IKLDebugNetworkingGetterInterface
 {
 public:
-    virtual ~IKLDebugFeatureInterfaceBase();
+    KLDEBUGUSERFRAMEWORK_API virtual ~IKLDebugFeatureInterfaceBase();
 
     // get path that will be displayed inside the ImGui tree
-    KLDEBUGUSERFRAMEWORK_API UE_NODISCARD virtual const FName& GetImGuiPath() const = 0;
+    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API virtual const FName& GetImGuiPath() const = 0;
 
     // this is called once at game startup from the engine module to initialize the class
     KLDEBUGUSERFRAMEWORK_API virtual void Initialize();
@@ -127,7 +127,7 @@ public:
     UE_NODISCARD bool RequiresAnyUpdate() const;
 
 protected:
-    KLDEBUGUSERFRAMEWORK_API UE_NODISCARD virtual const FString& GetWindowName() const = 0;
+    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API virtual const FString& GetWindowName() const = 0;
 };
 
 inline void IKLDebugFeatureInterfaceBase::Initialize()

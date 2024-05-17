@@ -35,6 +35,7 @@
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Stats/Stats2.h"
+#include "UnrealEngine.h"
 
 #if DO_ENSURE
 // engine
@@ -92,7 +93,7 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
     }
 
     UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::GetMutable();
-    if (EngineSusbsytem->IsImGuiSystemEnabled())
+    if (EngineSusbsytem && EngineSusbsytem->IsImGuiSystemEnabled())
     {
         // if we are destroying a world then disable the debugger by default when we enter in the new one
         // the user will need to enable it again. TRhis can be usefull noramlly and when going from PIE to
@@ -495,6 +496,9 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
     const EImGuiInterfaceType SelectableContainerType = EImGuiInterfaceType::SELECTABLE;
     FKLDebugImGuiFeatureContainerBase& SelectableObjectsContainer = _ContainerManager.GetContainerMutable(SelectableContainerType);
 
+    TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> SelectedFeatures;
+    SelectedFeatures.Reserve(10);
+
     for (int32 i = mSelectedObjectsVisualizers.Num() - 1; i >= 0; --i)
     {
         const FKLDebugImGuiFeatureVisualizer_Selectable& ObjVisualizer = mSelectedObjectsVisualizers[i];
@@ -506,7 +510,8 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
                 IKLDebugFeatureInterfaceBase& Interface = Iterator.GetFeatureInterfaceCastedMutable<IKLDebugFeatureInterfaceBase>();
                 KL::Debug::Feature::Helpers::OnFeatureUnselected(_World, ObjVisualizer.GetObjectKey().ResolveObjectPtr(), Interface);
 
-                FKLDebugImGuiSubsetFeaturesConstIterator ConstIter = SelectableObjectsContainer.GetFeaturesSubsetConstIterator(ObjVisualizer.GetFeaturesIndexes());
+                ObjVisualizer.GetSelectedFeaturesIndexes(SelectedFeatures);
+                FKLDebugImGuiSubsetFeaturesConstIterator ConstIter = SelectableObjectsContainer.GetFeaturesSubsetConstIterator(SelectedFeatures);
                 FKLDebugImGuiFeatureStatusUpdateData DelegateData{ _World, false, SelectableContainerType, ObjVisualizer.GetObjectKey(), ConstIter };
                 DelegateData.SetFullyRemoved();
                 mOnFeaturesUpdatedDelegate.Broadcast(DelegateData);

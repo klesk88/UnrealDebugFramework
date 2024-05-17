@@ -7,6 +7,7 @@
 // engine
 #include "CoreMinimal.h"
 #include "Engine/EngineBaseTypes.h"
+#include "Engine/World.h"
 #include "Templates/UnrealTemplate.h"
 
 class FKLDebugImGuiFeaturesTypesContainerManager;

@@ -46,7 +46,7 @@ protected:
     // allow the child to directly write in the write buffer if needed
     virtual void TickChildWriteBuffer(FArchive& _Writer);
     virtual void OnSendDataResultChild(const bool _DataSent);
-    virtual UE_NODISCARD bool CheckConnectionStatus();
+    UE_NODISCARD virtual bool CheckConnectionStatus();
 
     void ClearSocket(ISocketSubsystem& _SocketSubsystem);
     UE_NODISCARD FSocket& GetSocketMutable() const;

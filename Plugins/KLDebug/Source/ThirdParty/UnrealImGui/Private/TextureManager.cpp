@@ -9,6 +9,7 @@
 
 //@begin KLMod missing includes
 #include "Engine/Texture.h"
+#include "RHITypes.h"
 //@end KLMod
 
 

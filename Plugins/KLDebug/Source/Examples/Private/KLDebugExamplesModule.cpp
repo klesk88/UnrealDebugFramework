@@ -8,7 +8,10 @@
 #include "User/Framework/Public/Networking/Commands/Helpers/KLDebugUserNetworkingCommandHelpers.h"
 
 // engine
+#include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Modules/ModuleManager.h"
+#include "UObject/Object.h"
 
 #define LOCTEXT_NAMESPACE "KLDebugExamplesModule"
 

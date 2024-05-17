@@ -5,6 +5,8 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerBase.h"
 
 // engine
+#include "Components/PrimitiveComponent.h"
+#include "HAL/Platform.h"
 #include "UObject/Object.h"
 #include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtr.h"

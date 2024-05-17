@@ -6,6 +6,7 @@
 #include "Feature/Interface/KLDebugFeatureInterfaceBase.h"
 
 // engine
+#include "DebugRenderSceneProxy.h"
 #include "Templates/UniquePtr.h"
 
 class FDebugRenderSceneProxy;
@@ -22,7 +23,7 @@ class UWorld;
  * For example this could be Unreal Subsystems, singletons, etc. Because of this there is only at most one instance of this feature alive per world
  * (remember tough that in a client/server environment you have multiple worlds valid at the same time). To have data per world in that case create a context
  *
- * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() in the .cpp so that the class
+ * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_FEATURE() in the .cpp so that the class
  * can auto subscribe to the system. For example:
  *
  * class FClassDebug final : public IKLDebugFeatureInterface_Unique
@@ -33,7 +34,7 @@ class UWorld;
  *
  * FClassDebug.cpp
  *
- * KL_DEBUG_CREATE_WINDOW(FClassDebug)
+ * KL_DEBUG_CREATE_FEATURE(FClassDebug)
  */
 class KLDEBUGUSERFRAMEWORK_API IKLDebugFeatureInterface_Unique : public IKLDebugFeatureInterfaceBase, public IKLDebugContextUserInterface
 {
@@ -61,7 +62,7 @@ public:
     virtual void DrawImGui(FKLDebugFeatureImGuiInput_Unique& _Input);
     virtual void Render(const FKLDebugFeatureRenderInput_Unique& _Input) const;
 
-    static UE_NODISCARD constexpr EImGuiInterfaceType GetInterfaceType();
+    UE_NODISCARD static constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
     virtual void DrawImGuiChild(FKLDebugFeatureImGuiInput_Unique& _Context);
@@ -77,13 +78,13 @@ inline void IKLDebugFeatureInterface_Unique::OnFeatureUnselected([[maybe_unused]
 {
 }
 
-inline void IKLDebugFeatureInterface_Unique::DrawOnCanvas([[maybe_unused]] FKLDebugFeatureDrawCanvasInput_Unique& _Input) const
-{
-}
-
 inline TUniquePtr<FDebugRenderSceneProxy> IKLDebugFeatureInterface_Unique::CreateDebugSceneProxy([[maybe_unused]] FKLDebugFeatureSceneProxyInput_Unique& _Input)
 {
     return nullptr;
+}
+
+inline void IKLDebugFeatureInterface_Unique::DrawOnCanvas([[maybe_unused]] FKLDebugFeatureDrawCanvasInput_Unique& _Input) const
+{
 }
 
 inline void IKLDebugFeatureInterface_Unique::Tick([[maybe_unused]] FKLDebugFeatureTickInput_Unique& _Input)

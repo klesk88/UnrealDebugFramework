@@ -2,6 +2,7 @@
 
 #include "Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
 
+#include "Feature/Interface/Selectable/Input/KLDebugFeatureImGuiInput_Selectable.h"
 #include "ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 
 // modules

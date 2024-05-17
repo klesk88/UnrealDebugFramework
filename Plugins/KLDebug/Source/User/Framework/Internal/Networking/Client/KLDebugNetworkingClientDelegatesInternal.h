@@ -12,7 +12,7 @@ namespace KL::Debug::Client::Delegates::Internal
 {
     KLDEBUGUSERFRAMEWORK_API void BindGetDebugServerSocketPort(const FGetDebugServerSocketPort& _Delegate);
     KLDEBUGUSERFRAMEWORK_API void UnbindGetDebugServerSocketPort();
-    KLDEBUGUSERFRAMEWORK_API UE_NODISCARD TOptional<uint32> BroadcastGetDebugServerSocketPort();
-    KLDEBUGUSERFRAMEWORK_API UE_NODISCARD bool IsGetDebugServerSocketPortBound();
+    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API TOptional<uint32> BroadcastGetDebugServerSocketPort();
+    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API bool IsGetDebugServerSocketPortBound();
 
 }    // namespace KL::Debug::Client::Delegates::Internal

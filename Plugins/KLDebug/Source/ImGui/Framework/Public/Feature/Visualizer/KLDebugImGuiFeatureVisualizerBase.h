@@ -54,6 +54,7 @@ public:
 
     void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
     UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeaturesIndexes() const;
+    void GetSelectedFeaturesIndexes(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _SelectedFeatures) const;
 
     UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
     UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const;

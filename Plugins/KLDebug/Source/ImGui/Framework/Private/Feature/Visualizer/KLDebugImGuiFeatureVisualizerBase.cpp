@@ -67,3 +67,13 @@ void FKLDebugImGuiFeatureVisualizerBase::InitCommonCanvasInput(UWorld& _World, F
     _Input.CursorY = _Input.DefaultY = CanvasConfig.GetBorderOffsetY();
     _Input.World = &_World;
 }
+
+void FKLDebugImGuiFeatureVisualizerBase::GetSelectedFeaturesIndexes(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _SelectedFeatures) const
+{
+    _SelectedFeatures.Reset();
+    _SelectedFeatures.Reserve(mSelectedFeaturesIndexes.Num());
+    for (const FKLDebugImGuiFeatureVisualizerEntry& Entry : mSelectedFeaturesIndexes)
+    {
+        _SelectedFeatures.Emplace(Entry.GetFeatureIndex());
+    }
+}

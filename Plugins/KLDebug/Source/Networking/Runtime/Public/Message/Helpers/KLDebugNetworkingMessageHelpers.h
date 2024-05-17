@@ -22,10 +22,10 @@ namespace KL::Debug::Networking::Message
 
     KLDEBUGNETWORKINGRUNTIME_API void Init(const uint32 _MaxMessageSizeSplit, const uint32 _MaxDataSizeBeforeCompression, const uint32 _CompressMinBytesSaved, const uint32 _CompressMinPercentSaved);
 
-    KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD MessageID GetNewMessageID();
-    KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD uint32 GetHeaderSize();
+    UE_NODISCARD KLDEBUGNETWORKINGRUNTIME_API MessageID GetNewMessageID();
+    UE_NODISCARD KLDEBUGNETWORKINGRUNTIME_API uint32 GetHeaderSize();
 
-    KLDEBUGNETWORKINGRUNTIME_API UE_NODISCARD bool CompressBuffer(const TArray<uint8>& _DataToCompress, TArray<uint8>& _CompressedData);
+    UE_NODISCARD KLDEBUGNETWORKINGRUNTIME_API bool CompressBuffer(const TArray<uint8>& _DataToCompress, TArray<uint8>& _CompressedData);
     KLDEBUGNETWORKINGRUNTIME_API bool UncompressBuffer(const uint32 _UncompressSize, const TArrayView<const uint8>& _CompressedData, TArrayView<uint8>& _UncompressedData);
 
     KLDEBUGNETWORKINGRUNTIME_API void PrepareMessageToSend_Uncompressed(const IKLDebugNetworkingMessageInterface& _Message, TArray<uint8>& _DataToSend, FArchive& _Archive);

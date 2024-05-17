@@ -16,10 +16,13 @@
 #include "Containers/Array.h"
 #include "Containers/UnrealString.h"
 #include "CoreMinimal.h"
+#include "Delegates/Delegate.h"
 #include "Delegates/IDelegateInstance.h"
 #include "GenericPlatform/GenericPlatformProcess.h"
+#include "HAL/Platform.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Templates/UniquePtr.h"
+#include "UObject/Object.h"
 #include "UObject/ObjectPtr.h"
 
 #if DO_ENSURE

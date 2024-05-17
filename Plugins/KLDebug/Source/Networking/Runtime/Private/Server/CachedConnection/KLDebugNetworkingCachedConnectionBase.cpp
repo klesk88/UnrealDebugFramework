@@ -18,6 +18,8 @@
 #include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
 #include "SocketSubsystem.h"
+#include "Stats/Stats.h"
+#include "Stats/Stats2.h"
 
 #if DO_ENSURE
 // engine
@@ -164,7 +166,7 @@ int32 FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData()
         if (Size > static_cast<uint32>(SpaceLeftInBuffer))
         {
             ensureMsgf(false, TEXT("resizing array should not happen"));
-            const int32 NewSize = Size - SpaceLeftInBuffer;
+            const int32 NewSize = Size - SpaceLeftInBuffer + 1;
             mReceiveBuffer.SetNum(NewSize, false);
         }
 

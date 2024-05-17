@@ -11,7 +11,7 @@
 
 enum class KLDEBUGIMGUINETWORKING_API EKLDebugImGuiNetworkMessageTypes : uint8
 {
-    ImGuiMessage = EKLDebugNetworkingMessagesTypes::Count,
+    ImGuiMessage = static_cast<uint8>(EKLDebugNetworkingMessagesTypes::Count),
 
     Count
 };

@@ -14,7 +14,7 @@
  * will output an error for multiple class definitions)
  */
 
-#define KL_DEBUG_CREATE_WINDOW(_Class)                                                         \
+#define KL_DEBUG_CREATE_FEATURE(_Class)                                                        \
     namespace KL::Debug::Windows                                                               \
     {                                                                                          \
         static inline const TKLDebugFeatureManagerEntry<_Class> Instanced_##_Class{ #_Class }; \

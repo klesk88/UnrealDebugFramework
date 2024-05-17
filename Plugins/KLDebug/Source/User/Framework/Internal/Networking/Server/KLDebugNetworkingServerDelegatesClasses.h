@@ -2,6 +2,7 @@
 
 // engine
 #include "GenericPlatform/GenericPlatform.h"
+#include "HAL/Platform.h"
 
 namespace KL::Debug::Server::Delegates
 {

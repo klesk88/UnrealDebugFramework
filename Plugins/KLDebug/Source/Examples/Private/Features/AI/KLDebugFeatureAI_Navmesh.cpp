@@ -26,7 +26,7 @@
 #include "NavMesh/RecastNavMesh.h"
 #include "Serialization/Archive.h"
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_Navmesh)
+KL_DEBUG_CREATE_FEATURE(FKLDebugFeatureAI_Navmesh)
 
 void FKLDebugFeatureAI_Navmesh::OnFeatureSelected(const UWorld& _World)
 {
@@ -171,9 +171,9 @@ void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const UWorld& _World, const F
     }
 
     const int32 DetailFlags =
-        (1 << static_cast<int32>(ENavMeshDetailFlags::PolyEdges)) |
-        (1 << static_cast<int32>(ENavMeshDetailFlags::FilledPolys)) |
-        (1 << static_cast<int32>(ENavMeshDetailFlags::NavLinks));
+    (1 << static_cast<int32>(ENavMeshDetailFlags::PolyEdges)) |
+    (1 << static_cast<int32>(ENavMeshDetailFlags::FilledPolys)) |
+    (1 << static_cast<int32>(ENavMeshDetailFlags::NavLinks));
 
     if (TileSet.Num() == 0)
     {

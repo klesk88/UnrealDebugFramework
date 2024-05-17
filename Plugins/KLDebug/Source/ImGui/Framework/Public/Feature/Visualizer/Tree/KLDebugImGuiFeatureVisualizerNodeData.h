@@ -7,6 +7,7 @@
 // engine
 #include "Containers/UnrealString.h"
 #include "CoreMinimal.h"
+#include "HAL/Platform.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 

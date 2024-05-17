@@ -3,6 +3,7 @@
 #pragma once
 
 // modules
+#include "BottomBar/KLDebugExampleBottomBar.h"
 #include "User/Framework/Public/Context/KLDebugContextInterface.h"
 #include "User/Framework/Public/Mode/KLDebugModeInterface.h"
 #include "User/Framework/Public/Networking/Window/KLDebugNetworkingWindowInterface.h"

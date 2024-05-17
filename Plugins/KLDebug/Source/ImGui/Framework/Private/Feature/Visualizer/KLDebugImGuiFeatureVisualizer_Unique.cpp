@@ -9,9 +9,9 @@
 #include "Feature/Visualizer/KLDebugImGuiFeatureVisualizerEntry.h"
 
 // modules
-#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -25,7 +25,7 @@ void FKLDebugImGuiFeatureVisualizer_Unique::Init(const FKLDebugImGuiFeatureConta
 
 void FKLDebugImGuiFeatureVisualizer_Unique::DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context)
 {
-    if (ImGui::TreeNode(this, TCHAR_TO_ANSI(*mTreeName)))
+    if (ImGui::TreeNode(this, "%s", TCHAR_TO_ANSI(*mTreeName)))
     {
         mTreeVisualizer.DrawImGuiTree(GetInterfaceType(), _Context, true, nullptr, mSelectedFeaturesIndexes);
 

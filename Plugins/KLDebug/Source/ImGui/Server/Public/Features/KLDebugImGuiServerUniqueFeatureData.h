@@ -60,13 +60,3 @@ inline void FKLDebugImGuiServerUniqueFeatureData::SetCRC(const uint32 _CRC)
 {
     mCRC = _CRC;
 }
-
-const IKLDebugContextInterface* FKLDebugImGuiServerUniqueFeatureData::GetContext() const
-{
-    return GetFeatureContextMutable();
-}
-
-IKLDebugContextInterface* FKLDebugImGuiServerUniqueFeatureData::GetFeatureContextMutable() const
-{
-    return mContext.Get();
-}

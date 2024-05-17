@@ -4,6 +4,10 @@
 
 #include "Internal/Networking/Macro/KLDebugUserNetworkingInterfaceMacrosInternal.h"
 
+// engine
+#include "HAL/Platform.h"
+#include "UObject/NameTypes.h"
+
 #define KL_DEBUG_NETWORK_INTERFACE(ItemType, NetworkInterfaceType)                                              \
 public:                                                                                                         \
     UE_NODISCARD inline bool RequireServerTick() const override                                                 \
@@ -23,7 +27,7 @@ private:    // finish KL_DEBUG_NETWORK_INTERFACE
 class IKLDebugNetworkingBaseInterface
 {
 public:
-    virtual ~IKLDebugNetworkingBaseInterface();
+    KLDEBUGUSERFRAMEWORK_API virtual ~IKLDebugNetworkingBaseInterface();
 
     // RTTI section
     template <typename InterfaceClass>

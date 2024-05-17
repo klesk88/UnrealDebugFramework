@@ -14,7 +14,7 @@
 // engine
 #include "Containers/UnrealString.h"
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureAI_BehaviorTree)
+KL_DEBUG_CREATE_FEATURE(FKLDebugFeatureAI_BehaviorTree)
 
 TUniquePtr<IKLDebugContextInterface> FKLDebugFeatureAI_BehaviorTree::GetContext(const FKLDebugContextGetterInput_Selectable& _Input) const
 {
@@ -88,7 +88,7 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBrainInfo(const FKLDebugFeatureAI_
 
     if (ImGui::TreeNode("BehaviorData"))
     {
-        ImGui::Text("BrainComponent: [%ls]", *_Context.GetBrainComponentDebugInfo());
+        ImGui::Text("BrainComponent: [%s]", TCHAR_TO_ANSI(*_Context.GetBrainComponentDebugInfo()));
         ImGui::TreePop();
     }
 
@@ -100,14 +100,14 @@ void FKLDebugFeatureAI_BehaviorTree::ImGuiDrawBrainInfo(const FKLDebugFeatureAI_
         if (SeparatorIndex != INDEX_NONE && Idx)
         {
             TempString = _Context.GetBlackboardLines()[Idx].Left(SeparatorIndex + 1);
-            ImGui::Text("%ls", *TempString);
+            ImGui::Text("%s", TCHAR_TO_ANSI(*TempString));
             ImGui::SameLine();
             TempString = _Context.GetBlackboardLines()[Idx].Mid(SeparatorIndex + 1);
-            ImGui::TextColored(KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow), TCHAR_TO_ANSI(*TempString));
+            ImGui::TextColored(KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow), "%s", TCHAR_TO_ANSI(*TempString));
         }
         else
         {
-            ImGui::Text("%ls", *_Context.GetBlackboardLines()[Idx]);
+            ImGui::Text("%s", TCHAR_TO_ANSI(*_Context.GetBlackboardLines()[Idx]));
         }
     }
 

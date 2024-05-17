@@ -15,6 +15,7 @@
 #include "Containers/Map.h"
 #include "HAL/Platform.h"
 #include "Templates/UnrealTemplate.h"
+#include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtr.h"
 #include "UObject/WeakObjectPtrTemplates.h"
 
