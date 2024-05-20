@@ -28,3 +28,4 @@ Source/KLDebugFramework/*
 *Source/KLDebugFrameworkClient.Target.cs
 *Source/KLDebugFrameworkEditor.Target.cs
 *Source/KLDebugFrameworkServer.Target.cs
+.runcommandonsave
