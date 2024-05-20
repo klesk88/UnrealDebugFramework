@@ -12,7 +12,7 @@
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureEngine_Picker)
+KL_DEBUG_CREATE_FEATURE(FKLDebugFeatureEngine_Picker)
 
 FKLDebugFeatureEngine_Picker::FKLDebugFeatureEngine_Picker()
 {

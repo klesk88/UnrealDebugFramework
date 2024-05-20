@@ -22,6 +22,10 @@
 #include <SlateOptMacros.h>
 #include <Widgets/SViewport.h>
 
+//@Begin KLMod missing includes
+#include "UnrealClient.h"
+//@End KLMod
+
 #include <utility>
 
 

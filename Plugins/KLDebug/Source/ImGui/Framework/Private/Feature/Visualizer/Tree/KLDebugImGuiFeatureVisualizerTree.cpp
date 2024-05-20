@@ -15,13 +15,13 @@
 #include "TreeBuilder/KLDebugImGuiTreeBuilderStackData.h"
 
 // modules
-#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 #include "User/Framework/Internal/Feature/Interface/KLDebugFeatureInterfaceBase.h"
 #include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureInterface_Selectable.h"
 #include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureSelectableAllInputs.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureInterface_Unique.h"
 #include "User/Framework/Public/Feature/Interface/Unique/KLDebugFeatureUniqueAllInputs.h"
 #include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
+#include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Containers/UnrealString.h"
@@ -82,7 +82,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
             ImGui::PushStyleColor(ImGuiCol_Text, KL::Debug::ImGuiHelpers::ConvertUnrealColorToImGui(FColor::Yellow));
         }
 
-        const bool NodeOpen = ImGui::TreeNodeEx(&NodeData, NodeFlags, TCHAR_TO_ANSI(*NodeData.GetImGuiNodeString()));
+        const bool NodeOpen = ImGui::TreeNodeEx(&NodeData, NodeFlags, "%s", TCHAR_TO_ANSI(*NodeData.GetImGuiNodeString()));
 
         if (_TreeNode.HasFeatures())
         {

@@ -14,6 +14,7 @@
 #include "UnrealImGuiModule.h"
 #include "Utilities/WorldContext.h"
 #include "Utilities/WorldContextIndex.h"
+#include "HAL/Platform.h"
 
 #include <imgui.h>
 // TODO: Refactor ImGui Context Manager, to handle different types of worlds.
@@ -314,7 +315,9 @@ void FImGuiContextManager::BuildFontAtlas(const TMap<FName, TSharedPtr<ImFontCon
                 // Set font name for debugging
                 if (CustomFontConfig.IsValid())
                 {
+#if PLATFORM_WINDOWS
                     strcpy_s(CustomFontConfig->Name, 40, TCHAR_TO_ANSI(*CustomFontName.ToString()));
+#endif
                 }
 
                 FontAtlas.AddFont(CustomFontConfig.Get());

@@ -34,6 +34,7 @@ stb_uint stb_compress(stb_uchar* out, stb_uchar* in, stb_uint len);
 
 static bool binary_to_compressed_c(const char* filename, const char* symbol, bool use_base85_encoding, bool use_compression, bool use_static);
 
+/*
 int main(int argc, char** argv)
 {
     if (argc < 3)
@@ -63,6 +64,7 @@ int main(int argc, char** argv)
         fprintf(stderr, "Error opening or reading file: '%s'\n", argv[argn]);
     return ret ? 0 : 1;
 }
+*/
 
 char Encode85Byte(unsigned int x)
 {

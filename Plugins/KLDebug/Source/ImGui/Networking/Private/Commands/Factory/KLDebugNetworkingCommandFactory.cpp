@@ -7,6 +7,10 @@
 #include "User/Framework/Internal/Networking/Commands/StaticMemory/KLDebugUserNetworkingCommandManagerEntryBase.h"
 #include "User/Framework/Public/Networking/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
 
+// engine
+#include "Stats/Stats.h"
+#include "Stats/Stats2.h"
+
 void FKLDebugNetworkingCommandFactory::Init()
 {
     QUICK_SCOPE_CYCLE_COUNTER(FKLDebugNetworkingCommandFactory_Init);

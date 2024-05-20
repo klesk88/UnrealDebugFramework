@@ -7,6 +7,10 @@
 #include "ImGuiContextManager.h"
 #include "ImGuiDelegatesContainer.h"
 
+//@Begin KLMod missing includes
+#include "Misc/App.h"
+//@End KLMod
+
 //@Begin KLMod include also implot to create the context for it
 #include "User/ThirdParty/ImPlot/Public/Library/implot.h"
 

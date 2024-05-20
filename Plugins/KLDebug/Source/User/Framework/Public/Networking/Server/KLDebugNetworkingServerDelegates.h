@@ -3,6 +3,7 @@
 #include "Internal/Networking/Server/KLDebugNetworkingServerDelegatesClasses.h"
 
 // engine
+#include "Delegates/Delegate.h"
 #include "Delegates/DelegateCombinations.h"
 #include "GenericPlatform/GenericPlatform.h"
 #include "Misc/Optional.h"

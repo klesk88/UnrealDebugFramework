@@ -37,7 +37,7 @@ namespace KL::Debug::ImGuiHelpers
 
     void DrawColoredText(const FColor _Color, const FString& _Text)
     {
-        ::ImGui::TextColored(ConvertUnrealColorToImGui(_Color), TCHAR_TO_ANSI(*_Text));
+        ::ImGui::TextColored(ConvertUnrealColorToImGui(_Color), "%s", TCHAR_TO_ANSI(*_Text));
     }
 
     void DrawConditionalColoredText(const FString& _Text, const bool _ConditionResult)

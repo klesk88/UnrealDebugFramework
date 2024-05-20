@@ -10,6 +10,8 @@
 #include "Delegates/DelegateCombinations.h"
 #include "GenericPlatform/GenericPlatformProcess.h"
 #include "HAL/Platform.h"
+#include "Serialization/MemoryWriter.h"
+#include "Stats/Stats2.h"
 #include "Templates/UnrealTemplate.h"
 
 // c++
@@ -24,7 +26,7 @@ namespace KL::Debug::Networking::Commands::Internal
 {
     KLDEBUGUSERFRAMEWORK_API void BindOnNewCommand(const FOnKLDebugNewCommand& _Delegate);
     KLDEBUGUSERFRAMEWORK_API void BroadcastNewRequest(const FKLDebugOnNewCommandInput& _Input);
-    KLDEBUGUSERFRAMEWORK_API UE_NODISCARD bool CanBroadcastRequest();
+    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API bool CanBroadcastRequest();
 
     template <typename CommandClass>
     void SendCommandInternal(const UWorld& _World, const DebugCommandClientFilter& _ClientFilter)

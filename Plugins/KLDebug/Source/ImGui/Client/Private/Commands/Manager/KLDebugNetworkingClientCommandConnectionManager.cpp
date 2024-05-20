@@ -10,6 +10,7 @@
 #include "User/Framework/Public/Networking/Commands/Interface/KLDebugUserNetworkingCommandInterface.h"
 
 // engine
+#include "Engine/World.h"
 #include "Serialization/MemoryReader.h"
 
 FKLDebugNetworkingClientCommandConnectionManager::FKLDebugNetworkingClientCommandConnectionManager(const FObjectKey& _WorldKey)

@@ -6,6 +6,7 @@
 #include "User/Framework/Public/Window/KLDebugWindowTypes.h"
 
 // engine
+#include "Delegates/Delegate.h"
 #include "Delegates/DelegateCombinations.h"
 
 class FKLDebugImGuiFeatureStatusUpdateData;

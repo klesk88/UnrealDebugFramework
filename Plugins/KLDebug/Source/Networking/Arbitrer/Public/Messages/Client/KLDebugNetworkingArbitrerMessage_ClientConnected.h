@@ -31,7 +31,7 @@ private:
     uint32 mWorldServerPort = 0;
     uint32 mArbitrerReplyPort = 0;
     uint16 mClientID = 0;
-    uint8 mHeaderVersion = TNumericLimits<uint32>::Max();
+    uint8 mHeaderVersion = TNumericLimits<uint8>::Max();
 };
 
 inline bool FKLDebugNetworkingArbitrerMessage_ClientConnected::Arbitrer_IsValid() const

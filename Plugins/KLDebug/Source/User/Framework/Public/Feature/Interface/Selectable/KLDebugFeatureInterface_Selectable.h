@@ -24,7 +24,7 @@ class UObject;
  * The class is shared between all the entities which support the feature. To allow for data on a per entity basis, please create a context,
  * by overriding GetFeatureContext.
  *
- * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_WINDOW() in the .cpp so that the class
+ * IMPORTANT: after your class definition please use the macro KL_DEBUG_CREATE_FEATURE() in the .cpp so that the class
  * can auto subscribe to the system. For example:
  *
  * class FClassDebug final : public IKLDebugFeatureInterface_Selectable
@@ -35,7 +35,7 @@ class UObject;
  *
  * FClassDebug.cpp
  *
- * KL_DEBUG_CREATE_WINDOW(FClassDebug)
+ * KL_DEBUG_CREATE_FEATURE(FClassDebug)
  */
 class KLDEBUGUSERFRAMEWORK_API IKLDebugFeatureInterface_Selectable : public IKLDebugFeatureInterfaceBase
 {
@@ -63,7 +63,7 @@ public:
     virtual void DrawImGui(FKLDebugFeatureImGuiInput_Selectable& _Input);
     virtual void Render(const FKLDebugFeatureRenderInput_Selectable& _Input) const;
 
-    static UE_NODISCARD constexpr EImGuiInterfaceType GetInterfaceType();
+    UE_NODISCARD static constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
     virtual void DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input);

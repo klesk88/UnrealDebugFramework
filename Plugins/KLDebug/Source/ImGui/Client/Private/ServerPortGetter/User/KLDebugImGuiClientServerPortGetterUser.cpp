@@ -9,6 +9,7 @@
 // modules
 #include "ImGui/Networking/Public/Settings/KLDebugImGuiNetworkingSettings.h"
 #include "Networking/Runtime/Public/Log/KLDebugNetworkingLog.h"
+#include "User/Framework/Internal/Networking/Client/KLDebugNetworkingClientDelegatesInternal.h"
 
 // engine
 #include "Common/TcpSocketBuilder.h"

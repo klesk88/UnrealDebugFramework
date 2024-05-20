@@ -16,6 +16,7 @@
 
 // engine
 #include "Components/MeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Containers/UnrealString.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"

@@ -13,3 +13,13 @@ FKLDebugImGuiServerUniqueFeatureData::FKLDebugImGuiServerUniqueFeatureData(const
     const IKLDebugFeatureInterface_Unique& UniqueFeature = static_cast<const IKLDebugFeatureInterface_Unique&>(_FeatureInterface);
     mContext = UniqueFeature.GetContext(_Input);
 }
+
+const IKLDebugContextInterface* FKLDebugImGuiServerUniqueFeatureData::GetContext() const
+{
+    return GetFeatureContextMutable();
+}
+
+IKLDebugContextInterface* FKLDebugImGuiServerUniqueFeatureData::GetFeatureContextMutable() const
+{
+    return mContext.Get();
+}

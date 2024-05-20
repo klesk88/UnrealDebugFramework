@@ -2,6 +2,9 @@
 
 #pragma once
 
+// engine
+#include "HAL/Platform.h"
+
 class UWorld;
 
 namespace KL::Debug::User::Gameplay::Input

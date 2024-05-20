@@ -9,6 +9,7 @@
 
 // engine
 #include "Containers/Array.h"
+#include "Containers/Queue.h"
 #include "HAL/Platform.h"
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"

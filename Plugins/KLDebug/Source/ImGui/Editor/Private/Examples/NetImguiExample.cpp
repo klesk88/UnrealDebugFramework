@@ -67,7 +67,7 @@ namespace NetImGui::Demo
                 //--- Showcase using a FString to mix icon and text together ---
                 ImGui::NewLine();
                 FString titleKenney = FString::Format(TEXT("{0} Game Kenney Icons"), { UTF8_TO_TCHAR(ICON_KI_INFO_CIRCLE) });
-                ImGui::TextColored(kColorHighlight, TCHAR_TO_UTF8(*titleKenney));
+                ImGui::TextColored(kColorHighlight, "%s", TCHAR_TO_ANSI(*titleKenney));
 
                 //--- Showcase using multiple strings that includes normal text and icons, merged together in 1 utf8 string constant ---
                 ImGui::TextUnformatted("I " ICON_KI_HEART " icons in my text.");
@@ -81,7 +81,7 @@ namespace NetImGui::Demo
 #if NETIMGUI_FONT_ICON_AWESOME
                 //--- Showcase using a FString to mix icon and text together ---
                 FString titleAwesome = FString::Format(TEXT("{0} Font Awesome Icons"), { UTF8_TO_TCHAR(ICON_FA_CIRCLE_INFO) });
-                ImGui::TextColored(kColorHighlight, TCHAR_TO_UTF8(*titleAwesome));
+                ImGui::TextColored(kColorHighlight, "%s", TCHAR_TO_ANSI(*titleAwesome));
 
                 //--- Showcase using a utf8 string with icons inserted in it as a regular printf string constant ---
                 ImGui::Text("I %s icons in my text.", ICON_FA_HEART);

@@ -85,7 +85,7 @@ template <class Child, bool IsConst>
 template <typename FeatureInterfaceType, bool Enabled, typename TEnableIf<!Enabled, bool>::Type>
 inline FeatureInterfaceType& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureInterfaceCastedMutable() const
 {
-    checkf(GetFeature().IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
+    checkf(GetFeature().template IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
     return reinterpret_cast<FeatureInterfaceType&>(GetFeatureMutable());
 }
 
@@ -93,7 +93,7 @@ template <class Child, bool IsConst>
 template <typename FeatureInterfaceType>
 inline const FeatureInterfaceType& FKLDebugImGuiFeaturesIteratorBase<Child, IsConst>::GetFeatureInterfaceCasted() const
 {
-    checkf(GetFeature().IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
+    checkf(GetFeature().template IsDerivedFrom<FeatureInterfaceType>(), TEXT("casting to wrong type"));
     return reinterpret_cast<const FeatureInterfaceType&>(GetFeature());
 }
 

@@ -4,6 +4,10 @@
 
 #if PLATFORM_WINDOWS
 
+// engine
+#include "Containers/UnrealString.h"
+#include "HAL/Platform.h"
+
 namespace KL::Debug::Networking::Arbitrer
 {
     UE_NODISCARD bool LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole);

@@ -9,6 +9,7 @@
 #include "Examples/NetImguiDemoNodeExample.h"
 
 // modules
+#include "ThirdParty/NetImGuiThirdParty/Public/Fonts/NetImGuiFontListIncludes.h"
 #include "User/ThirdParty/ImGuiNodeEditor/Public/Library/imgui_node_editor.h"
 
 namespace NodeEditorSampleNetImgui
@@ -75,7 +76,7 @@ namespace NodeEditorSampleNetImgui
             int index = pin.Get();
 
 #if NETIMGUI_FONT_ICON_GAMEKENNEY
-            const char* zIcon = m_ActivesPin.IsValidIndex(index) && m_ActivesPin[index] ? ICON_KI_RADIO_CHECKED ICON_KI_CARET_RIGHT : ICON_KI_RADIO ICON_KI_CARET_RIGHT;
+            const char* zIcon = m_ActivesPin.IsValidIndex(index) && m_ActivesPin[index] ? ICON_KI_RADIO_CHECKED : ICON_KI_RADIO;
 #elif NETIMGUI_FONT_ICON_MATERIALDESIGN
             const char* zIcon = m_ActivesPin.IsValidIndex(index) && m_ActivesPin[index] ? ICON_MD_RADIO_BUTTON_CHECKED ICON_MD_CHEVRON_RIGHT : ICON_MD_RADIO_BUTTON_UNCHECKED ICON_MD_CHEVRON_RIGHT;
 #elif NETIMGUI_FONT_ICON_AWESOME

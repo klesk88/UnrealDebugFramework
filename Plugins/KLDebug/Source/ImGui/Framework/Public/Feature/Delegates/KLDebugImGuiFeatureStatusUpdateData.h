@@ -10,6 +10,8 @@
 
 // engine
 #include "CoreMinimal.h"
+#include "Engine/World.h"
+#include "HAL/Platform.h"
 #include "UObject/Object.h"
 
 class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureStatusUpdateData

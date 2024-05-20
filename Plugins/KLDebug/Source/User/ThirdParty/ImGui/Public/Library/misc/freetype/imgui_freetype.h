@@ -4,6 +4,7 @@
 #pragma once
 #include "imgui.h"      // IMGUI_API
 #ifndef IMGUI_DISABLE
+#if NETIMGUI_FREETYPE_ENABLED
 
 // Forward declarations
 struct ImFontAtlas;
@@ -48,4 +49,5 @@ namespace ImGuiFreeType
 #endif
 }
 
+#endif //NETIMGUI_FREETYPE_ENABLED
 #endif // #ifndef IMGUI_DISABLE

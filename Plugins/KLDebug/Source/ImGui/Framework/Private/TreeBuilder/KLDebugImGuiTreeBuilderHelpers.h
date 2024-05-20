@@ -143,7 +143,7 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
         Private::PreoderTraversalInternal(true, _TreeNodes, _KeepTraversingCbk, _NodeAlreadyVisitedCbk, _OperateOnNodeCbk, CloseParentLambda);
     }
 
-    FName GetFullPathName(const TArrayView<const FName>& _ImGuiSubPath, FString& _String)
+    inline FName GetFullPathName(const TArrayView<const FName>& _ImGuiSubPath, FString& _String)
     {
         _String.Reset();
         if (_ImGuiSubPath.IsEmpty())

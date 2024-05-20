@@ -3,15 +3,17 @@
 #include "Features/Object/PropertyWatcher/KLDebugFeatureObject_PropertyWatcher.h"
 
 // modules
+#include "User/Framework/Public/Feature/Interface/Selectable/KLDebugFeatureSelectableAllInputs.h"
 #include "User/Framework/Public/ThirdParty/ImGui/Helpers/KLDebugImGuiHelpers.h"
 #include "User/ThirdParty/ImGui/Public/Library/imgui.h"
 
 // engine
 #include "Engine/World.h"
 #include "UObject/SoftObjectPtr.h"
+#include "UObject/TextProperty.h"
 #include "UObject/UnrealType.h"
 
-KL_DEBUG_CREATE_WINDOW(FKLDebugFeatureObject_PropertyWatcher)
+KL_DEBUG_CREATE_FEATURE(FKLDebugFeatureObject_PropertyWatcher)
 
 const FString& FKLDebugFeatureObject_PropertyWatcher::GetWindowName() const
 {
@@ -87,7 +89,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         const UClass* Class = Object ? Cast<const UClass>(Object) : nullptr;
         if (Class)
         {
-            ImGui::Text(TCHAR_TO_ANSI(*Class->GetAuthoredName()));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*Class->GetAuthoredName()));
         }
         else
         {
@@ -99,7 +101,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         const UObject* Object = ObjectProperty->GetObjectPropertyValue(ContainerData);
         if (Object)
         {
-            ImGui::Text(TCHAR_TO_ANSI(*Object->GetName()));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*Object->GetName()));
         }
         else
         {
@@ -128,7 +130,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         else
         {
             const FString Path = SoftClass->ToSoftObjectPath().ToString();
-            ImGui::Text(TCHAR_TO_ANSI(*Path));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*Path));
         }
     }
     else if (const FWeakObjectProperty* WeakObjProp = CastField<const FWeakObjectProperty>(&_Property))
@@ -144,7 +146,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         }
         else
         {
-            ImGui::Text(TCHAR_TO_ANSI(*((*WeakPtr)->GetName())));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*((*WeakPtr)->GetName())));
         }
     }
     else if (const FLazyObjectProperty* LayzObjProp = CastField<const FLazyObjectProperty>(&_Property))
@@ -160,7 +162,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         }
         else
         {
-            ImGui::Text(TCHAR_TO_ANSI(*((*LazyPtr)->GetName())));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*((*LazyPtr)->GetName())));
         }
     }
     else if (const FSoftObjectProperty* SoftObjProp = CastField<const FSoftObjectProperty>(&_Property))
@@ -177,7 +179,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         else
         {
             const FString Path = SoftObjPtr->ToSoftObjectPath().ToString();
-            ImGui::Text(TCHAR_TO_ANSI(*Path));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*Path));
         }
     }
     else if (CastField<const FByteProperty>(&_Property) && CastField<const FByteProperty>(&_Property)->IsEnum())
@@ -256,17 +258,17 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
     else if (_Property.IsA(FStrProperty::StaticClass()))
     {
         const FString Value = *static_cast<const FString*>(ContainerData);
-        ImGui::Text(TCHAR_TO_ANSI(*Value));
+        ImGui::Text("%s", TCHAR_TO_ANSI(*Value));
     }
     else if (_Property.IsA(FNameProperty::StaticClass()))
     {
         const FString Value = (static_cast<const FName*>(ContainerData))->ToString();
-        ImGui::Text(TCHAR_TO_ANSI(*Value));
+        ImGui::Text("%s", TCHAR_TO_ANSI(*Value));
     }
     else if (_Property.IsA(FTextProperty::StaticClass()))
     {
         const FString Value = (static_cast<const FText*>(ContainerData))->ToString();
-        ImGui::Text(TCHAR_TO_ANSI(*Value));
+        ImGui::Text("%s", TCHAR_TO_ANSI(*Value));
     }
     else if (const FArrayProperty* ArrayProp = CastField<const FArrayProperty>(&_Property))
     {
@@ -296,7 +298,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
             Text = "<No Function Bound>";
         }
 
-        ImGui::Text(TCHAR_TO_ANSI(*Text));
+        ImGui::Text("%s", TCHAR_TO_ANSI(*Text));
     }
     else if (const FDelegateProperty* DelegateProp = CastField<const FDelegateProperty>(&_Property))
     {
@@ -311,7 +313,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
             Text = "<No Function Bound>";
         }
 
-        ImGui::Text(TCHAR_TO_ANSI(*Text));
+        ImGui::Text("%s", TCHAR_TO_ANSI(*Text));
     }
     else if (const FMulticastInlineDelegateProperty* MultiInlineDelegateProp = CastField<const FMulticastInlineDelegateProperty>(&_Property))
     {
@@ -371,12 +373,12 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         else if (StructType == "FTimespan")
         {
             const FString Value = static_cast<const FTimespan*>(ContainerData)->ToString();
-            ImGui::Text(TCHAR_TO_ANSI(*Value));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*Value));
         }
         else if (StructType == "FDateTime")
         {
             const FString Value = static_cast<const FTimespan*>(ContainerData)->ToString();
-            ImGui::Text(TCHAR_TO_ANSI(*Value));
+            ImGui::Text("%s", TCHAR_TO_ANSI(*Value));
         }
         else if (StructType == "FLinearColor")
         {
@@ -400,7 +402,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
         }
         else
         {
-            ImGui::Text("Struct type [%ls]", *StructType);
+            ImGui::Text("Struct type [%s]", TCHAR_TO_ANSI(*StructType));
         }
     }
     else

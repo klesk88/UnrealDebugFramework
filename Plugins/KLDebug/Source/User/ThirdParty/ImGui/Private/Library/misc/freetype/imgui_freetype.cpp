@@ -36,6 +36,7 @@
 
 #include "imgui.h"
 #ifndef IMGUI_DISABLE
+#if NETIMGUI_FREETYPE_ENABLED
 #include "imgui_freetype.h"
 #include "imgui_internal.h"     // ImMin,ImMax,ImFontAtlasBuild*,
 #include <stdint.h>
@@ -947,4 +948,5 @@ static FT_Error ImGuiLunasvgPortPresetSlot(FT_GlyphSlot slot, FT_Bool cache, FT_
 #pragma warning (pop)
 #endif
 
+#endif //NETIMGUI_FREETYPE_ENABLED
 #endif // #ifndef IMGUI_DISABLE
