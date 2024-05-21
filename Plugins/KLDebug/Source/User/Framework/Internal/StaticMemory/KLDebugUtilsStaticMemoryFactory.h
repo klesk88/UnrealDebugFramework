@@ -17,11 +17,11 @@ protected:
     template <typename StaticMemoryManagerType, typename StaticMemoryEntryType>
     void InitInternal();
 
-    UE_NODISCARD const DataInterface* TryGetData(const FName& _DataID) const;
-    UE_NODISCARD DataInterface* TryGetDataMutable(const FName& _DataID);
+    [[nodiscard]] const DataInterface* TryGetData(const FName& _DataID) const;
+    [[nodiscard]] DataInterface* TryGetDataMutable(const FName& _DataID);
 
-    UE_NODISCARD const DataInterface& GetData(const uint32 _Index) const;
-    UE_NODISCARD DataInterface& GetDataMutable(const uint32 _Index);
+    [[nodiscard]] const DataInterface& GetData(const uint32 _Index) const;
+    [[nodiscard]] DataInterface& GetDataMutable(const uint32 _Index);
 
 protected:
     TMap<FName, uint32> mIDToData;

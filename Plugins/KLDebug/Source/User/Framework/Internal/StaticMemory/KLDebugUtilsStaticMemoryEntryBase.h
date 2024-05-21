@@ -15,11 +15,11 @@ class TKLDebugUtilsStaticMemoryEntryBase : public FNoncopyable
 public:
     virtual ~TKLDebugUtilsStaticMemoryEntryBase() = default;
 
-    UE_NODISCARD virtual InterfaceType& AllocateInPlace(void* _PoolStartAddress) const = 0;
-    UE_NODISCARD virtual SIZE_T GetSize() const = 0;
+    [[nodiscard]] virtual InterfaceType& AllocateInPlace(void* _PoolStartAddress) const = 0;
+    [[nodiscard]] virtual SIZE_T GetSize() const = 0;
 
     void AddNextEntry(EntryType& _NextEntry);
-    UE_NODISCARD EntryType* GetNextEntry() const;
+    [[nodiscard]] EntryType* GetNextEntry() const;
 
 private:
     EntryType* mNext = nullptr;

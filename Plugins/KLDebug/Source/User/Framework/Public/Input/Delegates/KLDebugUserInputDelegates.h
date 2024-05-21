@@ -21,6 +21,6 @@ namespace KL::Debug::User::Gameplay::Input
 {
     KLDEBUGUSERFRAMEWORK_API void BindOnInputPressedPressed(const EKLDebugGameplayInputType _Input, const FOnKLDebugInputTrigger& _Delegate);
     KLDEBUGUSERFRAMEWORK_API void UnbindOnInputPressedPressed(const EKLDebugGameplayInputType _Input);
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API EKLDebugInputReply BroadcastOnInputPressed(const EKLDebugGameplayInputType _Input, const FOnInputTriggerData& _Data);
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API EKLDebugInputReply BroadcastOnInputPressed(const EKLDebugGameplayInputType _Input, const FOnInputTriggerData& _Data);
 
 }    // namespace KL::Debug::User::Gameplay::Input

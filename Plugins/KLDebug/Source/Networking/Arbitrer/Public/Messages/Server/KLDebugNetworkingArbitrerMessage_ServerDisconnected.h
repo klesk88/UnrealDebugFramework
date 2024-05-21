@@ -11,7 +11,7 @@ public:
     explicit FKLDebugNetworkingArbitrerMessage_ServerDisconnected(const uint32 _WorldServerPort);
     explicit FKLDebugNetworkingArbitrerMessage_ServerDisconnected(FArchive& _Archive);
 
-    UE_NODISCARD uint32 Arbitrer_GetWorldServerPort() const;
+    [[nodiscard]] uint32 Arbitrer_GetWorldServerPort() const;
 
 private:
     // IKLDebugNetworkingMessageInterface

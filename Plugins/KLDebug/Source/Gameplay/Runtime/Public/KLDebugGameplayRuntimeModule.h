@@ -14,8 +14,8 @@ public:
     void ShutdownModule() final;
     //
 
-    UE_NODISCARD static FKLDebugGameplayRuntimeModule& GetMutable();
-    UE_NODISCARD static const FKLDebugGameplayRuntimeModule& Get();
+    [[nodiscard]] static FKLDebugGameplayRuntimeModule& GetMutable();
+    [[nodiscard]] static const FKLDebugGameplayRuntimeModule& Get();
 };
 
 inline const FKLDebugGameplayRuntimeModule& FKLDebugGameplayRuntimeModule::Get()

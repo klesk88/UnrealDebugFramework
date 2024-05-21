@@ -21,7 +21,7 @@ IMPLEMENT_APPLICATION(DebugArbitrer, "DebugArbitrer");
 
 namespace KL::Arbitrer
 {
-    UE_NODISCARD bool CheckArbitrerSingleInstance()
+    [[nodiscard]] bool CheckArbitrerSingleInstance()
     {
         // based on CheckSessionBrowserSingleInstance in UserInterfaceCommand.cpp
 
@@ -64,7 +64,7 @@ namespace KL::Arbitrer
         return true;
     }
 
-    UE_NODISCARD FString GetLogFolder()
+    [[nodiscard]] FString GetLogFolder()
     {
         FString CmdLine(::GetCommandLineW());
         if (CmdLine.IsEmpty())

@@ -17,25 +17,25 @@ class KLDEBUGIMGUINETWORKING_API UKLDebugImGuiNetworkingSettings final : public 
     GENERATED_BODY()
 
 public:
-    UE_NODISCARD static const UKLDebugImGuiNetworkingSettings& Get();
+    [[nodiscard]] static const UKLDebugImGuiNetworkingSettings& Get();
 
-    UE_NODISCARD uint32 Client_GetReadBufferSize() const;
-    UE_NODISCARD uint32 Client_GetWriteBufferSize() const;
-    UE_NODISCARD uint32 Client_GetConnectionTempDataSize() const;
+    [[nodiscard]] uint32 Client_GetReadBufferSize() const;
+    [[nodiscard]] uint32 Client_GetWriteBufferSize() const;
+    [[nodiscard]] uint32 Client_GetConnectionTempDataSize() const;
 
-    UE_NODISCARD uint32 Server_GetMaxClientsExptectedConnected() const;
-    UE_NODISCARD uint32 Server_GetStartPortRange() const;
-    UE_NODISCARD uint32 Server_GetEndPortRange() const;
-    UE_NODISCARD uint32 Server_GetMaxConnectionBacklog() const;
-    UE_NODISCARD uint32 Server_GetReadBufferSize() const;
-    UE_NODISCARD uint32 Server_GetWriteBufferSize() const;
-    UE_NODISCARD uint32 Server_GetConnectionTempDataSize() const;
-    UE_NODISCARD uint32 Server_GetConnectionTempCompressDataSize() const;
+    [[nodiscard]] uint32 Server_GetMaxClientsExptectedConnected() const;
+    [[nodiscard]] uint32 Server_GetStartPortRange() const;
+    [[nodiscard]] uint32 Server_GetEndPortRange() const;
+    [[nodiscard]] uint32 Server_GetMaxConnectionBacklog() const;
+    [[nodiscard]] uint32 Server_GetReadBufferSize() const;
+    [[nodiscard]] uint32 Server_GetWriteBufferSize() const;
+    [[nodiscard]] uint32 Server_GetConnectionTempDataSize() const;
+    [[nodiscard]] uint32 Server_GetConnectionTempCompressDataSize() const;
 
-    UE_NODISCARD uint32 Common_GetMaxMessageDataSizeBeforeSplit() const;
-    UE_NODISCARD uint32 Common_GetMaxMessageDataSizeBeforeCompression() const;
-    UE_NODISCARD uint32 Common_GetCompressMinBytesSaved() const;
-    UE_NODISCARD uint32 Common_GetCompressMinPercentSaved() const;
+    [[nodiscard]] uint32 Common_GetMaxMessageDataSizeBeforeSplit() const;
+    [[nodiscard]] uint32 Common_GetMaxMessageDataSizeBeforeCompression() const;
+    [[nodiscard]] uint32 Common_GetCompressMinBytesSaved() const;
+    [[nodiscard]] uint32 Common_GetCompressMinPercentSaved() const;
 
 private:
     // Client

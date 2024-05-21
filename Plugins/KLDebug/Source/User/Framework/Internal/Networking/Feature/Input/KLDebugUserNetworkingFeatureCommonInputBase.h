@@ -15,17 +15,17 @@ public:
     explicit FKLDebugUserNetworkingFeatureCommonInputBase(const UWorld& _World, IKLDebugContextInterface* _Context);
     virtual ~FKLDebugUserNetworkingFeatureCommonInputBase() = default;
 
-    UE_NODISCARD const UWorld& GetWorld() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
 
     // the user is expected to know the type of the context the feature spawns trough GetFeatureContext.
     // It is also responsible to know when is valid and when not (if spawn is guaranteed to be valid till the feature is valid)
     template <typename ContextType>
-    UE_NODISCARD ContextType& GetContextMutable() const;
+    [[nodiscard]] ContextType& GetContextMutable() const;
 
     // the user is expected to know the type of the context the feature spawns trough GetFeatureContext.
     // It is also responsible to know when is valid and when not (if spawn is guaranteed to be valid till the feature is valid)
     template <typename ContextType>
-    UE_NODISCARD const ContextType& GetContext() const;
+    [[nodiscard]] const ContextType& GetContext() const;
 
 private:
     const UWorld& mWorld;

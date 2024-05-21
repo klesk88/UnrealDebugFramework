@@ -21,12 +21,12 @@ public:
 
     void SetFeatureData(IKLDebugFeatureInterfaceBase* _FeatureInterface, IKLDebugContextInterface* _FeatureContext);
 
-    UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManager() const;
-    UE_NODISCARD const UObject* TryGetObject() const;
-    UE_NODISCARD EImGuiInterfaceType GetContainerType() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureIndex() const;
-    UE_NODISCARD IKLDebugFeatureInterfaceBase* TryGetFeatureInterface() const;
-    UE_NODISCARD IKLDebugContextInterface* TryGetFeatureContext() const;
+    [[nodiscard]] const FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManager() const;
+    [[nodiscard]] const UObject* TryGetObject() const;
+    [[nodiscard]] EImGuiInterfaceType GetContainerType() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureIndex() const;
+    [[nodiscard]] IKLDebugFeatureInterfaceBase* TryGetFeatureInterface() const;
+    [[nodiscard]] IKLDebugContextInterface* TryGetFeatureContext() const;
 
 private:
     const FKLDebugImGuiFeaturesTypesContainerManager& mFeaturesContainerManager;

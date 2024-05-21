@@ -35,13 +35,13 @@ private:                                                                    \
                                                                             \
 public:                                                                     \
     template <typename FeatureType>                                         \
-    UE_NODISCARD static bool constexpr IsSameFeatureTypeCheck()             \
+    [[nodiscard]] static bool constexpr IsSameFeatureTypeCheck()             \
     {                                                                       \
         return std::is_same_v<ItemType, FeatureType>;                       \
     }                                                                       \
                                                                             \
     template <typename InterfaceClass>                                      \
-    UE_NODISCARD constexpr InterfaceClass* TryCastToInterfaceMutable()      \
+    [[nodiscard]] constexpr InterfaceClass* TryCastToInterfaceMutable()      \
     {                                                                       \
         if constexpr (TIsDerivedFrom<ItemType, InterfaceClass>::IsDerived)  \
         {                                                                   \
@@ -52,7 +52,7 @@ public:                                                                     \
     }                                                                       \
                                                                             \
     template <typename InterfaceClass>                                      \
-    UE_NODISCARD constexpr const InterfaceClass* TryCastToInterface() const \
+    [[nodiscard]] constexpr const InterfaceClass* TryCastToInterface() const \
     {                                                                       \
         if constexpr (TIsDerivedFrom<ItemType, InterfaceClass>::IsDerived)  \
         {                                                                   \
@@ -62,27 +62,27 @@ public:                                                                     \
         return nullptr;                                                     \
     }                                                                       \
                                                                             \
-    UE_NODISCARD inline bool RequireCanvasUpdate() const override           \
+    [[nodiscard]] inline bool RequireCanvasUpdate() const override           \
     {                                                                       \
         return RequireCanvasUpdateInternal<ItemType>();                     \
     }                                                                       \
                                                                             \
-    UE_NODISCARD inline bool RequireSceneProxy() const override             \
+    [[nodiscard]] inline bool RequireSceneProxy() const override             \
     {                                                                       \
         return RequireSceneProxyInternal<ItemType>();                       \
     }                                                                       \
                                                                             \
-    UE_NODISCARD inline bool RequireTick() const override                   \
+    [[nodiscard]] inline bool RequireTick() const override                   \
     {                                                                       \
         return RequireTickInternal<ItemType>();                             \
     }                                                                       \
                                                                             \
-    UE_NODISCARD inline bool RequireDrawImGui() const override              \
+    [[nodiscard]] inline bool RequireDrawImGui() const override              \
     {                                                                       \
         return RequireDrawImGuiInternal<ItemType>();                        \
     }                                                                       \
                                                                             \
-    UE_NODISCARD inline bool RequireRender() const override                 \
+    [[nodiscard]] inline bool RequireRender() const override                 \
     {                                                                       \
         return RequireRenderInternal<ItemType>();                           \
     }                                                                       \
@@ -109,25 +109,25 @@ public:
     KLDEBUGUSERFRAMEWORK_API virtual ~IKLDebugFeatureInterfaceBase();
 
     // get path that will be displayed inside the ImGui tree
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API virtual const FName& GetImGuiPath() const = 0;
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API virtual const FName& GetImGuiPath() const = 0;
 
     // this is called once at game startup from the engine module to initialize the class
     KLDEBUGUSERFRAMEWORK_API virtual void Initialize();
 
     // use the DERIVED_KL_DEBUG_FEATURE_CLASS macro for these
-    UE_NODISCARD virtual bool RequireCanvasUpdate() const;
-    UE_NODISCARD virtual bool RequireSceneProxy() const;
-    UE_NODISCARD virtual bool RequireTick() const;
-    UE_NODISCARD virtual bool RequireDrawImGui() const;
-    UE_NODISCARD virtual bool RequireRender() const;
+    [[nodiscard]] virtual bool RequireCanvasUpdate() const;
+    [[nodiscard]] virtual bool RequireSceneProxy() const;
+    [[nodiscard]] virtual bool RequireTick() const;
+    [[nodiscard]] virtual bool RequireDrawImGui() const;
+    [[nodiscard]] virtual bool RequireRender() const;
     // DERIVED_KL_DEBUG_FEATURE_CLASS
 
-    UE_NODISCARD const FName& GetFeatureNameID() const;
+    [[nodiscard]] const FName& GetFeatureNameID() const;
 
-    UE_NODISCARD bool RequiresAnyUpdate() const;
+    [[nodiscard]] bool RequiresAnyUpdate() const;
 
 protected:
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API virtual const FString& GetWindowName() const = 0;
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API virtual const FString& GetWindowName() const = 0;
 };
 
 inline void IKLDebugFeatureInterfaceBase::Initialize()

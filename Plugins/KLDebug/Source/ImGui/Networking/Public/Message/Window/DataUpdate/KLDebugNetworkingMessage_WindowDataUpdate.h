@@ -20,8 +20,8 @@ public:
     explicit FKLDebugNetworkingMessage_WindowDataUpdate() = default;
     explicit FKLDebugNetworkingMessage_WindowDataUpdate(const EKLDebugNetworkReceiveMessageType _ReceiveType, const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType, const TArray<uint8>& _Buffer);
 
-    UE_NODISCARD TArray<uint8>& Client_GetBufferDataMutable();
-    UE_NODISCARD EKLDebugNetworkReceiveMessageType GetReceiveType() const;
+    [[nodiscard]] TArray<uint8>& Client_GetBufferDataMutable();
+    [[nodiscard]] EKLDebugNetworkReceiveMessageType GetReceiveType() const;
 
 private:
     // TKLDebugNetworkingMessage_Base

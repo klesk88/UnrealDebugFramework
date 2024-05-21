@@ -13,8 +13,8 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureSelectableReceiveDat
 public:
     explicit FKLDebugUserNetworkingFeatureSelectableReceiveDataInput(const EKLDebugNetworkReceiveMessageType _ReceiveType, const UWorld& _World, UObject& _Object, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive);
 
-    UE_NODISCARD UObject& GetObjectMutable() const;
-    UE_NODISCARD const UObject& GetObject() const;
+    [[nodiscard]] UObject& GetObjectMutable() const;
+    [[nodiscard]] const UObject& GetObject() const;
 
 private:
     UObject& mObject;

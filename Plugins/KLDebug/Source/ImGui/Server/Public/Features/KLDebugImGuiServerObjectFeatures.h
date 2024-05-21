@@ -21,17 +21,17 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerObjectFeatures final : public FN
 {
 public:
     explicit FKLDebugImGuiServerObjectFeatures(const UWorld& _World, const FNetworkGUID& _NetworkID);
-    UE_NODISCARD bool operator==(const FNetworkGUID& _NetworkID) const;
+    [[nodiscard]] bool operator==(const FNetworkGUID& _NetworkID) const;
 
     void AddFeature(const FKLDebugContextGetterInput_Selectable& _Input, const IKLDebugFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
     void RemoveFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
-    UE_NODISCARD const TArray<FKLDebugImGuiServerObjectFeatureData>& GetEnableFetures() const;
-    UE_NODISCARD TArray<FKLDebugImGuiServerObjectFeatureData>& GetEnableFeturesMutable();
+    [[nodiscard]] const TArray<FKLDebugImGuiServerObjectFeatureData>& GetEnableFetures() const;
+    [[nodiscard]] TArray<FKLDebugImGuiServerObjectFeatureData>& GetEnableFeturesMutable();
 
-    UE_NODISCARD UObject* GetCachedObjectMutable() const;
-    UE_NODISCARD const UObject* GetCachedObject() const;
-    UE_NODISCARD const FNetworkGUID& GetNetworkID() const;
+    [[nodiscard]] UObject* GetCachedObjectMutable() const;
+    [[nodiscard]] const UObject* GetCachedObject() const;
+    [[nodiscard]] const FNetworkGUID& GetNetworkID() const;
 
 private:
     TArray<FKLDebugImGuiServerObjectFeatureData> mFeaturesEnable;

@@ -22,11 +22,11 @@ public:
     void DrawImGui(const int32 _CurrentIndex, const UWorld& _World, IKLDebugContextInterface* _Context, bool& _RenderWindow) const;
     void DrawCanvas(const int32 _CurrentIndex, UWorld& _World, UCanvas& _Canvas, UFont& _Font, IKLDebugContextInterface* _Context) const;
 
-    UE_NODISCARD const TArray<FKLDebugFrameworkModeSortedData>& GetSortedModes() const;
-    UE_NODISCARD TUniquePtr<IKLDebugContextInterface> UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _PrevIndex, const int32 _NewIndex);
-    UE_NODISCARD bool RequireCanvasDraw(const int32 _CurrentIndex) const;
-    UE_NODISCARD const IKLDebugModeInterface* TryGetCurrentInterface(const int32 _Index) const;
-    UE_NODISCARD IKLDebugModeInterface* TryGetCurrentInterfaceMutable(const int32 _Index);
+    [[nodiscard]] const TArray<FKLDebugFrameworkModeSortedData>& GetSortedModes() const;
+    [[nodiscard]] TUniquePtr<IKLDebugContextInterface> UpdateBottomBarIfNeeded(const UWorld& _World, const int32 _PrevIndex, const int32 _NewIndex);
+    [[nodiscard]] bool RequireCanvasDraw(const int32 _CurrentIndex) const;
+    [[nodiscard]] const IKLDebugModeInterface* TryGetCurrentInterface(const int32 _Index) const;
+    [[nodiscard]] IKLDebugModeInterface* TryGetCurrentInterfaceMutable(const int32 _Index);
 
 private:
     TArray<FKLDebugFrameworkModeSortedData> mSortedModes;

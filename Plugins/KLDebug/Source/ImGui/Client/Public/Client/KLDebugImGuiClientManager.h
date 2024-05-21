@@ -44,7 +44,7 @@ public:
     void GameThread_Tick(const UWorld& _World);
     void Parallel_TickWriteData(FArchive& _Writer);
 
-    UE_NODISCARD bool RequiresGameThreadTick() const;
+    [[nodiscard]] bool RequiresGameThreadTick() const;
 
 private:
     void GameThread_ReadMessages(const UWorld& _World);

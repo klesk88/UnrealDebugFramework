@@ -20,16 +20,16 @@ public:
     explicit FKLDebugImGuiFeatureStatusUpdateData(const UWorld& _World, const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const UObject& _Object, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
     explicit FKLDebugImGuiFeatureStatusUpdateData(const UWorld& _World, const bool _IsAdded, const EImGuiInterfaceType _ContainerType, const FObjectKey& _ObjectKey, FKLDebugImGuiSubsetFeaturesConstIterator& _FeaturesUpdatedIterator);
 
-    UE_NODISCARD const UWorld& GetOwnerWorld() const;
+    [[nodiscard]] const UWorld& GetOwnerWorld() const;
 
     void SetFullyRemoved();
-    UE_NODISCARD bool IsFullyRemoved() const;
+    [[nodiscard]] bool IsFullyRemoved() const;
 
-    UE_NODISCARD bool IsFeatureAdded() const;
-    UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator& GetFeatureIterator() const;
-    UE_NODISCARD EImGuiInterfaceType GetContainerType() const;
-    UE_NODISCARD const UObject* TryGetObject() const;
-    UE_NODISCARD const FObjectKey& GetObjectKey() const;
+    [[nodiscard]] bool IsFeatureAdded() const;
+    [[nodiscard]] FKLDebugImGuiSubsetFeaturesConstIterator& GetFeatureIterator() const;
+    [[nodiscard]] EImGuiInterfaceType GetContainerType() const;
+    [[nodiscard]] const UObject* TryGetObject() const;
+    [[nodiscard]] const FObjectKey& GetObjectKey() const;
 
 private:
     FKLDebugImGuiSubsetFeaturesConstIterator& mFeaturesIterator;

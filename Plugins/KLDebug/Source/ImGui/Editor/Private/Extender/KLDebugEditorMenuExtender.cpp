@@ -21,7 +21,7 @@
 
 namespace KL::Debug::Editor::MenuExtender
 {
-    UE_NODISCARD bool AreRequiredModulesLoaded()
+    [[nodiscard]] bool AreRequiredModulesLoaded()
     {
         return FModuleManager::Get().IsModuleLoaded("LevelEditor") && FKLUnrealImGuiModule::TryGet() != nullptr;
     }

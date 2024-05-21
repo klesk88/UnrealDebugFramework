@@ -14,8 +14,8 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureContainer_Selectable final :
 {
 public:
     // FKLDebugImGuiFeatureContainerBase
-    UE_NODISCARD bool IsCorrectContainerForFeature(const IKLDebugFeatureInterfaceBase& _Feature) const final;
-    UE_NODISCARD EImGuiInterfaceType GetContainerType() const final;
+    [[nodiscard]] bool IsCorrectContainerForFeature(const IKLDebugFeatureInterfaceBase& _Feature) const final;
+    [[nodiscard]] EImGuiInterfaceType GetContainerType() const final;
     void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const final;
     // FKLDebugImGuiFeatureContainerBase
 

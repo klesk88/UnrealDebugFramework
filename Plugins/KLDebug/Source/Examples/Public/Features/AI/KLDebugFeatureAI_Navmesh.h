@@ -23,7 +23,7 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_Navmesh : public IKLDebugFeatureInte
 
 public:
     // IKLDebugFeatureInterface_Unique
-    UE_NODISCARD bool DoesSupportWorld(const UWorld& _Object) const final;
+    [[nodiscard]] bool DoesSupportWorld(const UWorld& _Object) const final;
     void DrawOnCanvas(FKLDebugFeatureDrawCanvasInput_Unique& _Input) const final;
 
     void OnFeatureSelected(const UWorld& _World) final;
@@ -42,8 +42,8 @@ public:
 
 private:
     // IKLDebugFeatureInterface_Selectable
-    UE_NODISCARD const FString& GetWindowName() const final;
-    UE_NODISCARD const FName& GetImGuiPath() const final;
+    [[nodiscard]] const FString& GetWindowName() const final;
+    [[nodiscard]] const FName& GetImGuiPath() const final;
     // IKLDebugFeatureInterface_Selectable
 
     void CollectNavmeshData(const UWorld& _World, const FVector& _Location, FNavMeshSceneProxyData& _ProxyData) const;

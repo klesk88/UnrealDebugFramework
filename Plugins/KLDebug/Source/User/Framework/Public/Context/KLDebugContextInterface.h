@@ -8,14 +8,14 @@
 
 #define KL_DEBUG_DERIVED_CONTEXT(ItemType, ParentItemType)                                            \
 public:                                                                                               \
-    UE_NODISCARD inline static const FName& StaticItemType()                                          \
+    [[nodiscard]] inline static const FName& StaticItemType()                                          \
     {                                                                                                 \
         static const FName Interface(TEXT(#ItemType));                                                \
         return Interface;                                                                             \
     }                                                                                                 \
                                                                                                       \
 protected:                                                                                            \
-    UE_NODISCARD inline bool IsDerivedInternal(const FName& _ItemTypeName) const override             \
+    [[nodiscard]] inline bool IsDerivedInternal(const FName& _ItemTypeName) const override             \
     {                                                                                                 \
         return StaticItemType() == _ItemTypeName || ParentItemType::IsDerivedInternal(_ItemTypeName); \
     }                                                                                                 \
@@ -31,15 +31,15 @@ public:
     virtual ~IKLDebugContextInterface();
 
     template <typename FeatureContextType>
-    UE_NODISCARD bool IsDerivedFrom() const;
+    [[nodiscard]] bool IsDerivedFrom() const;
 
     template <typename FeatureContextType>
-    UE_NODISCARD bool IsSameContext() const;
+    [[nodiscard]] bool IsSameContext() const;
 
 protected:
     // use the KL_DEBUG_DERIVED_CONTEXT macro for these
-    UE_NODISCARD virtual bool IsDerivedInternal(const FName& _ItemTypeName) const;
-    UE_NODISCARD static const FName& StaticItemType();
+    [[nodiscard]] virtual bool IsDerivedInternal(const FName& _ItemTypeName) const;
+    [[nodiscard]] static const FName& StaticItemType();
     //
 };
 

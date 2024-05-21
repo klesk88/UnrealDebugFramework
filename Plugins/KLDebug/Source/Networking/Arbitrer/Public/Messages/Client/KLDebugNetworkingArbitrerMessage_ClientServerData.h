@@ -16,9 +16,9 @@ public:
     explicit FKLDebugNetworkingArbitrerMessage_ClientServerData(const uint32 _DebugPort, const uint16 _ClientID, const bool _CanConnect);
     explicit FKLDebugNetworkingArbitrerMessage_ClientServerData(FArchive& _Archive);
 
-    UE_NODISCARD uint32 Client_GetDebugPort() const;
-    UE_NODISCARD uint16 Client_GetClientID() const;
-    UE_NODISCARD bool Client_GetCanConnect() const;
+    [[nodiscard]] uint32 Client_GetDebugPort() const;
+    [[nodiscard]] uint16 Client_GetClientID() const;
+    [[nodiscard]] bool Client_GetCanConnect() const;
 
 private:
     // IKLDebugNetworkingMessageInterface

@@ -23,10 +23,10 @@ public:
     void SetNextTreeLevelNodeIndex(const int32 _Index);
 
     // the node is not guarantee to have a valid next tree level node
-    UE_NODISCARD TOptional<uint16> GetNextTreeLevelNodeIndex() const;
-    UE_NODISCARD uint16 GetFirstChildIndex() const;
-    UE_NODISCARD TOptional<uint16> GetNodeDataIndex() const;
-    UE_NODISCARD bool IsLeaf() const;
+    [[nodiscard]] TOptional<uint16> GetNextTreeLevelNodeIndex() const;
+    [[nodiscard]] uint16 GetFirstChildIndex() const;
+    [[nodiscard]] TOptional<uint16> GetNodeDataIndex() const;
+    [[nodiscard]] bool IsLeaf() const;
 
 private:
     // this represents, in the tree, the next node location at the same level of this node

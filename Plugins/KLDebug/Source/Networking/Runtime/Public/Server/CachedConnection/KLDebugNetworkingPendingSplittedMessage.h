@@ -18,14 +18,14 @@ class KLDEBUGNETWORKINGRUNTIME_API FKLDebugNetworkingPendingSplittedMessage fina
 {
 public:
     explicit FKLDebugNetworkingPendingSplittedMessage(const FKLDebugNetworkingMessage_Header& _Header, const TArrayView<uint8>& _MessageData);
-    UE_NODISCARD bool operator==(const KL::Debug::Networking::Message::MessageID _MessageID) const;
+    [[nodiscard]] bool operator==(const KL::Debug::Networking::Message::MessageID _MessageID) const;
 
     void AddData(const TArrayView<uint8>& _MessageData, const uint32 _OffsetIndex);
-    UE_NODISCARD bool IsFullyReceived() const;
-    UE_NODISCARD bool HasFailedToReadData() const;
+    [[nodiscard]] bool IsFullyReceived() const;
+    [[nodiscard]] bool HasFailedToReadData() const;
 
-    UE_NODISCARD const FKLDebugNetworkingMessage_Header& GetHeaderMessage() const;
-    UE_NODISCARD TArray<uint8>& GetDataMutable();
+    [[nodiscard]] const FKLDebugNetworkingMessage_Header& GetHeaderMessage() const;
+    [[nodiscard]] TArray<uint8>& GetDataMutable();
 
 private:
     FKLDebugNetworkingMessage_Header mHeader;

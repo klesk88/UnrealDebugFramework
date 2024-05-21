@@ -29,6 +29,6 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugFilterInterface
 public:
     virtual ~IKLDebugFilterInterface();
 
-    UE_NODISCARD virtual bool IsObjectValid(const UObject& _Object) const = 0;
-    UE_NODISCARD virtual const FName& GetFilterID() const = 0;
+    [[nodiscard]] virtual bool IsObjectValid(const UObject& _Object) const = 0;
+    [[nodiscard]] virtual const FName& GetFilterID() const = 0;
 };

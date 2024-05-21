@@ -12,7 +12,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugFeatureRenderInput_Selectable final : pub
 public:
     explicit FKLDebugFeatureRenderInput_Selectable(const UWorld& _World, const UObject& _Object, IKLDebugContextInterface* _Context);
 
-    UE_NODISCARD const UObject& GetObject() const;
+    [[nodiscard]] const UObject& GetObject() const;
 
 private:
     const UObject& mObject;

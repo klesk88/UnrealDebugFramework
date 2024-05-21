@@ -34,21 +34,21 @@ public:
     void ResetIndex();
 
     template <typename FeatureInterfaceType>
-    UE_NODISCARD const FeatureInterfaceType& GetFeatureInterfaceCasted() const;
+    [[nodiscard]] const FeatureInterfaceType& GetFeatureInterfaceCasted() const;
 
     template <typename FeatureInterfaceType, bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
-    UE_NODISCARD FeatureInterfaceType& GetFeatureInterfaceCastedMutable() const;
+    [[nodiscard]] FeatureInterfaceType& GetFeatureInterfaceCastedMutable() const;
 
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
-    UE_NODISCARD int32 GetFeaturesCount() const;
-    UE_NODISCARD const FKLDebugImGuiFeatureData& GetFeatureData() const;
-    UE_NODISCARD const FName& GetFeatureNameID() const;
-    UE_NODISCARD uint32 GetIteratorIndex() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
+    [[nodiscard]] int32 GetFeaturesCount() const;
+    [[nodiscard]] const FKLDebugImGuiFeatureData& GetFeatureData() const;
+    [[nodiscard]] const FName& GetFeatureNameID() const;
+    [[nodiscard]] uint32 GetIteratorIndex() const;
 
 protected:
     template <bool Enabled = IsConst, typename TEnableIf<!Enabled, bool>::Type = true>
-    UE_NODISCARD IKLDebugFeatureInterfaceBase& GetFeatureMutable() const;
-    UE_NODISCARD const IKLDebugFeatureInterfaceBase& GetFeature() const;
+    [[nodiscard]] IKLDebugFeatureInterfaceBase& GetFeatureMutable() const;
+    [[nodiscard]] const IKLDebugFeatureInterfaceBase& GetFeature() const;
 
 protected:
     // the data contains the offset between features so that we can retrieve them correctly from the pool. Each entry is the

@@ -11,8 +11,8 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureSelectableClientTick
 public:
     explicit FKLDebugUserNetworkingFeatureSelectableClientTickInput(const UWorld& _World, UObject& _OwnerObject, IKLDebugContextInterface* _Context, FArchive& _Archive);
 
-    UE_NODISCARD UObject& GetObjectMutable() const;
-    UE_NODISCARD const UObject& GetObject() const;
+    [[nodiscard]] UObject& GetObjectMutable() const;
+    [[nodiscard]] const UObject& GetObject() const;
 
 private:
     UObject& mObject;

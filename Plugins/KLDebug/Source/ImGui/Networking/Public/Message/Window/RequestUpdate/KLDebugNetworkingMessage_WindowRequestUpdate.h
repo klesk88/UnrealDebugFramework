@@ -17,7 +17,7 @@ public:
     explicit FKLDebugNetworkingMessage_WindowRequestUpdate() = default;
     explicit FKLDebugNetworkingMessage_WindowRequestUpdate(const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType, const TArray<uint8>& _Buffer);
 
-    UE_NODISCARD TArray<uint8>& Server_GetBufferDataMutable();
+    [[nodiscard]] TArray<uint8>& Server_GetBufferDataMutable();
 
 private:
     // TKLDebugNetworkingMessage_Base

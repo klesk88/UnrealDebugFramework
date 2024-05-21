@@ -11,7 +11,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugNetworkingWindowRequestUpdateInput final 
 public:
     explicit FKLDebugNetworkingWindowRequestUpdateInput(const UWorld& _World, IKLDebugContextInterface* _Contex, FArchive& _ReaderArchive, FArchive& _WriterArchive);
 
-    UE_NODISCARD FArchive& GetWriter() const;
+    [[nodiscard]] FArchive& GetWriter() const;
 
 private:
     FArchive& mWriterArchive;

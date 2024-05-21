@@ -30,7 +30,7 @@ namespace KL::Debug::NetworkingClient
 {
     static uint16 MessageID = 0;
 
-    UE_NODISCARD uint16 GetNewID()
+    [[nodiscard]] uint16 GetNewID()
     {
         MessageID = static_cast<uint16>((static_cast<uint32>(MessageID) + 1) % TNumericLimits<uint16>::Max());
         return MessageID;

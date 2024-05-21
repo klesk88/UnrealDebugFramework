@@ -14,7 +14,7 @@ namespace KL::Debug::User::Gameplay::Input
     public:
         explicit FOnInputTriggerData(const UWorld& _World);
 
-        UE_NODISCARD const UWorld& GetOwningWorld() const;
+        [[nodiscard]] const UWorld& GetOwningWorld() const;
 
     private:
         const UWorld& mWorld;

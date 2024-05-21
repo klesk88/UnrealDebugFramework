@@ -32,15 +32,15 @@ public:
     explicit FKLDebugImGuiClientServerCacheConnection(const FObjectKey& _WorldKey, const FUniqueNetIdRepl& _LocalPlayerNetID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _Socket);
 
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase
-    UE_NODISCARD bool IsValid() const final;
-    UE_NODISCARD bool RequiresGameThreadTick() const final;
+    [[nodiscard]] bool IsValid() const final;
+    [[nodiscard]] bool RequiresGameThreadTick() const final;
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase
 
-    UE_NODISCARD bool TickOnGameThread(UWorld& _World);
+    [[nodiscard]] bool TickOnGameThread(UWorld& _World);
 
 private:
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase
-    UE_NODISCARD bool TickChild() final;
+    [[nodiscard]] bool TickChild() final;
     void TickChildWriteBuffer(FArchive& _Writer) final;
     void Parallel_HandlePendingMessageChild(FKLDebugNetworkingPendingMessage&& _PendingMessage) final;
     // FKLDebugImGuiNetworkingTCPCachedConnectionBase

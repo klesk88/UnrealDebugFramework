@@ -43,14 +43,14 @@ public:
     void Deinitialize() final;
     // UEngineSubsystem
 
-    UE_NODISCARD static UKLDebugImGuiServerSubsystem_Engine* TryGetMutable();
-    UE_NODISCARD static const UKLDebugImGuiServerSubsystem_Engine* TryGet();
+    [[nodiscard]] static UKLDebugImGuiServerSubsystem_Engine* TryGetMutable();
+    [[nodiscard]] static const UKLDebugImGuiServerSubsystem_Engine* TryGet();
 
 private:
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
-    UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
-    UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
-    UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
+    [[nodiscard]] FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
+    [[nodiscard]] const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
+    [[nodiscard]] bool IsValidWorld(UWorld& _World) const final;
 
     ETickableTickType GetTickableTickTypeChild() const final;
     TStatId GetStatId() const final;

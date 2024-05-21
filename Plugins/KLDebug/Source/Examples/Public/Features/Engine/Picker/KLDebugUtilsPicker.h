@@ -22,7 +22,7 @@ class KLDEBUGEXAMPLES_API FKLDebugUtilsPicker final : public FNoncopyable
 public:
     FKLDebugUtilsPicker();
 
-    UE_NODISCARD UObject* GetPickedObject(const UWorld& _World) const;
+    [[nodiscard]] UObject* GetPickedObject(const UWorld& _World) const;
 
     void SetActorType(UClass& _Class);
     void SetInterfaceType(UClass& _Class);
@@ -30,11 +30,11 @@ public:
     void SetMaxDistanceFromScreenCenter(const float _MaxDistance);
 
 private:
-    UE_NODISCARD UObject* GetActorFromTrace(const UWorld& _World) const;
+    [[nodiscard]] UObject* GetActorFromTrace(const UWorld& _World) const;
 
     void GatherAllObjects(const UWorld& _World, TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const;
-    UE_NODISCARD bool GetCenterLocationFromScreenCoord(const UWorld& _World, FVector& _Location, FVector& _OutDirecton) const;
-    UE_NODISCARD bool IsRightDistance(const AActor& _Actor, const FVector& _Position, const FVector& _Direction, float& _OutDistance) const;
+    [[nodiscard]] bool GetCenterLocationFromScreenCoord(const UWorld& _World, FVector& _Location, FVector& _OutDirecton) const;
+    [[nodiscard]] bool IsRightDistance(const AActor& _Actor, const FVector& _Position, const FVector& _Direction, float& _OutDistance) const;
 
     void SortByDistance(TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const;
     void ApplyScores(TArray<FKLDebugUtilsPickerScoredObjects>& _OutObjects) const;

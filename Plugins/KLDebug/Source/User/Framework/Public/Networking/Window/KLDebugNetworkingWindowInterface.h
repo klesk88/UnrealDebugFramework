@@ -43,7 +43,7 @@ public:
     virtual void Client_Tick(FKLDebugNetworkingWindowClientTickInput& _Input);
     // client
 
-    UE_NODISCARD static bool constexpr NetworkShouldPerformStaticChecks();
+    [[nodiscard]] static bool constexpr NetworkShouldPerformStaticChecks();
 
     template <typename FeatureClass>
     static void constexpr NetworkStaticChecks();

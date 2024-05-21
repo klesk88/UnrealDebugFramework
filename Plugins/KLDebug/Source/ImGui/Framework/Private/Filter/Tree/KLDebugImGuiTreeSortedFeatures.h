@@ -15,10 +15,10 @@ public:
     explicit FKLDebugImGuiTreeSortedFeatures(const KL::Debug::ImGui::Features::Types::FeatureIndex _Offset, const FName& _FeaturePath, const TArray<FName>& _Filters, const IKLDebugFeatureInterface_Selectable& _Feature);
 
     // FKLDebugImGuiTreeBuilderData
-    UE_NODISCARD const TArray<FName>& GetPathTokens() const final;
+    [[nodiscard]] const TArray<FName>& GetPathTokens() const final;
     // FKLDebugImGuiTreeBuilderData
 
-    UE_NODISCARD const IKLDebugFeatureInterface_Selectable& GetFeature() const;
+    [[nodiscard]] const IKLDebugFeatureInterface_Selectable& GetFeature() const;
 
 private:
     const IKLDebugFeatureInterface_Selectable* mFeature = nullptr;

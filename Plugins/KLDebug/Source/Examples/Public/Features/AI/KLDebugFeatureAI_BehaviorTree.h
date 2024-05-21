@@ -15,11 +15,11 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTree final : public IKLDebug
 
 public:
     // IKLDebugFeatureInterface_Selectable
-    UE_NODISCARD TUniquePtr<IKLDebugContextInterface> GetContext(const FKLDebugContextGetterInput_Selectable& _Input) const final;
+    [[nodiscard]] TUniquePtr<IKLDebugContextInterface> GetContext(const FKLDebugContextGetterInput_Selectable& _Input) const final;
     // IKLDebugFeatureInterface_Selectable
 
     // IKLDebugUserNetworkingFeatureSelectableInterface
-    UE_NODISCARD bool Server_ShouldTick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const final;
+    [[nodiscard]] bool Server_ShouldTick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const final;
     void Server_Tick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) final;
     void Client_ReceiveData(const FKLDebugUserNetworkingFeatureSelectableReceiveDataInput& _Input) final;
     // IKLDebugUserNetworkingFeatureSelectableInterface
@@ -27,9 +27,9 @@ public:
 private:
     // IKLDebugFeatureInterface_Selectable
     void DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input) final;
-    UE_NODISCARD const FString& GetWindowName() const final;
+    [[nodiscard]] const FString& GetWindowName() const final;
     void GetFilterPath(TArray<FName>& _OutFilters) const final;
-    UE_NODISCARD const FName& GetImGuiPath() const final;
+    [[nodiscard]] const FName& GetImGuiPath() const final;
     // IKLDebugFeatureInterface_Selectable
 
     void ImGuiDrawBrainInfo(const FKLDebugFeatureAI_BehaviorTreeNetworkContext& _Context) const;

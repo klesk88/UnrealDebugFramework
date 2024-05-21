@@ -22,17 +22,17 @@ public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureStatusUpdate(const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType);
 
     // client
-    UE_NODISCARD bool Client_IsEqual(const EImGuiInterfaceType _ContainerType, const FNetworkGUID& _NetworkID) const;
+    [[nodiscard]] bool Client_IsEqual(const EImGuiInterfaceType _ContainerType, const FNetworkGUID& _NetworkID) const;
     void Client_AddFeatureUpdate(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID, const bool _Status);
     void Client_SetFullyRemoved();
     void Client_ClearFullyRemoved();
     // client
 
     // server
-    UE_NODISCARD bool Server_IsFullyRemoved() const;
-    UE_NODISCARD const FNetworkGUID& Server_GetNetworkID() const;
-    UE_NODISCARD EImGuiInterfaceType Server_GetContainerType() const;
-    UE_NODISCARD const TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusData>& Server_GetFeaturesData() const;
+    [[nodiscard]] bool Server_IsFullyRemoved() const;
+    [[nodiscard]] const FNetworkGUID& Server_GetNetworkID() const;
+    [[nodiscard]] EImGuiInterfaceType Server_GetContainerType() const;
+    [[nodiscard]] const TArray<FKLDebugImGuiNetworkingMessage_FeatureStatusData>& Server_GetFeaturesData() const;
     // server
 
 private:

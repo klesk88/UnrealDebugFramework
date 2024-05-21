@@ -13,9 +13,9 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiTreeBuilderStackData final : public
 public:
     explicit FKLDebugImGuiTreeBuilderStackData(const FName& _FullPath, const FName& _NodeName, const int32 _TreeNodeIdx);
 
-    UE_NODISCARD const FName& GetFullPath() const;
-    UE_NODISCARD const FName& GetNodeName() const;
-    UE_NODISCARD uint16 GetTreeNodeIndex() const;
+    [[nodiscard]] const FName& GetFullPath() const;
+    [[nodiscard]] const FName& GetNodeName() const;
+    [[nodiscard]] uint16 GetTreeNodeIndex() const;
 
 private:
     FName mFullPath;

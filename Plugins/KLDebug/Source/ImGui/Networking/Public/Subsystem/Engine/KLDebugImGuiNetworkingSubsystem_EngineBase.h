@@ -46,14 +46,14 @@ public:
 protected:
     virtual ETickableTickType GetTickableTickTypeChild() const;
 
-    UE_NODISCARD virtual FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnectionMutable, return nullptr;);
-    UE_NODISCARD virtual const FKLDebugImGuiNetworkingTCPBase* GetConnection() const PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnection, return nullptr;);
-    UE_NODISCARD virtual bool IsValidWorld(UWorld& _World) const;
+    [[nodiscard]] virtual FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnectionMutable, return nullptr;);
+    [[nodiscard]] virtual const FKLDebugImGuiNetworkingTCPBase* GetConnection() const PURE_VIRTUAL(UKLDebugImGuiNetworkingSubsystem_EngineBase::GetConnection, return nullptr;);
+    [[nodiscard]] virtual bool IsValidWorld(UWorld& _World) const;
     virtual void OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World);
     virtual void OnImGuiSusbsytemRemoved(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World);
 
-    UE_NODISCARD bool IsWorldInValidList(const UWorld& _World) const;
-    UE_NODISCARD bool HasValidWorlds() const;
+    [[nodiscard]] bool IsWorldInValidList(const UWorld& _World) const;
+    [[nodiscard]] bool HasValidWorlds() const;
 
     void ClearShouldTick();
     void GatherUpdateData(FKLDebugImGuiNetworkingGameThreadUpdateContextBase& _Context);

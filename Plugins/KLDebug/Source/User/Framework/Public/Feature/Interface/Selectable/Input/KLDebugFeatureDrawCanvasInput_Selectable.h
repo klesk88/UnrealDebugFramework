@@ -11,7 +11,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugFeatureDrawCanvasInput_Selectable final :
 public:
     explicit FKLDebugFeatureDrawCanvasInput_Selectable(const UObject& _Owner, UCanvas& _Canvas, UFont& _Font, IKLDebugContextInterface* _Context);
 
-    UE_NODISCARD const UObject& GetOwnerObject() const;
+    [[nodiscard]] const UObject& GetOwnerObject() const;
 
 private:
     const UObject& mOwnerObject;

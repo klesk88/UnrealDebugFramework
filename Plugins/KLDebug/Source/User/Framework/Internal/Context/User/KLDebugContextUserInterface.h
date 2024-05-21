@@ -17,7 +17,7 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugContextUserInterface
 public:
     virtual ~IKLDebugContextUserInterface();
 
-    UE_NODISCARD virtual TUniquePtr<IKLDebugContextInterface> GetContext(const FKLDebugContextGetterInput& _Input) const;
+    [[nodiscard]] virtual TUniquePtr<IKLDebugContextInterface> GetContext(const FKLDebugContextGetterInput& _Input) const;
 };
 
 inline TUniquePtr<IKLDebugContextInterface> IKLDebugContextUserInterface::GetContext(const FKLDebugContextGetterInput& _Input) const

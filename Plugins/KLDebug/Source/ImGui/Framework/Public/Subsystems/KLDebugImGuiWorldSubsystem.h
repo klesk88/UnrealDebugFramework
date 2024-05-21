@@ -57,8 +57,8 @@ public:
     void OnWorldBeginPlay(UWorld& _World) final;
     // UWorldSubsystem
 
-    UE_NODISCARD static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
-    UE_NODISCARD static const UKLDebugImGuiWorldSubsystem* TryGet(const UObject& _Object);
+    [[nodiscard]] static UKLDebugImGuiWorldSubsystem* TryGetMutable(const UObject& _Object);
+    [[nodiscard]] static const UKLDebugImGuiWorldSubsystem* TryGet(const UObject& _Object);
 
     void Tick(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
     void DrawImGui(const UWorld& _CurrentWorldUpdated, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
@@ -68,21 +68,21 @@ public:
     // to support editor selection
     void OnObjectSelected(UObject& _Object);
 
-    UE_NODISCARD FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
+    [[nodiscard]] FDelegateHandle BindOnImGuiFeatureStateUpdated(const FOnImGuiFeatureStateUpdated::FDelegate& _Delegate);
     void UnbindOnImGuiFeatureStateUpdated(FDelegateHandle& _Handle);
-    UE_NODISCARD FDelegateHandle BindOnFeatureRequestUpdate(const FOnFeaturesTick::FDelegate& _Delegate);
+    [[nodiscard]] FDelegateHandle BindOnFeatureRequestUpdate(const FOnFeaturesTick::FDelegate& _Delegate);
     void UnbindOnFeatureRequestUpdate(FDelegateHandle& _Handle);
-    UE_NODISCARD FDelegateHandle BindOnWindowsStatusChange(const FOnWindowStatusChange::FDelegate& _Delegate);
+    [[nodiscard]] FDelegateHandle BindOnWindowsStatusChange(const FOnWindowStatusChange::FDelegate& _Delegate);
     void UnbindOnWindowsStatusChange(FDelegateHandle& _Handle);
-    UE_NODISCARD FDelegateHandle BindOnShouldTickDelegate(const FOnShouldTickDelegate::FDelegate& _Delegate);
+    [[nodiscard]] FDelegateHandle BindOnShouldTickDelegate(const FOnShouldTickDelegate::FDelegate& _Delegate);
     void UnbindOnShouldTickDelegate(FDelegateHandle& _Handle);
 
     void TryGatherFeatureAndContext(FKLDebugImGuiGatherFeatureInput& _Input) const;
     void TryGatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback);
 
-    UE_NODISCARD bool GetShouldTick() const;
+    [[nodiscard]] bool GetShouldTick() const;
 
-    UE_NODISCARD IKLDebugContextInterface* GetCurrentWindowData(const EKLDebugWindowTypes _WindowType, int32& _Index) const;
+    [[nodiscard]] IKLDebugContextInterface* GetCurrentWindowData(const EKLDebugWindowTypes _WindowType, int32& _Index) const;
 
 private:
     void DrawImGuiVisualizers(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);

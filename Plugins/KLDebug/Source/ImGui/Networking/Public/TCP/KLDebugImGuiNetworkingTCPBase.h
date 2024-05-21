@@ -19,9 +19,9 @@ public:
 
 protected:
     virtual void RunChild() = 0;
-    UE_NODISCARD virtual float GetSleepTime() const;
+    [[nodiscard]] virtual float GetSleepTime() const;
 
-    UE_NODISCARD bool ShouldStop() const;
+    [[nodiscard]] bool ShouldStop() const;
 
 protected:
     float mSecondsToSleep = 0.2f;

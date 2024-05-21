@@ -15,12 +15,12 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerNodeData final : p
 {
 public:
     explicit FKLDebugImGuiFeatureVisualizerNodeData(const FName& _Name);
-    UE_NODISCARD bool operator==(const uint16 _NodeDataID) const;
+    [[nodiscard]] bool operator==(const uint16 _NodeDataID) const;
 
-    UE_NODISCARD const FString& GetImGuiNodeString() const;
+    [[nodiscard]] const FString& GetImGuiNodeString() const;
 
-    UE_NODISCARD bool GetIsSelected() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::VisualizerTree::NodeDataID GetID() const;
+    [[nodiscard]] bool GetIsSelected() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::VisualizerTree::NodeDataID GetID() const;
 
     void ClearIsSelected();
     void ToogleIsSelected();

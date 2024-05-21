@@ -12,12 +12,12 @@ class TKLDebugImGuiNetworkingConnectionRunnableContainer final : public FNoncopy
 public:
     ~TKLDebugImGuiNetworkingConnectionRunnableContainer();
 
-    UE_NODISCARD ConnectionType& GetConnectionMutable();
-    UE_NODISCARD const ConnectionType& GetConnection() const;
+    [[nodiscard]] ConnectionType& GetConnectionMutable();
+    [[nodiscard]] const ConnectionType& GetConnection() const;
 
     void InitSocket(const TCHAR* _ThreadName);
     void ClearConnection();
-    UE_NODISCARD bool HasValidConnection() const;
+    [[nodiscard]] bool HasValidConnection() const;
 
 private:
     ConnectionType mConnection;

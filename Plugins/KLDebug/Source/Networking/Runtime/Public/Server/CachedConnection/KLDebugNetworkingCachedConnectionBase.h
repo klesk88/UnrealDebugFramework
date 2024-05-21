@@ -29,37 +29,37 @@ public:
     explicit FKLDebugNetworkingCachedConnectionBase(const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _Socket);
     virtual ~FKLDebugNetworkingCachedConnectionBase();
 
-    UE_NODISCARD virtual bool RequiresGameThreadTick() const = 0;
+    [[nodiscard]] virtual bool RequiresGameThreadTick() const = 0;
 
     void Shutdown();
     void Tick();
 
-    UE_NODISCARD virtual bool IsValid() const;
-    UE_NODISCARD const FSocket& GetSocket() const;
+    [[nodiscard]] virtual bool IsValid() const;
+    [[nodiscard]] const FSocket& GetSocket() const;
 
 protected:
     // this needs to override by the child classes to handle incoming messages
     virtual void Parallel_HandlePendingMessageChild(FKLDebugNetworkingPendingMessage&& _PendingMessage) = 0;
     // this is use to tick the child and see if we are in an invalid state.
     // NOTER: this is called after TickChildReadBufferGetCanReadMore
-    UE_NODISCARD virtual bool TickChild();
+    [[nodiscard]] virtual bool TickChild();
     // allow the child to directly write in the write buffer if needed
     virtual void TickChildWriteBuffer(FArchive& _Writer);
     virtual void OnSendDataResultChild(const bool _DataSent);
-    UE_NODISCARD virtual bool CheckConnectionStatus();
+    [[nodiscard]] virtual bool CheckConnectionStatus();
 
     void ClearSocket(ISocketSubsystem& _SocketSubsystem);
-    UE_NODISCARD FSocket& GetSocketMutable() const;
+    [[nodiscard]] FSocket& GetSocketMutable() const;
 
-    UE_NODISCARD bool TickReadWriteBuffers(const bool _HasReadBytes, FArchive& _Reader);
-    UE_NODISCARD TArray<uint8>& GetWriteBuffer();
-    UE_NODISCARD bool TickReadMessagesWithHeader(FArchive& _Reader);
+    [[nodiscard]] bool TickReadWriteBuffers(const bool _HasReadBytes, FArchive& _Reader);
+    [[nodiscard]] TArray<uint8>& GetWriteBuffer();
+    [[nodiscard]] bool TickReadMessagesWithHeader(FArchive& _Reader);
 
 private:
     int32 TickReadConnectionData();
     void TickWriteConnectionData();
 
-    UE_NODISCARD bool HandleInternalMessages(const FKLDebugNetworkingMessage_Header& _Header, FArchive& _Data) const;
+    [[nodiscard]] bool HandleInternalMessages(const FKLDebugNetworkingMessage_Header& _Header, FArchive& _Data) const;
 
     void UpdateBufferStartIndex(const uint32 _BufferStopPosition, const uint32 _TotalBufferSize);
 

@@ -108,7 +108,7 @@ void FKLDebugFeatureObject_PropertyWatcher::ImguiDrawProperty(FProperty& _Proper
             ImGui::Text("<Null>");
         }
     }
-    else if (const FClassPtrProperty* ClassPtrProp = CastField<const FClassPtrProperty>(&_Property))
+    else if (const FClassProperty* ClassPtrProp = CastField<const FClassProperty>(&_Property))
     {
         ImGui::Text("PtrProperty not implemented");
     }

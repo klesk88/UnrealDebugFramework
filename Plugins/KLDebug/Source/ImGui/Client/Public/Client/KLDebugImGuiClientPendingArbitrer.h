@@ -19,8 +19,8 @@ public:
 
     void Init(FSocket& _Socket);
     void SendData();
-    UE_NODISCARD bool HasSentData() const;
-    UE_NODISCARD TArray<uint8>& GetDataToSendMutable();
+    [[nodiscard]] bool HasSentData() const;
+    [[nodiscard]] TArray<uint8>& GetDataToSendMutable();
 
 private:
     void Shutdown();

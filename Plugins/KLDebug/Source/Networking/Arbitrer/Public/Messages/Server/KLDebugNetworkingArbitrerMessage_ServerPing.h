@@ -13,7 +13,7 @@ public:
     explicit FKLDebugNetworkingArbitrerMessage_ServerPing(const uint32 _AnswerPort);
     explicit FKLDebugNetworkingArbitrerMessage_ServerPing(FArchive& _Archive);
 
-    UE_NODISCARD uint32 Arbitrer_GetAnswerPort() const;
+    [[nodiscard]] uint32 Arbitrer_GetAnswerPort() const;
 
 private:
     // IKLDebugNetworkingMessageInterface

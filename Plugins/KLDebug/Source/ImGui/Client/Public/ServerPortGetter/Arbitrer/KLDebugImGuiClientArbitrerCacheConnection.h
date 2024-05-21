@@ -34,13 +34,13 @@ private:
 public:
     explicit FKLDebugImGuiClientArbitrerCacheConnection(const UWorld& _World, const FUniqueNetIdRepl& _LocalPlayerNetID, const uint32 _WorldPort, TSharedRef<FInternetAddr> _ArbitrerAddress, FSocket& _ArbitrerSocket);
     ~FKLDebugImGuiClientArbitrerCacheConnection();
-    UE_NODISCARD bool operator==(const uint16& _ID) const;
+    [[nodiscard]] bool operator==(const uint16& _ID) const;
 
     void Parallel_Tick(const uint32 _ArbitrerReplyPort, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer);
 
-    UE_NODISCARD uint32 GetHost() const;
-    UE_NODISCARD const FObjectKey& GetWorldObjKey() const;
-    UE_NODISCARD const FUniqueNetIdRepl& GetNetLocalPlayerID() const;
+    [[nodiscard]] uint32 GetHost() const;
+    [[nodiscard]] const FObjectKey& GetWorldObjKey() const;
+    [[nodiscard]] const FUniqueNetIdRepl& GetNetLocalPlayerID() const;
 
 private:
     void TickArbitrer(const uint32 _ArbitrerReplyPort, TArray<uint8>& _WriteTempBuffer, TArray<uint8>& _WriteBuffer);

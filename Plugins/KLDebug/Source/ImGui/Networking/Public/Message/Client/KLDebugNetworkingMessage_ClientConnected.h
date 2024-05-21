@@ -18,7 +18,7 @@ public:
     explicit FKLDebugNetworkingMessage_ClientConnected(const FUniqueNetIdRepl& _LocalPlayerNetID);
     explicit FKLDebugNetworkingMessage_ClientConnected(FArchive& _Archive);
 
-    UE_NODISCARD const FUniqueNetIdRepl& GetPlayerNetID() const;
+    [[nodiscard]] const FUniqueNetIdRepl& GetPlayerNetID() const;
 
 private:
     // IKLDebugNetworkingMessageInterface

@@ -21,11 +21,11 @@ public:
     virtual ~FKLDebugFeatureManagerEntryBase() = default;
 
     void AddNextEntry(FKLDebugFeatureManagerEntryBase& _NextEntry);
-    UE_NODISCARD FKLDebugFeatureManagerEntryBase* GetNextEntry() const;
+    [[nodiscard]] FKLDebugFeatureManagerEntryBase* GetNextEntry() const;
 
-    UE_NODISCARD virtual EImGuiInterfaceType GetInterfaceType() const = 0;
-    UE_NODISCARD virtual IKLDebugFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const = 0;
-    UE_NODISCARD virtual SIZE_T GetSize() const = 0;
+    [[nodiscard]] virtual EImGuiInterfaceType GetInterfaceType() const = 0;
+    [[nodiscard]] virtual IKLDebugFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const = 0;
+    [[nodiscard]] virtual SIZE_T GetSize() const = 0;
 
 private:
     FKLDebugFeatureManagerEntryBase* mNext = nullptr;

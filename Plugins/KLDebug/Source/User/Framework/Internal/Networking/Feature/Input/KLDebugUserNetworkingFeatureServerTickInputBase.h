@@ -16,7 +16,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureServerTickInputBase 
 public:
     explicit FKLDebugUserNetworkingFeatureServerTickInputBase(const UWorld& _World, IKLDebugContextInterface* _ContextData, FArchive& _Archive);
 
-    UE_NODISCARD FArchive& GetArchiveMutable() const;
+    [[nodiscard]] FArchive& GetArchiveMutable() const;
 
 private:
     FArchive& mArchive;

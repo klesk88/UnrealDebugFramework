@@ -16,16 +16,16 @@ public:
     explicit FKLDebugNetworkingWindowInputBase(const UWorld& _World, IKLDebugContextInterface* _Context, FArchive& _Archive);
     virtual ~FKLDebugNetworkingWindowInputBase() = default;
 
-    UE_NODISCARD const UWorld& GetWorld() const;
-    UE_NODISCARD FArchive& GetArchiveMutable() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
+    [[nodiscard]] FArchive& GetArchiveMutable() const;
 
     // the user is expected to know the type of the context.
     template <typename ContextType>
-    UE_NODISCARD ContextType& GetContextMutable() const;
+    [[nodiscard]] ContextType& GetContextMutable() const;
 
     // the user is expected to know the type of the context.
     template <typename ContextType>
-    UE_NODISCARD const ContextType& GetContext() const;
+    [[nodiscard]] const ContextType& GetContext() const;
 
 private:
     const UWorld& mWorld;

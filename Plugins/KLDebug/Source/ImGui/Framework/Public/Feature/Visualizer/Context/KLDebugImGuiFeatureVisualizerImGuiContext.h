@@ -18,11 +18,11 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerImGuiContext final
 public:
     explicit FKLDebugImGuiFeatureVisualizerImGuiContext(const UWorld& _World, const bool _DrawTree, const FOnImGuiFeatureStateUpdated& _FeatureUpdateDelegate, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
 
-    UE_NODISCARD const UWorld& GetWorld() const;
-    UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager& GetFeaturesContainerManager() const;
-    UE_NODISCARD bool GetShouldDrawTree() const;
-    UE_NODISCARD ENetMode GetCurrentNetMode() const;
-    UE_NODISCARD const FOnImGuiFeatureStateUpdated& GetFeatureUpdateDelegate() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
+    [[nodiscard]] FKLDebugImGuiFeaturesTypesContainerManager& GetFeaturesContainerManager() const;
+    [[nodiscard]] bool GetShouldDrawTree() const;
+    [[nodiscard]] ENetMode GetCurrentNetMode() const;
+    [[nodiscard]] const FOnImGuiFeatureStateUpdated& GetFeatureUpdateDelegate() const;
 
 private:
     const UWorld& mWorld;

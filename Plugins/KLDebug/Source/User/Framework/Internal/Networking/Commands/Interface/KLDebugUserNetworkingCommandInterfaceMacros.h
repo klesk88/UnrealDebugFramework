@@ -80,20 +80,20 @@ namespace KL::Debug::User::Commands::MacroHelpers
  */
 #define KL_DEBUG_COMMAND_INTERNAL(_CommandID, _ContextClass)                                                                       \
 public:                                                                                                                            \
-    UE_NODISCARD inline static const FName& StaticGetCommandID()                                                                   \
+    [[nodiscard]] inline static const FName& StaticGetCommandID()                                                                   \
     {                                                                                                                              \
         static const FName CommandID(TEXT(#_CommandID));                                                                           \
         return CommandID;                                                                                                          \
     }                                                                                                                              \
                                                                                                                                    \
-    UE_NODISCARD inline const FName& GetID() const override                                                                        \
+    [[nodiscard]] inline const FName& GetID() const override                                                                        \
     {                                                                                                                              \
         return StaticGetCommandID();                                                                                               \
     }                                                                                                                              \
                                                                                                                                    \
     using ContextClassType = _ContextClass;                                                                                        \
                                                                                                                                    \
-    UE_NODISCARD inline static constexpr bool StaticHasContextClass()                                                              \
+    [[nodiscard]] inline static constexpr bool StaticHasContextClass()                                                              \
     {                                                                                                                              \
         return std::is_same_v<ContextClassType, void> == false;                                                                    \
     }                                                                                                                              \

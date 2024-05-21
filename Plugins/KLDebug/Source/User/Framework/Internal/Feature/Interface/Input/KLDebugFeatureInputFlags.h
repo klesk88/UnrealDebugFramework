@@ -22,7 +22,7 @@ private:
 public:
     void SetFag(const EFeatureUpdateFlags _Flag);
     void ClearFag(const EFeatureUpdateFlags _Flag);
-    UE_NODISCARD bool IsFlagSet(const EFeatureUpdateFlags _Flag) const;
+    [[nodiscard]] bool IsFlagSet(const EFeatureUpdateFlags _Flag) const;
 
 private:
     InputFeatureUpdateFlag mFlags;

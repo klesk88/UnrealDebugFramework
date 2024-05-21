@@ -16,8 +16,8 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingCommandExecuteInput_Server 
 public:
     explicit FKLDebugUserNetworkingCommandExecuteInput_Server(APlayerController& _PlayerClientOwner, UWorld& _World);
 
-    UE_NODISCARD const APlayerController& GetOwningPlayerConnection() const;
-    UE_NODISCARD APlayerController& GetOwningPlayerConnectionMutable() const;
+    [[nodiscard]] const APlayerController& GetOwningPlayerConnection() const;
+    [[nodiscard]] APlayerController& GetOwningPlayerConnectionMutable() const;
 
 private:
     APlayerController& mPlayerClientOwner;

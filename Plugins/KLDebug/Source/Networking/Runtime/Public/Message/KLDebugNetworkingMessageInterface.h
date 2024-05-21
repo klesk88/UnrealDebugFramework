@@ -15,12 +15,12 @@ class KLDEBUGNETWORKINGRUNTIME_API IKLDebugNetworkingMessageInterface
 public:
     virtual ~IKLDebugNetworkingMessageInterface() = default;
 
-    UE_NODISCARD virtual uint16 GetMessageType() const = 0;
-    UE_NODISCARD virtual uint16 GetMessageEnumType() const = 0;
-    UE_NODISCARD virtual bool IsValid() const;
+    [[nodiscard]] virtual uint16 GetMessageType() const = 0;
+    [[nodiscard]] virtual uint16 GetMessageEnumType() const = 0;
+    [[nodiscard]] virtual bool IsValid() const;
 
-    UE_NODISCARD virtual bool SupportsEmptyData() const;
-    UE_NODISCARD virtual uint8 GetMessageVersion() const;
+    [[nodiscard]] virtual bool SupportsEmptyData() const;
+    [[nodiscard]] virtual uint8 GetMessageVersion() const;
 
     void Serialize(FArchive& _Archive);
 

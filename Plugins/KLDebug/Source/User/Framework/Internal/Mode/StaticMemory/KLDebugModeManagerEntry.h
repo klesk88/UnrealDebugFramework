@@ -18,8 +18,8 @@ public:
     TKLDebugModeManagerEntry(const FName& _NameToCheck);
 
     // FKLDebugModeManagerEntryBase
-    UE_NODISCARD IKLDebugModeInterface& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD SIZE_T GetSize() const final;
+    [[nodiscard]] IKLDebugModeInterface& AllocateInPlace(void* _PoolStartAddress) const final;
+    [[nodiscard]] SIZE_T GetSize() const final;
     // FKLDebugModeManagerEntryBase
 };
 

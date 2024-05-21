@@ -15,7 +15,7 @@ public:
     explicit FKLDebugNetworkingMessage_CheckIfAlive(FArchive& _Archive);
 
     // IKLDebugNetworkingMessageInterface
-    UE_NODISCARD bool SupportsEmptyData() const final;
+    [[nodiscard]] bool SupportsEmptyData() const final;
     // IKLDebugNetworkingMessageInterface
 
 private:

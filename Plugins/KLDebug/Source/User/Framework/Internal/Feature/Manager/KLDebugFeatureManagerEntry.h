@@ -16,9 +16,9 @@ public:
     explicit TKLDebugFeatureManagerEntry(const FName& _NameToCheck);
 
     // FKLDebugFeatureManagerEntryBase
-    UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const final;
-    UE_NODISCARD IKLDebugFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD SIZE_T GetSize() const final;
+    [[nodiscard]] EImGuiInterfaceType GetInterfaceType() const final;
+    [[nodiscard]] IKLDebugFeatureInterfaceBase& AllocateInPlace(void* _PoolStartAddress) const final;
+    [[nodiscard]] SIZE_T GetSize() const final;
     // FKLDebugFeatureManagerEntryBase
 };
 

@@ -17,7 +17,7 @@ public:
     explicit FKLDebugImGuiFilterTreeNode(const KL::Debug::ImGui::Features::Types::FilterIndex _FilterIndex);
     explicit FKLDebugImGuiFilterTreeNode(const int32 _NodeDataIndex, const KL::Debug::ImGui::Features::Types::FilterIndex _FilterIndex);
 
-    UE_NODISCARD uint16 GetFilterIndex() const;
+    [[nodiscard]] uint16 GetFilterIndex() const;
 
 private:
     KL::Debug::ImGui::Features::Types::FilterIndex mFilterIndex = TNumericLimits<KL::Debug::ImGui::Features::Types::FilterIndex>::Max();

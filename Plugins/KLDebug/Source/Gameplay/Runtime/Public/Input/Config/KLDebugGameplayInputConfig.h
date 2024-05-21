@@ -23,10 +23,10 @@ struct KLDEBUGGAMEPLAYRUNTIME_API FKLDebugGameplayInputConfig
 public:
     void Load() const;
 
-    UE_NODISCARD const UInputMappingContext* TryGetMappingContext() const;
-    UE_NODISCARD int32 GetInputContextPriority() const;
+    [[nodiscard]] const UInputMappingContext* TryGetMappingContext() const;
+    [[nodiscard]] int32 GetInputContextPriority() const;
 
-    UE_NODISCARD const UInputAction* TryGetInputAction(const EKLDebugGameplayInputType& _Action) const;
+    [[nodiscard]] const UInputAction* TryGetInputAction(const EKLDebugGameplayInputType& _Action) const;
 
 private:
     UPROPERTY(EditDefaultsOnly, Category = "Enanched Input")

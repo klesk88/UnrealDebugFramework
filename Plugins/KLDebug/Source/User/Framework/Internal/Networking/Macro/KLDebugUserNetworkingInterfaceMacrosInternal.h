@@ -7,14 +7,14 @@
 
 #define KL_DEBUG_NETWORK_INTERFACE_INTERNAL_RTTI(NetworkInterfaceType, ParentItemType)                              \
 public:                                                                                                             \
-    UE_NODISCARD inline static const FName& NetworkStaticItemType()                                                 \
+    [[nodiscard]] inline static const FName& NetworkStaticItemType()                                                 \
     {                                                                                                               \
         static const FName Interface(TEXT(#NetworkInterfaceType));                                                  \
         return Interface;                                                                                           \
     }                                                                                                               \
                                                                                                                     \
 protected:                                                                                                          \
-    UE_NODISCARD inline bool NetworkIsDerivedInternal(const FName& _ItemTypeName) const override                    \
+    [[nodiscard]] inline bool NetworkIsDerivedInternal(const FName& _ItemTypeName) const override                    \
     {                                                                                                               \
         return NetworkStaticItemType() == _ItemTypeName || ParentItemType::NetworkIsDerivedInternal(_ItemTypeName); \
     }                                                                                                               \

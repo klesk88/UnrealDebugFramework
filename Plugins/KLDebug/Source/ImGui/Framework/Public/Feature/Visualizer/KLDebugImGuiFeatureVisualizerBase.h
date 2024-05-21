@@ -47,17 +47,17 @@ public:
     virtual void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const = 0;
     virtual void GatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) = 0;
 
-    UE_NODISCARD virtual bool IsValid() const;
+    [[nodiscard]] virtual bool IsValid() const;
 
     void Init(const FKLDebugImGuiFeatureContainerBase& _Container, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     void Shutdown(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UObject* _OwnerObject);
 
     void DrawImGui(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem);
-    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeaturesIndexes() const;
+    [[nodiscard]] const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeaturesIndexes() const;
     void GetSelectedFeaturesIndexes(TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _SelectedFeatures) const;
 
-    UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
-    UE_NODISCARD EImGuiInterfaceType GetInterfaceType() const;
+    [[nodiscard]] const FKLDebugImGuiFeatureVisualizerEntry* TryGetSelectedFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+    [[nodiscard]] EImGuiInterfaceType GetInterfaceType() const;
 
 protected:
     virtual void DrawImGuiTree(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context) = 0;

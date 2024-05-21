@@ -14,9 +14,9 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugFrameworkModeSortedData final : public F
 public:
     explicit FKLDebugFrameworkModeSortedData(const FString& _Name, IKLDebugModeInterface& _Interface);
 
-    UE_NODISCARD const FString& GetName() const;
-    UE_NODISCARD const IKLDebugModeInterface& GetInterface() const;
-    UE_NODISCARD IKLDebugModeInterface& GetInterfaceMutable() const;
+    [[nodiscard]] const FString& GetName() const;
+    [[nodiscard]] const IKLDebugModeInterface& GetInterface() const;
+    [[nodiscard]] IKLDebugModeInterface& GetInterfaceMutable() const;
 
 private:
     const FString& mName;

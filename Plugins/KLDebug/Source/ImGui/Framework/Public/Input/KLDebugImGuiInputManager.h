@@ -16,7 +16,7 @@ public:
     void ToogleImGuiSystem();
     void ToogleImGuiInput();
 
-    UE_NODISCARD bool IsEnable() const;
+    [[nodiscard]] bool IsEnable() const;
 
 private:
     bool mIsImGuiEnable = false;

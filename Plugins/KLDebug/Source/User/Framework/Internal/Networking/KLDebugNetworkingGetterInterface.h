@@ -16,8 +16,10 @@ namespace KL::Debug::Networking::Getter
         {
             return static_cast<const IKLDebugNetworkingBaseInterface*>(&_ClassInstance);
         }
-
-        return nullptr;
+        else
+        {
+            return nullptr;
+        }
     }
 
     template <typename ClassType>
@@ -27,8 +29,10 @@ namespace KL::Debug::Networking::Getter
         {
             return static_cast<IKLDebugNetworkingBaseInterface*>(&_ClassInstance);
         }
-
-        return nullptr;
+        else
+        {
+            return nullptr;
+        }
     }
 
 }    // namespace KL::Debug::Networking::Getter
@@ -59,9 +63,9 @@ public:
     virtual ~IKLDebugNetworkingGetterInterface();
 
     template <typename NetworkInterfaceClass>
-    UE_NODISCARD const NetworkInterfaceClass* TryCastToNetworkInterface() const;
+    [[nodiscard]] const NetworkInterfaceClass* TryCastToNetworkInterface() const;
     template <typename NetworkInterfaceClass>
-    UE_NODISCARD NetworkInterfaceClass* TryCastToNetworkInterfaceMutable();
+    [[nodiscard]] NetworkInterfaceClass* TryCastToNetworkInterfaceMutable();
 
 protected:
     virtual const IKLDebugNetworkingBaseInterface* TryGetNetworkInterfaceInternal() const;

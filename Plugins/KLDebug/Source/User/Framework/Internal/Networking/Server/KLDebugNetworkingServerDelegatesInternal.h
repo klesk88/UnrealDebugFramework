@@ -14,6 +14,6 @@ namespace KL::Debug::Server::Delegates::Internal
     KLDEBUGUSERFRAMEWORK_API void BindOnGetDebugServerSocketPortRange(const FOnGetDebugServerSocketPortRange& _Delegate);
     KLDEBUGUSERFRAMEWORK_API void UnbindOnGetDebugServerSocketPortRange();
     // without _API on purpose as it should be called just internally this module
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API TOptional<KL::Debug::Server::Delegates::FServerSocketPortRangeDelegateData> BroadcastOnGetDebugServerSocketPortRange();
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API TOptional<KL::Debug::Server::Delegates::FServerSocketPortRangeDelegateData> BroadcastOnGetDebugServerSocketPortRange();
 
 }    // namespace KL::Debug::Server::Delegates::Internal

@@ -17,10 +17,10 @@ public:
     explicit FKLDebugNetworkingPendingMessage(const FKLDebugNetworkingMessage_Header& _Header, TArray<uint8>&& _MessageData);
     explicit FKLDebugNetworkingPendingMessage(FKLDebugNetworkingPendingMessage&& _Other);
 
-    UE_NODISCARD bool HasData() const;
-    UE_NODISCARD uint16 GetMessageType() const;
-    UE_NODISCARD uint16 GetMessageEnumType() const;
-    UE_NODISCARD const TArray<uint8>& GetMessageData() const;
+    [[nodiscard]] bool HasData() const;
+    [[nodiscard]] uint16 GetMessageType() const;
+    [[nodiscard]] uint16 GetMessageEnumType() const;
+    [[nodiscard]] const TArray<uint8>& GetMessageData() const;
 
 private:
     void UncompressData(const FKLDebugNetworkingMessage_Header& _Header, const TArray<uint8>& _MessageData);

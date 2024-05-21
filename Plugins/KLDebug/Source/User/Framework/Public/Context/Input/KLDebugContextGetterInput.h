@@ -16,8 +16,8 @@ public:
     explicit FKLDebugContextGetterInput(const UWorld& _World, const ENetMode _CurrentNetMode);
     virtual ~FKLDebugContextGetterInput() = default;
 
-    UE_NODISCARD const UWorld& GetWorld() const;
-    UE_NODISCARD ENetMode GetCurrentNetMode() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
+    [[nodiscard]] ENetMode GetCurrentNetMode() const;
 
 private:
     const UWorld& mWorld;

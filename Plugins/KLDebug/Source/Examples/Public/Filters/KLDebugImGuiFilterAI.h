@@ -12,5 +12,5 @@ class KLDEBUGEXAMPLES_API KLDebugImGuiFilterAI final : public IKLDebugFilterInte
     KL_DEBUG_FILTER_GENERATE(AI)
 
 public:
-    UE_NODISCARD bool IsObjectValid(const UObject& _Object) const final;
+    [[nodiscard]] bool IsObjectValid(const UObject& _Object) const final;
 };

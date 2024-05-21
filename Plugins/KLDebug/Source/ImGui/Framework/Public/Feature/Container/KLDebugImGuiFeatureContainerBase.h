@@ -32,12 +32,12 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureContainerBase : public FNonc
 public:
     virtual ~FKLDebugImGuiFeatureContainerBase() = default;
 
-    UE_NODISCARD virtual bool IsCorrectContainerForFeature(const IKLDebugFeatureInterfaceBase& _Feature) const = 0;
-    UE_NODISCARD virtual EImGuiInterfaceType GetContainerType() const = 0;
+    [[nodiscard]] virtual bool IsCorrectContainerForFeature(const IKLDebugFeatureInterfaceBase& _Feature) const = 0;
+    [[nodiscard]] virtual EImGuiInterfaceType GetContainerType() const = 0;
 
-    UE_NODISCARD bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const;
-    UE_NODISCARD uint32 GetFeaturesCount() const;
-    UE_NODISCARD TOptional<FName> TryGetFeatureNameID(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+    [[nodiscard]] bool IsValidFeatureIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FName& _FeatureNameID) const;
+    [[nodiscard]] uint32 GetFeaturesCount() const;
+    [[nodiscard]] TOptional<FName> TryGetFeatureNameID(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
     void InitGenerateFeatures(const uint32 _Size, const uint32 _EntryCount);
     IKLDebugFeatureInterfaceBase& AllocateNewEntry(const FKLDebugFeatureManagerEntryBase& _Entry, const KL::Debug::ImGui::Features::Types::FeatureOffset _OffsetIndex, TArray<FString>& _PathString);
@@ -45,25 +45,25 @@ public:
 
     void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
 
-    UE_NODISCARD FKLDebugImGuiFeaturesIterator GetFeaturesIterator();
-    UE_NODISCARD FKLDebugImGuiFeaturesConstIterator GetFeaturesConstIterator() const;
+    [[nodiscard]] FKLDebugImGuiFeaturesIterator GetFeaturesIterator();
+    [[nodiscard]] FKLDebugImGuiFeaturesConstIterator GetFeaturesConstIterator() const;
 
-    UE_NODISCARD FKLDebugImGuiFeatureVisualizerIterator GetFeatureVisualizerIterator(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes);
-    UE_NODISCARD FKLDebugImGuiFeatureVisualizerConstIterator GetFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes) const;
+    [[nodiscard]] FKLDebugImGuiFeatureVisualizerIterator GetFeatureVisualizerIterator(TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes);
+    [[nodiscard]] FKLDebugImGuiFeatureVisualizerConstIterator GetFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes) const;
 
-    UE_NODISCARD FKLDebugImGuiSubsetFeaturesIterator GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
-    UE_NODISCARD FKLDebugImGuiSubsetFeaturesConstIterator GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const;
+    [[nodiscard]] FKLDebugImGuiSubsetFeaturesIterator GetFeaturesSubsetIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes);
+    [[nodiscard]] FKLDebugImGuiSubsetFeaturesConstIterator GetFeaturesSubsetConstIterator(const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _FeaturesIndexes) const;
 
-    UE_NODISCARD const IKLDebugFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
-    UE_NODISCARD IKLDebugFeatureInterfaceBase& GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
+    [[nodiscard]] const IKLDebugFeatureInterfaceBase& GetFeature(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+    [[nodiscard]] IKLDebugFeatureInterfaceBase& GetFeatureMutable(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
 protected:
     virtual void GatherFeaturesChild(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const = 0;
     virtual void FinishGenerateFeatureChild();
 
-    UE_NODISCARD const TArray<FKLDebugImGuiFeatureData>& GetFeaturesData() const;
-    UE_NODISCARD TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPoolMutable();
-    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPool() const;
+    [[nodiscard]] const TArray<FKLDebugImGuiFeatureData>& GetFeaturesData() const;
+    [[nodiscard]] TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPoolMutable();
+    [[nodiscard]] const TArray<KL::Debug::ImGui::Features::Types::FeaturePoolValue>& GetFeaturesPool() const;
 
 private:
     // offset between features so that we can retrieve them correctly from the pool. Each entry is the

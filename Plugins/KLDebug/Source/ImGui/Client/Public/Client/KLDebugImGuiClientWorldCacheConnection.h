@@ -17,10 +17,10 @@ class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientWorldCacheConnection final : pub
 {
 public:
     explicit FKLDebugImGuiClientWorldCacheConnection(const FObjectKey& _WorldKey, const FUniqueNetIdRepl& _LocalPlayerNetID, const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _WorldServerSocket);
-    UE_NODISCARD bool operator==(const FObjectKey& _WorldID) const;
+    [[nodiscard]] bool operator==(const FObjectKey& _WorldID) const;
 
-    UE_NODISCARD bool Parallel_Tick();
-    UE_NODISCARD bool TickOnGameThread();
+    [[nodiscard]] bool Parallel_Tick();
+    [[nodiscard]] bool TickOnGameThread();
 
 private:
     FKLDebugImGuiClientServerCacheConnection mCacheConnection;

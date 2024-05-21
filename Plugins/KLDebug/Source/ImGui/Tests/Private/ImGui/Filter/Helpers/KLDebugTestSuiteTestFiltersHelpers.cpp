@@ -10,7 +10,7 @@ namespace KL::Debug::TestSuite::Filter::Helpers
     /// private
 
     template <typename FilterClass>
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureOffset AllocateFilter(const KL::Debug::ImGui::Features::Types::FeatureOffset _CurrentFilterOffset, TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& _FilterPool)
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureOffset AllocateFilter(const KL::Debug::ImGui::Features::Types::FeatureOffset _CurrentFilterOffset, TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& _FilterPool)
     {
         new (static_cast<void*>(&_FilterPool[_CurrentFilterOffset])) FilterClass();
         return _CurrentFilterOffset + sizeof(FilterClass);

@@ -10,9 +10,9 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureRequestUpdateInputBa
 public:
     explicit FKLDebugUserNetworkingFeatureRequestUpdateInputBase(const UWorld& _World, FArchive& _ReaderArchive, FArchive& _WriterArchive);
 
-    UE_NODISCARD const UWorld& GetWorld() const;
-    UE_NODISCARD FArchive& GetWriter() const;
-    UE_NODISCARD FArchive& GetReader() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
+    [[nodiscard]] FArchive& GetWriter() const;
+    [[nodiscard]] FArchive& GetReader() const;
 
 private:
     const UWorld& mWorld;

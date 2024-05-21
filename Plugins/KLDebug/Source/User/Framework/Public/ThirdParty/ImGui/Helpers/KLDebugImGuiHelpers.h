@@ -16,8 +16,8 @@ class UWorld;
 namespace KL::Debug::ImGuiHelpers
 {
     KLDEBUGUSERFRAMEWORK_API void HelpMarker(const char* _Description);
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API ImVec4 ConvertUnrealColorToImGui(const FColor& _Color);
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API ImVec4 ConvertUnrealColorToImGui(const FLinearColor& _Color);
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API ImVec4 ConvertUnrealColorToImGui(const FColor& _Color);
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API ImVec4 ConvertUnrealColorToImGui(const FLinearColor& _Color);
     KLDEBUGUSERFRAMEWORK_API void DrawColoredText(const FColor _Color, const FString& _Text);
     KLDEBUGUSERFRAMEWORK_API void DrawConditionalColoredText(const FString& _Text, const bool _ConditionResult);
 

@@ -238,7 +238,7 @@ protected:
     virtual void Init();
     virtual void Shutdown();
 
-    UE_NODISCARD FImGuiModuleManager& GetImguiModuleManager() const;
+    [[nodiscard]] FImGuiModuleManager& GetImguiModuleManager() const;
     //@End KLMod
 };
 

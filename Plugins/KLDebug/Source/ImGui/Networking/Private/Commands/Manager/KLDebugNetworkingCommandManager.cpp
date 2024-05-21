@@ -20,7 +20,7 @@ namespace KL::Debug::Networking::Commands::Manager
     {
     public:
         explicit FCommandRequesterDelegate(const FObjectKey& _WorldKey, const FOnKLDebugNewCommandWorld& _Delegate);
-        UE_NODISCARD bool operator==(const FObjectKey& _WorldKey) const;
+        [[nodiscard]] bool operator==(const FObjectKey& _WorldKey) const;
 
         void Broadcast(const KL::Debug::Networking::Commands::Internal::FKLDebugOnNewCommandInput& _Input) const;
 

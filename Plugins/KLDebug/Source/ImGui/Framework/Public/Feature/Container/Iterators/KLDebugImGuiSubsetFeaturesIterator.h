@@ -11,8 +11,8 @@ public:
 
 private:
     // FKLDebugImGuiFeaturesConstIterator
-    UE_NODISCARD bool IsValid() const final;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
+    [[nodiscard]] bool IsValid() const final;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesConstIterator
 
     const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& mFeaturesIndexes;
@@ -44,8 +44,8 @@ public:
 
 private:
     // FKLDebugImGuiFeaturesIterator
-    UE_NODISCARD bool IsValid() const final;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
+    [[nodiscard]] bool IsValid() const final;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesIterator
 
 private:

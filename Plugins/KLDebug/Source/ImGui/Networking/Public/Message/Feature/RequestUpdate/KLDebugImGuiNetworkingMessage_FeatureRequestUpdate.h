@@ -24,11 +24,11 @@ public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate(const FName& _FeatureName, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const EImGuiInterfaceType _ContainerType, const TArray<uint8>& _BufferData);
     explicit FKLDebugImGuiNetworkingMessage_FeatureRequestUpdate(const FName& _FeatureName, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _ContainerType, const TArray<uint8>& _BufferData);
 
-    UE_NODISCARD const FName& Server_GetFeatureNameID() const;
-    UE_NODISCARD const FNetworkGUID& Server_GetFeatureObject() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex Server_GetFeatureIndex() const;
-    UE_NODISCARD EImGuiInterfaceType Server_GetContainerType() const;
-    UE_NODISCARD TArray<uint8>& Server_GetBufferDataMutable();
+    [[nodiscard]] const FName& Server_GetFeatureNameID() const;
+    [[nodiscard]] const FNetworkGUID& Server_GetFeatureObject() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex Server_GetFeatureIndex() const;
+    [[nodiscard]] EImGuiInterfaceType Server_GetContainerType() const;
+    [[nodiscard]] TArray<uint8>& Server_GetBufferDataMutable();
 
 private:
     // TKLDebugNetworkingMessage_Base

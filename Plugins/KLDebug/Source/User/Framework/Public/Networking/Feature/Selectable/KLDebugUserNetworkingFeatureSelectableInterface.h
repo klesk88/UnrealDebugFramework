@@ -32,7 +32,7 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugUserNetworkingFeatureSelectableInterface 
 {
 public:
     // server
-    UE_NODISCARD virtual bool Server_ShouldTick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const;
+    [[nodiscard]] virtual bool Server_ShouldTick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const;
     virtual void Server_Tick(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input);
     virtual void Server_FeatureUpdate(const FKLDebugUserNetworkingFeatureSelectableRequestUpdateInput& _Input) const;
     // server
@@ -42,7 +42,7 @@ public:
     virtual void Client_Tick(FKLDebugUserNetworkingFeatureSelectableClientTickInput& _Input);
     // client
 
-    UE_NODISCARD static bool constexpr NetworkShouldPerformStaticChecks();
+    [[nodiscard]] static bool constexpr NetworkShouldPerformStaticChecks();
 
     template <typename FeatureClass>
     static void constexpr NetworkStaticChecks();

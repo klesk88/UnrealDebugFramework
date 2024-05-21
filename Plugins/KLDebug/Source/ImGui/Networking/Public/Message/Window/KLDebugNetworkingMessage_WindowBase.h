@@ -22,9 +22,9 @@ public:
     explicit TKLDebugNetworkingMessage_WindowBase() = default;
     explicit TKLDebugNetworkingMessage_WindowBase(const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType);
 
-    UE_NODISCARD const FName& GetID() const;
-    UE_NODISCARD uint16 GetIndex() const;
-    UE_NODISCARD EKLDebugWindowTypes GetWindowType() const;
+    [[nodiscard]] const FName& GetID() const;
+    [[nodiscard]] uint16 GetIndex() const;
+    [[nodiscard]] EKLDebugWindowTypes GetWindowType() const;
 
 protected:
     // TKLDebugNetworkingMessage_Base

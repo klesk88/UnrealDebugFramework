@@ -12,9 +12,9 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugFeatureImGuiInput_Selectable final : publ
 public:
     explicit FKLDebugFeatureImGuiInput_Selectable(const UWorld& _World, bool& _IsWindowOpen, IKLDebugContextInterface* _FeatureContext, UObject& _Object);
 
-    UE_NODISCARD const UObject& GetObject() const;
-    UE_NODISCARD UObject& GetObjectMutable() const;
-    UE_NODISCARD bool HasAuthorityOnObject() const;
+    [[nodiscard]] const UObject& GetObject() const;
+    [[nodiscard]] UObject& GetObjectMutable() const;
+    [[nodiscard]] bool HasAuthorityOnObject() const;
 
 private:
     UObject& mObject;

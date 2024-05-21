@@ -19,10 +19,10 @@ public:
     explicit FKLDebugImGuiVisualizerTreeSortedFeatures(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex, const FKLDebugImGuiFeatureData& _FeatureData, const FName& _FeatureImGuiPath);
 
     // FKLDebugImGuiTreeBuilderData
-    UE_NODISCARD const TArray<FName>& GetPathTokens() const final;
+    [[nodiscard]] const TArray<FName>& GetPathTokens() const final;
     // FKLDebugImGuiTreeBuilderData
 
-    UE_NODISCARD const FKLDebugImGuiFeatureData& GetFeatureData() const;
+    [[nodiscard]] const FKLDebugImGuiFeatureData& GetFeatureData() const;
 
 private:
     const FKLDebugImGuiFeatureData& mFeatureData;

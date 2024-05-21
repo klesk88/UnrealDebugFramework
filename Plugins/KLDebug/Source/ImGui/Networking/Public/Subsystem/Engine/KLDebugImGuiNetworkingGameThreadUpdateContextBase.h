@@ -15,13 +15,13 @@ public:
 
     void SetNewWorlds(const TArray<TWeakObjectPtr<const UWorld>>& _NewWorlds);
     void SetRemovedWorlds(const TArray<FObjectKey>& _RemovedWorlds);
-    UE_NODISCARD const TArray<FObjectKey>& GetRemovedWorlds() const;
-    UE_NODISCARD TArray<const UWorld*>& GetWorldsMutable();
-    UE_NODISCARD const TArray<const UWorld*>& GetWorlds() const;
-    UE_NODISCARD const TArray<TWeakObjectPtr<const UWorld>>& GetNewWorlds() const;
+    [[nodiscard]] const TArray<FObjectKey>& GetRemovedWorlds() const;
+    [[nodiscard]] TArray<const UWorld*>& GetWorldsMutable();
+    [[nodiscard]] const TArray<const UWorld*>& GetWorlds() const;
+    [[nodiscard]] const TArray<TWeakObjectPtr<const UWorld>>& GetNewWorlds() const;
 
     void SetShouldKeepTicking(const bool _ShouldTick);
-    UE_NODISCARD bool GetShouldKeepTicking() const;
+    [[nodiscard]] bool GetShouldKeepTicking() const;
 
 private:
     TArray<const UWorld*> mWorlds;

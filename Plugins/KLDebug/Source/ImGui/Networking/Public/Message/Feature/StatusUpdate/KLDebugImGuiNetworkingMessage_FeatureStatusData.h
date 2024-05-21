@@ -22,9 +22,9 @@ public:
 
     void Serialize(FArchive& _Archive);
 
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex Server_GetFeatureIndex() const;
-    UE_NODISCARD const FName& Server_GetFeatureNameID() const;
-    UE_NODISCARD bool Server_IsAdded() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex Server_GetFeatureIndex() const;
+    [[nodiscard]] const FName& Server_GetFeatureNameID() const;
+    [[nodiscard]] bool Server_IsAdded() const;
 
 private:
     FName mFeatureNameID;

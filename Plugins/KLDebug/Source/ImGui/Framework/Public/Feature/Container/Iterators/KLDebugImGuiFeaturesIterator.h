@@ -21,8 +21,8 @@ public:
     explicit operator bool() const;
 
 protected:
-    UE_NODISCARD virtual bool IsValid() const;
-    UE_NODISCARD virtual KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const;
+    [[nodiscard]] virtual bool IsValid() const;
+    [[nodiscard]] virtual KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const;
 };
 
 inline FKLDebugImGuiFeaturesConstIterator::FKLDebugImGuiFeaturesConstIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesConstIterator, true>::PoolType& _FeaturesPool)
@@ -60,8 +60,8 @@ public:
     explicit operator bool() const;
 
 protected:
-    UE_NODISCARD virtual bool IsValid() const;
-    UE_NODISCARD virtual KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const;
+    [[nodiscard]] virtual bool IsValid() const;
+    [[nodiscard]] virtual KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const;
 };
 
 inline FKLDebugImGuiFeaturesIterator::FKLDebugImGuiFeaturesIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesIteratorBase<FKLDebugImGuiFeaturesIterator, false>::PoolType& _FeaturesPool)

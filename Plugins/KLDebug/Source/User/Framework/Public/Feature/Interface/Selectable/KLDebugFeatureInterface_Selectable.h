@@ -51,19 +51,19 @@ public:
     // This can be used to clean the owner object that this feature was operating on
     virtual void OnFeatureUnselected(UObject& _OwnerObject) const;
 
-    UE_NODISCARD virtual TUniquePtr<IKLDebugContextInterface> GetContext(const FKLDebugContextGetterInput_Selectable& _Input) const;
+    [[nodiscard]] virtual TUniquePtr<IKLDebugContextInterface> GetContext(const FKLDebugContextGetterInput_Selectable& _Input) const;
 
     virtual void Tick(FKLDebugFeatureTickInput_Selectable& _Input);
 
     // method that is called if RequireCanvasUpdate returns true which allow the user to draw things on the game viewport canvas
     virtual void DrawOnCanvas(FKLDebugFeatureDrawCanvasInput_Selectable& _Input) const;
 
-    UE_NODISCARD virtual TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Selectable& _Input) const;
+    [[nodiscard]] virtual TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Selectable& _Input) const;
 
     virtual void DrawImGui(FKLDebugFeatureImGuiInput_Selectable& _Input);
     virtual void Render(const FKLDebugFeatureRenderInput_Selectable& _Input) const;
 
-    UE_NODISCARD static constexpr EImGuiInterfaceType GetInterfaceType();
+    [[nodiscard]] static constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
     virtual void DrawImGuiChild(FKLDebugFeatureImGuiInput_Selectable& _Input);

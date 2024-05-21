@@ -18,7 +18,7 @@ public:
     void ShutdownModule() final;
     //
 
-    UE_NODISCARD static FKLDebugImGuiEditorModule& Get();
+    [[nodiscard]] static FKLDebugImGuiEditorModule& Get();
 
 private:
     FKLDebugEditorPicker mEditorPicker;

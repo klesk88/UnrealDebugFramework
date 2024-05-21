@@ -20,8 +20,8 @@ public:
 
     void Init(const IKLDebugFeatureInterfaceBase& _FeatureInterface, TArray<FString>& _PathString);
 
-    UE_NODISCARD const TArray<FName>& GetImGuiPathTokens() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureOffset GetFeatureOffset() const;
+    [[nodiscard]] const TArray<FName>& GetImGuiPathTokens() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureOffset GetFeatureOffset() const;
 
 private:
     TArray<FName> mImGuiPathTokens;

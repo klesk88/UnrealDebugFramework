@@ -13,9 +13,9 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureSelectableServerTick
 public:
     explicit FKLDebugUserNetworkingFeatureSelectableServerTickInput(const UWorld& _World, const bool _HasAuthority, UObject& _OwnerObject, IKLDebugContextInterface* _ContextData, FArchive& _Archive);
 
-    UE_NODISCARD bool HasAuthorityOnObject() const;
-    UE_NODISCARD UObject& GetObjectMutable() const;
-    UE_NODISCARD const UObject& GetObject() const;
+    [[nodiscard]] bool HasAuthorityOnObject() const;
+    [[nodiscard]] UObject& GetObjectMutable() const;
+    [[nodiscard]] const UObject& GetObject() const;
 
 private:
     UObject& mObject;

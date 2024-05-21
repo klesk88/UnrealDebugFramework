@@ -42,7 +42,7 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugFeatureInterface_Unique : public IKLDebug
 
 public:
     // should return true if the world supports this kind of feature
-    UE_NODISCARD virtual bool DoesSupportWorld(const UWorld& _World) const = 0;
+    [[nodiscard]] virtual bool DoesSupportWorld(const UWorld& _World) const = 0;
 
     // this is called once per world which supports this feature after the world has called its BeginPlay. Only one world at the time for a certain client can be valid
     // so this can be treated as if there is only one feature alive (contrary to IKLDebugFeatureInterface_Selectable), so you can perform some initialization here for your feature.
@@ -55,14 +55,14 @@ public:
     virtual void DrawOnCanvas(FKLDebugFeatureDrawCanvasInput_Unique& _Input) const;
 
     //
-    UE_NODISCARD virtual TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Unique& _Input);
+    [[nodiscard]] virtual TUniquePtr<FDebugRenderSceneProxy> CreateDebugSceneProxy(FKLDebugFeatureSceneProxyInput_Unique& _Input);
 
     virtual void Tick(FKLDebugFeatureTickInput_Unique& _Input);
 
     virtual void DrawImGui(FKLDebugFeatureImGuiInput_Unique& _Input);
     virtual void Render(const FKLDebugFeatureRenderInput_Unique& _Input) const;
 
-    UE_NODISCARD static constexpr EImGuiInterfaceType GetInterfaceType();
+    [[nodiscard]] static constexpr EImGuiInterfaceType GetInterfaceType();
 
 protected:
     virtual void DrawImGuiChild(FKLDebugFeatureImGuiInput_Unique& _Context);

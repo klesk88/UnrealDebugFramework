@@ -14,8 +14,8 @@ class IKLDebugFeatureInterfaceBase;
 class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerUniqueFeatures final : public FNoncopyable
 {
 public:
-    UE_NODISCARD const TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeatures() const;
-    UE_NODISCARD TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeaturesMutable();
+    [[nodiscard]] const TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeatures() const;
+    [[nodiscard]] TArray<FKLDebugImGuiServerUniqueFeatureData>& GetFeaturesMutable();
     void AddFeature(const FKLDebugContextGetterInput& _Input, const IKLDebugFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeature, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
     void RemoveFeature(KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeature);
     void Clear();

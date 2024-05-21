@@ -22,23 +22,23 @@ class KLDEBUGEXAMPLES_API FKLDebugFeatureAI_BehaviorTreeNetworkContext final : p
     KL_DEBUG_DERIVED_CONTEXT(FKLDebugFeatureAI_BehaviorTreeNetworkContext, IKLDebugContextInterface)
     
 public:
-    UE_NODISCARD bool ShouldGatherData(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const;
+    [[nodiscard]] bool ShouldGatherData(const FKLDebugUserNetworkingFeatureSelectableServerTickInput& _Input) const;
 
     void UpdateData(const UObject& _OwnerObject);
 
     void Network_GatherData(FArchive& _Archive);
 
-    UE_NODISCARD const TArray<FString>& GetBlackboardLines() const;
-    UE_NODISCARD const FString& GetBrainComponentDebugInfo() const;
-    UE_NODISCARD const FString& GetCurrentAITask() const;
-    UE_NODISCARD const FString& GetCurrentAIState() const;
-    UE_NODISCARD const FString& GetCurrentAIAssets() const;
+    [[nodiscard]] const TArray<FString>& GetBlackboardLines() const;
+    [[nodiscard]] const FString& GetBrainComponentDebugInfo() const;
+    [[nodiscard]] const FString& GetCurrentAITask() const;
+    [[nodiscard]] const FString& GetCurrentAIState() const;
+    [[nodiscard]] const FString& GetCurrentAIAssets() const;
 
-    UE_NODISCARD float GetTimeSinceReplicated(const UWorld& _World) const;
+    [[nodiscard]] float GetTimeSinceReplicated(const UWorld& _World) const;
 
 private:
-    UE_NODISCARD const UBehaviorTreeComponent* GetBTComponent(const UObject& _Object) const;
-    UE_NODISCARD const UBrainComponent* GetBrainComponent(const UObject& _Object) const;
+    [[nodiscard]] const UBehaviorTreeComponent* GetBTComponent(const UObject& _Object) const;
+    [[nodiscard]] const UBrainComponent* GetBrainComponent(const UObject& _Object) const;
 
     void UpdateBrainInfo(const UObject& _Object);
     void UpateBTInfo(const UObject& _Object);

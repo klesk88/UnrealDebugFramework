@@ -14,8 +14,8 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerRenderContext fina
 public:
     explicit FKLDebugImGuiFeatureVisualizerRenderContext(const UWorld& _World, const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
 
-    UE_NODISCARD const UWorld& GetWorld() const;
-    UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetFeaturesContainerManager() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
+    [[nodiscard]] const FKLDebugImGuiFeaturesTypesContainerManager& GetFeaturesContainerManager() const;
 
 private:
     const UWorld& mWorld;

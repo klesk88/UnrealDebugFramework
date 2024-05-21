@@ -18,15 +18,15 @@ public:
     explicit FKLDebugImGuiFeatureVisualizerEntry(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeaturesIndex, const KL::Debug::ImGui::Features::VisualizerTree::NodeDataID _NodeDataID, TUniquePtr<IKLDebugContextInterface>&& _FeatureContext);
     ~FKLDebugImGuiFeatureVisualizerEntry();
 
-    UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
+    [[nodiscard]] bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex) const;
 
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureIndex() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::VisualizerTree::NodeDataID GetNodeDataID() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureIndex() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::VisualizerTree::NodeDataID GetNodeDataID() const;
 
-    UE_NODISCARD bool& GetIsEnableRef();
-    UE_NODISCARD bool IsEnable() const;
+    [[nodiscard]] bool& GetIsEnableRef();
+    [[nodiscard]] bool IsEnable() const;
 
-    UE_NODISCARD IKLDebugContextInterface* TryGetFeatureContextMutable() const;
+    [[nodiscard]] IKLDebugContextInterface* TryGetFeatureContextMutable() const;
 
 protected:
     TUniquePtr<IKLDebugContextInterface> mFeatureContext;

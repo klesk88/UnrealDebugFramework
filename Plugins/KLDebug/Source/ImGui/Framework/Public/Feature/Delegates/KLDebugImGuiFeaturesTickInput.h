@@ -24,17 +24,17 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeaturesTickInput
 public:
     explicit FKLDebugImGuiFeaturesTickInput(const UWorld& _World, const int32 _CurrentModeIndex, const int32 _BottomBarIndex, FKLDebugImGuiFeatureVisualizer_Unique& _UniqueFeatures, TArray<FKLDebugImGuiFeatureVisualizer_Selectable>& _ObjectFeatures, FKLDebugImGuiFeaturesTypesContainerManager& _ContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _Flags, IKLDebugModeInterface* _CurrentMode, IKLDebugContextInterface* _CurrentModeContext, IKLDebugBottomBarInterface* _CurrentBottomBar, IKLDebugContextInterface* _BottomBarContext);
 
-    UE_NODISCARD const UWorld& GetOwnerWorld() const;
-    UE_NODISCARD FKLDebugImGuiFeatureVisualizer_Unique& GetUniqueFeaturesMutable() const;
-    UE_NODISCARD TArray<FKLDebugImGuiFeatureVisualizer_Selectable>& GetObjectFeaturesMutable() const;
-    UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureEnableSet& GetFeatureFlagsMutable() const;
-    UE_NODISCARD int32 GetCurrentModeIndex() const;
-    UE_NODISCARD IKLDebugModeInterface* TryGetCurrentMode() const;
-    UE_NODISCARD IKLDebugContextInterface* TryGetCurrentModeContext() const;
-    UE_NODISCARD int32 GetBottomBarIndex() const;
-    UE_NODISCARD IKLDebugBottomBarInterface* TryGetCurrentBottomBar() const;
-    UE_NODISCARD IKLDebugContextInterface* TryGetCurrentBottomBarContext() const;
+    [[nodiscard]] const UWorld& GetOwnerWorld() const;
+    [[nodiscard]] FKLDebugImGuiFeatureVisualizer_Unique& GetUniqueFeaturesMutable() const;
+    [[nodiscard]] TArray<FKLDebugImGuiFeatureVisualizer_Selectable>& GetObjectFeaturesMutable() const;
+    [[nodiscard]] FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureEnableSet& GetFeatureFlagsMutable() const;
+    [[nodiscard]] int32 GetCurrentModeIndex() const;
+    [[nodiscard]] IKLDebugModeInterface* TryGetCurrentMode() const;
+    [[nodiscard]] IKLDebugContextInterface* TryGetCurrentModeContext() const;
+    [[nodiscard]] int32 GetBottomBarIndex() const;
+    [[nodiscard]] IKLDebugBottomBarInterface* TryGetCurrentBottomBar() const;
+    [[nodiscard]] IKLDebugContextInterface* TryGetCurrentBottomBarContext() const;
 
 private:
     const UWorld& mWorld;

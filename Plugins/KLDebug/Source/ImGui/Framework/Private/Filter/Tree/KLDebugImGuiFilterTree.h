@@ -32,14 +32,14 @@ public:
     void Init(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
     void GatherFeatures(const UObject& _Obj, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& _OutFeaturesIndexes) const;
 
-    UE_NODISCARD bool HasFilters() const;
+    [[nodiscard]] bool HasFilters() const;
 
 private:
     void GenerateFilters();
     void GenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
     void SortFeatures(FKLDebugImGuiFeaturesIterator& _Iterator, TArray<FKLDebugImGuiTreeSortedFeatures>& _OutSortedFeature);
     void GenerateTree(const TArray<FKLDebugImGuiTreeSortedFeatures>& _SortedFeatures);
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FilterIndex GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureType) const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FilterIndex GetFilterIndexFromID(const FName& _FilterID, const FName& _FeatureType) const;
 
 private:
     // offset between features so that we can retrieve them correctly from the pool. Each entry is the
@@ -62,9 +62,9 @@ private:
 public:
     void TestInitWithExternalData(TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>&& _FilterPool, TArray<KL::Debug::ImGui::Features::Types::FilterIndex>&& _FilterOffsets);
     void TestGenerateTree(const int32 _FeaturesCount, FKLDebugImGuiFeaturesIterator& _Iterator);
-    UE_NODISCARD const TArray<FKLDebugImGuiFilterTreeNode>& TestGetTreeNodes() const;
-    UE_NODISCARD const TArray<FKLDebugImGuiFilterTreeNodeData>& TestGetTreeNodesData() const;
-    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& TestGetFilterPool() const;
+    [[nodiscard]] const TArray<FKLDebugImGuiFilterTreeNode>& TestGetTreeNodes() const;
+    [[nodiscard]] const TArray<FKLDebugImGuiFilterTreeNodeData>& TestGetTreeNodesData() const;
+    [[nodiscard]] const TArray<KL::Debug::ImGui::Features::Types::FilterPoolValue>& TestGetFilterPool() const;
 #endif
 };
 

@@ -10,12 +10,12 @@
 
 #define KL_DEBUG_NETWORK_INTERFACE(ItemType, NetworkInterfaceType)                                              \
 public:                                                                                                         \
-    UE_NODISCARD inline bool RequireServerTick() const override                                                 \
+    [[nodiscard]] inline bool RequireServerTick() const override                                                 \
     {                                                                                                           \
         return !std::is_same_v<decltype(&NetworkInterfaceType::Server_Tick), decltype(&ItemType::Server_Tick)>; \
     }                                                                                                           \
                                                                                                                 \
-    UE_NODISCARD inline bool RequireClientTick() const override                                                 \
+    [[nodiscard]] inline bool RequireClientTick() const override                                                 \
     {                                                                                                           \
         return !std::is_same_v<decltype(&NetworkInterfaceType::Client_Tick), decltype(&ItemType::Client_Tick)>; \
     }                                                                                                           \
@@ -31,28 +31,28 @@ public:
 
     // RTTI section
     template <typename InterfaceClass>
-    UE_NODISCARD const InterfaceClass* NetworkTryCastToInterface() const;
+    [[nodiscard]] const InterfaceClass* NetworkTryCastToInterface() const;
     template <typename InterfaceClass>
-    UE_NODISCARD InterfaceClass* NetworkTryCastToInterfaceMutable();
+    [[nodiscard]] InterfaceClass* NetworkTryCastToInterfaceMutable();
 
     template <typename OtherType>
-    UE_NODISCARD bool NetworkIsDerivedFrom() const;
+    [[nodiscard]] bool NetworkIsDerivedFrom() const;
     // RTTI section
 
     // if true we will check the crc of the data buffer gather trough GatherData before sending the message
     // if is the same then we will skip the message
-    UE_NODISCARD virtual bool Server_ShouldVerifyCRCBeforeSendData() const;
+    [[nodiscard]] virtual bool Server_ShouldVerifyCRCBeforeSendData() const;
 
     // implemented by the macro KL_DEBUG_FEATURE_NETWORK_CLASS
-    UE_NODISCARD virtual bool RequireServerTick() const;
-    UE_NODISCARD virtual bool RequireClientTick() const;
+    [[nodiscard]] virtual bool RequireServerTick() const;
+    [[nodiscard]] virtual bool RequireClientTick() const;
     // KL_DEBUG_FEATURE_NETWORK_CLASS
 
 protected:
 protected:
     //  RTTI section these will be extended from the network module by the different network interfaces
-    UE_NODISCARD virtual bool NetworkIsDerivedInternal(const FName& _ItemTypeName) const;
-    UE_NODISCARD static const FName& NetworkStaticItemType();
+    [[nodiscard]] virtual bool NetworkIsDerivedInternal(const FName& _ItemTypeName) const;
+    [[nodiscard]] static const FName& NetworkStaticItemType();
     //
 
     template <typename FeatureClass, typename InterfaceType>

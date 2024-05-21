@@ -27,14 +27,14 @@ public:
     explicit FKLDebugImGuiServerClientCachedConnection(const int32 _ReadBufferSize, const int32 _WriteBufferSize, FSocket& _ClientSocket);
 
     // FKLDebugNetworkingCachedConnectionBase
-    UE_NODISCARD bool RequiresGameThreadTick() const final;
+    [[nodiscard]] bool RequiresGameThreadTick() const final;
     // FKLDebugNetworkingCachedConnectionBase
 
     // this is called from the game thread.
-    UE_NODISCARD bool TickOnGameThread(const TArray<FKLDebugNetworkingCommandConnectionManagerBase*>& _ClientsConnected, UWorld& _World);
-    UE_NODISCARD APlayerController* TryGetPlayerControllerMutable() const;
-    UE_NODISCARD const APlayerController* TryGetPlayerController() const;
-    UE_NODISCARD FKLDebugNetworkingServerCommandConnectionManager& GetCommandManagerMutable();
+    [[nodiscard]] bool TickOnGameThread(const TArray<FKLDebugNetworkingCommandConnectionManagerBase*>& _ClientsConnected, UWorld& _World);
+    [[nodiscard]] APlayerController* TryGetPlayerControllerMutable() const;
+    [[nodiscard]] const APlayerController* TryGetPlayerController() const;
+    [[nodiscard]] FKLDebugNetworkingServerCommandConnectionManager& GetCommandManagerMutable();
 
     void AddCommand(FKLDebugNetworkingMessage_Command&& _Command);
 

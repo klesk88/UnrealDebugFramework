@@ -22,10 +22,10 @@ public:
     void Shutdown();
     void Update(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);
 
-    UE_NODISCARD int32 GetCurrentBottomBarIndex() const;
-    UE_NODISCARD int32 GetCurrentModeIndex() const;
-    UE_NODISCARD IKLDebugContextInterface* GetCurrentModeContext() const;
-    UE_NODISCARD IKLDebugContextInterface* GetCurrentBottomBarContext() const;
+    [[nodiscard]] int32 GetCurrentBottomBarIndex() const;
+    [[nodiscard]] int32 GetCurrentModeIndex() const;
+    [[nodiscard]] IKLDebugContextInterface* GetCurrentModeContext() const;
+    [[nodiscard]] IKLDebugContextInterface* GetCurrentBottomBarContext() const;
 
 private:
     void DrawImGuiTopBar(const UWorld& _World, FKLDebugFrameworkBottomBarManager& _BottomBarManager, FKLDebugFrameworkModeManager& _ModeManager);

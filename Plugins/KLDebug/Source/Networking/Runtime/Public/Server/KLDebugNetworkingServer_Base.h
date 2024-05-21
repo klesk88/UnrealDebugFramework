@@ -19,7 +19,7 @@ public:
     // FRunnable
 
 protected:
-    UE_NODISCARD bool ShouldStop() const;
+    [[nodiscard]] bool ShouldStop() const;
 
 private:
     FSocket* mSocket = nullptr;

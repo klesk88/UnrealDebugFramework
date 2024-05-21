@@ -21,10 +21,10 @@ public:
     explicit FKLDebugNetworkingMessage_Command(const FName& _ID, TArray<uint8>&& _ContextData);
     explicit FKLDebugNetworkingMessage_Command(FArchive& _Archive);
 
-    UE_NODISCARD const FName& GetCommandID() const;
+    [[nodiscard]] const FName& GetCommandID() const;
 
-    UE_NODISCARD const TArray<uint8>& GetCommandContextData() const;
-    UE_NODISCARD TArray<uint8>& GetCommandContextDataMutable();
+    [[nodiscard]] const TArray<uint8>& GetCommandContextData() const;
+    [[nodiscard]] TArray<uint8>& GetCommandContextDataMutable();
 
 private:
     // IKLDebugNetworkingMessageInterface

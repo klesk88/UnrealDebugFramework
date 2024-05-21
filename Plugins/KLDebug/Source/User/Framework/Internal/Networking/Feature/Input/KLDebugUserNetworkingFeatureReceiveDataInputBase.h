@@ -16,8 +16,8 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureReceiveDataInputBase
 public:
     explicit FKLDebugUserNetworkingFeatureReceiveDataInputBase(const EKLDebugNetworkReceiveMessageType _ReceiveType, const UWorld& _World, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive);
 
-    UE_NODISCARD FArchive& GetArchiveMutable() const;
-    UE_NODISCARD EKLDebugNetworkReceiveMessageType GetReceiveType() const;
+    [[nodiscard]] FArchive& GetArchiveMutable() const;
+    [[nodiscard]] EKLDebugNetworkReceiveMessageType GetReceiveType() const;
 
 private:
     FArchive& mArchive;

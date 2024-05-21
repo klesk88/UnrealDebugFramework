@@ -13,7 +13,7 @@ public:
     explicit FKLDebugNetworkingMessage_WindowToogle(const uint16 _NewSelection, const FName& _ID, const EKLDebugWindowTypes _WindowType);
     explicit FKLDebugNetworkingMessage_WindowToogle(const EKLDebugWindowTypes _WindowType);
 
-    UE_NODISCARD bool Server_GetHasElement() const;
+    [[nodiscard]] bool Server_GetHasElement() const;
 
 private:
     // TKLDebugNetworkingMessage_Base

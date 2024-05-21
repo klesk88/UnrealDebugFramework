@@ -14,8 +14,8 @@ class KLDEBUGNETWORKINGRUNTIME_API FKLDebugNetworkingMessageSerializeInput final
 public:
     explicit FKLDebugNetworkingMessageSerializeInput(const uint8 _MessageVersion, FArchive& _Archive);
 
-    UE_NODISCARD uint8 GetMessageVersion() const;
-    UE_NODISCARD FArchive& GetArchive() const;
+    [[nodiscard]] uint8 GetMessageVersion() const;
+    [[nodiscard]] FArchive& GetArchive() const;
 
 protected:
     FArchive& mArchive;

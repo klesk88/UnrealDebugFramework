@@ -30,7 +30,7 @@ public:
 
     void Parallel_Tick();
 
-    UE_NODISCARD bool HasBeenInitialized() const;
+    [[nodiscard]] bool HasBeenInitialized() const;
 
     void ArbitrerAddWorldConnection(const int32 _ServerPort, const int32 _DebugPort);
     void ArbitrerRemovedWorldConnection(const int32 _ServerPort);

@@ -17,12 +17,12 @@ private:
     friend struct TOptional<Child>;
 
 public:
-    UE_NODISCARD static Child& Get();
+    [[nodiscard]] static Child& Get();
 
     void AddEntry(const SIZE_T _ClassSize, EntryType& _NewEntry);
-    UE_NODISCARD EntryType* GetStartEntry() const;
-    UE_NODISCARD SIZE_T GetTotalSizeRequired() const;
-    UE_NODISCARD uint32 GetEntryCount() const;
+    [[nodiscard]] EntryType* GetStartEntry() const;
+    [[nodiscard]] SIZE_T GetTotalSizeRequired() const;
+    [[nodiscard]] uint32 GetEntryCount() const;
 
 protected:
     TKLDebugUtilsStaticMemoryManager() = default;

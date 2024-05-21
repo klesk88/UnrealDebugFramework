@@ -26,7 +26,7 @@ namespace KL::Debug::Networking::Commands::Internal
 {
     KLDEBUGUSERFRAMEWORK_API void BindOnNewCommand(const FOnKLDebugNewCommand& _Delegate);
     KLDEBUGUSERFRAMEWORK_API void BroadcastNewRequest(const FKLDebugOnNewCommandInput& _Input);
-    UE_NODISCARD KLDEBUGUSERFRAMEWORK_API bool CanBroadcastRequest();
+    [[nodiscard]] KLDEBUGUSERFRAMEWORK_API bool CanBroadcastRequest();
 
     template <typename CommandClass>
     void SendCommandInternal(const UWorld& _World, const DebugCommandClientFilter& _ClientFilter)

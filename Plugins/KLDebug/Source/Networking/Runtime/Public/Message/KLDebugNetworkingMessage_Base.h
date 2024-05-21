@@ -9,8 +9,8 @@ class TKLDebugNetworkingMessage_Base : public IKLDebugNetworkingMessageInterface
 {
 public:
     // IKLDebugNetworkingMessageInterface
-    UE_NODISCARD uint16 GetMessageType() const final;
-    UE_NODISCARD uint16 GetMessageEnumType() const final;
+    [[nodiscard]] uint16 GetMessageType() const final;
+    [[nodiscard]] uint16 GetMessageEnumType() const final;
     // IKLDebugNetworkingMessageInterface
 };
 

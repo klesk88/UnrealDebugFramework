@@ -17,7 +17,7 @@ public:
     void ShutdownModule() final;
     //
 
-    UE_NODISCARD static FKLDebugImGuiFrameworkModule& Get();
+    [[nodiscard]] static FKLDebugImGuiFrameworkModule& Get();
 
-    UE_NODISCARD const FString& GetKLDebugEngineFlag() const;
+    [[nodiscard]] const FString& GetKLDebugEngineFlag() const;
 };

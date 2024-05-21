@@ -24,9 +24,9 @@ public:
 
 private:
     // IKLDebugImGuiFeatureInterface_EngineSubsystem
-    UE_NODISCARD bool DoesSupportWorld(const UWorld& _World) const final;
-    UE_NODISCARD const FName& GetImGuiPath() const;
-    UE_NODISCARD const FString& GetWindowName() const final;
+    [[nodiscard]] bool DoesSupportWorld(const UWorld& _World) const final;
+    [[nodiscard]] const FName& GetImGuiPath() const;
+    [[nodiscard]] const FString& GetWindowName() const final;
     void DrawImGuiChild(FKLDebugFeatureImGuiInput_Unique& _Input) final;
     // IKLDebugImGuiFeatureInterface_EngineSubsystem
 

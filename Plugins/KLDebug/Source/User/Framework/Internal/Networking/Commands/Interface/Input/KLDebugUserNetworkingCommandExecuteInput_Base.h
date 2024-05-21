@@ -13,8 +13,8 @@ public:
     explicit FKLDebugUserNetworkingCommandExecuteInput_Base(UWorld& _World);
     virtual ~FKLDebugUserNetworkingCommandExecuteInput_Base() = default;
 
-    UE_NODISCARD UWorld& GetWorldMutable() const;
-    UE_NODISCARD const UWorld& GetWorld() const;
+    [[nodiscard]] UWorld& GetWorldMutable() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
 
 private:
     UWorld& mWorld;

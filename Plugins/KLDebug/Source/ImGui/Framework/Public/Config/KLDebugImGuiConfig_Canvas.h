@@ -14,8 +14,8 @@ struct KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiConfig_Canvas
     GENERATED_BODY()
 
 public:
-    UE_NODISCARD float GetBorderOffsetX() const;
-    UE_NODISCARD float GetBorderOffsetY() const;
+    [[nodiscard]] float GetBorderOffsetX() const;
+    [[nodiscard]] float GetBorderOffsetY() const;
 
 private:
     UPROPERTY(EditDefaultsOnly, config)

@@ -11,9 +11,9 @@ public:
     explicit FKLDebugNetworkingArbitrerMessage_ServerConnected(const uint32 _WorldServerPort, const uint32 _DebugPort);
     explicit FKLDebugNetworkingArbitrerMessage_ServerConnected(FArchive& _Archive);
 
-    UE_NODISCARD uint32 Arbitrer_GetWorldServerPort() const;
-    UE_NODISCARD uint32 Arbitrer_GetDebugPort() const;
-    UE_NODISCARD uint32 Arbitrer_GetHeaderVersion() const;
+    [[nodiscard]] uint32 Arbitrer_GetWorldServerPort() const;
+    [[nodiscard]] uint32 Arbitrer_GetDebugPort() const;
+    [[nodiscard]] uint32 Arbitrer_GetHeaderVersion() const;
 
 private:
     // IKLDebugNetworkingMessageInterface

@@ -12,10 +12,10 @@ class KLDEBUGEXAMPLES_API FKLDebugUtilsPickerScoredObjects final : public FNonco
 public:
     explicit FKLDebugUtilsPickerScoredObjects(const float _Distance, UObject& _Object);
 
-    UE_NODISCARD UObject* GetObject() const;
-    UE_NODISCARD float GetDistance() const;
+    [[nodiscard]] UObject* GetObject() const;
+    [[nodiscard]] float GetDistance() const;
 
-    UE_NODISCARD float GetScore() const;
+    [[nodiscard]] float GetScore() const;
     void SetScore(const float _Score);
 
 private:

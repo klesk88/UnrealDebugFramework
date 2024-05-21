@@ -10,12 +10,12 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerConstIterator fina
 public:
     explicit FKLDebugImGuiFeatureVisualizerConstIterator(const TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes, const TArray<FKLDebugImGuiFeatureData>& _FeatureData, typename FKLDebugImGuiFeaturesConstIterator::PoolType& _FeaturesPool);
 
-    UE_NODISCARD const FKLDebugImGuiFeatureVisualizerEntry& GetEntryData() const;
+    [[nodiscard]] const FKLDebugImGuiFeatureVisualizerEntry& GetEntryData() const;
 
 private:
     // FKLDebugImGuiFeaturesConstIterator
-    UE_NODISCARD bool IsValid() const final;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
+    [[nodiscard]] bool IsValid() const final;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesConstIterator
 
     const TArray<FKLDebugImGuiFeatureVisualizerEntry>& mFeaturesIndexes;
@@ -50,12 +50,12 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiFeatureVisualizerIterator final : p
 public:
     explicit FKLDebugImGuiFeatureVisualizerIterator(const TArray<FKLDebugImGuiFeatureData>& _FeatureData, TArray<FKLDebugImGuiFeatureVisualizerEntry>& _FeaturesIndexes, typename FKLDebugImGuiFeaturesIterator::PoolType& _FeaturesPool);
 
-    UE_NODISCARD FKLDebugImGuiFeatureVisualizerEntry& GetEntryDataMutable();
+    [[nodiscard]] FKLDebugImGuiFeatureVisualizerEntry& GetEntryDataMutable();
 
 private:
     // FKLDebugImGuiFeaturesIterator
-    UE_NODISCARD bool IsValid() const final;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
+    [[nodiscard]] bool IsValid() const final;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndexChild() const final;
     // FKLDebugImGuiFeaturesIterator
 
 private:

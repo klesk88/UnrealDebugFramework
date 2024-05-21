@@ -14,11 +14,11 @@ class KLDEBUGIMGUICLIENT_API FKLDebugImGuiClientServerPortGetterUser_PendingWorl
 {
 public:
     explicit FKLDebugImGuiClientServerPortGetterUser_PendingWorld(const UWorld& _World, const uint32 _ServerIP, const FUniqueNetIdRepl& _LocalPlayerNetID);
-    UE_NODISCARD bool operator==(const FObjectKey& _WorldKey) const;
+    [[nodiscard]] bool operator==(const FObjectKey& _WorldKey) const;
 
-    UE_NODISCARD const FObjectKey& GetWorldKey() const;
-    UE_NODISCARD uint32 GetServerIP() const;
-    UE_NODISCARD const FUniqueNetIdRepl& GetNetLocalPlayerID() const;
+    [[nodiscard]] const FObjectKey& GetWorldKey() const;
+    [[nodiscard]] uint32 GetServerIP() const;
+    [[nodiscard]] const FUniqueNetIdRepl& GetNetLocalPlayerID() const;
 
 private:
     FObjectKey mWorldKey;

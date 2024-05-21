@@ -22,11 +22,11 @@ namespace KL::Debug::Networking::Commands::Internal
     public:
         explicit FKLDebugOnNewCommandInput(const UWorld& _World, const FName& _CommandID, const DebugCommandClientFilter& _ClientFilter, TArray<uint8>&& _ContextData);
 
-        UE_NODISCARD const UWorld& GetWorld() const;
-        UE_NODISCARD const FName& GetCommandID() const;
-        UE_NODISCARD const DebugCommandClientFilter& GetClientFilter() const;
-        UE_NODISCARD TArray<uint8>&& GetContextDataMutable() const;
-        UE_NODISCARD const TArray<uint8>& GetContextData() const;
+        [[nodiscard]] const UWorld& GetWorld() const;
+        [[nodiscard]] const FName& GetCommandID() const;
+        [[nodiscard]] const DebugCommandClientFilter& GetClientFilter() const;
+        [[nodiscard]] TArray<uint8>&& GetContextDataMutable() const;
+        [[nodiscard]] const TArray<uint8>& GetContextData() const;
 
     private:
         const UWorld& mWorld;

@@ -18,8 +18,8 @@ public:
     TKLDebugUserNetworkingCommandManagerEntry();
 
     // FKLDebugFilterManagerEntryBase
-    UE_NODISCARD IKLDebugUserNetworkingCommandInterface& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD SIZE_T GetSize() const final;
+    [[nodiscard]] IKLDebugUserNetworkingCommandInterface& AllocateInPlace(void* _PoolStartAddress) const final;
+    [[nodiscard]] SIZE_T GetSize() const final;
     // FKLDebugFilterManagerEntryBase
 };
 

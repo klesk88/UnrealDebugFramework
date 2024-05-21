@@ -21,8 +21,8 @@ public:
     void Initialize();
     void Shutdown();
 
-    UE_NODISCARD const FKLDebugImGuiFeatureContainerBase& GetContainer(const EImGuiInterfaceType _Type) const;
-    UE_NODISCARD FKLDebugImGuiFeatureContainerBase& GetContainerMutable(const EImGuiInterfaceType _Type) const;
+    [[nodiscard]] const FKLDebugImGuiFeatureContainerBase& GetContainer(const EImGuiInterfaceType _Type) const;
+    [[nodiscard]] FKLDebugImGuiFeatureContainerBase& GetContainerMutable(const EImGuiInterfaceType _Type) const;
 
 private:
     void CreateContainers();

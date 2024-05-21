@@ -16,8 +16,8 @@ class FKLDebugArbitrerPendingMessages
 public:
     explicit FKLDebugArbitrerPendingMessages(FArchive& _Reader);
 
-    UE_NODISCARD const FKLDebugNetworkingArbitrerMessage_ClientConnected& GetMessage() const;
-    UE_NODISCARD double GetTimeSinceAdded() const;
+    [[nodiscard]] const FKLDebugNetworkingArbitrerMessage_ClientConnected& GetMessage() const;
+    [[nodiscard]] double GetTimeSinceAdded() const;
 
 private:
     FKLDebugNetworkingArbitrerMessage_ClientConnected mMessage;

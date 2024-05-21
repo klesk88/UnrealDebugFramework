@@ -16,10 +16,10 @@ public:
     explicit FKLDebugImGuiTreeBuilderData(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex, const FName& _FeatureImGuiPath);
     virtual ~FKLDebugImGuiTreeBuilderData() = default;
 
-    UE_NODISCARD virtual const TArray<FName>& GetPathTokens() const = 0;
+    [[nodiscard]] virtual const TArray<FName>& GetPathTokens() const = 0;
 
-    UE_NODISCARD const FName& GetFullPath() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
+    [[nodiscard]] const FName& GetFullPath() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetFeatureDataIndex() const;
 
 private:
     FName mTreePath;

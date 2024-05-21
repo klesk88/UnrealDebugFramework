@@ -19,10 +19,10 @@ class KLDEBUGGAMEPLAYRUNTIME_API UKLDebugGameplayConfig final : public UDevelope
 public:
     UKLDebugGameplayConfig();
 
-    UE_NODISCARD static const UKLDebugGameplayConfig& Get();
+    [[nodiscard]] static const UKLDebugGameplayConfig& Get();
 
     void Load() const;
-    UE_NODISCARD const FKLDebugGameplayInputConfig& GetInputConfig() const;
+    [[nodiscard]] const FKLDebugGameplayInputConfig& GetInputConfig() const;
 
 private:
     UPROPERTY(EditDefaultsOnly, config)

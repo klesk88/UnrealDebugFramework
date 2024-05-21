@@ -27,12 +27,12 @@ public:
     void ShutdownModule() final;
     //
 
-    UE_NODISCARD static FKLUnrealImGuiModule& Get();
-    UE_NODISCARD static FKLUnrealImGuiModule* TryGet();
+    [[nodiscard]] static FKLUnrealImGuiModule& Get();
+    [[nodiscard]] static FKLUnrealImGuiModule* TryGet();
 
     void EnableImGuiSystem();
     void DisableImGuiSystem();
-    UE_NODISCARD FDelegateHandle BindToEnableStateChange(const FOnNetImguiEnableStateChange::FDelegate& _Delegate);
+    [[nodiscard]] FDelegateHandle BindToEnableStateChange(const FOnNetImguiEnableStateChange::FDelegate& _Delegate);
     void UnBindFromEnableStateChange(FDelegateHandle& _DelegateHandle);
 
 private:

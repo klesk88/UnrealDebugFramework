@@ -14,8 +14,8 @@ namespace KL::Debug::Server::Delegates
     public:
         explicit FServerSocketPortRangeDelegateData(const uint32 _StartRange, const uint32 _EndRange);
 
-        UE_NODISCARD uint32 GetStartRange() const;
-        UE_NODISCARD uint32 GetEndRange() const;
+        [[nodiscard]] uint32 GetStartRange() const;
+        [[nodiscard]] uint32 GetEndRange() const;
 
     private:
         uint32 mStartRange = 0;

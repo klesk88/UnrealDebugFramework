@@ -18,9 +18,9 @@ public:
     void SetEndDataOffset(const int32 _Index);
 
     // the node is not guarantee to have a valid representation in the feature array
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetStartDataOffset() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetStartDataOffset() const;
     // the node is not guarantee to have a valid representation in the feature array
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetEndDataOffset() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetEndDataOffset() const;
 
 private:
     // this represents the location of the feature in the main data array so we can retrieve it

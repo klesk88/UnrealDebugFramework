@@ -26,7 +26,7 @@ public:
     explicit FKLDebugNetworkingCommandConnectionManagerBase();
     virtual ~FKLDebugNetworkingCommandConnectionManagerBase() = default;
 
-    UE_NODISCARD bool HasPendingData() const;
+    [[nodiscard]] bool HasPendingData() const;
     void AddPendingMessage(FKLDebugNetworkingPendingMessage&& _PendingMessage);
     virtual void AddSendCommand(FKLDebugNetworkingMessage_Command&& _NewCommand);
 

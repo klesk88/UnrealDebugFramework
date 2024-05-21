@@ -32,7 +32,7 @@ public:
     void AddRange(TArray<TUniquePtr<FDebugRenderSceneProxy>>&& _Children);
 
 private:
-    UE_NODISCARD uint32 GetAllocatedSizeInternal() const;
+    [[nodiscard]] uint32 GetAllocatedSizeInternal() const;
 
 protected:
     TArray<TUniquePtr<FDebugRenderSceneProxy>> mChildProxies;

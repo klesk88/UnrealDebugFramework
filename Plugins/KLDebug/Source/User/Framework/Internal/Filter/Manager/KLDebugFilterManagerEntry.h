@@ -21,8 +21,8 @@ public:
     TKLDebugFilterManagerEntry();
 
     // FKLDebugFilterManagerEntryBase
-    UE_NODISCARD IKLDebugFilterInterface& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD SIZE_T GetSize() const final;
+    [[nodiscard]] IKLDebugFilterInterface& AllocateInPlace(void* _PoolStartAddress) const final;
+    [[nodiscard]] SIZE_T GetSize() const final;
     // FKLDebugFilterManagerEntryBase
 };
 

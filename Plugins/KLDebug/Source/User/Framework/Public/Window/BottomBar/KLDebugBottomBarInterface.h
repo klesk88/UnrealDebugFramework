@@ -41,7 +41,7 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugBottomBarInterface : public IKLDebugRTTII
 public:
     virtual ~IKLDebugBottomBarInterface();
 
-    UE_NODISCARD virtual const FString& GetFriendlyName() const = 0;
+    [[nodiscard]] virtual const FString& GetFriendlyName() const = 0;
 
     virtual void Draw(const FKLDebugBottomBarDrawInput& _Input) const = 0;
 

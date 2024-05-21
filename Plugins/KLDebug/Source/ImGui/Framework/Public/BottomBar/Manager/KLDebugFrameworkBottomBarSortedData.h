@@ -14,9 +14,9 @@ class KLDEBUGIMGUIFRAMEWORK_API FKLDebugFrameworkBottomBarSortedData final : pub
 public:
     explicit FKLDebugFrameworkBottomBarSortedData(const FString& _Name, IKLDebugBottomBarInterface& _Interface);
 
-    UE_NODISCARD const FString& GetName() const;
-    UE_NODISCARD const IKLDebugBottomBarInterface& GetInterface() const;
-    UE_NODISCARD IKLDebugBottomBarInterface& GetInterfaceMutable() const;
+    [[nodiscard]] const FString& GetName() const;
+    [[nodiscard]] const IKLDebugBottomBarInterface& GetInterface() const;
+    [[nodiscard]] IKLDebugBottomBarInterface& GetInterfaceMutable() const;
 
 private:
     const FString& mName;

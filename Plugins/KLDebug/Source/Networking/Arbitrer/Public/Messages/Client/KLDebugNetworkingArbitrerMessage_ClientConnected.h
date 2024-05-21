@@ -14,12 +14,12 @@ public:
     explicit FKLDebugNetworkingArbitrerMessage_ClientConnected(const uint32 _Host, const uint32 _WorldServerPort, const uint32 _ArbitrerReplyPort, const uint16 _ID);
     explicit FKLDebugNetworkingArbitrerMessage_ClientConnected(FArchive& _Archive);
 
-    UE_NODISCARD bool Arbitrer_IsValid() const;
-    UE_NODISCARD uint32 Arbitrer_GetHost() const;
-    UE_NODISCARD uint32 Arbitrer_GetWorldServerPort() const;
-    UE_NODISCARD uint32 Arbitrer_GetArbitrerReplyPort() const;
-    UE_NODISCARD uint16 Arbitrer_GetArbitrerClientID() const;
-    UE_NODISCARD uint8 Arbitrer_GetHeaderVersion() const;
+    [[nodiscard]] bool Arbitrer_IsValid() const;
+    [[nodiscard]] uint32 Arbitrer_GetHost() const;
+    [[nodiscard]] uint32 Arbitrer_GetWorldServerPort() const;
+    [[nodiscard]] uint32 Arbitrer_GetArbitrerReplyPort() const;
+    [[nodiscard]] uint16 Arbitrer_GetArbitrerClientID() const;
+    [[nodiscard]] uint8 Arbitrer_GetHeaderVersion() const;
 
 private:
     // IKLDebugNetworkingMessageInterface

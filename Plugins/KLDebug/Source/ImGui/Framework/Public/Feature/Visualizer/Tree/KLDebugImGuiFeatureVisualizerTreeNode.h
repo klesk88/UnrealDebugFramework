@@ -20,8 +20,8 @@ public:
     explicit FKLDebugImGuiFeatureVisualizerTreeNode(const int32 _NodeDataIndex);
 
     void AddFeatureDataIndex(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex);
-    UE_NODISCARD bool HasFeatures() const;
-    UE_NODISCARD const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeatureIndexes() const;
+    [[nodiscard]] bool HasFeatures() const;
+    [[nodiscard]] const TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>& GetFeatureIndexes() const;
 
 private:
     TArray<KL::Debug::ImGui::Features::Types::FeatureIndex> mFeaturesIndexes;

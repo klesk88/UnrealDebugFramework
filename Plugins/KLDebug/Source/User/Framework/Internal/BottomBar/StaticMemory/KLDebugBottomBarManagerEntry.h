@@ -18,8 +18,8 @@ public:
     TKLDebugBottomBarManagerEntry(const FName& _NameToCheck);
 
     // FKLDebugBottomBarManagerEntryBase
-    UE_NODISCARD IKLDebugBottomBarInterface& AllocateInPlace(void* _PoolStartAddress) const final;
-    UE_NODISCARD SIZE_T GetSize() const final;
+    [[nodiscard]] IKLDebugBottomBarInterface& AllocateInPlace(void* _PoolStartAddress) const final;
+    [[nodiscard]] SIZE_T GetSize() const final;
     // FKLDebugBottomBarManagerEntryBase
 };
 

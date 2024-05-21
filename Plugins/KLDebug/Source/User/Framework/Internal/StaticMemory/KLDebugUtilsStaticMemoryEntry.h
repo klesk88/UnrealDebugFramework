@@ -16,10 +16,10 @@ public:
     virtual ~TKLDebugImGuiStaticMemoryEntryBase() = default;
 
     void AddNextEntry(EntryType& _NextEntry);
-    UE_NODISCARD EntryType* GetNextEntry() const;
+    [[nodiscard]] EntryType* GetNextEntry() const;
 
-    UE_NODISCARD virtual InterfaceType& AllocateInPlace(void* _PoolStartAddress) const = 0;
-    UE_NODISCARD virtual SIZE_T GetSize() const = 0;
+    [[nodiscard]] virtual InterfaceType& AllocateInPlace(void* _PoolStartAddress) const = 0;
+    [[nodiscard]] virtual SIZE_T GetSize() const = 0;
 
 private:
     EntryType* mNext = nullptr;

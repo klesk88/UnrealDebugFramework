@@ -13,16 +13,16 @@ class KLDEBUGNETWORKINGARBITRER_API UKLDebugNetworkingArbitrerSettings final : p
     GENERATED_BODY()
 
 public:
-    UE_NODISCARD static const UKLDebugNetworkingArbitrerSettings& Get();
+    [[nodiscard]] static const UKLDebugNetworkingArbitrerSettings& Get();
 
-    UE_NODISCARD uint32 GetPort() const;
-    UE_NODISCARD uint32 GetStartClientPortRange() const;
-    UE_NODISCARD uint32 GetEndClientPortRange() const;
-    UE_NODISCARD uint32 GetServerPortListeningStart() const;
-    UE_NODISCARD uint32 GetServerPortListeningEnd() const;
-    UE_NODISCARD uint32 GetReceiveBufferSize() const;
-    UE_NODISCARD uint32 GetWriteBufferSize() const;
-    UE_NODISCARD float GetMaxTimeForClientAnswer() const;
+    [[nodiscard]] uint32 GetPort() const;
+    [[nodiscard]] uint32 GetStartClientPortRange() const;
+    [[nodiscard]] uint32 GetEndClientPortRange() const;
+    [[nodiscard]] uint32 GetServerPortListeningStart() const;
+    [[nodiscard]] uint32 GetServerPortListeningEnd() const;
+    [[nodiscard]] uint32 GetReceiveBufferSize() const;
+    [[nodiscard]] uint32 GetWriteBufferSize() const;
+    [[nodiscard]] float GetMaxTimeForClientAnswer() const;
 
 private:
     // this is hte port use by the arbitrer service

@@ -21,10 +21,10 @@ class KLDEBUGIMGUIFRAMEWORK_API UKLDebugImGuiConfig final : public UDeveloperSet
 public:
     UKLDebugImGuiConfig();
 
-    UE_NODISCARD static const UKLDebugImGuiConfig& Get();
+    [[nodiscard]] static const UKLDebugImGuiConfig& Get();
 
-    UE_NODISCARD const TSoftObjectPtr<UMaterialInterface>& GeOverlayMaterial() const;
-    UE_NODISCARD const FKLDebugImGuiConfig_Canvas& GetCanvasConfig() const;
+    [[nodiscard]] const TSoftObjectPtr<UMaterialInterface>& GeOverlayMaterial() const;
+    [[nodiscard]] const FKLDebugImGuiConfig_Canvas& GetCanvasConfig() const;
 
 private:
     UPROPERTY(EditDefaultsOnly, config)

@@ -16,10 +16,10 @@ public:
     explicit FKLDebugUserNetworkingFeatureClientTickInputBase(const UWorld& _World, IKLDebugContextInterface* _Context, FArchive& _Archive);
     virtual ~FKLDebugUserNetworkingFeatureClientTickInputBase() = default;
 
-    UE_NODISCARD FArchive& GetWriter() const;
+    [[nodiscard]] FArchive& GetWriter() const;
 
     void SetUpdateSceneProxy();
-    UE_NODISCARD bool ShouldUpdateSceneProxy() const;
+    [[nodiscard]] bool ShouldUpdateSceneProxy() const;
 
 private:
     FArchive& mArchive;

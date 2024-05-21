@@ -21,15 +21,15 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerObjectFeatureData final : public
 public:
     explicit FKLDebugImGuiServerObjectFeatureData(const FKLDebugContextGetterInput_Selectable& _Input, const IKLDebugFeatureInterfaceBase& _FeatureInterface, const KL::Debug::ImGui::Features::Types::FeatureIndex _ClientFeatureIndex, const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex);
     ~FKLDebugImGuiServerObjectFeatureData();
-    UE_NODISCARD bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex) const;
+    [[nodiscard]] bool operator==(const KL::Debug::ImGui::Features::Types::FeatureIndex _ServerFeatureIndex) const;
 
     void SetLastSendCRC(const uint32 _CRC);
 
-    UE_NODISCARD uint32 GetLastSentCRC() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetServerFeatureIndex() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex GetClientFeatureIndex() const;
-    UE_NODISCARD IKLDebugContextInterface* GetContextMutable() const;
-    UE_NODISCARD const IKLDebugContextInterface* GetContext() const;
+    [[nodiscard]] uint32 GetLastSentCRC() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetServerFeatureIndex() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex GetClientFeatureIndex() const;
+    [[nodiscard]] IKLDebugContextInterface* GetContextMutable() const;
+    [[nodiscard]] const IKLDebugContextInterface* GetContext() const;
 
 private:
     TUniquePtr<IKLDebugContextInterface> mContext;

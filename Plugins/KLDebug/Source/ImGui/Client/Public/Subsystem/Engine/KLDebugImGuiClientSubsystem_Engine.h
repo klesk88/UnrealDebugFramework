@@ -33,9 +33,9 @@ public:
 
 private:
     // UKLDebugImGuiNetworkingSubsystem_EngineBase
-    UE_NODISCARD FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
-    UE_NODISCARD const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
-    UE_NODISCARD bool IsValidWorld(UWorld& _World) const final;
+    [[nodiscard]] FKLDebugImGuiNetworkingTCPBase* GetConnectionMutable() final;
+    [[nodiscard]] const FKLDebugImGuiNetworkingTCPBase* GetConnection() const final;
+    [[nodiscard]] bool IsValidWorld(UWorld& _World) const final;
     void OnImGuiSusbsytemAdded(UKLDebugImGuiWorldSubsystem& _ImGuiSubsystem, UWorld& _World) final;
 
     ETickableTickType GetTickableTickTypeChild() const;

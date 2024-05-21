@@ -16,15 +16,15 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugModeDrawCanvasInput final : public FGamep
 public:
     explicit FKLDebugModeDrawCanvasInput(const UWorld& _World, UCanvas& _Canvas, UFont& _Font, IKLDebugContextInterface* _Context);
 
-    UE_NODISCARD const UWorld& GetWorld() const;
+    [[nodiscard]] const UWorld& GetWorld() const;
 
     // the user is expected to know the type of the context. this is guaranteed to be valid if the user spawns one
     template <typename ContextType>
-    UE_NODISCARD ContextType& GetContextMutable() const;
+    [[nodiscard]] ContextType& GetContextMutable() const;
 
     // the user is expected to know the type of the context. this is guaranteed to be valid if the user spawns one
     template <typename ContextType>
-    UE_NODISCARD const ContextType& GetContext() const;
+    [[nodiscard]] const ContextType& GetContext() const;
 
 private:
     const UWorld& mWorld;

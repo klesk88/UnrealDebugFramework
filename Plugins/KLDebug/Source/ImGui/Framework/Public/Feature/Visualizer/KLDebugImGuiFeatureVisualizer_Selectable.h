@@ -33,18 +33,18 @@ public:
 public:
     explicit FKLDebugImGuiFeatureVisualizer_Selectable(const FKLDebugImGuiFeatureContainerBase& _Container, UMaterialInterface* _MaterialInterface, UObject& _Object, TArray<KL::Debug::ImGui::Features::Types::FeatureIndex>&& _FeaturesIndexes);
     ~FKLDebugImGuiFeatureVisualizer_Selectable();
-    UE_NODISCARD bool operator==(const UObject& _Object) const;
+    [[nodiscard]] bool operator==(const UObject& _Object) const;
 
     // FKLDebugImGuiFeatureVisualizerBase
-    UE_NODISCARD bool IsValid() const final;
+    [[nodiscard]] bool IsValid() const final;
     void TickFeatures(const UWorld& _World, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem) final;
     void Render(const FKLDebugImGuiFeatureVisualizerRenderContext& _Context) const final;
     void DrawOnCanvas(const FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager, UCanvas& _Canvas, UFont& _Font, UWorld& _World) const final;
     void GatherSceneProxies(const UPrimitiveComponent& _RenderingComponent, const KL::Debug::Framework::Rendering::GatherSceneProxyCallback& _Callback, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
-    UE_NODISCARD bool ShouldKeepAlive() const;
-    UE_NODISCARD const FObjectKey& GetObjectKey() const;
+    [[nodiscard]] bool ShouldKeepAlive() const;
+    [[nodiscard]] const FObjectKey& GetObjectKey() const;
 
     void ApplyDelegateMutable(const SelectableDelegateCallback& _Delegate, FKLDebugImGuiFeaturesTypesContainerManager& _FeatureContainerManager);
 
@@ -54,7 +54,7 @@ private:
     void DrawImGuiFeaturesEnabled(const FKLDebugImGuiFeatureVisualizerImGuiContext& _Context, KL::Debug::ImGui::Features::Types::FeatureEnableSet& _RequiredExternalSystem) final;
     // FKLDebugImGuiFeatureVisualizerBase
 
-    UE_NODISCARD UMeshComponent* TryGetMeshComponent() const;
+    [[nodiscard]] UMeshComponent* TryGetMeshComponent() const;
     void SetMaterialOverlay(UMaterialInterface* _MaterialInterface);
 
 private:

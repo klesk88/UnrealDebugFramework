@@ -26,15 +26,15 @@ public:
     explicit FKLDebugImGuiNetworkingMessage_FeatureDataUpdate(const EKLDebugNetworkReceiveMessageType _ReceiveType, const FNetworkGUID& _NetworkID, const EImGuiInterfaceType _InterfaceType, const FName& _FeatureNameID, const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureIndex);
 
     // TKLDebugNetworkingMessage_Base
-    UE_NODISCARD bool IsValid() const final;
+    [[nodiscard]] bool IsValid() const final;
     // TKLDebugNetworkingMessage_Base
 
-    UE_NODISCARD UObject* Client_GetObjectMutable(const UWorld& _World) const;
-    UE_NODISCARD EImGuiInterfaceType Client_GetImGuiInterfaceType() const;
-    UE_NODISCARD KL::Debug::ImGui::Features::Types::FeatureIndex Client_GetFeatureIndex() const;
-    UE_NODISCARD const FName& Client_GetFeatureNameID() const;
-    UE_NODISCARD const TArray<uint8>& Client_GetDataArray() const;
-    UE_NODISCARD EKLDebugNetworkReceiveMessageType Client_GetReceiveType() const;
+    [[nodiscard]] UObject* Client_GetObjectMutable(const UWorld& _World) const;
+    [[nodiscard]] EImGuiInterfaceType Client_GetImGuiInterfaceType() const;
+    [[nodiscard]] KL::Debug::ImGui::Features::Types::FeatureIndex Client_GetFeatureIndex() const;
+    [[nodiscard]] const FName& Client_GetFeatureNameID() const;
+    [[nodiscard]] const TArray<uint8>& Client_GetDataArray() const;
+    [[nodiscard]] EKLDebugNetworkReceiveMessageType Client_GetReceiveType() const;
 
 private:
     // TKLDebugNetworkingMessage_Base

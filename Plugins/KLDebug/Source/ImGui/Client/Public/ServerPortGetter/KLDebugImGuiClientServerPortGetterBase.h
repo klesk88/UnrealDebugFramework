@@ -24,8 +24,8 @@ public:
     virtual void Shutdown() = 0;
     virtual void RemoveWorlds(const TArray<FObjectKey>& _RemovedWorlds);
 
-    UE_NODISCARD bool GatherWorldData(const UWorld& _World, uint32& _ServerIP, int32& _ServerPort, FUniqueNetIdRepl& _LocalPlayerNetID) const;
-    UE_NODISCARD bool IsWorldDataReady(const UWorld& _World) const;
+    [[nodiscard]] bool GatherWorldData(const UWorld& _World, uint32& _ServerIP, int32& _ServerPort, FUniqueNetIdRepl& _LocalPlayerNetID) const;
+    [[nodiscard]] bool IsWorldDataReady(const UWorld& _World) const;
 };
 
 inline void IKLDebugImGuiClientServerPortGetterBase::RemoveWorlds(const TArray<FObjectKey>& _RemovedWorlds)

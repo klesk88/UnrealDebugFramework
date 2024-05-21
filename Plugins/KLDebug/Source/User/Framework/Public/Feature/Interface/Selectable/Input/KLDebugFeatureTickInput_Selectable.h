@@ -11,7 +11,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugFeatureTickInput_Selectable final : publi
 public:
     explicit FKLDebugFeatureTickInput_Selectable(const UWorld& _World, const UObject& _Owner, IKLDebugContextInterface* _Context);
 
-    UE_NODISCARD const UObject& GetOwner() const;
+    [[nodiscard]] const UObject& GetOwner() const;
 
 private:
     const UObject& mOwner;

@@ -17,20 +17,20 @@ public:
     explicit FKLDebugFeatureSceneProxyInput_Base(const UPrimitiveComponent& _RenderingComponent, IKLDebugContextInterface* _Context);
     virtual ~FKLDebugFeatureSceneProxyInput_Base() = default;
 
-    UE_NODISCARD const UPrimitiveComponent& GetRenderingComponent() const;
+    [[nodiscard]] const UPrimitiveComponent& GetRenderingComponent() const;
 
     void SetDrawDelegateHelper(TUniquePtr<FDebugDrawDelegateHelper>&& _DelegateHelper);
-    UE_NODISCARD TUniquePtr<FDebugDrawDelegateHelper>&& GetDrawDelegateHelper();
+    [[nodiscard]] TUniquePtr<FDebugDrawDelegateHelper>&& GetDrawDelegateHelper();
 
     // the user is expected to know the type of the context the imgui spawns trough GetFeatureContext.
     // It is also responsible to know when is valid and when not (if spawn is guaranteed to be valid till the imgui feature is valid)
     template <typename ContextType>
-    UE_NODISCARD ContextType& GetContextMutable() const;
+    [[nodiscard]] ContextType& GetContextMutable() const;
 
     // the user is expected to know the type of the context the imgui spawns trough GetFeatureContext.
     // It is also responsible to know when is valid and when not (if spawn is guaranteed to be valid till the imgui feature is valid)
     template <typename ContextType>
-    UE_NODISCARD const ContextType& GetContext() const;
+    [[nodiscard]] const ContextType& GetContext() const;
 
 private:
     const UPrimitiveComponent& mRenderingComponent;

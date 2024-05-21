@@ -6,9 +6,9 @@
 
 namespace KL::Debug::Networking::Arbitrer
 {
-    UE_NODISCARD bool LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole);
+    [[nodiscard]] bool LunchArbitrer(const FString& _ExecutablePath, const bool _CreateConsole);
     void CloseArbitrer();
-    UE_NODISCARD bool IsArbitrerRunningInternal();
+    [[nodiscard]] bool IsArbitrerRunningInternal();
 }    // namespace KL::Debug::Networking::Arbitrer
 
 #endif

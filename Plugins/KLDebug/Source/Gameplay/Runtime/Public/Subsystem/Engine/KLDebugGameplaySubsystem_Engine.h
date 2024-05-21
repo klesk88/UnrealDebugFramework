@@ -19,8 +19,8 @@ class KLDEBUGGAMEPLAYRUNTIME_API UKLDebugGameplaySubsystem_Engine final : public
     GENERATED_BODY()
 
 public:
-    UE_NODISCARD static UKLDebugGameplaySubsystem_Engine* TryGetMutable();
-    UE_NODISCARD static const UKLDebugGameplaySubsystem_Engine* TryGet();
+    [[nodiscard]] static UKLDebugGameplaySubsystem_Engine* TryGetMutable();
+    [[nodiscard]] static const UKLDebugGameplaySubsystem_Engine* TryGet();
 
     void ToogleDebugCamera(const TWeakObjectPtr<const ULocalPlayer> _LocalPlayer);
     void TooglePause(const TWeakObjectPtr<const ULocalPlayer> _LocalPlayer);

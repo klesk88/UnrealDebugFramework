@@ -12,7 +12,7 @@ class KLDEBUGIMGUINETWORKING_API FKLDebugNetworkingCommandFactory final : public
 public:
     void Init();
 
-    UE_NODISCARD const IKLDebugUserNetworkingCommandInterface* TryGetCommand(const FName& _CommandID) const;
+    [[nodiscard]] const IKLDebugUserNetworkingCommandInterface* TryGetCommand(const FName& _CommandID) const;
 };
 
 inline const IKLDebugUserNetworkingCommandInterface* FKLDebugNetworkingCommandFactory::TryGetCommand(const FName& _CommandID) const

@@ -21,13 +21,13 @@
 
 #define KL_DEBUG_FILTER_GENERATE(_FilterName)                   \
 public:                                                         \
-    UE_NODISCARD inline static const FName& StaticGetFilterID() \
+    [[nodiscard]] inline static const FName& StaticGetFilterID() \
     {                                                           \
         static FName FilterID(TEXT(#_FilterName));              \
         return FilterID;                                        \
     }                                                           \
                                                                 \
-    UE_NODISCARD inline const FName& GetFilterID() const final  \
+    [[nodiscard]] inline const FName& GetFilterID() const final  \
     {                                                           \
         return StaticGetFilterID();                             \
     }                                                           \

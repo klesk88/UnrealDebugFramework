@@ -23,7 +23,7 @@ class UWorld;
     KL_DEBUG_RTTI(ItemType, ParentItemType)                                                                    \
     KL_DEBUG_NETWORK_GETTER_INTERFACE(ItemType)                                                                \
                                                                                                                \
-    UE_NODISCARD inline bool RequiresDrawCanvas() const override                                               \
+    [[nodiscard]] inline bool RequiresDrawCanvas() const override                                               \
     {                                                                                                          \
         return !std::is_same_v<decltype(&IKLDebugModeInterface::DrawCanvas), decltype(&ItemType::DrawCanvas)>; \
     }                                                                                                          \
@@ -49,7 +49,7 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugModeInterface : public IKLDebugRTTIInterf
 public:
     virtual ~IKLDebugModeInterface();
 
-    UE_NODISCARD virtual const FString& GetFriendlyName() const = 0;
+    [[nodiscard]] virtual const FString& GetFriendlyName() const = 0;
 
     virtual void DrawImGui(const FKLDebugModeDrawImGuiInput& _Input);
     virtual void DrawCanvas(FKLDebugModeDrawCanvasInput& _Input) const;
@@ -58,7 +58,7 @@ public:
     virtual void OnUnselect(const UWorld& _World);
 
     // implemented by KL_DEBUG_DERIVED_MODE macro
-    UE_NODISCARD virtual bool RequiresDrawCanvas() const;
+    [[nodiscard]] virtual bool RequiresDrawCanvas() const;
     // KL_DEBUG_DERIVED_MODE
 };
 

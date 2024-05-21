@@ -46,8 +46,8 @@ private:
 
 #if WITH_AUTOMATION_TESTS
 public:
-    UE_NODISCARD const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TestGetTreeNodes() const;
-    UE_NODISCARD const TArray<FKLDebugImGuiFeatureVisualizerNodeData>& TestGetTreeNodesData() const;
+    [[nodiscard]] const TArray<FKLDebugImGuiFeatureVisualizerTreeNode>& TestGetTreeNodes() const;
+    [[nodiscard]] const TArray<FKLDebugImGuiFeatureVisualizerNodeData>& TestGetTreeNodesData() const;
 #endif
 };
 

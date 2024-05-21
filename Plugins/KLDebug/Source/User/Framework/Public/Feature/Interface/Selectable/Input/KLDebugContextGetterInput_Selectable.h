@@ -14,8 +14,8 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugContextGetterInput_Selectable final : pub
 public:
     explicit FKLDebugContextGetterInput_Selectable(const UObject& _Object, const bool _HasAuthority, const UWorld& _World, const ENetMode _CurrentNetMode);
 
-    UE_NODISCARD const UObject& GetObject() const;
-    UE_NODISCARD bool HasAuthorityOnObject() const;
+    [[nodiscard]] const UObject& GetObject() const;
+    [[nodiscard]] bool HasAuthorityOnObject() const;
 
 private:
     const UObject& mObject;

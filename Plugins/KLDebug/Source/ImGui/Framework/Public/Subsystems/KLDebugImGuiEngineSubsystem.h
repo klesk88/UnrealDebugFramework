@@ -32,21 +32,21 @@ public:
     void Initialize(FSubsystemCollectionBase& _Collection) final;
     void Deinitialize() final;
 
-    UE_NODISCARD static UKLDebugImGuiEngineSubsystem* GetMutable();
-    UE_NODISCARD static const UKLDebugImGuiEngineSubsystem* Get();
-    UE_NODISCARD const FKLDebugImGuiFeaturesTypesContainerManager& GetFeatureContainerManager() const;
-    UE_NODISCARD FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable();
-    UE_NODISCARD const FKLDebugFrameworkModeManager& GetModeManager() const;
-    UE_NODISCARD FKLDebugFrameworkModeManager& GetModeManagerMutable();
-    UE_NODISCARD const FKLDebugFrameworkBottomBarManager& GetBottomWindowManager() const;
-    UE_NODISCARD FKLDebugFrameworkBottomBarManager& GetBottomWindowManagerMutable();
+    [[nodiscard]] static UKLDebugImGuiEngineSubsystem* GetMutable();
+    [[nodiscard]] static const UKLDebugImGuiEngineSubsystem* Get();
+    [[nodiscard]] const FKLDebugImGuiFeaturesTypesContainerManager& GetFeatureContainerManager() const;
+    [[nodiscard]] FKLDebugImGuiFeaturesTypesContainerManager& GetContainerManagerMutable();
+    [[nodiscard]] const FKLDebugFrameworkModeManager& GetModeManager() const;
+    [[nodiscard]] FKLDebugFrameworkModeManager& GetModeManagerMutable();
+    [[nodiscard]] const FKLDebugFrameworkBottomBarManager& GetBottomWindowManager() const;
+    [[nodiscard]] FKLDebugFrameworkBottomBarManager& GetBottomWindowManagerMutable();
 
     void ToogleImGuiSystemState();
     void ToogleImGuiInput();
 
-    UE_NODISCARD bool IsImGuiSystemEnabled() const;
+    [[nodiscard]] bool IsImGuiSystemEnabled() const;
 
-    UE_NODISCARD UMaterialInterface* GetOverlayMaterial() const;
+    [[nodiscard]] UMaterialInterface* GetOverlayMaterial() const;
 
 private:
     void InitFromConfig();

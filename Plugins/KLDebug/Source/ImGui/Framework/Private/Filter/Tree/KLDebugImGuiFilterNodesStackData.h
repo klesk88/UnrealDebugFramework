@@ -18,9 +18,9 @@
 // public:
 //     explicit FKLDebugImGuiFilterNodesStackData(const FName& _FilterTag, const FName& _FullFilter, const int32 _TreeNodeIndex);
 //
-//     UE_NODISCARD const FName&                 GetFilterTag() const;
-//     UE_NODISCARD const FName&                 GetFullFilter() const;
-//     UE_NODISCARD FKLDebugImGuiFilterTreeNode& GetTreeNode(TArray<FKLDebugImGuiFilterTreeNode>& _TreeNodes) const;
+//     [[nodiscard]] const FName&                 GetFilterTag() const;
+//     [[nodiscard]] const FName&                 GetFullFilter() const;
+//     [[nodiscard]] FKLDebugImGuiFilterTreeNode& GetTreeNode(TArray<FKLDebugImGuiFilterTreeNode>& _TreeNodes) const;
 //
 // private:
 //     FName  mFilterTag;

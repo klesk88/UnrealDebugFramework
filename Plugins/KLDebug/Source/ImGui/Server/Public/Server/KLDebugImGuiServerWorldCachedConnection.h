@@ -25,20 +25,20 @@ class KLDEBUGIMGUISERVER_API FKLDebugImGuiServerWorldCachedConnection final : pu
 public:
     explicit FKLDebugImGuiServerWorldCachedConnection(const UWorld& _World, const int32 _ServerPort, const int32 _DebugPort, FSocket& _WorldDebugSocket);
     ~FKLDebugImGuiServerWorldCachedConnection();
-    UE_NODISCARD bool operator==(const FObjectKey& _WorldKey) const;
+    [[nodiscard]] bool operator==(const FObjectKey& _WorldKey) const;
 
     void RemoveInvalidClientConnections();
 
-    UE_NODISCARD int32 GetServerPort() const;
+    [[nodiscard]] int32 GetServerPort() const;
 
-    UE_NODISCARD bool Parallel_Tick();
-    UE_NODISCARD bool TickOnGameThread();
+    [[nodiscard]] bool Parallel_Tick();
+    [[nodiscard]] bool TickOnGameThread();
 
 private:
     void ShutdownInternal(ISocketSubsystem& _SocketSubsystem);
 
     void TickPendingConnections();
-    UE_NODISCARD bool TickClientsConnections();
+    [[nodiscard]] bool TickClientsConnections();
 
     void RemoveInvalidConnections();
 

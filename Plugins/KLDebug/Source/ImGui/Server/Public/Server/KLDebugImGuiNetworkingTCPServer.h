@@ -40,10 +40,10 @@ private:
 
     void GameThread_RemoveOldWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
     void GameThread_AddNewWorlds(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
-    UE_NODISCARD bool GameThread_UpdateConnections(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
+    [[nodiscard]] bool GameThread_UpdateConnections(const FKLDebugImGuiTCPServerGameThreadContext& _Context);
 
-    UE_NODISCARD FSocket* GetNewWorldSocket(const uint32 _StartPort, const uint32 _EndPort, const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const;
-    UE_NODISCARD const TSharedPtr<FInternetAddr> GetWorldLocalAddress(const UWorld& _World) const;
+    [[nodiscard]] FSocket* GetNewWorldSocket(const uint32 _StartPort, const uint32 _EndPort, const UKLDebugImGuiNetworkingSettings& _Settings, int32& _DebugPort) const;
+    [[nodiscard]] const TSharedPtr<FInternetAddr> GetWorldLocalAddress(const UWorld& _World) const;
 
 private:
     FKLDebugImGuiServerArbitrerManager mArbitrerManager;

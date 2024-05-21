@@ -11,24 +11,24 @@
 
 #define KL_DEBUG_RTTI(ItemType, ParentItemType)                                                       \
 public:                                                                                               \
-    UE_NODISCARD inline static const FName& StaticItemType()                                          \
+    [[nodiscard]] inline static const FName& StaticItemType()                                          \
     {                                                                                                 \
         static const FName Interface(TEXT(#ItemType));                                                \
         return Interface;                                                                             \
     }                                                                                                 \
                                                                                                       \
-    UE_NODISCARD inline constexpr static bool IsDerivedFromParent()                                   \
+    [[nodiscard]] inline constexpr static bool IsDerivedFromParent()                                   \
     {                                                                                                 \
         return TIsDerivedFrom<ItemType, ParentItemType>::IsDerived;                                   \
     }                                                                                                 \
                                                                                                       \
-    UE_NODISCARD inline const FName& GetID() const override                                           \
+    [[nodiscard]] inline const FName& GetID() const override                                           \
     {                                                                                                 \
         return StaticItemType();                                                                      \
     }                                                                                                 \
                                                                                                       \
 protected:                                                                                            \
-    UE_NODISCARD inline bool IsDerivedInternal(const FName& _ItemTypeName) const override             \
+    [[nodiscard]] inline bool IsDerivedInternal(const FName& _ItemTypeName) const override             \
     {                                                                                                 \
         return StaticItemType() == _ItemTypeName || ParentItemType::IsDerivedInternal(_ItemTypeName); \
     }                                                                                                 \
@@ -51,15 +51,15 @@ class KLDEBUGUSERFRAMEWORK_API IKLDebugRTTIInterface
 public:
     virtual ~IKLDebugRTTIInterface();
 
-    UE_NODISCARD virtual const FName& GetID() const = 0;
+    [[nodiscard]] virtual const FName& GetID() const = 0;
 
     template <typename OtherType>
-    UE_NODISCARD bool IsDerivedFrom() const;
+    [[nodiscard]] bool IsDerivedFrom() const;
 
 protected:
     // use the KL_DEBUG_RTTI macro for these
-    UE_NODISCARD virtual bool IsDerivedInternal(const FName& _ItemTypeName) const;
-    UE_NODISCARD static const FName& StaticItemType();
+    [[nodiscard]] virtual bool IsDerivedInternal(const FName& _ItemTypeName) const;
+    [[nodiscard]] static const FName& StaticItemType();
     // KL_DEBUG_RTTI
 };
 

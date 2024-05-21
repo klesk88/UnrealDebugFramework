@@ -75,7 +75,7 @@ public:
     // for example, to send a command from one client to another and we use the server only as a way to broadcast
     // the message.
     // by default we execute the command on the server
-    UE_NODISCARD virtual EServerCommandExecutionType Server_ShouldExecute() const;
+    [[nodiscard]] virtual EServerCommandExecutionType Server_ShouldExecute() const;
 };
 
 inline IKLDebugUserNetworkingCommandInterface::EServerCommandExecutionType IKLDebugUserNetworkingCommandInterface::Server_ShouldExecute() const

@@ -12,7 +12,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugNetworkingWindowReceiveDataInput final : 
 public:
     explicit FKLDebugNetworkingWindowReceiveDataInput(const EKLDebugNetworkReceiveMessageType _ReceiveMessageType, const UWorld& _World, IKLDebugContextInterface* _FeatureContext, FArchive& _Archive);
 
-    UE_NODISCARD EKLDebugNetworkReceiveMessageType GetReceiveMessageType() const;
+    [[nodiscard]] EKLDebugNetworkReceiveMessageType GetReceiveMessageType() const;
 
 private:
     EKLDebugNetworkReceiveMessageType mReceiveMessageType = EKLDebugNetworkReceiveMessageType::RequestUpdate;

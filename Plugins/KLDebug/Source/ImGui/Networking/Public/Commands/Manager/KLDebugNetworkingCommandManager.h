@@ -24,5 +24,5 @@ namespace KL::Debug::Networking::Commands::Manager
     KLDEBUGIMGUINETWORKING_API void Init();
     KLDEBUGIMGUINETWORKING_API void BindOnNewCommandWorldRequest(const FObjectKey& _WorldKey, const FOnKLDebugNewCommandWorld& _Delegate);
     KLDEBUGIMGUINETWORKING_API void UnbindOnNewCommandWorldRequest(const FObjectKey& _WorldKey);
-    UE_NODISCARD KLDEBUGIMGUINETWORKING_API const IKLDebugUserNetworkingCommandInterface* TryGetCommand(const FName& _CommandID);
+    [[nodiscard]] KLDEBUGIMGUINETWORKING_API const IKLDebugUserNetworkingCommandInterface* TryGetCommand(const FName& _CommandID);
 }    // namespace KL::Debug::Networking::Commands::Manager

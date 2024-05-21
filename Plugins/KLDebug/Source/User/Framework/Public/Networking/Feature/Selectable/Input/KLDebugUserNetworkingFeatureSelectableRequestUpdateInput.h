@@ -11,7 +11,7 @@ class KLDEBUGUSERFRAMEWORK_API FKLDebugUserNetworkingFeatureSelectableRequestUpd
 public:
     explicit FKLDebugUserNetworkingFeatureSelectableRequestUpdateInput(const UWorld& _World, const UObject& _Object, FArchive& _ReaderArchive, FArchive& _WriterArchive);
 
-    UE_NODISCARD const UObject& GetObject() const;
+    [[nodiscard]] const UObject& GetObject() const;
 
 private:
     const UObject& mObject;

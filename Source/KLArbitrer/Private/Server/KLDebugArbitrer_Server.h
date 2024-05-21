@@ -30,7 +30,7 @@ class ISocketSubsystem;
 class FKLDebugNetworkArbitrer_Server final : public FNoncopyable
 {
 public:
-    UE_NODISCARD bool Init();
+    [[nodiscard]] bool Init();
     void Run();
     void Exit();
 
@@ -47,7 +47,7 @@ private:
     void ReadData(const FKLDebugNetworkingMessage_Header& _Header, FArchive& _Reader);
 
     void TickPendingClientMessages();
-    UE_NODISCARD bool TrySendPendingClientMessage(const FKLDebugNetworkingArbitrerMessage_ClientConnected& _Message);
+    [[nodiscard]] bool TrySendPendingClientMessage(const FKLDebugNetworkingArbitrerMessage_ClientConnected& _Message);
 
 private:
     TArray<FKLDebugArbitrerPendingMessages> mPendingMessages;
