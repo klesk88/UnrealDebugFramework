@@ -51,7 +51,7 @@ void FKLDebugImGuiNetworkingTCPClient::Exit()
 void FKLDebugImGuiNetworkingTCPClient::RemoveCachedConnection(const int32 _Index)
 {
     FKLDebugImGuiClientWorldCacheConnection& CachedConnection = mCachedConnections[_Index];
-    mCachedConnections.RemoveAtSwap(_Index, 1, false);
+    mCachedConnections.RemoveAtSwap(_Index, 1, EAllowShrinking::No);
 }
 
 void FKLDebugImGuiNetworkingTCPClient::RunChild()
@@ -178,14 +178,14 @@ void FKLDebugImGuiNetworkingTCPClient::GameThread_NewWorlds(FKLDebugImGuiClientG
         const TWeakObjectPtr<const UWorld>& WorldPtr = mPendingWorlds[i];
         if (!WorldPtr.IsValid())
         {
-            mPendingWorlds.RemoveAt(i, 1, false);
+            mPendingWorlds.RemoveAt(i, 1, EAllowShrinking::No);
             continue;
         }
 
         if (mServerPortGetter->IsWorldDataReady(*WorldPtr.Get()))
         {
             WorldReadys.Emplace(WorldPtr);
-            mPendingWorlds.RemoveAt(i, 1, false);
+            mPendingWorlds.RemoveAt(i, 1, EAllowShrinking::No);
         }
     }
 

@@ -156,7 +156,7 @@ int32 FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData()
     if (mReadBufferStartIndex == 0 && mReceiveBuffer.Num() > static_cast<int32>(mInitialReadBufferSize))
     {
         // resize the array to its original size so we dont waste too much space
-        mReceiveBuffer.SetNum(mInitialReadBufferSize, true);
+        mReceiveBuffer.SetNum(mInitialReadBufferSize, EAllowShrinking::Yes);
     }
 
     while (Socket.HasPendingData(Size) && Size > 0)
@@ -167,7 +167,7 @@ int32 FKLDebugNetworkingCachedConnectionBase::TickReadConnectionData()
         {
             ensureMsgf(false, TEXT("resizing array should not happen"));
             const int32 NewSize = Size - SpaceLeftInBuffer + 1;
-            mReceiveBuffer.SetNum(NewSize, false);
+            mReceiveBuffer.SetNum(NewSize, EAllowShrinking::No);
         }
 
         const uint32 MaxReadSize = FMath::Min(Size, static_cast<uint32>(mReceiveBuffer.Num() - StartBufferIndex));
@@ -262,7 +262,7 @@ bool FKLDebugNetworkingCachedConnectionBase::TickReadMessagesWithHeader(FArchive
             }
         }
 
-        mPendingSplittedMessages.RemoveAtSwap(Index, 1, false);
+        mPendingSplittedMessages.RemoveAtSwap(Index, 1, EAllowShrinking::No);
     };
 
     const uint32 StopReadLocation = KL::Debug::Networking::Message::ReadBufferGetStopReadLocation(ReadMessagesLambda, mTempMessageBuffer, _Reader);
@@ -348,7 +348,7 @@ void FKLDebugNetworkingCachedConnectionBase::SendData(TArray<uint8>& _Buffer)
     UE_LOG(LogKLDebug_Networking, Warning, TEXT("FKLDebugNetworkingCachedConnectionBase::SendData>> Supposed to send [%d] but we sent just [%d]"), _Buffer.Num(), BytesSent);
 
     // remove the byts we managed to send
-    _Buffer.RemoveAt(0, BytesSent, false);
+    _Buffer.RemoveAt(0, BytesSent, EAllowShrinking::No);
 }
 
 void FKLDebugNetworkingCachedConnectionBase::UpdateBufferStartIndex(const uint32 _BufferStopPosition, const uint32 _TotalBufferSize)

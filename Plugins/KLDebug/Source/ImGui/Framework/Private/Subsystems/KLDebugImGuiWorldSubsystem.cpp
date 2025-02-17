@@ -287,7 +287,7 @@ void UKLDebugImGuiWorldSubsystem::Tick(const UWorld& _CurrentWorldUpdated, FKLDe
             FKLDebugImGuiFeatureVisualizer_Selectable& SelectableFeature = mSelectedObjectsVisualizers[i];
             if (!SelectableFeature.IsValid())
             {
-                mSelectedObjectsVisualizers.RemoveAtSwap(i, 1, false);
+                mSelectedObjectsVisualizers.RemoveAtSwap(i, 1, EAllowShrinking::No);
                 continue;
             }
 
@@ -517,7 +517,7 @@ void UKLDebugImGuiWorldSubsystem::DrawImGuiObjects(const UWorld& _World, const b
                 mOnFeaturesUpdatedDelegate.Broadcast(DelegateData);
             }
 
-            mSelectedObjectsVisualizers.RemoveAt(i, 1, false);
+            mSelectedObjectsVisualizers.RemoveAt(i, 1, EAllowShrinking::No);
         }
     }
 }

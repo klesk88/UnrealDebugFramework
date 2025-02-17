@@ -103,8 +103,10 @@ UObject* FKLDebugUtilsPicker::GetActorFromTrace(const UWorld& _World) const
         return nullptr;
     }
 
+    ensureMsgf(false, TEXT("TODO"));
+
     // TODO
-    const FVector2D ScreenPos;
+    const FVector2D ScreenPos = FVector2D::ZeroVector;
     const FMatrix InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
 
     FVector WorldPosition, WorldDirection;

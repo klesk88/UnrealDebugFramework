@@ -22,5 +22,5 @@ void FKLDebugImGuiServerUniqueFeatures::RemoveFeature(KL::Debug::ImGui::Features
         return;
     }
 
-    mFeatures.RemoveAtSwap(Index, 1, false);
+    mFeatures.RemoveAtSwap(Index, 1, EAllowShrinking::No);
 }

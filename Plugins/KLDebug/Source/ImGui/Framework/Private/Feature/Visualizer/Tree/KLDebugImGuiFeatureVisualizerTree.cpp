@@ -141,7 +141,7 @@ void FKLDebugImGuiFeatureVisualizerTree::DrawImGuiTree(const EImGuiInterfaceType
                     }
 #endif
 
-                    _FeaturesIndexesSelected.RemoveAtSwap(Index, 1, false);
+                    _FeaturesIndexesSelected.RemoveAtSwap(Index, 1, EAllowShrinking::No);
                     IsAdded = false;
                     FeaturesUpdated.Emplace(FeatureIndex);
                 }

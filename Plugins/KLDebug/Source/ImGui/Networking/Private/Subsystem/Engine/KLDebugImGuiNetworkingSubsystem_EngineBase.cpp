@@ -105,7 +105,7 @@ void UKLDebugImGuiNetworkingSubsystem_EngineBase::OnRemoveImGuiSubsystem(UKLDebu
     const int32 Index = mCurrentWorlds.IndexOfByKey(World);
     if (Index != INDEX_NONE)
     {
-        mCurrentWorlds.RemoveAt(Index, 1, false);
+        mCurrentWorlds.RemoveAt(Index, 1, EAllowShrinking::No);
     }
     else
     {
