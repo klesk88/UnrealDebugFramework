@@ -102,7 +102,7 @@ namespace KL::Debug::Networking::Commands::Manager
         ensureMsgf(Index != INDEX_NONE, TEXT("we should have found a valid delegate"));
         if (Index != INDEX_NONE)
         {
-            RequesterDelegatesPerWorld.RemoveAtSwap(Index, 1, false);
+            RequesterDelegatesPerWorld.RemoveAtSwap(Index, 1, EAllowShrinking::No);
         }
     }
 

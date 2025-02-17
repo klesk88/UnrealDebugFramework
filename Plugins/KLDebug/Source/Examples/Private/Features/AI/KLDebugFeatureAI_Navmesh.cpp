@@ -161,8 +161,7 @@ void FKLDebugFeatureAI_Navmesh::CollectNavmeshData(const UWorld& _World, const F
     int32 TargetTileX = 0;
     int32 TargetTileY = 0;
     RecastNavMesh->GetNavMeshTileXY(_Location, TargetTileX, TargetTileY);
-
-    TArray<int32> TileSet;
+    TArray<FNavTileRef> TileSet;
     for (int32 Idx = 0; Idx < NumTilesToDisplay; Idx++)
     {
         const int32 NeiX = TargetTileX + DeltaX[Idx];

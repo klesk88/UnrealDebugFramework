@@ -62,7 +62,7 @@ void FKLDebugImGuiClientServerPortGetterUser::RemoveWorlds(const TArray<FObjectK
         const int32 Index = mPendingWorlds.IndexOfByKey(RemovedWorld);
         if (Index != INDEX_NONE)
         {
-            mPendingWorlds.RemoveAtSwap(Index, 1, false);
+            mPendingWorlds.RemoveAtSwap(Index, 1, EAllowShrinking::No);
         }
     }
 }

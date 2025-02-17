@@ -53,7 +53,7 @@ void FKLDebugImGuiServerWorldCachedConnection::RemoveInvalidClientConnections()
         const FKLDebugImGuiServerClientCachedConnection& ClientConnection = mCachedClientConnections[i];
         if (!ClientConnection.IsValid())
         {
-            mCachedClientConnections.RemoveAtSwap(i, 1, false);
+            mCachedClientConnections.RemoveAtSwap(i, 1, EAllowShrinking::No);
         }
     }
 }
@@ -98,7 +98,7 @@ bool FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections()
         if (!Connection.IsValid())
         {
             UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickClientsConnections>> Removing client connection because marked invalid"));
-            mCachedClientConnections.RemoveAtSwap(i, 1, false);
+            mCachedClientConnections.RemoveAtSwap(i, 1, EAllowShrinking::No);
             continue;
         }
 
@@ -135,7 +135,7 @@ bool FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread()
         if (!Connection.IsValid())
         {
             UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread>> Removing client connection because marked invalid"));
-            mCachedClientConnections.RemoveAtSwap(i, 1, false);
+            mCachedClientConnections.RemoveAtSwap(i, 1, EAllowShrinking::No);
             continue;
         }
 
@@ -153,7 +153,7 @@ void FKLDebugImGuiServerWorldCachedConnection::RemoveInvalidConnections()
         if (!Connection.IsValid())
         {
             UE_LOG(LogKLDebug_Networking, Display, TEXT("FKLDebugImGuiServerWorldCachedConnection::TickOnGameThread>> Removing client connection because marked invalid"));
-            mCachedClientConnections.RemoveAtSwap(i, 1, false);
+            mCachedClientConnections.RemoveAtSwap(i, 1, EAllowShrinking::No);
             continue;
         }
     }

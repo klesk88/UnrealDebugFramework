@@ -123,7 +123,7 @@ void FKLDebugImGuiServerCacheConnection::RemoveObjectFeatures(const FNetworkGUID
     const int32 Index = mFeaturesPerObject.IndexOfByKey(_NetworkID);
     if (Index != INDEX_NONE)
     {
-        mFeaturesPerObject.RemoveAtSwap(Index, 1, false);
+        mFeaturesPerObject.RemoveAtSwap(Index, 1, EAllowShrinking::No);
     }
 }
 

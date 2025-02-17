@@ -56,7 +56,7 @@ inline void FKLDebugImGuiServerObjectFeatures::RemoveFeature(const KL::Debug::Im
     const int32 Index = mFeaturesEnable.IndexOfByKey(_FeatureIndex);
     if (Index != INDEX_NONE)
     {
-        mFeaturesEnable.RemoveAtSwap(Index, 1, false);
+        mFeaturesEnable.RemoveAtSwap(Index, 1, EAllowShrinking::No);
     }
 }
 

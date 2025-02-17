@@ -43,11 +43,11 @@ namespace KL::Debug::Networking::Message
 
         const uint32 UncompressSize = _DataToCompress.Num();
         int32 CompressedSize = FCompression::CompressMemoryBound(NAME_Zlib, _DataToCompress.Num(), COMPRESS_BiasMemory);
-        _CompressedData.SetNum(CompressedSize, false);
+        _CompressedData.SetNum(CompressedSize, EAllowShrinking::No);
         const bool Result = FCompression::CompressMemoryIfWorthDecompressing(NAME_Zlib, CompressMinBytesSaved, CompressMinPercentSaved, _CompressedData.GetData(), CompressedSize, _DataToCompress.GetData(), UncompressSize, COMPRESS_BiasMemory);
         if (Result)
         {
-            _CompressedData.SetNum(CompressedSize, false);
+            _CompressedData.SetNum(CompressedSize, EAllowShrinking::No);
             return true;
         }
         else
@@ -141,7 +141,7 @@ namespace KL::Debug::Networking::Message
                 break;
             }
 
-            _MessageBufferData.SetNum(static_cast<int32>(HeaderMessage.GetMessageDataSize()), false);
+            _MessageBufferData.SetNum(static_cast<int32>(HeaderMessage.GetMessageDataSize()), EAllowShrinking::No);
             _Reader.Serialize(_MessageBufferData.GetData(), HeaderMessage.GetMessageDataSize());
             CurrentPosition = _Reader.Tell();
 

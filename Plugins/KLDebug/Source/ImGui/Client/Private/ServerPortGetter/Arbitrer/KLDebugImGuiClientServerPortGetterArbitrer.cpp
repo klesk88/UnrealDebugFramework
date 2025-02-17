@@ -183,7 +183,7 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::TickReadArbitrerData(TArray<FK
 
     while (mArbitrerSocket->HasPendingData(Size) && Size > 0)
     {
-        mArbitrerReplyReadData.SetNumUninitialized(Size, false);
+        mArbitrerReplyReadData.SetNumUninitialized(Size, EAllowShrinking::No);
         Size = 0;
         mArbitrerSocket->Recv(mArbitrerReplyReadData.GetData(), mArbitrerReplyReadData.Num(), BytesRead);
         if (BytesRead == 0)
@@ -249,7 +249,7 @@ void FKLDebugImGuiClientServerPortGetterArbitrer::OnReadArbitrerData(FArchive& _
 
         if (Index != INDEX_NONE)
         {
-            mArbitrerConnections.RemoveAtSwap(Index, 1, false);
+            mArbitrerConnections.RemoveAtSwap(Index, 1, EAllowShrinking::No);
         }
     };
 

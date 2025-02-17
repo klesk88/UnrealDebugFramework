@@ -119,7 +119,7 @@ void FKLDebugImGuiFeatureVisualizerBase::DrawImguiFeaturesEnabledCommon(const FK
         const uint32 Index = FeaturesToRemoveIdx[i];
         const FKLDebugImGuiFeatureVisualizerEntry& Entry = mSelectedFeaturesIndexes[Index];
         mTreeVisualizer.ClearToogleNodeData(Entry.GetNodeDataID());
-        mSelectedFeaturesIndexes.RemoveAtSwap(Index, 1, false);
+        mSelectedFeaturesIndexes.RemoveAtSwap(Index, 1, EAllowShrinking::No);
     }
 
     if (_Context.GetFeatureUpdateDelegate().IsBound() && !FeaturesToRemove.IsEmpty())

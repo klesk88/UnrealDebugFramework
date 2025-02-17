@@ -36,7 +36,7 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
 
             while (!NodesStack.IsEmpty())
             {
-                NodesStackPair<TreeNodeType> CurrentStackNode = NodesStack.Pop(false);
+                NodesStackPair<TreeNodeType> CurrentStackNode = NodesStack.Pop(EAllowShrinking::No);
                 const TreeNodeType* TreeNode = CurrentStackNode.Value;
 
                 if (_CheckNodeAlreadyVisisted && CurrentStackNode.Key)
@@ -107,7 +107,7 @@ namespace KL::Debug::ImGuiTreeBuilder::Helpers
 
                 NodeInStack.SetNextTreeLevelNodeIndex(_TreeNodes.Num());
                 const int32 RemoveCount = _TreeNodesStack.Num() - i;
-                _TreeNodesStack.RemoveAt(i, RemoveCount, false);
+                _TreeNodesStack.RemoveAt(i, RemoveCount, EAllowShrinking::No);
                 return StopIndex;
             }
 

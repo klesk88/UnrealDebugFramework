@@ -30,7 +30,7 @@ void FKLDebugImGuiNetworkingTCPServer::RemoveCachedConnection(const int32 _Index
         mArbitrerManager.ArbitrerRemovedWorldConnection(RemoveConnection.GetServerPort());
     }
 
-    mWorldCachedConnections.RemoveAtSwap(_Index, 1, false);
+    mWorldCachedConnections.RemoveAtSwap(_Index, 1, EAllowShrinking::No);
 }
 
 void FKLDebugImGuiNetworkingTCPServer::RunChild()
