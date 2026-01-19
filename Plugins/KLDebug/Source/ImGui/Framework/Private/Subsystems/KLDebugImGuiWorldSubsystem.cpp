@@ -104,6 +104,8 @@ void UKLDebugImGuiWorldSubsystem::Deinitialize()
 
 void UKLDebugImGuiWorldSubsystem::OnWorldBeginPlay(UWorld& _World)
 {
+    Super::OnWorldBeginPlay(_World);
+
     if (!UKismetSystemLibrary::IsDedicatedServer(&_World))
     {
         const UKLDebugImGuiEngineSubsystem* EngineSusbsytem = UKLDebugImGuiEngineSubsystem::Get();
