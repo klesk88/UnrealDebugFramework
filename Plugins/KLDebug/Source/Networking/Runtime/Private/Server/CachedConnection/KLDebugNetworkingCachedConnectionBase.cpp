@@ -19,7 +19,6 @@
 #include "Serialization/MemoryWriter.h"
 #include "SocketSubsystem.h"
 #include "Stats/Stats.h"
-#include "Stats/Stats2.h"
 
 #if DO_ENSURE
 // engine

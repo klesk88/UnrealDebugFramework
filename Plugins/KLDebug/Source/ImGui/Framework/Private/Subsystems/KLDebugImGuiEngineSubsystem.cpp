@@ -15,7 +15,7 @@
 #include "Engine/Engine.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Materials/MaterialInstance.h"
-#include "Stats/Stats2.h"
+#include "Stats/Stats.h"
 #include "UObject/Object.h"
 
 namespace KL::Debug::ImGui::EngineSubsystem

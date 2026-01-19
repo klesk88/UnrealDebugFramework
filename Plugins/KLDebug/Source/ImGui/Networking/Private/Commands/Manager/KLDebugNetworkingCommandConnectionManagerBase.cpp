@@ -12,7 +12,6 @@
 #include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
 #include "Stats/Stats.h"
-#include "Stats/Stats2.h"
 
 FKLDebugNetworkingCommandConnectionManagerBase::FKLDebugNetworkingCommandConnectionManagerBase()
 {

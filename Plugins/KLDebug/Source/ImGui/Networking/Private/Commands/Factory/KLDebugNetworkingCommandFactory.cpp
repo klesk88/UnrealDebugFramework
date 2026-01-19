@@ -9,7 +9,7 @@
 
 // engine
 #include "Stats/Stats.h"
-#include "Stats/Stats2.h"
+#include "Stats/Stats.h"
 
 void FKLDebugNetworkingCommandFactory::Init()
 {

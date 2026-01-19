@@ -34,7 +34,7 @@
 #include "Engine/GameViewportClient.h"
 #include "Engine/World.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Stats/Stats2.h"
+#include "Stats/Stats.h"
 #include "UnrealEngine.h"
 
 #if DO_ENSURE

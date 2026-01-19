@@ -11,7 +11,7 @@
 #include "GenericPlatform/GenericPlatformProcess.h"
 #include "HAL/Platform.h"
 #include "Serialization/MemoryWriter.h"
-#include "Stats/Stats2.h"
+#include "Stats/Stats.h"
 #include "Templates/UnrealTemplate.h"
 
 // c++

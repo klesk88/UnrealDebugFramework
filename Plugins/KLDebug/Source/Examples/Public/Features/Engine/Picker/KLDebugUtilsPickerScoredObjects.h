@@ -7,7 +7,7 @@
 
 class UObject;
 
-class KLDEBUGEXAMPLES_API FKLDebugUtilsPickerScoredObjects final : public FNoncopyable
+class KLDEBUGEXAMPLES_API FKLDebugUtilsPickerScoredObjects final
 {
 public:
     explicit FKLDebugUtilsPickerScoredObjects(const float _Distance, UObject& _Object);

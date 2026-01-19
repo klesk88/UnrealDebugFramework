@@ -42,7 +42,7 @@
 #include "Misc/ScopeExit.h"
 #include "Serialization/MemoryReader.h"
 #include "Serialization/MemoryWriter.h"
-#include "Stats/Stats2.h"
+#include "Stats/Stats.h"
 #include "UObject/CoreNet.h"
 #include "UObject/NameTypes.h"
 

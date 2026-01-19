@@ -30,8 +30,7 @@ public class KLUnrealImGui : ModuleRules
                 //engine
                 "AIModule",
                 "Engine",
-                "GameplayTags",
-                "StructUtils",
+                "GameplayTags"
             }
         );
 

@@ -114,7 +114,7 @@ void FKLUnrealImGuiFontManager::AddFontGroup(ImFontAtlas& _OutFontAtlas, ImFontC
     _FontConfig.MergeMode = false;
 
     _Name += FString::Printf(TEXT(" (%ipx)"), static_cast<int>(_PxSize));
-    FPlatformString::Strcpy(_FontConfig.Name, sizeof(_FontConfig.Name), TCHAR_TO_UTF8(_Name.GetCharArray().GetData()));
+    FPlatformString::Strncpy(_FontConfig.Name, TCHAR_TO_UTF8(_Name.GetCharArray().GetData()), sizeof(_FontConfig.Name) );
     _OutFontAtlas.AddFontFromMemoryCompressedTTF(_FontData, _FontDataSize, _PxSize, &_FontConfig, _GlyphRange);
 
     _FontConfig.MergeMode = true;

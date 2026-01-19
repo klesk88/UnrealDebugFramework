@@ -144,7 +144,7 @@ void FKLDebugImGuiFilterTree::SortFeatures(FKLDebugImGuiFeaturesIterator& _Itera
 
         checkf(!FiltersNames.IsEmpty(), TEXT("first element must be root do not ovveride it and we expect some valid filters"));
         const FName FullFilterPath = KL::Debug::ImGuiTreeBuilder::Helpers::GetFullPathName(FiltersNames, FilterString);
-        _OutSortedFeatures.Emplace_GetRef(_Iterator.GetFeatureDataIndex(), FullFilterPath, FiltersNames, Feature);
+        _OutSortedFeatures.Emplace(_Iterator.GetFeatureDataIndex(), FullFilterPath, FiltersNames, Feature);
     }
 
     mFeaturesWithoutFilters.Shrink();

@@ -28,10 +28,9 @@ public class KLDebugGameplayRuntime : ModuleRules
                 "Engine",
                 "EnhancedInput",
                 "InputCore",
-                "Slate",
-                "StructUtils"
+                "Slate"
             }
-            );
+        );
 
 
         PrivateDependencyModuleNames.AddRange(

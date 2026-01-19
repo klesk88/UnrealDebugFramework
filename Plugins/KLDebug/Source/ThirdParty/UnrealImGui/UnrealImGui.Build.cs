@@ -31,7 +31,7 @@ public class UnrealImGui : ModuleRules
 
 #if UE_4_24_OR_LATER
         bLegacyPublicIncludePaths = false;
-        ShadowVariableWarningLevel = WarningLevel.Error;
+        CppCompileWarningSettings.ShadowVariableWarningLevel = WarningLevel.Error;
         bTreatAsEngineModule = true;
 #endif
 

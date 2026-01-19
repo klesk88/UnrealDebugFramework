@@ -9,7 +9,7 @@
 
 class IKLDebugBottomBarInterface;
 
-class KLDEBUGIMGUIFRAMEWORK_API FKLDebugFrameworkBottomBarSortedData final : public FNoncopyable
+class KLDEBUGIMGUIFRAMEWORK_API FKLDebugFrameworkBottomBarSortedData final
 {
 public:
     explicit FKLDebugFrameworkBottomBarSortedData(const FString& _Name, IKLDebugBottomBarInterface& _Interface);

@@ -9,7 +9,7 @@
 
 class IKLDebugModeInterface;
 
-class KLDEBUGIMGUIFRAMEWORK_API FKLDebugFrameworkModeSortedData final : public FNoncopyable
+class KLDEBUGIMGUIFRAMEWORK_API FKLDebugFrameworkModeSortedData final
 {
 public:
     explicit FKLDebugFrameworkModeSortedData(const FString& _Name, IKLDebugModeInterface& _Interface);

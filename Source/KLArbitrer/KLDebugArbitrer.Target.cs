@@ -40,6 +40,5 @@ public class KLDebugArbitrerTarget : TargetRules
 
         // Network config
         bWithPushModel = true;
-        bUseIris = true;
     }
 }

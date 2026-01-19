@@ -293,15 +293,15 @@ void FImGuiContextManager::BuildFontAtlas(const TMap<FName, TSharedPtr<ImFontCon
             ImFontConfig FontConfig = {};
             FontConfig.SizePixels   = FMath::RoundFromZero(13.f * DPIScale);
             FontAtlas.AddFontDefault(&FontConfig);
-            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Roboto Medium, 16px");
+            FPlatformString::Strncpy(FontConfig.Name, "Roboto Medium, 16px", sizeof(FontConfig.Name) );
             FontAtlas.AddFontFromMemoryCompressedTTF(Roboto_Medium_compressed_data, Roboto_Medium_compressed_size, 16.0f * DPIScale, &FontConfig);
-            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Cousine Regular, 15px");
+            FPlatformString::Strncpy(FontConfig.Name, "Cousine Regular, 15px", sizeof(FontConfig.Name) );
             FontAtlas.AddFontFromMemoryCompressedTTF(Cousine_Regular_compressed_data, Cousine_Regular_compressed_size, 15.0f * DPIScale, &FontConfig);
-            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Karla Regular, 16px");
+            FPlatformString::Strncpy(FontConfig.Name, "Karla Regular, 16px", sizeof(FontConfig.Name) );
             FontAtlas.AddFontFromMemoryCompressedTTF(Karla_Regular_compressed_data, Karla_Regular_compressed_size, 16.0f * DPIScale, &FontConfig);
-            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Droid Sans, 16px");
+            FPlatformString::Strncpy(FontConfig.Name, "Droid Sans, 16px", sizeof(FontConfig.Name));
             FontAtlas.AddFontFromMemoryCompressedTTF(Droid_Sans_compressed_data, Droid_Sans_compressed_size, 16.0f * DPIScale, &FontConfig);
-            FPlatformString::Strcpy(FontConfig.Name, sizeof(FontConfig.Name), "Proggy Tiny, 10px");
+            FPlatformString::Strncpy(FontConfig.Name, "Proggy Tiny, 10px", sizeof(FontConfig.Name) );
             FontAtlas.AddFontFromMemoryCompressedTTF(Proggy_Tiny_compressed_data, Proggy_Tiny_compressed_size, 10.0f * DPIScale, &FontConfig);
 
             // ... add extra fonts here (and add extra entry in 'FImguiModule::eFont' enum)

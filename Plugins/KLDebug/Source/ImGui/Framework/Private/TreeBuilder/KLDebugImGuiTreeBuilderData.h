@@ -10,7 +10,7 @@
 #include "Templates/UnrealTemplate.h"
 #include "UObject/NameTypes.h"
 
-class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiTreeBuilderData : public FNoncopyable
+class KLDEBUGIMGUIFRAMEWORK_API FKLDebugImGuiTreeBuilderData
 {
 public:
     explicit FKLDebugImGuiTreeBuilderData(const KL::Debug::ImGui::Features::Types::FeatureIndex _FeatureDataIndex, const FName& _FeatureImGuiPath);
