@@ -5,6 +5,7 @@
 .vs/*
 
 #Unreal ignore list
+Plugins/DebugArbitrer/DebugArbitrer/Saved/*
 Plugins/*/Intermediate/*
 Plugins/*/Binaries/*
 Plugins/*/Saved/*

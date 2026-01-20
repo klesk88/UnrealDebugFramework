@@ -59,7 +59,8 @@ bool UKLDebugImGuiServerSubsystem_Engine::IsValidWorld(UWorld& _World) const
         return false;
     }
 
-    const bool IsServer = UKismetSystemLibrary::IsDedicatedServer(&_World);
+    //for listen server we need to check if it is a server or not
+    const bool IsServer = UKismetSystemLibrary::IsDedicatedServer(&_World) || UKismetSystemLibrary::IsServer(&_World);
     return IsServer;
 }
 
