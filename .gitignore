@@ -3,6 +3,9 @@
 *.sln
 *.uproject
 .vs/*
+.vscode/*
+.ignore
+KLDebugFramework.code-workspace
 
 #Unreal ignore list
 Plugins/DebugArbitrer/DebugArbitrer/Saved/*
